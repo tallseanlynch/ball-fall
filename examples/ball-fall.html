@@ -156,7 +156,7 @@
         // }
 
         const groundBox = new Physijs.BoxMesh(
-          new THREE.BoxGeometry(30, 1, 5),
+          new THREE.BoxGeometry(30, 1, 10),
           new THREE.MeshPhongMaterial({ color: "red" }),
           0 // mass
         );
@@ -166,10 +166,11 @@
         groundBox.setLinearVelocity(new THREE.Vector3(0, 0, 0));
         groundBox.setAngularVelocity(new THREE.Vector3(0, 0, 0));
         groundBox.castShadow = true;
-        groundBox.receiveShadow = true;
+		groundBox.receiveShadow = true;
+		groundBox.rotation.x = Math.random() * 2 * Math.PI
 
         const groundBox1 = new Physijs.BoxMesh(
-          new THREE.BoxGeometry(30, 1, 5),
+          new THREE.BoxGeometry(30, 1, 10),
           new THREE.MeshPhongMaterial({ color: "red" }),
           0 // mass
         );
@@ -181,9 +182,10 @@
         groundBox1.setAngularVelocity(new THREE.Vector3(0, 0, 0));
         groundBox1.castShadow = true;
         groundBox1.receiveShadow = true;
+		groundBox1.rotation.x = Math.random() * 2 * Math.PI
 
         const groundBox2 = new Physijs.BoxMesh(
-          new THREE.BoxGeometry(30, 1, 5),
+          new THREE.BoxGeometry(30, 1, 10),
           new THREE.MeshPhongMaterial({ color: "red" }),
           0 // mass
         );
@@ -193,7 +195,8 @@
         groundBox2.setLinearVelocity(new THREE.Vector3(0, 0, 0));
         groundBox2.setAngularVelocity(new THREE.Vector3(0, 0, 0));
         groundBox2.castShadow = true;
-        groundBox2.receiveShadow = true;
+		groundBox2.receiveShadow = true;
+		groundBox2.rotation.x = Math.random() * 2 * Math.PI
 
         ground.receiveShadow = true;
         scene.add(ground);
@@ -203,12 +206,61 @@
         spawnBox();
 
         requestAnimationFrame(render);
-        scene.simulate();
+		scene.simulate();
+
+		window.appConfig = {
+			touchStart: false,
+			touchEnd: false,
+			currentX: 0,
+			currentY: 0,
+			prevX: 0,
+			prevY: 0,
+			diffX: 0,
+			diffY: 0
+		}
+		document.addEventListener('touchstart', (e) => {
+			window.appConfig.touchEnd = false
+			window.appConfig.touchStart = true
+			window.appConfig.currentX = e.touches[0].clientX
+			window.appConfig.currentY = e.touches[0].clientY
+
+			window.appConfig.prevX = e.touches[0].clientX
+			window.appConfig.prevY = e.touches[0].clientY
+			window.appConfig.diffX = window.appConfig.currentX - window.appConfig.prevX
+			window.appConfig.diffY = window.appConfig.currentY - window.appConfig.prevY
+			console.log('TOUCHSTART', e)
+			console.log('APPCONFIG', window.appConfig)
+		})
+		// document.addEventListener('mousemove', (e) => {
+		// 	console.log('MOUSEMOVE', e.clientX, e.clientY)
+		// })
+		document.body.addEventListener('touchmove', (e) => {
+			window.appConfig.prevX = window.appConfig.currentX
+			window.appConfig.prevY = window.appConfig.currentY
+			window.appConfig.currentX = e.touches[0].clientX
+			window.appConfig.currentY = e.touches[0].clientY
+			window.appConfig.diffX = e.touches[0].clientX - window.appConfig.prevX
+			window.appConfig.diffY = e.touches[0].clientY - window.appConfig.prevY
+			console.log('TOUCHMOVE', e.touches[0].clientX, e.touches[0].clientY)
+			console.log('APPCONFIG', window.appConfig)
+			console.log(window.appConfig.diffX, window.appConfig.diffY)
+		}, true)
+		document.addEventListener('touchend', (e) => {
+			window.appConfig.touchEnd = true
+			window.appConfig.touchStart = false
+			window.appConfig.currentX = 0
+			window.appConfig.currentY = 0
+			window.appConfig.diffX = 0
+			window.appConfig.diffY = 0
+			console.log('TOUCHEND', e)
+			console.log('APPCONFIG', window.appConfig)
+		})
+
       };
 
       spawnBox = (function () {
         var box_geometry = new THREE.BoxGeometry(4, 4, 4),
-          sphere_geometry = new THREE.SphereGeometry(4, 16, 16),
+          sphere_geometry = new THREE.SphereGeometry(1, 16, 16),
           handleCollision = function (
             collided_with,
             linearVelocity,
@@ -278,15 +330,15 @@
 
           material = Physijs.createMaterial(
             new THREE.MeshPhongMaterial(),
-            0.1, // medium friction
-            0.3 // low restitution
+            0.5, // medium friction
+            3 // low restitution
           );
           // material.map.wrapS = material.map.wrapT = THREE.RepeatWrapping;
           // material.map.repeat.set( .5, .5 );
 
           //material = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture( 'images/rocks.jpg' ) });
 
-          sphere = new Physijs.BoxMesh(sphere_geometry, material);
+          sphere = new Physijs.SphereMesh(sphere_geometry, material);
           sphere.collisions = 0;
 
           sphere.position.set(
@@ -302,7 +354,8 @@
           );
 
           sphere.castShadow = true;
-          sphere.addEventListener("collision", handleCollision);
+		  sphere.addEventListener("collision", handleCollision);
+		  sphere.gameName = 'SPHERE0'
           scene.add(sphere);
         };
         return () => {
@@ -320,7 +373,12 @@
         // 		console.log(m, mi)
         // 		m.position.z = 0
         // 	}
-        // })
+		// })
+		if(window.appConfig.touchStart === true && window.appConfig.touchEnd === false) {
+			console.log('ACTIVE!!!')
+			scene.children[6].setLinearVelocity(new THREE.Vector3(window.appConfig.diffX, 0, window.appConfig.diffY))
+			console.log(scene.children[6])
+		}
         requestAnimationFrame(render);
         renderer.render(scene, camera);
         render_stats.update();
