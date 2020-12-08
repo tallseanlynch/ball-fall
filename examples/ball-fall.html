@@ -24,6 +24,20 @@
       Physijs.scripts.worker = "js/physijs_worker.js";
       Physijs.scripts.ammo = "ammo.js";
 
+      const basicColors = [
+          new THREE.Color( 0xfff1e3 ),
+          new THREE.Color( 0xffd5c9 ),
+          new THREE.Color( 0xffa6bb ),
+          new THREE.Color( 0xff757f ),
+          new THREE.Color( 0x159294 )
+        ]
+
+        const getRandomColor = () => {
+          // console.log(basicColors[Math.floor(Math.round() * basicColors.length)])
+          // debugger
+          return basicColors[Math.floor(Math.random() * basicColors.length)]
+        }
+
       var initScene,
         render,
         _boxes = [],
@@ -63,7 +77,8 @@
           .appendChild(physics_stats.domElement);
 
         scene = new Physijs.Scene();
-        scene.setGravity(new THREE.Vector3(0, -30, 0));
+        scene.background = getRandomColor()
+        scene.setGravity(new THREE.Vector3(0, -10, 0));
         scene.addEventListener("update", function () {
           scene.simulate(undefined, 1);
           physics_stats.update();
@@ -78,6 +93,11 @@
         camera.position.set(0, 25, 100);
         camera.lookAt(scene.position);
         scene.add(camera);
+
+        const skyColor = getRandomColor()
+        const groundColor = getRandomColor()
+        const hemisphereLight = new THREE.HemisphereLight(skyColor, groundColor, .75);
+        scene.add(hemisphereLight)
 
         // Light
         light = new THREE.SpotLight(0xffffff);
@@ -94,6 +114,23 @@
         light.shadowMapWidth = light.shadowMapHeight = 2048;
         light.shadowDarkness = 0.7;
         scene.add(light);
+
+        const pointLight0 = new THREE.PointLight(getRandomColor(), 1);
+        pointLight0.gameName = "POINTLIGHT0"
+        pointLight0.power = 5
+        pointLight0.decay = 1
+        pointLight0.distance = 5
+        scene.add(pointLight0)
+
+        // LFO
+        const lfoPositive = (t = 1000) => {
+          let lfoValue = (0.5 + 0.5 * Math.cos(Date.now() / t)) * 1
+          return lfoValue
+        }
+
+        const lfo = (t = 1000) => {
+          return ((.5 - lfoPositive(t)) * 2)
+        }
 
         // Orbit Controls
 		orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -125,20 +162,20 @@
         loader = new THREE.TextureLoader();
 
         // Ground
-        ground_material = Physijs.createMaterial(
-          new THREE.MeshLambertMaterial({
-            map: loader.load("images/rocks.jpg"),
-          }),
-          0.8, // high friction
-          0.3 // low restitution
-        );
-        ground_material.map.wrapS = ground_material.map.wrapT =
-          THREE.RepeatWrapping;
-        ground_material.map.repeat.set(3, 3);
+        // ground_material = Physijs.createMaterial(
+        //   new THREE.MeshLambertMaterial({
+        //     map: loader.load("images/rocks.jpg"),
+        //   }),
+        //   0.8, // high friction
+        //   0.3 // low restitution
+        // );
+        // ground_material.map.wrapS = ground_material.map.wrapT =
+        //   THREE.RepeatWrapping;
+        // ground_material.map.repeat.set(3, 3);
 
         ground = new Physijs.BoxMesh(
           new THREE.BoxGeometry(100, 1, 100),
-          ground_material,
+          new THREE.MeshPhongMaterial({ color: getRandomColor() }),
           0 // mass
         );
 
@@ -146,7 +183,7 @@
 
         const groundBox = new Physijs.BoxMesh(
           new THREE.BoxGeometry(10, 1, 10),
-          new THREE.MeshPhongMaterial({ color: "red" }),
+          new THREE.MeshPhongMaterial({ color: getRandomColor() }),
           0 // mass
         );
         groundBox.position.y = randomNumber(5);
@@ -162,7 +199,7 @@
 
         const groundBox1 = new Physijs.BoxMesh(
           new THREE.BoxGeometry(30, 1, 10),
-          new THREE.MeshPhongMaterial({ color: "red" }),
+          new THREE.MeshPhongMaterial({ color: getRandomColor() }),
           0 // mass
 		);
 		function randomNumber(n) {
@@ -182,7 +219,7 @@
 
         const groundBox2 = new Physijs.BoxMesh(
           new THREE.BoxGeometry(30, 1, 10),
-          new THREE.MeshPhongMaterial({ color: "red" }),
+          new THREE.MeshPhongMaterial({ color: getRandomColor() }),
           0 // mass
         );
         groundBox2.position.x = randomNumber(-15);
@@ -259,37 +296,37 @@
       spawnBox = (function () {
         var box_geometry = new THREE.BoxGeometry(4, 4, 4),
           sphere_geometry = new THREE.SphereGeometry(1, 16, 16),
-          handleCollision = function (
-            collided_with,
-            linearVelocity,
-            angularVelocity
-          ) {
-            switch (++this.collisions) {
-              case 1:
-                this.material.color.setHex(0xcc8855);
-                break;
+          // handleCollision = function (
+          //   collided_with,
+          //   linearVelocity,
+          //   angularVelocity
+          // ) {
+          //   switch (++this.collisions) {
+          //     case 1:
+          //       this.material.color.setHex(0xcc8855);
+          //       break;
 
-              case 2:
-                this.material.color.setHex(0xbb9955);
-                break;
+          //     case 2:
+          //       this.material.color.setHex(0xbb9955);
+          //       break;
 
-              case 3:
-                this.material.color.setHex(0xaaaa55);
-                break;
+          //     case 3:
+          //       this.material.color.setHex(0xaaaa55);
+          //       break;
 
-              case 4:
-                this.material.color.setHex(0x99bb55);
-                break;
+          //     case 4:
+          //       this.material.color.setHex(0x99bb55);
+          //       break;
 
-              case 5:
-                this.material.color.setHex(0x88cc55);
-                break;
+          //     case 5:
+          //       this.material.color.setHex(0x88cc55);
+          //       break;
 
-              case 6:
-                this.material.color.setHex(0x77dd55);
-                break;
-            }
-          },
+          //     case 6:
+          //       this.material.color.setHex(0x77dd55);
+          //       break;
+          //   }
+          // },
           createBox = function () {
             var box, material;
 
@@ -318,7 +355,7 @@
             );
 
             box.castShadow = true;
-            box.addEventListener("collision", handleCollision);
+            // box.addEventListener("collision", handleCollision);
             box.addEventListener("ready", spawnBox);
             scene.add(box);
           };
@@ -327,7 +364,14 @@
           var sphere, material;
 
           material = Physijs.createMaterial(
-            new THREE.MeshPhongMaterial(),
+            new THREE.MeshLambertMaterial({ 
+              // color: getRandomColor(), 
+              envMap: scene.background,      
+              combine: THREE.MixOperation,     
+              reflectivity: .1,
+              transparent: true,
+              opacity: .98
+            }),
             0.5, // medium friction
             3 // low restitution
           );
@@ -336,54 +380,54 @@
 
           //material = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture( 'images/rocks.jpg' ) });
 
-          sphere = new Physijs.SphereMesh(sphere_geometry, material);
-          sphere.collisions = 0;
+  		  sphere = new Physijs.SphereMesh(sphere_geometry, material);
+        sphere.collisions = 0;
 
-          sphere.position.set(
-            Math.random() * 15 - 7.5,
-            25,
-            0
-          );
+        sphere.position.set(
+          0,
+          50,
+          0
+        );
 
-          sphere.rotation.set(
-            Math.random() * Math.PI,
-            Math.random() * Math.PI,
-            Math.random() * Math.PI
-          );
+        sphere.rotation.set(
+          Math.random() * Math.PI,
+          Math.random() * Math.PI,
+          Math.random() * Math.PI
+        );
 
-          sphere.castShadow = true;
-		  sphere.addEventListener("collision", handleCollision);
+        sphere.castShadow = true;
+		  // sphere.addEventListener("collision", handleCollision);
 		  sphere.gameName = 'SPHERE0'
           scene.add(sphere);
         };
         return () => {
 		  createSphere();
 
-		  const glassMesh0 = new Physijs.BoxMesh(
-            /*geometry*/ new THREE.BoxGeometry(50, 50, 1),
-            /*material*/ new THREE.MeshBasicMaterial({
-              color: new THREE.Color('blue'),
-              opacity: .05,
-              transparent: true,
-            }),
-            /*mass*/ 0
-		  );
+		//   const glassMesh0 = new Physijs.BoxMesh(
+        //     /*geometry*/ new THREE.BoxGeometry(50, 100, 1),
+        //     /*material*/ new THREE.MeshBasicMaterial({
+        //       color: new THREE.Color('blue'),
+        //       opacity: 0,
+        //       transparent: true,
+        //     }),
+        //     /*mass*/ 0
+		//   );
 
-		  const glassMesh1 = new Physijs.BoxMesh(
-            /*geometry*/ new THREE.BoxGeometry(50, 50, 1),
-            /*material*/ new THREE.MeshBasicMaterial({
-              color: new THREE.Color('red'),
-              opacity: .05,
-              transparent: true,
-            }),
-            /*mass*/ 0
-		  );
+		//   const glassMesh1 = new Physijs.BoxMesh(
+        //     /*geometry*/ new THREE.BoxGeometry(50, 100, 1),
+        //     /*material*/ new THREE.MeshBasicMaterial({
+        //       color: new THREE.Color('red'),
+        //       opacity: 0,
+        //       transparent: true,
+        //     }),
+        //     /*mass*/ 0
+		//   );
 
-		  glassMesh0.position.z = -5
-		  glassMesh1.position.z = 5
+		//   glassMesh0.position.z = -1.5
+		//   glassMesh1.position.z = 1.5
 
-          scene.add(glassMesh0);
-          scene.add(glassMesh1);
+        //   scene.add(glassMesh0);
+        //   scene.add(glassMesh1);
 		
 
         };
@@ -402,10 +446,13 @@
 		// })
 		if(window.appConfig.touchStart === true && window.appConfig.touchEnd === false) {
 			console.log('ACTIVE!!!')
-			scene.children[6].setLinearVelocity(new THREE.Vector3(window.appConfig.diffX, 0, window.appConfig.diffY))
+      const scaleV = .5
+      scene.children.find(obj=>obj.gameName==="SPHERE0").setLinearVelocity(new THREE.Vector3(window.appConfig.diffX * scaleV, 0, window.appConfig.diffY * scaleV))
 			console.log(scene.children[6])
-		}
-        requestAnimationFrame(render);
+    }
+      const spherePosition = scene.children.find(obj=>obj.gameName==="SPHERE0").position
+      scene.children.find(obj=>obj.gameName==="POINTLIGHT0").position.set(spherePosition.x, spherePosition.y + 1, spherePosition.z)
+      requestAnimationFrame(render);
         renderer.render(scene, camera);
         render_stats.update();
       };
