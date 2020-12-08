@@ -144,20 +144,8 @@
 
         let features = [];
 
-        // const addGroundBoxes = (x) => {
-        // 	for(i=0;i<x;x++) {
-        // 		features.push(
-        // 			new Physijs.BoxMesh(
-        // 				new THREE.BoxGeometry(30, 1, 5),
-        // 				new THREE.MeshPhongMaterial({color: 'red'}),
-        // 				0 // mass
-        // 			)
-        // 		)
-        // 	}
-        // }
-
         const groundBox = new Physijs.BoxMesh(
-          new THREE.BoxGeometry(30, 1, 10),
+          new THREE.BoxGeometry(10, 1, 10),
           new THREE.MeshPhongMaterial({ color: "red" }),
           0 // mass
         );
@@ -170,7 +158,7 @@
 		groundBox.receiveShadow = true;
 		groundBox.rotation.x = Math.random() * 2 * Math.PI
 		groundBox.rotation.y = Math.random() * 2 * Math.PI
-		groundBox.rotation.z = Math.random() * 2 * Math.PI
+		// groundBox.rotation.z = Math.random() * 2 * Math.PI
 
         const groundBox1 = new Physijs.BoxMesh(
           new THREE.BoxGeometry(30, 1, 10),
@@ -190,7 +178,7 @@
         groundBox1.receiveShadow = true;
 		groundBox1.rotation.x = Math.random() * 2 * Math.PI
 		groundBox1.rotation.y = Math.random() * 2 * Math.PI
-		groundBox1.rotation.z = Math.random() * 2 * Math.PI
+		// groundBox1.rotation.z = Math.random() * 2 * Math.PI
 
         const groundBox2 = new Physijs.BoxMesh(
           new THREE.BoxGeometry(30, 1, 10),
@@ -206,7 +194,7 @@
 		groundBox2.receiveShadow = true;
 		groundBox2.rotation.x = Math.random() * 2 * Math.PI
 		groundBox2.rotation.y = Math.random() * 2 * Math.PI
-		groundBox2.rotation.z = Math.random() * 2 * Math.PI
+		// groundBox2.rotation.z = Math.random() * 2 * Math.PI
 
         ground.receiveShadow = true;
         scene.add(ground);
@@ -354,7 +342,7 @@
           sphere.position.set(
             Math.random() * 15 - 7.5,
             25,
-            Math.random() * 15 - 7.5
+            0
           );
 
           sphere.rotation.set(
@@ -369,7 +357,35 @@
           scene.add(sphere);
         };
         return () => {
-          createSphere();
+		  createSphere();
+
+		  const glassMesh0 = new Physijs.BoxMesh(
+            /*geometry*/ new THREE.BoxGeometry(50, 50, 1),
+            /*material*/ new THREE.MeshBasicMaterial({
+              color: new THREE.Color('blue'),
+              opacity: .05,
+              transparent: true,
+            }),
+            /*mass*/ 0
+		  );
+
+		  const glassMesh1 = new Physijs.BoxMesh(
+            /*geometry*/ new THREE.BoxGeometry(50, 50, 1),
+            /*material*/ new THREE.MeshBasicMaterial({
+              color: new THREE.Color('red'),
+              opacity: .05,
+              transparent: true,
+            }),
+            /*mass*/ 0
+		  );
+
+		  glassMesh0.position.z = -5
+		  glassMesh1.position.z = 5
+
+          scene.add(glassMesh0);
+          scene.add(glassMesh1);
+		
+
         };
         // return function() {
         // 	setTimeout( createBox, 2000 );
