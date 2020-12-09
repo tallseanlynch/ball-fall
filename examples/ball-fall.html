@@ -248,6 +248,7 @@
 
         requestAnimationFrame(render);
         scene.simulate();
+        const clickRay = new THREE.Raycaster()
 
         window.appConfig = {
           touchStart: false,
@@ -306,6 +307,18 @@
           window.appConfig.diffX = 0;
           window.appConfig.diffY = 0;
           console.log("TOUCHEND", e);
+          console.log("APPCONFIG", window.appConfig);
+        });
+        document.addEventListener("click", (e) => {
+          console.log("CLICK", e);
+          const normalized = new THREE.Vector2(e.clientX, e.clientY)
+          clickRay.setFromCamera(normalized.normalize(), camera)
+          
+          console.log(
+            clickRay.intersectObject(
+              scene.children.find((obj) => obj.name === 'stage').children.find((obj) => obj.gameName === 'FRONTGLASS')
+            )
+          )
           console.log("APPCONFIG", window.appConfig);
         });
       };
@@ -423,11 +436,12 @@
             /*material*/ new THREE.MeshBasicMaterial({
               color: new THREE.Color("blue"),
               opacity: 0.5,
-              transparent: true,
-              name: "glassMesh0",
+              transparent: true
             }),
             /*mass*/ 0
           );
+          glassMesh0.gameName = "FRONTGLASS"
+          glassMesh0.name = "glassMesh0"
 
           const glassMesh1 = new Physijs.BoxMesh(
             /*geometry*/ new THREE.BoxGeometry(25, 375, 1),
@@ -465,18 +479,20 @@
             /*material*/ new THREE.MeshBasicMaterial({
               color: new THREE.Color("purple"),
               opacity: 0.5,
-              transparent: true,
-              name: "stageFloor",
+              transparent: true
             }),
             /*mass*/ 0
           );
+
+          stageFloor.name = "stageFloor"
+
           const stage = new Physijs.BoxMesh(
             new THREE.Geometry(),
             /*material*/ new THREE.MeshBasicMaterial(),
             /*mass*/ 0
           );
           stage.name = "stage";
-          stage.position.y = -187;
+          stage.position.y = -140;
 
           glassMesh0.position.z = -1.5;
           glassMesh1.position.z = 1.5;
@@ -517,11 +533,10 @@
             .setLinearVelocity(
               new THREE.Vector3(
                 window.appConfig.diffX * scaleV,
-                0,
-                window.appConfig.diffY * scaleV
+                window.appConfig.diffY * -scaleV,
+                0
               )
             );
-          console.log(scene.children[6]);
         }
         const spherePosition = scene.children.find(
           (obj) => obj.gameName === "SPHERE0"
@@ -534,9 +549,22 @@
             spherePosition.z
           );
 
-        camera.position.y = scene.children.find(
-          (obj) => obj.gameName === "SPHERE0"
-        ).position.y;
+        const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0");
+        const stage = scene.children.find((obj) => obj.name === "stage");
+        const stageFloor = stage.children.find(
+          (obj) => obj.name === "stageFloor"
+        );
+        const compareVector = new THREE.Vector3();
+        const distanceSphereToStageFloor = compareVector
+          .subVectors(
+            new THREE.Vector3().setFromMatrixPosition(sphere.matrixWorld),
+            new THREE.Vector3().setFromMatrixPosition(stageFloor.matrixWorld)
+          )
+          .length();
+        if (distanceSphereToStageFloor > 50) {
+          camera.position.y = sphere.position.y;
+        }
+
         requestAnimationFrame(render);
         renderer.render(scene, camera);
         render_stats.update();
