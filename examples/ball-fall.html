@@ -37,6 +37,10 @@
         // debugger
         return basicColors[Math.floor(Math.random() * basicColors.length)];
       };
+<<<<<<< HEAD
+=======
+
+>>>>>>> 08907c66d8397c5241ad46f2a569ca7f9655fe69
 
       var initScene,
         render,
@@ -78,13 +82,27 @@
 
         scene = new Physijs.Scene();
 
+<<<<<<< HEAD
         scene.background = getRandomColor();
         scene.setGravity(new THREE.Vector3(0, -10, 0));
 
+=======
+        scene.setGravity(new THREE.Vector3(0, -3, 0));
+        scene.background = getRandomColor();
+>>>>>>> 08907c66d8397c5241ad46f2a569ca7f9655fe69
         scene.addEventListener("update", function () {
           scene.simulate(undefined, 1);
           physics_stats.update();
         });
+
+        const skyColor = getRandomColor();
+        const groundColor = getRandomColor();
+        const hemisphereLight = new THREE.HemisphereLight(
+          skyColor,
+          groundColor,
+          0.75
+        );
+        scene.add(hemisphereLight);
 
         camera = new THREE.PerspectiveCamera(
           35,
@@ -122,6 +140,10 @@
         scene.add(light);
 
         const pointLight0 = new THREE.PointLight(getRandomColor(), 1);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 08907c66d8397c5241ad46f2a569ca7f9655fe69
         pointLight0.gameName = "POINTLIGHT0";
         pointLight0.power = 5;
         pointLight0.decay = 1;
@@ -137,6 +159,10 @@
         const lfo = (t = 1000) => {
           return (0.5 - lfoPositive(t)) * 2;
         };
+<<<<<<< HEAD
+=======
+
+>>>>>>> 08907c66d8397c5241ad46f2a569ca7f9655fe69
 
         // Orbit Controls
         // orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -313,37 +339,40 @@
       spawnBox = (function () {
         var box_geometry = new THREE.BoxGeometry(4, 4, 4),
           sphere_geometry = new THREE.SphereGeometry(1, 16, 16),
-          // handleCollision = function (
-          //   collided_with,
-          //   linearVelocity,
-          //   angularVelocity
-          // ) {
-          //   switch (++this.collisions) {
-          //     case 1:
-          //       this.material.color.setHex(0xcc8855);
-          //       break;
 
-          //     case 2:
-          //       this.material.color.setHex(0xbb9955);
-          //       break;
+          handleCollision = function (
+            collided_with,
+            linearVelocity,
+            angularVelocity
+          ) {
+            console.log("collision");
+            // switch (++this.collisions) {
+            //   case 1:
+            //     this.material.color.setHex(0xcc8855);
+            //     break;
 
-          //     case 3:
-          //       this.material.color.setHex(0xaaaa55);
-          //       break;
+            //   case 2:
+            //     this.material.color.setHex(0xbb9955);
+            //     break;
 
-          //     case 4:
-          //       this.material.color.setHex(0x99bb55);
-          //       break;
+            //   case 3:
+            //     this.material.color.setHex(0xaaaa55);
+            //     break;
 
-          //     case 5:
-          //       this.material.color.setHex(0x88cc55);
-          //       break;
+            //   case 4:
+            //     this.material.color.setHex(0x99bb55);
+            //     break;
 
-          //     case 6:
-          //       this.material.color.setHex(0x77dd55);
-          //       break;
-          //   }
-          // },
+            //   case 5:
+            //     this.material.color.setHex(0x88cc55);
+            //     break;
+
+            //   case 6:
+            //     this.material.color.setHex(0x77dd55);
+            //     break;
+            // }
+          },
+
           createBox = function () {
             var box, material;
 
@@ -381,6 +410,10 @@
           var sphere, material;
 
           material = Physijs.createMaterial(
+<<<<<<< HEAD
+=======
+
+>>>>>>> 08907c66d8397c5241ad46f2a569ca7f9655fe69
             new THREE.MeshLambertMaterial({
               // color: getRandomColor(),
               // envMap: scene.background,
@@ -388,6 +421,10 @@
               // reflectivity: 0.1,
               // transparent: true,
               // opacity: 0.98,
+<<<<<<< HEAD
+=======
+
+>>>>>>> 08907c66d8397c5241ad46f2a569ca7f9655fe69
             }),
             0.5, // medium friction
             3 // low restitution
@@ -462,7 +499,11 @@
           const stageFloor = new Physijs.BoxMesh(
             /*geometry*/ new THREE.BoxGeometry(25, 1, 3),
             /*material*/ new THREE.MeshBasicMaterial({
+<<<<<<< HEAD
               color: new THREE.Color("purple"),
+=======
+              color: getRandomColor(),
+>>>>>>> 08907c66d8397c5241ad46f2a569ca7f9655fe69
               opacity: 0.5,
               transparent: true,
               name: "stageFloor",
@@ -536,7 +577,20 @@
         camera.position.y = scene.children.find(
           (obj) => obj.gameName === "SPHERE0"
         ).position.y;
+<<<<<<< HEAD
 
+=======
+        const spherePosition = scene.children.find(
+          (obj) => obj.gameName === "SPHERE0"
+        ).position;
+        scene.children
+          .find((obj) => obj.gameName === "POINTLIGHT0")
+          .position.set(
+            spherePosition.x,
+            spherePosition.y + 1,
+            spherePosition.z
+          );
+>>>>>>> 08907c66d8397c5241ad46f2a569ca7f9655fe69
         requestAnimationFrame(render);
         renderer.render(scene, camera);
         render_stats.update();
