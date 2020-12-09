@@ -9,6 +9,7 @@
         margin: 0;
         padding: 0;
       }
+      html { touch-action:none; }
     </style>
 
     <script type="text/javascript" src="js/ammo.js"></script>
@@ -165,6 +166,22 @@
 
         // Loader
 
+        const startAudio = () => {
+          const listener = new THREE.AudioListener();
+          camera.add( listener );
+
+          // create a global audio source
+          const sound = new THREE.Audio( listener );
+
+          // load a sound and set it as the Audio object's buffer
+          const audioLoader = new THREE.AudioLoader();
+          audioLoader.load( 'sounds/ball-fall-sounds 1-Audio.mp3', function( buffer ) {
+            sound.setBuffer( buffer );
+            // sound.setLoop( true );
+            sound.setVolume( 0.5 );
+            sound.play();
+          });
+        }
         loader = new THREE.TextureLoader();
 
         // Ground
@@ -228,8 +245,8 @@
           new THREE.MeshPhongMaterial({ color: getRandomColor() }),
           0 // mass
         );
-        groundBox2.position.x = randomNumber(-15);
-        groundBox2.position.y = randomNumber(15);
+        groundBox2.position.x = 0;
+        groundBox2.position.y = randomNumber(-15);
         groundBox2.position.__dirtyPosition = true;
         groundBox2.setLinearVelocity(new THREE.Vector3(0, 0, 0));
         groundBox2.setAngularVelocity(new THREE.Vector3(0, 0, 0));
@@ -243,7 +260,7 @@
         // scene.add(ground);
         // scene.add(groundBox);
         // scene.add(groundBox1);
-        // scene.add(groundBox2);
+        scene.add(groundBox2);
         spawnBox();
 
         requestAnimationFrame(render);
@@ -259,7 +276,11 @@
           prevY: 0,
           diffX: 0,
           diffY: 0,
+          start: false,
+          pause: false,
+          startAudio: startAudio
         };
+
         document.addEventListener("touchstart", (e) => {
           window.appConfig.touchEnd = false;
           window.appConfig.touchStart = true;
@@ -296,6 +317,7 @@
             );
             console.log("APPCONFIG", window.appConfig);
             console.log(window.appConfig.diffX, window.appConfig.diffY);
+            e.preventDefault()
           },
           true
         );
@@ -310,6 +332,7 @@
           console.log("APPCONFIG", window.appConfig);
         });
         document.addEventListener("click", (e) => {
+          e.preventDefault()
           console.log("CLICK", e);
           const normalized = new THREE.Vector2(e.clientX, e.clientY)
           clickRay.setFromCamera(normalized.normalize(), camera)
@@ -396,12 +419,12 @@
 
           material = Physijs.createMaterial(
             new THREE.MeshLambertMaterial({
-              // color: getRandomColor(),
+              color: getRandomColor()
               // envMap: scene.background,
               // combine: THREE.MixOperation,
               // reflectivity: 0.1,
               // transparent: true,
-              // opacity: 0.98,
+              // opacity: 0.98
             }),
             0.5, // medium friction
             3 // low restitution
@@ -425,7 +448,6 @@
           sphere.castShadow = true;
           // sphere.addEventListener("collision", handleCollision);
           sphere.gameName = "SPHERE0";
-
           scene.add(sphere);
         };
         return () => {
@@ -515,6 +537,8 @@
         // };
       })();
 
+      // let hasRendered = false
+
       render = function () {
         // scene.children.forEach((m, mi) => {
         // 	if(mi > 3) {
@@ -522,22 +546,41 @@
         // 		m.position.z = 0
         // 	}
         // })
-        if (
-          window.appConfig.touchStart === true &&
-          window.appConfig.touchEnd === false
-        ) {
-          console.log("ACTIVE!!!");
-          const scaleV = 0.5;
+        const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0");
+        const stage = scene.children.find((obj) => obj.name === "stage");
+
+        if(window.appConfig.start === false || window.appConfig.pause === true) {
+          if(window.appConfig.start === false) {
+            sphere.position.set(0, 50, 0);
+          }
           scene.children
             .find((obj) => obj.gameName === "SPHERE0")
             .setLinearVelocity(
               new THREE.Vector3(
-                window.appConfig.diffX * scaleV,
-                window.appConfig.diffY * -scaleV,
+                0,
+                0,
                 0
               )
             );
+        } else {
+          if (
+            window.appConfig.touchStart === true &&
+            window.appConfig.touchEnd === false
+          ) {
+            console.log("ACTIVE!!!");
+            const scaleV = 0.5;
+            scene.children
+              .find((obj) => obj.gameName === "SPHERE0")
+              .setLinearVelocity(
+                new THREE.Vector3(
+                  window.appConfig.diffX * scaleV,
+                  window.appConfig.diffY * -scaleV,
+                  0
+                )
+              );
+          }
         }
+
         const spherePosition = scene.children.find(
           (obj) => obj.gameName === "SPHERE0"
         ).position;
@@ -549,8 +592,6 @@
             spherePosition.z
           );
 
-        const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0");
-        const stage = scene.children.find((obj) => obj.name === "stage");
         const stageFloor = stage.children.find(
           (obj) => obj.name === "stageFloor"
         );
@@ -570,11 +611,44 @@
         render_stats.update();
       };
 
+      const start = () => {
+        window.appConfig.start = true
+        window.appConfig.startAudio()
+        document.querySelector('#start-button').classList.add('hide')
+      }
+
+      const pause = () => {
+        window.appConfig.pause = !window.appConfig.pause
+      }
+
       window.onload = initScene;
     </script>
+    <style>
+      #start-button {
+        position:fixed;
+        left:40%;
+        top:50%;
+        padding: 10px 30px;
+        border: 3px solid black;
+      }
+      #pause-button {
+        position:fixed;
+        left:3%;
+        bottom:3%;
+        padding: 10px 30px;
+        border: 3px solid black;
+      }
+      .hide {
+        display: none;
+        visibility: hidden;
+      }
+
+    </style>
   </head>
 
   <body>
     <div id="viewport"></div>
+    <button id="start-button" onClick="start()">Start</button>
+    <button id="pause-button" onClick="pause()">Pause</button>    
   </body>
 </html>
