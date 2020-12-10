@@ -57,7 +57,8 @@
         orbitControls;
 
       initScene = function () {
-        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setClearColor(0x000000, 0)
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMap.enabled = true;
         renderer.shadowMapSoft = true;
@@ -81,7 +82,7 @@
 
         scene = new Physijs.Scene();
 
-        scene.background = getRandomColor();
+        // scene.background = getRandomColor();
         scene.setGravity(new THREE.Vector3(0, -10, 0));
 
         scene.addEventListener("update", function () {
@@ -650,7 +651,7 @@
             /*geometry*/ new THREE.BoxGeometry(25, 375, 1),
             /*material*/ new THREE.MeshBasicMaterial({
               color: new THREE.Color("blue"),
-              opacity: 0.5,
+              opacity: 0.0,
               transparent: true,
               wifeframe: true,
             }),
@@ -663,7 +664,7 @@
             /*geometry*/ new THREE.BoxGeometry(25, 375, 1),
             /*material*/ new THREE.MeshBasicMaterial({
               color: new THREE.Color("red"),
-              opacity: 0.5,
+              opacity: 0.0,
               transparent: true,
               wifeframe: true,
             }),
@@ -673,7 +674,7 @@
             /*geometry*/ new THREE.BoxGeometry(3, 375, 1),
             /*material*/ new THREE.MeshBasicMaterial({
               color: new THREE.Color("green"),
-              opacity: 0.5,
+              opacity: 0.0,
               transparent: true,
               wifeframe: true,
             }),
@@ -684,7 +685,7 @@
             /*geometry*/ new THREE.BoxGeometry(3, 375, 1),
             /*material*/ new THREE.MeshBasicMaterial({
               color: new THREE.Color("yellow"),
-              opacity: 0.5,
+              opacity: 0.0,
               transparent: true,
               wifeframe: true,
             }),
@@ -842,6 +843,10 @@
         position: absolute;
         top: 3%;
         right: 3%;
+      }
+      body {
+        background: rgb(2,0,36);
+        background: linear-gradient(180deg, rgba(2,0,36,0) 0%, rgba(121,9,117,1) 0%, rgba(0,212,255,1) 32%, rgba(252,231,183,1) 98%);
       }
     </style>
   </head>
