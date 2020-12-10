@@ -13,8 +13,14 @@
         touch-action: none;
       }
       body {
-        background: rgb(2,0,36);
-        background: linear-gradient(180deg, rgba(2,0,36,0) 0%, rgba(121,9,117,1) 0%, rgba(0,212,255,1) 32%, rgba(252,231,183,1) 98%);
+        background: rgb(2, 0, 36);
+        background: linear-gradient(
+          180deg,
+          rgba(2, 0, 36, 0) 0%,
+          rgba(121, 9, 117, 1) 0%,
+          rgba(0, 212, 255, 1) 32%,
+          rgba(252, 231, 183, 1) 98%
+        );
       }
     </style>
 
@@ -58,7 +64,8 @@
         ground,
         light,
         camera,
-        orbitControls;
+        orbitControls,
+        clock;
 
       initScene = function () {
         renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -326,66 +333,7 @@
           });
         });
 
-        const groundBox = new Physijs.BoxMesh(
-          new THREE.BoxGeometry(10, 1, 10),
-          new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-          0 // mass
-        );
-        groundBox.position.y = randomNumber(5);
-        groundBox.position.x = randomNumber(5);
-        groundBox.position.__dirtyPosition = true;
-        groundBox.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-        groundBox.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-        groundBox.castShadow = true;
-        groundBox.receiveShadow = true;
-        groundBox.rotation.x = Math.random() * 2 * Math.PI;
-        groundBox.rotation.y = Math.random() * 2 * Math.PI;
-        // groundBox.rotation.z = Math.random() * 2 * Math.PI
-
-        const groundBox1 = new Physijs.BoxMesh(
-          new THREE.BoxGeometry(30, 1, 10),
-          new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-          0 // mass
-        );
-        function randomNumber(n) {
-          return Math.round(Math.random() * n);
-        }
-        groundBox1.position.y = randomNumber(10);
-        groundBox1.position.x = randomNumber(20);
-        groundBox1.position.z = randomNumber(-10);
-        groundBox1.position.__dirtyPosition = true;
-        groundBox1.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-        groundBox1.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-        groundBox1.castShadow = true;
-        groundBox1.receiveShadow = true;
-        groundBox1.rotation.x = Math.random() * 2 * Math.PI;
-        groundBox1.rotation.y = Math.random() * 2 * Math.PI;
-        // groundBox1.rotation.z = Math.random() * 2 * Math.PI
-
-        const groundBox2 = new Physijs.BoxMesh(
-          new THREE.BoxGeometry(30, 1, 10),
-          new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-          0 // mass
-        );
-        groundBox2.position.x = 0;
-        groundBox2.position.y = randomNumber(-15);
-        groundBox2.position.__dirtyPosition = true;
-        groundBox2.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-        groundBox2.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-        groundBox2.castShadow = true;
-        groundBox2.receiveShadow = true;
-        groundBox2.rotation.x = Math.random() * 2 * Math.PI;
-        groundBox2.rotation.y = Math.random() * 2 * Math.PI;
-        groundBox2.name = "GROUNDBOX2";
-        groundBox2.featureType = "BOX";
-
-        // groundBox2.rotation.z = Math.random() * 2 * Math.PI
-
-        // ground.receiveShadow = true;
-        // scene.add(ground);
-        // scene.add(groundBox);
-        // scene.add(groundBox1);
-        // scene.add(groundBox2);
+        const clock = new THREE.Clock(false);
         spawnBox();
 
         requestAnimationFrame(render);
@@ -406,6 +354,7 @@
           startAudio: startAudio,
           audioLoader: audioLoader,
           soundSource: sound,
+          clock: clock,
         };
 
         document.addEventListener("touchstart", (e) => {
@@ -739,7 +688,7 @@
       // let hasRendered = false
 
       render = function () {
-        const timerFilter = new Date() % 20
+        const timerFilter = new Date() % 20;
         // scene.children.forEach((m, mi) => {
         // 	if(mi > 3) {
         // 		console.log(m, mi)
@@ -801,14 +750,16 @@
           .length();
         const percentFinished = distanceSphereToStageFloor / 375;
         window.appConfig.percentFinished = percentFinished;
-        if(timerFilter===0){
+        if (timerFilter === 0) {
           console.log(percentFinished);
         }
         if (distanceSphereToStageFloor > 50) {
           camera.position.y = sphere.position.y;
         }
 
-        const timerElement = document.querySelector("#timer");
+        const timerElement = (document.querySelector(
+          "#timer"
+        ).innerText = window.appConfig.clock.getElapsedTime().toFixed(2));
 
         requestAnimationFrame(render);
         renderer.render(scene, camera);
@@ -819,10 +770,14 @@
         window.appConfig.start = true;
         window.appConfig.startAudio();
         document.querySelector("#start-button").classList.add("hide");
+        window.appConfig.clock.start();
       };
 
       const pause = () => {
         window.appConfig.pause = !window.appConfig.pause;
+        window.appConfig.pause
+          ? window.appConfig.clock.stop()
+          : window.appConfig.clock.start();
       };
 
       window.onload = initScene;
