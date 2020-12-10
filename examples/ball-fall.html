@@ -9,7 +9,9 @@
         margin: 0;
         padding: 0;
       }
-      html { touch-action:none; }
+      html {
+        touch-action: none;
+      }
     </style>
 
     <script type="text/javascript" src="js/ammo.js"></script>
@@ -168,20 +170,23 @@
 
         const startAudio = () => {
           const listener = new THREE.AudioListener();
-          camera.add( listener );
+          camera.add(listener);
 
           // create a global audio source
-          const sound = new THREE.Audio( listener );
+          const sound = new THREE.Audio(listener);
 
           // load a sound and set it as the Audio object's buffer
           const audioLoader = new THREE.AudioLoader();
-          audioLoader.load( 'sounds/ball-fall-sounds 1-Audio.mp3', function( buffer ) {
-            sound.setBuffer( buffer );
-            // sound.setLoop( true );
-            sound.setVolume( 0.5 );
-            sound.play();
-          });
-        }
+          audioLoader.load(
+            "sounds/ball-fall-sounds 1-Audio.mp3",
+            function (buffer) {
+              sound.setBuffer(buffer);
+              // sound.setLoop( true );
+              sound.setVolume(0.5);
+              sound.play();
+            }
+          );
+        };
         loader = new THREE.TextureLoader();
 
         // Ground
@@ -202,7 +207,117 @@
         //   0 // mass
         // );
 
-        let features = [];
+        let level = 1;
+
+        let features = [
+          [
+            { appearAtLevel: 25 },
+            { appearAtLevel: 25 },
+            { appearAtLevel: 25 },
+            { appearAtLevel: 1, type: "ramp" },
+            { appearAtLevel: 25 },
+          ],
+          [
+            { appearAtLevel: 25 },
+            { appearAtLevel: 25 },
+            { appearAtLevel: 1, type: "ramp" },
+            { appearAtLevel: 25 },
+            { appearAtLevel: 25 },
+          ],
+          [
+            { appearAtLevel: 25 },
+            { appearAtLevel: 1, type: "ramp" },
+            { appearAtLevel: 25 },
+            { appearAtLevel: 25 },
+            { appearAtLevel: 25 },
+          ],
+          [
+            { appearAtLevel: 25 },
+            { appearAtLevel: 25 },
+            { appearAtLevel: 1, type: "ramp" },
+            { appearAtLevel: 25 },
+            { appearAtLevel: 25 },
+          ],
+          [
+            { appearAtLevel: 25 },
+            { appearAtLevel: 25 },
+            { appearAtLevel: 25 },
+            { appearAtLevel: 1, type: "ramp" },
+            { appearAtLevel: 25 },
+          ],
+          [
+            { appearAtLevel: 25 },
+            { appearAtLevel: 25 },
+            { appearAtLevel: 1, type: "ramp" },
+            { appearAtLevel: 25 },
+            { appearAtLevel: 25 },
+          ],
+          [
+            { appearAtLevel: 25 },
+            { appearAtLevel: 1, type: "ramp" },
+            { appearAtLevel: 25 },
+            { appearAtLevel: 25 },
+            { appearAtLevel: 25 },
+          ],
+          [
+            { appearAtLevel: 1, type: "plinko" },
+            { appearAtLevel: 1, type: "plinko" },
+            { appearAtLevel: 1, type: "plinko" },
+            { appearAtLevel: 1, type: "plinko" },
+            { appearAtLevel: 1, type: "plinko" },
+          ],
+        ];
+        features.forEach((row, rowIndex) => {
+          row.forEach((zone, zoneIndex) => {
+            // console.log(zone);
+            const xPercent = zoneIndex / row.length;
+            const yPercent = rowIndex / features.length;
+            const xPosition = xPercent * 25 - 12.5;
+            const yPosition = -(yPercent * 375);
+            // console.log("xPercent", xPercent);
+            // console.log("yPercent", yPercent);
+            // console.log("xPosition", xPosition);
+            // console.log("yPosition", yPosition);
+            // if (zone) {
+            //   if (zone) {
+            if (zone.appearAtLevel <= level) {
+              if (zone.type === "ramp") {
+                const obj = new Physijs.BoxMesh(
+                  new THREE.BoxGeometry(
+                    Math.random() * 12 + 3,
+                    Math.random() * 0.5 + 0.9,
+                    Math.random() * 0.5 + 0.9
+                  ),
+                  Physijs.createMaterial(
+                    new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+                    // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
+                    0.6, // medium friction
+                    0.3 // low restitution
+                  ),
+                  0 // mass
+                );
+                // console.dir(obj);
+                zone.obj = obj;
+                // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
+
+                obj.position.x = xPosition;
+                obj.position.y = yPosition;
+                obj.position.z = 0;
+                obj.position.__dirtyPosition = true;
+                obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+                obj.castShadow = true;
+                obj.receiveShadow = true;
+                // obj.rotation.x = Math.random() * 2 * Math.PI;
+                // obj.rotation.y = 0.3 * Math.PI;
+                obj.rotation.z = Math.random() * 2 * Math.PI;
+                obj.featureType = "BOX";
+                scene.add(obj);
+                // console.dir(JSON.stringify(obj.position));
+              }
+            }
+          });
+        });
 
         const groundBox = new Physijs.BoxMesh(
           new THREE.BoxGeometry(10, 1, 10),
@@ -260,12 +375,12 @@
         // scene.add(ground);
         // scene.add(groundBox);
         // scene.add(groundBox1);
-        scene.add(groundBox2);
+        // scene.add(groundBox2);
         spawnBox();
 
         requestAnimationFrame(render);
         scene.simulate();
-        const clickRay = new THREE.Raycaster()
+        const clickRay = new THREE.Raycaster();
 
         window.appConfig = {
           touchStart: false,
@@ -278,7 +393,7 @@
           diffY: 0,
           start: false,
           pause: false,
-          startAudio: startAudio
+          startAudio: startAudio,
         };
 
         document.addEventListener("touchstart", (e) => {
@@ -317,7 +432,7 @@
             );
             console.log("APPCONFIG", window.appConfig);
             console.log(window.appConfig.diffX, window.appConfig.diffY);
-            e.preventDefault()
+            e.preventDefault();
           },
           true
         );
@@ -332,16 +447,18 @@
           console.log("APPCONFIG", window.appConfig);
         });
         document.addEventListener("click", (e) => {
-          e.preventDefault()
+          e.preventDefault();
           console.log("CLICK", e);
-          const normalized = new THREE.Vector2(e.clientX, e.clientY)
-          clickRay.setFromCamera(normalized.normalize(), camera)
-          
+          const normalized = new THREE.Vector2(e.clientX, e.clientY);
+          clickRay.setFromCamera(normalized.normalize(), camera);
+
           console.log(
             clickRay.intersectObject(
-              scene.children.find((obj) => obj.name === 'stage').children.find((obj) => obj.gameName === 'FRONTGLASS')
+              scene.children
+                .find((obj) => obj.name === "stage")
+                .children.find((obj) => obj.gameName === "FRONTGLASS")
             )
-          )
+          );
           console.log("APPCONFIG", window.appConfig);
         });
       };
@@ -419,7 +536,7 @@
 
           material = Physijs.createMaterial(
             new THREE.MeshLambertMaterial({
-              color: getRandomColor()
+              color: getRandomColor(),
               // envMap: scene.background,
               // combine: THREE.MixOperation,
               // reflectivity: 0.1,
@@ -458,12 +575,13 @@
             /*material*/ new THREE.MeshBasicMaterial({
               color: new THREE.Color("blue"),
               opacity: 0.5,
-              transparent: true
+              transparent: true,
+              wifeframe: true,
             }),
             /*mass*/ 0
           );
-          glassMesh0.gameName = "FRONTGLASS"
-          glassMesh0.name = "glassMesh0"
+          glassMesh0.gameName = "FRONTGLASS";
+          glassMesh0.name = "glassMesh0";
 
           const glassMesh1 = new Physijs.BoxMesh(
             /*geometry*/ new THREE.BoxGeometry(25, 375, 1),
@@ -471,7 +589,7 @@
               color: new THREE.Color("red"),
               opacity: 0.5,
               transparent: true,
-              name: "glassMesh1",
+              wifeframe: true,
             }),
             /*mass*/ 0
           );
@@ -481,7 +599,7 @@
               color: new THREE.Color("green"),
               opacity: 0.5,
               transparent: true,
-              name: "glassMesh2",
+              wifeframe: true,
             }),
             /*mass*/ 0
           );
@@ -492,7 +610,7 @@
               color: new THREE.Color("yellow"),
               opacity: 0.5,
               transparent: true,
-              name: "glassMesh3",
+              wifeframe: true,
             }),
             /*mass*/ 0
           );
@@ -501,12 +619,12 @@
             /*material*/ new THREE.MeshBasicMaterial({
               color: new THREE.Color("purple"),
               opacity: 0.5,
-              transparent: true
+              transparent: true,
             }),
             /*mass*/ 0
           );
 
-          stageFloor.name = "stageFloor"
+          stageFloor.name = "stageFloor";
 
           const stage = new Physijs.BoxMesh(
             new THREE.Geometry(),
@@ -549,19 +667,16 @@
         const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0");
         const stage = scene.children.find((obj) => obj.name === "stage");
 
-        if(window.appConfig.start === false || window.appConfig.pause === true) {
-          if(window.appConfig.start === false) {
+        if (
+          window.appConfig.start === false ||
+          window.appConfig.pause === true
+        ) {
+          if (window.appConfig.start === false) {
             sphere.position.set(0, 50, 0);
           }
           scene.children
             .find((obj) => obj.gameName === "SPHERE0")
-            .setLinearVelocity(
-              new THREE.Vector3(
-                0,
-                0,
-                0
-              )
-            );
+            .setLinearVelocity(new THREE.Vector3(0, 0, 0));
         } else {
           if (
             window.appConfig.touchStart === true &&
@@ -612,29 +727,29 @@
       };
 
       const start = () => {
-        window.appConfig.start = true
-        window.appConfig.startAudio()
-        document.querySelector('#start-button').classList.add('hide')
-      }
+        window.appConfig.start = true;
+        window.appConfig.startAudio();
+        document.querySelector("#start-button").classList.add("hide");
+      };
 
       const pause = () => {
-        window.appConfig.pause = !window.appConfig.pause
-      }
+        window.appConfig.pause = !window.appConfig.pause;
+      };
 
       window.onload = initScene;
     </script>
     <style>
       #start-button {
-        position:fixed;
-        left:40%;
-        top:50%;
+        position: fixed;
+        left: 40%;
+        top: 50%;
         padding: 10px 30px;
         border: 3px solid black;
       }
       #pause-button {
-        position:fixed;
-        left:3%;
-        bottom:3%;
+        position: fixed;
+        left: 3%;
+        bottom: 3%;
         padding: 10px 30px;
         border: 3px solid black;
       }
@@ -642,13 +757,12 @@
         display: none;
         visibility: hidden;
       }
-
     </style>
   </head>
 
   <body>
     <div id="viewport"></div>
     <button id="start-button" onClick="start()">Start</button>
-    <button id="pause-button" onClick="pause()">Pause</button>    
+    <button id="pause-button" onClick="pause()">Pause</button>
   </body>
 </html>
