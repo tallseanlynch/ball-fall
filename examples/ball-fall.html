@@ -2,7 +2,7 @@
 
 <html>
   <head>
-    <title>Collisions - Physijs</title>
+    <title>Ball Fall</title>
     <style>
       body,
       html {
@@ -168,25 +168,27 @@
 
         // Loader
 
-        const startAudio = () => {
-          const listener = new THREE.AudioListener();
-          camera.add(listener);
+        const listener = new THREE.AudioListener();
+        camera.add(listener);
 
-          // create a global audio source
-          const sound = new THREE.Audio(listener);
+        // create a global audio source
+        const sound = new THREE.Audio(listener);
 
-          // load a sound and set it as the Audio object's buffer
-          const audioLoader = new THREE.AudioLoader();
+        // load a sound and set it as the Audio object's buffer
+        const audioLoader = new THREE.AudioLoader();
+
+        const startAudio = (source) => {
           audioLoader.load(
-            "sounds/ball-fall-sounds 1-Audio.mp3",
+            "sounds/ball-fall-sounds 19-3-Audio 1.mp3",
             function (buffer) {
               sound.setBuffer(buffer);
-              // sound.setLoop( true );
-              sound.setVolume(0.5);
+              sound.setLoop(true);
+              sound.setVolume(0.25);
               sound.play();
             }
           );
         };
+
         loader = new THREE.TextureLoader();
 
         // Ground
@@ -369,6 +371,9 @@
         groundBox2.receiveShadow = true;
         groundBox2.rotation.x = Math.random() * 2 * Math.PI;
         groundBox2.rotation.y = Math.random() * 2 * Math.PI;
+        groundBox2.name = "GROUNDBOX2";
+        groundBox2.featureType = "BOX";
+
         // groundBox2.rotation.z = Math.random() * 2 * Math.PI
 
         // ground.receiveShadow = true;
@@ -394,6 +399,8 @@
           start: false,
           pause: false,
           startAudio: startAudio,
+          audioLoader: audioLoader,
+          soundSource: sound,
         };
 
         document.addEventListener("touchstart", (e) => {
@@ -472,31 +479,100 @@
             angularVelocity
           ) {
             console.log("collision");
-            // switch (++this.collisions) {
-            //   case 1:
-            //     this.material.color.setHex(0xcc8855);
-            //     break;
+            console.log("collided_with", collided_with);
+            if (collided_with.featureType === "BOX") {
+              // debugger
+              // collided_with.children[0].play()
+              // const groundBox2Audio = new THREE.PositionalAudio( window.appConfig.listener2 );
 
-            //   case 2:
-            //     this.material.color.setHex(0xbb9955);
-            //     break;
+              // window.appConfig.audioLoader.load( 'sounds/ball-fall-sounds 19-3-Audio 1.mp3', function( buffer ) {
+              //   window.appConfig.soundSource2.setBuffer( buffer );
+              //   window.appConfig.soundSource2.setBuffer( buffer );
+              //   window.appConfig.soundSource2.setVolume( 0.99 );
+              // });
 
-            //   case 3:
-            //     this.material.color.setHex(0xaaaa55);
-            //     break;
+              switch (++this.collisions % 6) {
+                case 1:
+                  window.appConfig.soundSource.stop();
+                  window.appConfig.audioLoader.load(
+                    "sounds/ball-fall-sounds 1-Audio.mp3",
+                    function (buffer) {
+                      window.appConfig.soundSource.setBuffer(buffer);
+                      // sound.setLoop( true );
+                      window.appConfig.soundSource.setVolume(0.25);
+                      window.appConfig.soundSource.play();
+                    }
+                  );
+                  break;
 
-            //   case 4:
-            //     this.material.color.setHex(0x99bb55);
-            //     break;
+                case 2:
+                  window.appConfig.soundSource.stop();
+                  window.appConfig.audioLoader.load(
+                    "sounds/ball-fall-sounds 2-3-Audio 1.mp3",
+                    function (buffer) {
+                      window.appConfig.soundSource.setBuffer(buffer);
+                      // sound.setLoop( true );
+                      window.appConfig.soundSource.setVolume(0.25);
+                      window.appConfig.soundSource.play();
+                    }
+                  );
+                  break;
 
-            //   case 5:
-            //     this.material.color.setHex(0x88cc55);
-            //     break;
+                case 3:
+                  window.appConfig.soundSource.stop();
+                  window.appConfig.audioLoader.load(
+                    "sounds/ball-fall-sounds 3-3-Audio 1.mp3",
+                    function (buffer) {
+                      window.appConfig.soundSource.setBuffer(buffer);
+                      // sound.setLoop( true );
+                      window.appConfig.soundSource.setVolume(0.25);
+                      window.appConfig.soundSource.play();
+                    }
+                  );
+                  break;
 
-            //   case 6:
-            //     this.material.color.setHex(0x77dd55);
-            //     break;
-            // }
+                case 4:
+                  window.appConfig.soundSource.stop();
+                  window.appConfig.audioLoader.load(
+                    "sounds/ball-fall-sounds 4-3-Audio 1.mp3",
+                    function (buffer) {
+                      window.appConfig.soundSource.setBuffer(buffer);
+                      // sound.setLoop( true );
+                      window.appConfig.soundSource.setVolume(0.25);
+                      window.appConfig.soundSource.play();
+                    }
+                  );
+                  break;
+
+                case 5:
+                  window.appConfig.soundSource.stop();
+                  window.appConfig.audioLoader.load(
+                    "sounds/ball-fall-sounds 5-3-Audio 1.mp3",
+                    function (buffer) {
+                      window.appConfig.soundSource.setBuffer(buffer);
+                      // sound.setLoop( true );
+                      window.appConfig.soundSource.setVolume(0.25);
+                      window.appConfig.soundSource.play();
+                    }
+                  );
+                  break;
+
+                case 6:
+                  window.appConfig.soundSource.stop();
+                  window.appConfig.audioLoader.load(
+                    "sounds/ball-fall-sounds 6-3-Audio 1.mp3",
+                    function (buffer) {
+                      window.appConfig.soundSource.setBuffer(buffer);
+                      // sound.setLoop( true );
+                      window.appConfig.soundSource.setVolume(0.25);
+                      window.appConfig.soundSource.play();
+                    }
+                  );
+                  break;
+              }
+
+              console.log("AFTERPLAY");
+            }
           },
           createBox = function () {
             var box, material;
@@ -563,7 +639,7 @@
           );
 
           sphere.castShadow = true;
-          // sphere.addEventListener("collision", handleCollision);
+          sphere.addEventListener("collision", handleCollision);
           sphere.gameName = "SPHERE0";
           scene.add(sphere);
         };
@@ -721,6 +797,8 @@
           camera.position.y = sphere.position.y;
         }
 
+        const timerElement = document.querySelector("#timer");
+
         requestAnimationFrame(render);
         renderer.render(scene, camera);
         render_stats.update();
@@ -757,11 +835,20 @@
         display: none;
         visibility: hidden;
       }
+      #timer {
+        padding: 10px 30px;
+        height: 100px;
+        width: 200px;
+        position: absolute;
+        top: 3%;
+        right: 3%;
+      }
     </style>
   </head>
 
   <body>
     <div id="viewport"></div>
+    <div id="timer">000</div>
     <button id="start-button" onClick="start()">Start</button>
     <button id="pause-button" onClick="pause()">Pause</button>
   </body>
