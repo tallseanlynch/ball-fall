@@ -463,6 +463,7 @@
                   `stage${window.appConfig.level}`
                 ].finalTime;
               document.querySelector("#report").classList.remove("hide");
+              document.querySelector("#pause-button").disabled = true;
             }
             if (collided_with.featureType === "BOX") {
               // debugger
@@ -797,6 +798,7 @@
         window.appConfig.start = true;
         window.appConfig.startAudio();
         document.querySelector("#start-button").classList.add("hide");
+        document.querySelector("#pause-button").disabled = false;
         window.appConfig.timer.start();
       };
 
@@ -863,6 +865,6 @@
     <div id="timer"></div>
     <div id="report" class="hide"></div>
     <button id="start-button" onClick="start()">Start</button>
-    <button id="pause-button" onClick="pause()">Pause</button>
+    <button id="pause-button" disabled onClick="pause()">Pause</button>
   </body>
 </html>
