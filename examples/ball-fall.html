@@ -12,16 +12,17 @@
       html {
         touch-action: none;
       }
-      body {
+      /* body {
         background: rgb(2, 0, 36);
         background: linear-gradient(
           180deg,
           rgba(2, 0, 36, 0) 0%,
           rgba(121, 9, 117, 1) 0%,
-          rgba(0, 212, 255, 1) 32%,
-          rgba(252, 231, 183, 1) 98%
+          rgba(0, 212, 255, 1) 33%,
+          rgba(252, 231, 183, 1) 66%
+          rgba(2, 0, 36, 0) 100%
         );
-      }
+      } */
     </style>
 
     <script type="text/javascript" src="js/ammo.js"></script>
@@ -39,7 +40,7 @@
       var backgroundMusic0 = new Howl({
         src: ['sounds/ball-fall-sounds 19-3-Audio 1.mp3'],
         autoPlay: true,
-        loop: true,
+        loop: false,
         onend: () => {
           console.log("finished 1")
         }
@@ -751,9 +752,9 @@
         window.appConfig.percentFinished = percentFinished;
         if (new Date().getTime() % 10 < 3) {
           document.body.style.background =
-            "linear-gradient(180deg, rgba(2,0,36,0) 0%, rgba(121,9,117,1) 0%, rgba(0,212,255,1) " +
+            "linear-gradient(180deg, rgba(2,0,36,0) 0%, rgba(121,9,117,1) 0%, rgba(252,231,183,1) " +
             Math.round((1 - percentFinished) * 100) / 3 +
-            "%, rgba(252,231,183,1) " +
+            "%, rgba(0,212,255,1)" +
             Math.round((1 - percentFinished) * 100) +
             "%)";
         }
