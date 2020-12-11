@@ -24,10 +24,101 @@
     <script type="text/javascript" src="js/physi.js"></script>
     <script type="text/javascript" src="js/physijs_worker.js"></script>
     <script type="text/javascript" src="js/THREEOrbitControls.js"></script>
+    <script type="text/javascript" src="js/howler.min.js"></script>
 
     <script type="text/javascript">
       "use strict";
 
+      var backgroundMusic0 = new Howl({
+        src: ['sounds/ball-fall-sounds 19-3-Audio 1.mp3'],
+        autoPlay: true,
+        loop: true,
+        onend: () => {
+          console.log("finished 1")
+        }
+      });
+
+      var howlSound0 = new Howl({
+        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        onstart: () => {
+          console.log("started 0")
+        },
+        onend: () => {
+          console.log("finished 0")
+        }
+      });
+
+      var howlSound1 = new Howl({
+        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        onstart: () => {
+          console.log("started 1")
+        },
+        onend: () => {
+          console.log("finished 1")
+        }
+      });
+
+      var howlSound2 = new Howl({
+        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        onstart: () => {
+          console.log("started 2")
+        },
+        onend: () => {
+          console.log("finished 2")
+        }
+      });
+
+      var howlSound3 = new Howl({
+        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        onstart: () => {
+          console.log("started 3")
+        },
+        onend: () => {
+          console.log("finished 3")
+        }
+      });
+
+      var howlSound4 = new Howl({
+        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        onstart: () => {
+          console.log("started 4")
+        },
+        onend: () => {
+          console.log("finished 4")
+        }
+      });
+
+      var howlSound5 = new Howl({
+        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        onstart: () => {
+          console.log("started 5")
+        },
+        onend: () => {
+          console.log("finished 5")
+        }
+      });
+
+      var howlSound6 = new Howl({
+        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        onstart: () => {
+          console.log("started 6")
+        },
+        onend: () => {
+          console.log("finished 6")
+        }
+      });
+
+      var howlSound7 = new Howl({
+        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        onstart: () => {
+          console.log("started 7")
+        },
+        onend: () => {
+          console.log("finished 7")
+        }
+      });
+
+      backgroundMusic0.play()
       Physijs.scripts.worker = "js/physijs_worker.js";
       Physijs.scripts.ammo = "ammo.js";
 
@@ -40,8 +131,6 @@
       ];
 
       const getRandomColor = () => {
-        // console.log(basicColors[Math.floor(Math.round() * basicColors.length)])
-        // debugger
         return basicColors[Math.floor(Math.random() * basicColors.length)];
       };
 
@@ -171,48 +260,7 @@
         onWindowResize();
         window.addEventListener("resize", onWindowResize, false);
 
-        // Loader
-
-        const listener = new THREE.AudioListener();
-        camera.add(listener);
-
-        // create a global audio source
-        const sound = new THREE.Audio(listener);
-
-        // load a sound and set it as the Audio object's buffer
-        const audioLoader = new THREE.AudioLoader();
-
-        const startAudio = (source) => {
-          audioLoader.load(
-            "sounds/ball-fall-sounds 19-3-Audio 1.mp3",
-            function (buffer) {
-              sound.setBuffer(buffer);
-              sound.setLoop(true);
-              sound.setVolume(0.25);
-              sound.play();
-            }
-          );
-        };
-
         loader = new THREE.TextureLoader();
-
-        // Ground
-        // ground_material = Physijs.createMaterial(
-        //   new THREE.MeshLambertMaterial({
-        //     map: loader.load("images/rocks.jpg"),
-        //   }),
-        //   0.8, // high friction
-        //   0.3 // low restitution
-        // );
-        // ground_material.map.wrapS = ground_material.map.wrapT =
-        //   THREE.RepeatWrapping;
-        // ground_material.map.repeat.set(3, 3);
-
-        // ground = new Physijs.BoxMesh(
-        //   new THREE.BoxGeometry(100, 1, 100),
-        //   ground_material,
-        //   0 // mass
-        // );
 
         let level = 1;
 
@@ -342,10 +390,7 @@
           diffX: 0,
           diffY: 0,
           start: false,
-          pause: false,
-          startAudio: startAudio,
-          audioLoader: audioLoader,
-          soundSource: sound,
+          pause: false
         };
 
         document.addEventListener("touchstart", (e) => {
@@ -426,93 +471,37 @@
             console.log("collision");
             console.log("collided_with", collided_with);
             if (collided_with.featureType === "BOX") {
-              // debugger
-              // collided_with.children[0].play()
-              // const groundBox2Audio = new THREE.PositionalAudio( window.appConfig.listener2 );
-
-              // window.appConfig.audioLoader.load( 'sounds/ball-fall-sounds 19-3-Audio 1.mp3', function( buffer ) {
-              //   window.appConfig.soundSource2.setBuffer( buffer );
-              //   window.appConfig.soundSource2.setBuffer( buffer );
-              //   window.appConfig.soundSource2.setVolume( 0.99 );
-              // });
-
-              switch (++this.collisions % 6) {
+              switch (++this.collisions % 8) {
                 case 1:
-                  window.appConfig.soundSource.stop();
-                  window.appConfig.audioLoader.load(
-                    "sounds/ball-fall-sounds 1-Audio.mp3",
-                    function (buffer) {
-                      window.appConfig.soundSource.setBuffer(buffer);
-                      // sound.setLoop( true );
-                      window.appConfig.soundSource.setVolume(0.25);
-                      window.appConfig.soundSource.play();
-                    }
-                  );
+                  howlSound0.play()
                   break;
 
                 case 2:
-                  window.appConfig.soundSource.stop();
-                  window.appConfig.audioLoader.load(
-                    "sounds/ball-fall-sounds 2-3-Audio 1.mp3",
-                    function (buffer) {
-                      window.appConfig.soundSource.setBuffer(buffer);
-                      // sound.setLoop( true );
-                      window.appConfig.soundSource.setVolume(0.25);
-                      window.appConfig.soundSource.play();
-                    }
-                  );
+                  howlSound1.play()
                   break;
 
                 case 3:
-                  window.appConfig.soundSource.stop();
-                  window.appConfig.audioLoader.load(
-                    "sounds/ball-fall-sounds 3-3-Audio 1.mp3",
-                    function (buffer) {
-                      window.appConfig.soundSource.setBuffer(buffer);
-                      // sound.setLoop( true );
-                      window.appConfig.soundSource.setVolume(0.25);
-                      window.appConfig.soundSource.play();
-                    }
-                  );
+                  howlSound2.play()
                   break;
 
                 case 4:
-                  window.appConfig.soundSource.stop();
-                  window.appConfig.audioLoader.load(
-                    "sounds/ball-fall-sounds 4-3-Audio 1.mp3",
-                    function (buffer) {
-                      window.appConfig.soundSource.setBuffer(buffer);
-                      // sound.setLoop( true );
-                      window.appConfig.soundSource.setVolume(0.25);
-                      window.appConfig.soundSource.play();
-                    }
-                  );
+                  howlSound3.play()
                   break;
 
                 case 5:
-                  window.appConfig.soundSource.stop();
-                  window.appConfig.audioLoader.load(
-                    "sounds/ball-fall-sounds 5-3-Audio 1.mp3",
-                    function (buffer) {
-                      window.appConfig.soundSource.setBuffer(buffer);
-                      // sound.setLoop( true );
-                      window.appConfig.soundSource.setVolume(0.25);
-                      window.appConfig.soundSource.play();
-                    }
-                  );
+                  howlSound4.play()
                   break;
 
                 case 6:
-                  window.appConfig.soundSource.stop();
-                  window.appConfig.audioLoader.load(
-                    "sounds/ball-fall-sounds 6-3-Audio 1.mp3",
-                    function (buffer) {
-                      window.appConfig.soundSource.setBuffer(buffer);
-                      // sound.setLoop( true );
-                      window.appConfig.soundSource.setVolume(0.25);
-                      window.appConfig.soundSource.play();
-                    }
-                  );
+                  howlSound5.play()
+                  break;
+
+                case 7:
+                  howlSound6.play()
+                  break;
+
+                case 8:
+                  howlSound7.play()
                   break;
               }
 
@@ -567,11 +556,6 @@
             0.5, // medium friction
             3 // low restitution
           );
-          // material.map.wrapS = material.map.wrapT = THREE.RepeatWrapping;
-          // material.map.repeat.set( .5, .5 );
-
-          //material = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture( 'images/rocks.jpg' ) });
-
           sphere = new Physijs.SphereMesh(sphere_geometry, material);
           sphere.collisions = 0;
 
@@ -671,22 +655,10 @@
           stage.add(stageFloor);
           scene.add(stage);
         };
-        // return function() {
-        // 	setTimeout( createBox, 2000 );
-        // 	setTimeout( createSphere, 1500 );
-        // };
       })();
-
-      // let hasRendered = false
 
       render = function () {
         
-        // scene.children.forEach((m, mi) => {
-        // 	if(mi > 3) {
-        // 		console.log(m, mi)
-        // 		m.position.z = 0
-        // 	}
-        // })
         const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0");
         const stage = scene.children.find((obj) => obj.name === "stage");
 
@@ -758,11 +730,11 @@
 
       const start = () => {
         window.appConfig.start = true;
-        window.appConfig.startAudio();
         document.querySelector("#start-button").classList.add("hide");
       };
 
       const pause = () => {
+        window.appConfig.pause ? backgroundMusic0.play() : backgroundMusic0.pause()
         window.appConfig.pause = !window.appConfig.pause;
       };
 
@@ -774,7 +746,6 @@
         left: 40%;
         top: 50%;
         padding: 10px 30px;
-        /* border: 3px solid black; */
         border: 0;
         border-radius: 5px;
         opacity: .75;
@@ -784,7 +755,6 @@
         left: 3%;
         bottom: 3%;
         padding: 10px 30px;
-        /* border: 3px solid black; */
         border: 0;
         border-radius: 5px;
         opacity: .75;
