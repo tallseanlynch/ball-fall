@@ -439,7 +439,7 @@
                 scene.add(wall);
               } else if (zone.type === "cone") {
                 const obj = new Physijs.ConeMesh(
-                  new THREE.CylinderGeometry(0, 5, 4, 32),
+                  new THREE.CylinderGeometry(0, 4.75, 3.75, 32),
                   Physijs.createMaterial(
                     new THREE.MeshPhongMaterial({ color: getRandomColor() }),
                     // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
