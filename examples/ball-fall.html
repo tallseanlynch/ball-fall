@@ -37,95 +37,95 @@
       "use strict";
 
       var backgroundMusic0 = new Howl({
-        src: ['sounds/ball-fall-sounds 19-3-Audio 1.mp3'],
+        src: ["sounds/ball-fall-sounds 19-3-Audio 1.mp3"],
         autoPlay: true,
-        loop: true,
+        loop: false,
         onend: () => {
-          console.log("finished 1")
-        }
+          console.log("finished 1");
+        },
       });
 
       var howlSound0 = new Howl({
-        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        src: ["sounds/ball-fall-sounds 15-3-Audio 1.mp3"],
         onstart: () => {
-          console.log("started 0")
+          console.log("started 0");
         },
         onend: () => {
-          console.log("finished 0")
-        }
+          console.log("finished 0");
+        },
       });
 
       var howlSound1 = new Howl({
-        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        src: ["sounds/ball-fall-sounds 15-3-Audio 1.mp3"],
         onstart: () => {
-          console.log("started 1")
+          console.log("started 1");
         },
         onend: () => {
-          console.log("finished 1")
-        }
+          console.log("finished 1");
+        },
       });
 
       var howlSound2 = new Howl({
-        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        src: ["sounds/ball-fall-sounds 15-3-Audio 1.mp3"],
         onstart: () => {
-          console.log("started 2")
+          console.log("started 2");
         },
         onend: () => {
-          console.log("finished 2")
-        }
+          console.log("finished 2");
+        },
       });
 
       var howlSound3 = new Howl({
-        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        src: ["sounds/ball-fall-sounds 15-3-Audio 1.mp3"],
         onstart: () => {
-          console.log("started 3")
+          console.log("started 3");
         },
         onend: () => {
-          console.log("finished 3")
-        }
+          console.log("finished 3");
+        },
       });
 
       var howlSound4 = new Howl({
-        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        src: ["sounds/ball-fall-sounds 15-3-Audio 1.mp3"],
         onstart: () => {
-          console.log("started 4")
+          console.log("started 4");
         },
         onend: () => {
-          console.log("finished 4")
-        }
+          console.log("finished 4");
+        },
       });
 
       var howlSound5 = new Howl({
-        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        src: ["sounds/ball-fall-sounds 15-3-Audio 1.mp3"],
         onstart: () => {
-          console.log("started 5")
+          console.log("started 5");
         },
         onend: () => {
-          console.log("finished 5")
-        }
+          console.log("finished 5");
+        },
       });
 
       var howlSound6 = new Howl({
-        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        src: ["sounds/ball-fall-sounds 15-3-Audio 1.mp3"],
         onstart: () => {
-          console.log("started 6")
+          console.log("started 6");
         },
         onend: () => {
-          console.log("finished 6")
-        }
+          console.log("finished 6");
+        },
       });
 
       var howlSound7 = new Howl({
-        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        src: ["sounds/ball-fall-sounds 15-3-Audio 1.mp3"],
         onstart: () => {
-          console.log("started 7")
+          console.log("started 7");
         },
         onend: () => {
-          console.log("finished 7")
-        }
+          console.log("finished 7");
+        },
       });
 
-      backgroundMusic0.play()
+      backgroundMusic0.play();
       Physijs.scripts.worker = "js/physijs_worker.js";
       Physijs.scripts.ammo = "ammo.js";
 
@@ -270,40 +270,12 @@
 
         loader = new THREE.TextureLoader();
 
-        let level = 1;
+        let level = 5;
         window.appConfig.level = level;
         let features = [
           [
             { appearAtLevel: 25 },
-            { appearAtLevel: 25 },
-            { appearAtLevel: 25 },
-            { appearAtLevel: 1, type: "ramp" },
-            { appearAtLevel: 25 },
-          ],
-          [
-            { appearAtLevel: 25 },
-            { appearAtLevel: 25 },
-            { appearAtLevel: 1, type: "ramp" },
-            { appearAtLevel: 25 },
-            { appearAtLevel: 25 },
-          ],
-          [
-            { appearAtLevel: 25 },
-            { appearAtLevel: 1, type: "ramp" },
-            { appearAtLevel: 25 },
-            { appearAtLevel: 25 },
-            { appearAtLevel: 25 },
-          ],
-          [
-            { appearAtLevel: 25 },
-            { appearAtLevel: 25 },
-            { appearAtLevel: 1, type: "ramp" },
-            { appearAtLevel: 25 },
-            { appearAtLevel: 25 },
-          ],
-          [
-            { appearAtLevel: 25 },
-            { appearAtLevel: 25 },
+            { appearAtLevel: 2, type: "cone" },
             { appearAtLevel: 25 },
             { appearAtLevel: 1, type: "ramp" },
             { appearAtLevel: 25 },
@@ -319,17 +291,46 @@
             { appearAtLevel: 25 },
             { appearAtLevel: 1, type: "ramp" },
             { appearAtLevel: 25 },
+            { appearAtLevel: 3, type: "cone" },
+            { appearAtLevel: 25 },
+          ],
+          [
+            { appearAtLevel: 25 },
+            { appearAtLevel: 25 },
+            { appearAtLevel: 1, type: "ramp" },
             { appearAtLevel: 25 },
             { appearAtLevel: 25 },
           ],
           [
-            { appearAtLevel: 1, type: "plinko" },
+            { appearAtLevel: 25 },
+            { appearAtLevel: 5, type: "cone" },
+            { appearAtLevel: 25 },
+            { appearAtLevel: 1, type: "ramp" },
+            { appearAtLevel: 25 },
+          ],
+          [
+            { appearAtLevel: 25 },
+            { appearAtLevel: 25 },
+            { appearAtLevel: 1, type: "ramp" },
+            { appearAtLevel: 25 },
+            { appearAtLevel: 25 },
+          ],
+          [
+            { appearAtLevel: 25 },
+            { appearAtLevel: 1, type: "ramp" },
+            { appearAtLevel: 25 },
+            { appearAtLevel: 4, type: "cone" },
+            { appearAtLevel: 25 },
+          ],
+          [
+            { appearAtLevel: 9999, type: "plinko" },
             { appearAtLevel: 1, type: "plinko" },
             { appearAtLevel: 1, type: "plinko" },
             { appearAtLevel: 1, type: "plinko" },
             { appearAtLevel: 1, type: "plinko" },
           ],
         ];
+        window.appConfig.features = features;
         features.forEach((row, rowIndex) => {
           row.forEach((zone, zoneIndex) => {
             // console.log(zone);
@@ -363,9 +364,10 @@
                 zone.obj = obj;
                 // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
 
-                obj.position.x = xPosition;
-                obj.position.y = yPosition;
+                obj.position.x = xPosition + 2.5;
+                obj.position.y = yPosition - 12 + (Math.random() - 0.5) * 12;
                 obj.position.z = 0;
+                obj.__dirtyPosition = true;
                 obj.position.__dirtyPosition = true;
                 obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
                 obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
@@ -377,6 +379,98 @@
                 obj.featureType = "BOX";
                 scene.add(obj);
                 // console.dir(JSON.stringify(obj.position));
+              } else if (zone.type === "plinko") {
+                const plinkoColor = getRandomColor();
+                const obj = new Physijs.BoxMesh(
+                  new THREE.BoxGeometry(1, 10, 3),
+                  Physijs.createMaterial(
+                    new THREE.MeshPhongMaterial({ color: plinkoColor }),
+                    // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
+                    0.6, // medium friction
+                    0.3 // low restitution
+                  ),
+                  0 // mass
+                );
+                // console.dir(obj);
+                zone.obj = obj;
+                // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
+
+                obj.position.x = xPosition;
+                obj.position.y = yPosition + 10;
+                obj.position.z = 0;
+                obj.__dirtyPosition = true;
+                obj.position.__dirtyPosition = true;
+                obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+                obj.castShadow = true;
+                obj.receiveShadow = true;
+                // obj.rotation.x = Math.random() * 2 * Math.PI;
+                // obj.rotation.y = 0.3 * Math.PI;
+                // obj.rotation.z = Math.random() * 2 * Math.PI;
+                obj.featureType = "PLINKO";
+                scene.add(obj);
+                const wall = new Physijs.BoxMesh(
+                  new THREE.BoxGeometry(1, 3, 10),
+                  Physijs.createMaterial(
+                    new THREE.MeshPhongMaterial({ color: plinkoColor }),
+                    // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
+                    0.6, // medium friction
+                    0.3 // low restitution
+                  ),
+                  0 // mass
+                );
+                // console.dir(obj);
+                zone.wall = wall;
+                // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
+
+                wall.position.x = xPosition;
+                wall.position.y = yPosition + 3.5;
+                wall.position.z = 3.5;
+                wall.position.__dirtyPosition = true;
+                wall.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                wall.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+                wall.castShadow = true;
+                wall.receiveShadow = true;
+                // obj.rotation.x = Math.random() * 2 * Math.PI;
+                // obj.rotation.y = 0.3 * Math.PI;
+                // obj.rotation.z = Math.random() * 2 * Math.PI;
+                wall.featureType = "PLINKOWALL";
+                // console.dir(JSON.stringify(obj.position));
+                scene.add(wall);
+              } else if (zone.type === "cone") {
+                const obj = new Physijs.ConeMesh(
+                  new THREE.CylinderGeometry(0, 5, 4, 32),
+                  Physijs.createMaterial(
+                    new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+                    // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
+                    0.6, // medium friction
+                    0.3 // low restitution
+                  ),
+                  0 // mass
+                );
+                // console.dir(obj);
+                zone.obj = obj;
+                // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
+
+                obj.position.x = xPosition + 2.5;
+                obj.position.y = yPosition - 12 + (Math.random() - 0.5) * 24;
+                obj.position.z = 0;
+                obj.position.__dirtyPosition = true;
+                obj.rotation.__dirtyRotation = true;
+                obj.__dirtyPosition = true;
+                obj.__dirtyRotation = true;
+                obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+                obj.castShadow = true;
+                obj.receiveShadow = true;
+                obj.rotation.x = Math.random() * 2 * Math.PI;
+                obj.rotation.y = Math.random() * 2 * Math.PI;
+                obj.rotation.z = Math.random() * 2 * Math.PI;
+                obj.featureType = "CONE";
+                scene.add(obj);
+                // console.dir(JSON.stringify(obj.position));
+                console.dir(obj);
+                // debugger;
               }
             }
           });
@@ -409,7 +503,7 @@
           pause: false,
           timer: timer,
           results: results,
-          pause: false
+          pause: false,
         };
 
         document.addEventListener("touchstart", (e) => {
@@ -514,35 +608,35 @@
             if (collided_with.featureType === "BOX") {
               switch (++this.collisions % 8) {
                 case 1:
-                  howlSound0.play()
+                  howlSound0.play();
                   break;
 
                 case 2:
-                  howlSound1.play()
+                  howlSound1.play();
                   break;
 
                 case 3:
-                  howlSound2.play()
+                  howlSound2.play();
                   break;
 
                 case 4:
-                  howlSound3.play()
+                  howlSound3.play();
                   break;
 
                 case 5:
-                  howlSound4.play()
+                  howlSound4.play();
                   break;
 
                 case 6:
-                  howlSound5.play()
+                  howlSound5.play();
                   break;
 
                 case 7:
-                  howlSound6.play()
+                  howlSound6.play();
                   break;
 
                 case 8:
-                  howlSound7.play()
+                  howlSound7.play();
                   break;
               }
 
@@ -615,13 +709,12 @@
         };
         return () => {
           createSphere();
-          const stageColor = getRandomColor();
-
+          const sidesColor = getRandomColor();
           const glassMesh0 = new Physijs.BoxMesh(
-            /*geometry*/ new THREE.BoxGeometry(25, 375, 1),
+            /*geometry*/ new THREE.BoxGeometry(25, 370, 1),
             /*material*/ new THREE.MeshBasicMaterial({
-              color: stageColor,
-              opacity: 0.1,
+              color: getRandomColor(),
+              opacity: 0,
               transparent: true,
               wifeframe: true,
             }),
@@ -633,39 +726,43 @@
           const glassMesh1 = new Physijs.BoxMesh(
             /*geometry*/ new THREE.BoxGeometry(25, 375, 1),
             /*material*/ new THREE.MeshBasicMaterial({
-              color: stageColor,
-              opacity: 0,
+              color: getRandomColor(),
+              opacity: 0.0,
               transparent: true,
               wifeframe: true,
             }),
             /*mass*/ 0
           );
+          glassMesh1.gameName = "BACKGLASS";
+          glassMesh1.name = "glassMesh1";
           const glassMesh2 = new Physijs.BoxMesh(
             /*geometry*/ new THREE.BoxGeometry(3, 375, 1),
             /*material*/ new THREE.MeshBasicMaterial({
-              color: stageColor,
-              opacity: 0,
+              color: sidesColor,
+              opacity: 0.5,
               transparent: true,
-              wifeframe: true,
             }),
             /*mass*/ 0
           );
 
+          glassMesh2.gameName = "LEFTGLASS";
+          glassMesh2.name = "glassMesh2";
           const glassMesh3 = new Physijs.BoxMesh(
             /*geometry*/ new THREE.BoxGeometry(3, 375, 1),
             /*material*/ new THREE.MeshBasicMaterial({
-              color: stageColor,
-              opacity: 0,
+              color: sidesColor,
+              opacity: 0.5,
               transparent: true,
-              wifeframe: true,
             }),
             /*mass*/ 0
           );
+          glassMesh3.gameName = "RIGHTGLASS";
+          glassMesh3.name = "glassMesh3";
           const stageFloor = new Physijs.BoxMesh(
-            /*geometry*/ new THREE.BoxGeometry(25, 1, 3),
+            /*geometry*/ new THREE.BoxGeometry(25, 1, 10),
             /*material*/ new THREE.MeshBasicMaterial({
-              color: stageColor,
-              opacity: 0.1,
+              color: getRandomColor(),
+              opacity: 0,
               transparent: true,
             }),
             /*mass*/ 0
@@ -673,28 +770,44 @@
 
           stageFloor.name = "stageFloor";
           stageFloor.featureType = "STAGEFLOOR";
-          glassMesh0.position.z = -1.5;
-          glassMesh1.position.z = 1.5;
+          const catchWall = new Physijs.BoxMesh(
+            /*geometry*/ new THREE.BoxGeometry(25, 10, 1),
+            /*material*/ new THREE.MeshBasicMaterial({
+              color: getRandomColor(),
+              opacity: 0,
+              transparent: true,
+            }),
+            /*mass*/ 0
+          );
+
+          catchWall.name = "catchWall";
+          catchWall.featureType = "CATCHWALL";
+
+          catchWall.position.y = -327;
+          catchWall.position.z = 5;
+          glassMesh0.position.z = 1.5;
+          glassMesh1.position.z = -1.5;
           glassMesh2.position.x = -12.5;
           glassMesh2.rotation.y = Math.PI * 0.5;
           glassMesh3.position.x = 12.5;
           glassMesh3.rotation.y = Math.PI * -0.5;
-          glassMesh0.position.y = -140;
+          glassMesh0.position.y = -137.5;
           glassMesh1.position.y = -140;
           glassMesh2.position.y = -140;
           glassMesh3.position.y = -140;
           stageFloor.position.y = -327;
+          stageFloor.rotation.x = Math.PI * 0.125;
 
           scene.add(glassMesh0);
           scene.add(glassMesh1);
           scene.add(glassMesh2);
           scene.add(glassMesh3);
           scene.add(stageFloor);
+          scene.add(catchWall);
         };
       })();
 
       render = function () {
-        
         const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0");
 
         if (
@@ -763,6 +876,24 @@
 
         const timerElement = document.querySelector("#timer");
 
+        // window.appConfig.features.forEach((row, rowIndex) => {
+        //   row.forEach((zone, zoneIndex) => {
+        //     if (zone.obj) {
+        //       if (zone.obj.featureType === "CONE") {
+        //         zone.obj.rotation.x += 0.01;
+        //         // zone.obj.quaternion.setFromEuler(
+        //         //   new THREE.Euler(
+        //         //     zone.obj.position.x,
+        //         //     zone.obj.position.y,
+        //         //     zone.obj.position.z + 0.01,
+        //         //     "XYZ"
+        //         //   )
+        //         // );
+        //       }
+        //     }
+        //   });
+        // });
+
         requestAnimationFrame(render);
         renderer.render(scene, camera);
         render_stats.update();
@@ -776,7 +907,9 @@
       };
 
       const pause = () => {
-        window.appConfig.pause ? backgroundMusic0.play() : backgroundMusic0.pause()
+        window.appConfig.pause
+          ? backgroundMusic0.play()
+          : backgroundMusic0.pause();
         window.appConfig.pause = !window.appConfig.pause;
         if (window.appConfig.pause) {
           window.appConfig.timer.pause();
