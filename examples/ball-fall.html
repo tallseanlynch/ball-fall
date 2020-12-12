@@ -38,16 +38,17 @@
       "use strict";
 
       var backgroundMusic0 = new Howl({
-        src: ['sounds/ball-fall-sounds 19-3-Audio 1.mp3'],
+        src: ['sounds/BALL FALL jingle flat 1.mp3'],
         autoPlay: true,
-        loop: false,
+        loop: true,
         onend: () => {
           console.log("finished 1")
         }
       });
+      backgroundMusic0.volume(.1)
 
       var howlSound0 = new Howl({
-        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        src: ['sounds/Sound FX/BALL FALL fx a1.mp3'],
         onstart: () => {
           console.log("started 0")
         },
@@ -57,7 +58,7 @@
       });
 
       var howlSound1 = new Howl({
-        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        src: ['sounds/Sound FX/BALL FALL fx a2.mp3'],
         onstart: () => {
           console.log("started 1")
         },
@@ -67,7 +68,7 @@
       });
 
       var howlSound2 = new Howl({
-        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        src: ['sounds/Sound FX/BALL FALL fx a3.mp3'],
         onstart: () => {
           console.log("started 2")
         },
@@ -77,7 +78,7 @@
       });
 
       var howlSound3 = new Howl({
-        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        src: ['sounds/Sound FX/BALL FALL fx a4.mp3'],
         onstart: () => {
           console.log("started 3")
         },
@@ -87,7 +88,7 @@
       });
 
       var howlSound4 = new Howl({
-        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        src: ['sounds/Sound FX/BALL FALL fx a5.mp3'],
         onstart: () => {
           console.log("started 4")
         },
@@ -97,7 +98,7 @@
       });
 
       var howlSound5 = new Howl({
-        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        src: ['sounds/Sound FX/BALL FALL fx a6.mp3'],
         onstart: () => {
           console.log("started 5")
         },
@@ -107,7 +108,7 @@
       });
 
       var howlSound6 = new Howl({
-        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        src: ['sounds/Sound FX/BALL FALL fx a7.mp3'],
         onstart: () => {
           console.log("started 6")
         },
@@ -117,7 +118,7 @@
       });
 
       var howlSound7 = new Howl({
-        src: ['sounds/ball-fall-sounds 15-3-Audio 1.mp3'],
+        src: ['sounds/Sound FX/BALL FALL fx a8.mp3'],
         onstart: () => {
           console.log("started 7")
         },
@@ -137,6 +138,8 @@
         new THREE.Color(0xff757f),
         new THREE.Color(0x159294),
       ];
+
+      let adjustCamera = 20
 
       const getRandomColor = () => {
         return basicColors[Math.floor(Math.random() * basicColors.length)];
@@ -207,9 +210,23 @@
           1,
           1000
         );
-        camera.position.set(0, 25, 100);
-        camera.lookAt(scene.position);
+        
+        adjustCamera = 20
+        camera.position.set(0, 10, 10);
+        // camera.lookAt(new THREE.Vector3(0, adjustCamera, 0));
+        camera.lookAt(new THREE.Vector3(0, 10, 0));
+        // sphere.position.set(0, 10, 0);
+        // camera.lookAt(new THREE.Vector3(sphere.position.x, sphere.position.y + 10, sphere.position.z));
+        // camera.lookAt(scene.position);
         scene.add(camera);
+
+        // const cameraPositionTimer = new easytimer.Timer()
+        
+        // cameraPositionTimer.start({countdown: true, startValues: {seconds: 1}})
+        // setTimeout(() => {
+        //   console.log(cameraPositionTimer.getTotalTimeValues().seconds, cameraPositionTimer.getTotalTimeValues().seconds)
+        // }, 5000)
+
 
         // Light
         light = new THREE.SpotLight(0xffffff);
@@ -261,7 +278,7 @@
             Math.atan(tanFOV * (window.innerHeight / windowHeight));
 
           camera.updateProjectionMatrix();
-          camera.lookAt(scene.position);
+          // camera.lookAt(scene.position);
 
           renderer.setSize(window.innerWidth, window.innerHeight);
           renderer.render(scene, camera);
@@ -388,6 +405,18 @@
         requestAnimationFrame(render);
         scene.simulate();
         const clickRay = new THREE.Raycaster();
+
+        // const initialCameraPosition = camera.position.z
+        // const cameraPositionTimer = new easytimer.Timer({ countdown: true, startValues: {seconds: 2}});
+        // cameraPositionTimer.addEventListener("secondTenthsUpdated", function () {
+        //   console.log(cameraPositionTimer.getTimeValues().toString(['minutes', 'seconds', 'secondTenths']))
+        //   camera.position.z += 1
+        // });
+
+        // window.cameraPositionTimer = cameraPositionTimer
+        // const initialCameraTimeout = setTimeout(() => {
+        //   cameraPositionTimer.start({precision: 'secondTenths'})
+        // }, 1000)
 
         const timer = new easytimer.Timer();
         timer.addEventListener("secondTenthsUpdated", function (e) {
@@ -691,11 +720,43 @@
           scene.add(glassMesh2);
           scene.add(glassMesh3);
           scene.add(stageFloor);
+
+          window.appConfig.initialBallZoom = {
+            started: 0,
+            ended: 0,
+            z: scene.children.find((obj) => obj.gameName === "SPHERE0").position.z,
+            percentComplete: 0,
+            time: 2000,
+            timeLeft: 1000,
+            currentTime: 0,
+            finalCameraZPosition: 100
+          }
         };
       })();
 
+      let startTime = new Date().getTime()
+
       render = function () {
         
+        if(window.appConfig.initialBallZoom.started === 0 && window.appConfig.initialBallZoom.ended === 0) {
+          window.appConfig.initialBallZoom.started = startTime
+          window.appConfig.initialBallZoom.currentTime = startTime
+        }
+
+        if(window.appConfig.initialBallZoom.started !== 0 && window.appConfig.initialBallZoom.ended === 0) {
+          let currentTime = new Date().getTime()
+          window.appConfig.initialBallZoom.currentTime = currentTime
+          let percentComplete = ((currentTime - startTime) / window.appConfig.initialBallZoom.time)
+          window.appConfig.initialBallZoom.percentComplete = percentComplete
+          console.log('time left: ' + (currentTime - startTime))
+          console.log('time left %: ' + percentComplete)
+          if(currentTime - startTime > window.appConfig.initialBallZoom.time) {
+            window.appConfig.initialBallZoom.ended = new Date().getTime()
+            console.log(appConfig.initialBallZoom)
+          }
+        }
+
+
         const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0");
 
         if (
@@ -758,9 +819,11 @@
             Math.round((1 - percentFinished) * 100) +
             "%)";
         }
-        if (distanceSphereToStageFloor > 50) {
+        // if (distanceSphereToStageFloor > 50) {
+          // camera.position.y = sphere.position.y + adjustCamera;
           camera.position.y = sphere.position.y;
-        }
+          camera.position.z = 10 + (90 * window.appConfig.initialBallZoom.percentComplete)
+        // }
 
         const timerElement = document.querySelector("#timer");
 
