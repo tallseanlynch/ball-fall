@@ -38,17 +38,17 @@
       "use strict";
 
       var backgroundMusic0 = new Howl({
-        src: ['sounds/BALL FALL jingle flat 1.mp3'],
+        src: ["sounds/BALL FALL jingle flat 1.mp3"],
         autoPlay: true,
         loop: false,
         onend: () => {
           console.log("finished 1");
         },
       });
-      backgroundMusic0.volume(.1)
+      backgroundMusic0.volume(0.1);
 
       var howlSound0 = new Howl({
-        src: ['sounds/Sound FX/BALL FALL fx a1.mp3'],
+        src: ["sounds/Sound FX/BALL FALL fx a1.mp3"],
         onstart: () => {
           console.log("started 0");
         },
@@ -58,7 +58,7 @@
       });
 
       var howlSound1 = new Howl({
-        src: ['sounds/Sound FX/BALL FALL fx a2.mp3'],
+        src: ["sounds/Sound FX/BALL FALL fx a2.mp3"],
         onstart: () => {
           console.log("started 1");
         },
@@ -68,7 +68,7 @@
       });
 
       var howlSound2 = new Howl({
-        src: ['sounds/Sound FX/BALL FALL fx a3.mp3'],
+        src: ["sounds/Sound FX/BALL FALL fx a3.mp3"],
         onstart: () => {
           console.log("started 2");
         },
@@ -78,7 +78,7 @@
       });
 
       var howlSound3 = new Howl({
-        src: ['sounds/Sound FX/BALL FALL fx a4.mp3'],
+        src: ["sounds/Sound FX/BALL FALL fx a4.mp3"],
         onstart: () => {
           console.log("started 3");
         },
@@ -88,7 +88,7 @@
       });
 
       var howlSound4 = new Howl({
-        src: ['sounds/Sound FX/BALL FALL fx a5.mp3'],
+        src: ["sounds/Sound FX/BALL FALL fx a5.mp3"],
         onstart: () => {
           console.log("started 4");
         },
@@ -98,7 +98,7 @@
       });
 
       var howlSound5 = new Howl({
-        src: ['sounds/Sound FX/BALL FALL fx a6.mp3'],
+        src: ["sounds/Sound FX/BALL FALL fx a6.mp3"],
         onstart: () => {
           console.log("started 5");
         },
@@ -108,7 +108,7 @@
       });
 
       var howlSound6 = new Howl({
-        src: ['sounds/Sound FX/BALL FALL fx a7.mp3'],
+        src: ["sounds/Sound FX/BALL FALL fx a7.mp3"],
         onstart: () => {
           console.log("started 6");
         },
@@ -118,7 +118,7 @@
       });
 
       var howlSound7 = new Howl({
-        src: ['sounds/Sound FX/BALL FALL fx a8.mp3'],
+        src: ["sounds/Sound FX/BALL FALL fx a8.mp3"],
         onstart: () => {
           console.log("started 7");
         },
@@ -139,7 +139,7 @@
         new THREE.Color(0x159294),
       ];
 
-      let adjustCamera = 20
+      let adjustCamera = 20;
 
       const getRandomColor = () => {
         return basicColors[Math.floor(Math.random() * basicColors.length)];
@@ -210,8 +210,8 @@
           1,
           1000
         );
-        
-        adjustCamera = 20
+
+        adjustCamera = 20;
         camera.position.set(0, 10, 10);
         // camera.lookAt(new THREE.Vector3(0, adjustCamera, 0));
         camera.lookAt(new THREE.Vector3(0, 10, 0));
@@ -221,12 +221,11 @@
         scene.add(camera);
 
         // const cameraPositionTimer = new easytimer.Timer()
-        
+
         // cameraPositionTimer.start({countdown: true, startValues: {seconds: 1}})
         // setTimeout(() => {
         //   console.log(cameraPositionTimer.getTotalTimeValues().seconds, cameraPositionTimer.getTotalTimeValues().seconds)
         // }, 5000)
-
 
         // Light
         light = new THREE.SpotLight(0xffffff);
@@ -288,57 +287,57 @@
 
         loader = new THREE.TextureLoader();
 
-        let level = 5;
+        let level = 25;
         window.appConfig.level = level;
         let features = [
           [
-            { appearAtLevel: 25 },
+            { appearAtLevel: 16, type: "tetrahedron" },
             { appearAtLevel: 2, type: "cone" },
-            { appearAtLevel: 25 },
+            { appearAtLevel: 11, type: "disc" },
             { appearAtLevel: 1, type: "ramp" },
-            { appearAtLevel: 25 },
+            { appearAtLevel: 21, type: "torus" },
           ],
           [
-            { appearAtLevel: 25 },
-            { appearAtLevel: 25 },
+            { appearAtLevel: 22, type: "torus" },
+            { appearAtLevel: 6, type: "icosahedron" },
             { appearAtLevel: 1, type: "ramp" },
-            { appearAtLevel: 25 },
-            { appearAtLevel: 25 },
+            { appearAtLevel: 12, type: "disc" },
+            { appearAtLevel: 18, type: "tetrahedron" },
           ],
           [
-            { appearAtLevel: 25 },
+            { appearAtLevel: 10, type: "icosahedron" },
             { appearAtLevel: 1, type: "ramp" },
-            { appearAtLevel: 25 },
+            { appearAtLevel: 23, type: "torus" },
             { appearAtLevel: 3, type: "cone" },
-            { appearAtLevel: 25 },
+            { appearAtLevel: 14, type: "disc" },
           ],
           [
-            { appearAtLevel: 25 },
-            { appearAtLevel: 25 },
+            { appearAtLevel: 20, type: "cone" },
+            { appearAtLevel: 19, type: "tetrahedron" },
             { appearAtLevel: 1, type: "ramp" },
-            { appearAtLevel: 25 },
-            { appearAtLevel: 25 },
+            { appearAtLevel: 7, type: "icosahedron" },
+            { appearAtLevel: 13, type: "disc" },
           ],
           [
-            { appearAtLevel: 25 },
+            { appearAtLevel: 18, type: "tetrahedron" },
             { appearAtLevel: 5, type: "cone" },
-            { appearAtLevel: 25 },
+            { appearAtLevel: 9, type: "icosahedron" },
             { appearAtLevel: 1, type: "ramp" },
-            { appearAtLevel: 25 },
+            { appearAtLevel: 24, type: "torus" },
           ],
           [
-            { appearAtLevel: 25 },
-            { appearAtLevel: 25 },
+            { appearAtLevel: 20, type: "tetrahedron" },
+            { appearAtLevel: 8, type: "icosahedron" },
             { appearAtLevel: 1, type: "ramp" },
-            { appearAtLevel: 25 },
-            { appearAtLevel: 25 },
+            { appearAtLevel: 15, type: "disc" },
+            { appearAtLevel: 25, type: "ramp" },
           ],
           [
-            { appearAtLevel: 25 },
+            { appearAtLevel: 14, type: "disc" },
             { appearAtLevel: 1, type: "ramp" },
-            { appearAtLevel: 25 },
+            { appearAtLevel: 10, type: "icosahedron" },
             { appearAtLevel: 4, type: "cone" },
-            { appearAtLevel: 25 },
+            { appearAtLevel: 17, type: "tetrahedron" },
           ],
           [
             { appearAtLevel: 9999, type: "plinko" },
@@ -350,18 +349,25 @@
         ];
         window.appConfig.features = features;
         features.forEach((row, rowIndex) => {
+          const rowYLanes = [16, 8, 0, -8, -16];
+
           row.forEach((zone, zoneIndex) => {
             // console.log(zone);
             const xPercent = zoneIndex / row.length;
             const yPercent = rowIndex / features.length;
             const xPosition = xPercent * 25 - 12.5;
-            const yPosition = -(yPercent * 375);
+            const yLaneModIndex = Math.floor(Math.random() * rowYLanes.length);
+            const yLaneMod = rowYLanes[yLaneModIndex];
+            rowYLanes.splice(yLaneModIndex, 1);
+            const yPosition =
+              rowIndex !== 7 ? -(yPercent * 375) + yLaneMod : -(yPercent * 375);
             // console.log("xPercent", xPercent);
             // console.log("yPercent", yPercent);
             // console.log("xPosition", xPosition);
             // console.log("yPosition", yPosition);
             // if (zone) {
             //   if (zone) {
+
             if (zone.appearAtLevel <= level) {
               if (zone.type === "ramp") {
                 const obj = new Physijs.BoxMesh(
@@ -383,7 +389,7 @@
                 // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
 
                 obj.position.x = xPosition + 2.5;
-                obj.position.y = yPosition - 12 + (Math.random() - 0.5) * 12;
+                obj.position.y = yPosition - 12;
                 obj.position.z = 0;
                 obj.__dirtyPosition = true;
                 obj.position.__dirtyPosition = true;
@@ -471,7 +477,7 @@
                 // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
 
                 obj.position.x = xPosition + 2.5;
-                obj.position.y = yPosition - 12 + (Math.random() - 0.5) * 24;
+                obj.position.y = yPosition - 12;
                 obj.position.z = 0;
                 obj.position.__dirtyPosition = true;
                 obj.rotation.__dirtyRotation = true;
@@ -485,6 +491,155 @@
                 obj.rotation.y = Math.random() * 2 * Math.PI;
                 obj.rotation.z = Math.random() * 2 * Math.PI;
                 obj.featureType = "CONE";
+                scene.add(obj);
+                // console.dir(JSON.stringify(obj.position));
+                console.dir(obj);
+                // debugger;
+              } else if (zone.type === "icosahedron") {
+                const obj = new Physijs.ConvexMesh(
+                  new THREE.IcosahedronGeometry(Math.random() * 3 + 1, 0),
+                  Physijs.createMaterial(
+                    new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+                    // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
+                    0.6, // medium friction
+                    0.3 // low restitution
+                  ),
+                  0 // mass
+                );
+                // console.dir(obj);
+                zone.obj = obj;
+                // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
+
+                obj.position.x = xPosition + 2.5;
+                obj.position.y = yPosition - 12;
+                obj.position.z = 0;
+                obj.position.__dirtyPosition = true;
+                obj.rotation.__dirtyRotation = true;
+                obj.__dirtyPosition = true;
+                obj.__dirtyRotation = true;
+                obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+                obj.castShadow = true;
+                obj.receiveShadow = true;
+                obj.rotation.x = Math.random() * 2 * Math.PI;
+                obj.rotation.y = Math.random() * 2 * Math.PI;
+                obj.rotation.z = Math.random() * 2 * Math.PI;
+                obj.featureType = "ICOSAHEDRON";
+                scene.add(obj);
+                // console.dir(JSON.stringify(obj.position));
+                console.dir(obj);
+                // debugger;
+              } else if (zone.type === "disc") {
+                const radius = Math.random() * 3 + 1;
+                const obj = new Physijs.CylinderMesh(
+                  new THREE.CylinderGeometry(
+                    radius,
+                    radius,
+                    Math.random() * 3,
+                    Math.ceil(Math.random() * 8)
+                  ),
+                  Physijs.createMaterial(
+                    new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+                    // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
+                    0.6, // medium friction
+                    0.3 // low restitution
+                  ),
+                  0 // mass
+                );
+                // console.dir(obj);
+                zone.obj = obj;
+                // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
+
+                obj.position.x = xPosition + 2.5;
+                obj.position.y = yPosition - 12;
+                obj.position.z = 0;
+                obj.position.__dirtyPosition = true;
+                obj.rotation.__dirtyRotation = true;
+                obj.__dirtyPosition = true;
+                obj.__dirtyRotation = true;
+                obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+                obj.castShadow = true;
+                obj.receiveShadow = true;
+                obj.rotation.x = Math.random() * 2 * Math.PI;
+                obj.rotation.y = Math.random() * 2 * Math.PI;
+                obj.rotation.z = Math.random() * 2 * Math.PI;
+                obj.featureType = "DISC";
+                scene.add(obj);
+                // console.dir(JSON.stringify(obj.position));
+                console.dir(obj);
+                // debugger;
+              } else if (zone.type === "tetrahedron") {
+                const radius = Math.random() * 3 + 1;
+                const obj = new Physijs.CylinderMesh(
+                  new THREE.TetrahedronGeometry(Math.random() * 3 + 2),
+                  Physijs.createMaterial(
+                    new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+                    // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
+                    0.6, // medium friction
+                    0.3 // low restitution
+                  ),
+                  0 // mass
+                );
+                // console.dir(obj);
+                zone.obj = obj;
+                // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
+
+                obj.position.x = xPosition + 2.5;
+                obj.position.y = yPosition - 12;
+                obj.position.z = 0;
+                obj.position.__dirtyPosition = true;
+                obj.rotation.__dirtyRotation = true;
+                obj.__dirtyPosition = true;
+                obj.__dirtyRotation = true;
+                obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+                obj.castShadow = true;
+                obj.receiveShadow = true;
+                obj.rotation.x = Math.random() * 2 * Math.PI;
+                obj.rotation.y = Math.random() * 2 * Math.PI;
+                obj.rotation.z = Math.random() * 2 * Math.PI;
+                obj.featureType = "TETRAHEDRON";
+                scene.add(obj);
+                // console.dir(JSON.stringify(obj.position));
+                console.dir(obj);
+                // debugger;
+              } else if (zone.type === "torus") {
+                const radiusMod = Math.random() * 3 + 1;
+                const obj = new Physijs.ConvexMesh(
+                  new THREE.TorusGeometry(
+                    Math.random() + 1,
+                    0.2,
+                    6,
+                    Math.random() > 0.5 ? 4 : 5
+                  ),
+                  Physijs.createMaterial(
+                    new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+                    // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
+                    0.6, // medium friction
+                    0.3 // low restitution
+                  ),
+                  0 // mass
+                );
+                // console.dir(obj);
+                zone.obj = obj;
+                // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
+
+                obj.position.x = xPosition + 2.5;
+                obj.position.y = yPosition - 12;
+                obj.position.z = 0;
+                obj.position.__dirtyPosition = true;
+                obj.rotation.__dirtyRotation = true;
+                obj.__dirtyPosition = true;
+                obj.__dirtyRotation = true;
+                obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+                obj.castShadow = true;
+                obj.receiveShadow = true;
+                obj.rotation.x = Math.random() * 2 * Math.PI;
+                obj.rotation.y = Math.random() * 2 * Math.PI;
+                obj.rotation.z = Math.random() * 2 * Math.PI;
+                obj.featureType = "TORUS";
                 scene.add(obj);
                 // console.dir(JSON.stringify(obj.position));
                 console.dir(obj);
@@ -512,11 +667,13 @@
         //   cameraPositionTimer.start({precision: 'secondTenths'})
         // }, 1000)
 
-        const timer = new easytimer.Timer();
+        const timer = new easytimer.Timer({ precision: "secondTenths" });
         timer.addEventListener("secondTenthsUpdated", function (e) {
           document.querySelector(
             "#timer"
-          ).innerText = `${timer.getTimeValues()}`;
+          ).innerText = `${timer
+            .getTimeValues()
+            .toString(["minutes", "seconds", "secondTenths"])}`;
         });
         const results = {};
         window.appConfig = {
@@ -618,13 +775,13 @@
                     `stage${window.appConfig.level}`
                   ].finalTime = window.appConfig.timer
                     .getTimeValues()
-                    .toString())
+                    .toString(["minutes", "seconds", "secondTenths"]))
                 : (window.appConfig.results[
                     `stage${window.appConfig.level}`
                   ] = {
                     finalTime: window.appConfig.timer
                       .getTimeValues()
-                      .toString(),
+                      .toString(["minutes", "seconds", "secondTenths"]),
                   });
               //now performance report and start level transition
               console.dir(window.appConfig.results);
@@ -635,6 +792,15 @@
               document.querySelector("#report").classList.remove("hide");
               document.querySelector("#pause-button").disabled = true;
             }
+            const suonousFeatureTypes = [
+              "BOX",
+              "ICOSAHEDRON",
+              "GLASS",
+              "STAGEFLOOR",
+              "TETRAHEDRON",
+              "CONE",
+              "DISC",
+            ];
             if (collided_with.featureType === "BOX") {
               switch (++this.collisions % 8) {
                 case 1:
@@ -838,38 +1004,44 @@
           window.appConfig.initialBallZoom = {
             started: 0,
             ended: 0,
-            z: scene.children.find((obj) => obj.gameName === "SPHERE0").position.z,
+            z: scene.children.find((obj) => obj.gameName === "SPHERE0").position
+              .z,
             percentComplete: 0,
             time: 2000,
             timeLeft: 1000,
             currentTime: 0,
-            finalCameraZPosition: 100
-          }
+            finalCameraZPosition: 100,
+          };
         };
       })();
 
-      let startTime = new Date().getTime()
+      let startTime = new Date().getTime();
 
       render = function () {
-        
-        if(window.appConfig.initialBallZoom.started === 0 && window.appConfig.initialBallZoom.ended === 0) {
-          window.appConfig.initialBallZoom.started = startTime
-          window.appConfig.initialBallZoom.currentTime = startTime
+        if (
+          window.appConfig.initialBallZoom.started === 0 &&
+          window.appConfig.initialBallZoom.ended === 0
+        ) {
+          window.appConfig.initialBallZoom.started = startTime;
+          window.appConfig.initialBallZoom.currentTime = startTime;
         }
 
-        if(window.appConfig.initialBallZoom.started !== 0 && window.appConfig.initialBallZoom.ended === 0) {
-          let currentTime = new Date().getTime()
-          window.appConfig.initialBallZoom.currentTime = currentTime
-          let percentComplete = ((currentTime - startTime) / window.appConfig.initialBallZoom.time)
-          window.appConfig.initialBallZoom.percentComplete = percentComplete
-          console.log('time left: ' + (currentTime - startTime))
-          console.log('time left %: ' + percentComplete)
-          if(currentTime - startTime > window.appConfig.initialBallZoom.time) {
-            window.appConfig.initialBallZoom.ended = new Date().getTime()
-            console.log(appConfig.initialBallZoom)
+        if (
+          window.appConfig.initialBallZoom.started !== 0 &&
+          window.appConfig.initialBallZoom.ended === 0
+        ) {
+          let currentTime = new Date().getTime();
+          window.appConfig.initialBallZoom.currentTime = currentTime;
+          let percentComplete =
+            (currentTime - startTime) / window.appConfig.initialBallZoom.time;
+          window.appConfig.initialBallZoom.percentComplete = percentComplete;
+          console.log("time left: " + (currentTime - startTime));
+          console.log("time left %: " + percentComplete);
+          if (currentTime - startTime > window.appConfig.initialBallZoom.time) {
+            window.appConfig.initialBallZoom.ended = new Date().getTime();
+            console.log(appConfig.initialBallZoom);
           }
         }
-
 
         const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0");
 
@@ -934,9 +1106,10 @@
             "%)";
         }
         // if (distanceSphereToStageFloor > 50) {
-          // camera.position.y = sphere.position.y + adjustCamera;
-          camera.position.y = sphere.position.y;
-          camera.position.z = 10 + (90 * window.appConfig.initialBallZoom.percentComplete)
+        // camera.position.y = sphere.position.y + adjustCamera;
+        camera.position.y = sphere.position.y;
+        camera.position.z =
+          10 + 90 * window.appConfig.initialBallZoom.percentComplete;
         // }
 
         const timerElement = document.querySelector("#timer");
