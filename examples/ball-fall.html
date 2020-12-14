@@ -348,6 +348,15 @@
           ],
         ];
         window.appConfig.features = features;
+        const featureTypes = {
+          ramp: [],
+          cone: [],
+          icosahedron: [],
+          tetrahedron: [],
+          torus: [],
+          disc: [],
+        };
+        window.appConfig.featureTypes = featureTypes;
         features.forEach((row, rowIndex) => {
           const rowYLanes = [16, 8, 0, -8, -16];
 
@@ -645,6 +654,9 @@
                 console.dir(obj);
                 // debugger;
               }
+              zone.obj && Object.keys(featureTypes).indexOf(zone.type) > -1
+                ? featureTypes[zone.type].push(zone.obj)
+                : null;
             }
           });
         });
@@ -993,6 +1005,14 @@
           glassMesh3.position.y = -140;
           stageFloor.position.y = -327;
           stageFloor.rotation.x = Math.PI * 0.125;
+          glassMesh0.__dirtyPosition = true;
+          glassMesh0.__dirtyRotation = true;
+          glassMesh1.__dirtyPosition = true;
+          glassMesh1.__dirtyRotation = true;
+          glassMesh2.__dirtyPosition = true;
+          glassMesh2.__dirtyRotation = true;
+          glassMesh3.__dirtyPosition = true;
+          glassMesh3.__dirtyRotation = true;
 
           scene.add(glassMesh0);
           scene.add(glassMesh1);
@@ -1114,22 +1134,17 @@
 
         const timerElement = document.querySelector("#timer");
 
-        // window.appConfig.features.forEach((row, rowIndex) => {
-        //   row.forEach((zone, zoneIndex) => {
-        //     if (zone.obj) {
-        //       if (zone.obj.featureType === "CONE") {
-        //         zone.obj.rotation.x += 0.01;
-        //         // zone.obj.quaternion.setFromEuler(
-        //         //   new THREE.Euler(
-        //         //     zone.obj.position.x,
-        //         //     zone.obj.position.y,
-        //         //     zone.obj.position.z + 0.01,
-        //         //     "XYZ"
-        //         //   )
-        //         // );
-        //       }
-        //     }
-        //   });
+        // window.appConfig.featureTypes.cone.forEach((feature, featureIndex) => {
+        //   const newRotation = (feature.rotation.x + 0.001) % 360;
+        //   feature.quaternion.setFromEuler(
+        //     new THREE.Euler(
+        //       newRotation,
+        //       feature.position.y,
+        //       feature.position.z,
+        //       "XYZ"
+        //     )
+        //   );
+        //   feature.__dirtyRotation = true;
         // });
 
         requestAnimationFrame(render);
