@@ -706,19 +706,21 @@
         };
 
         document.addEventListener("touchstart", (e) => {
-          window.appConfig.touchEnd = false;
-          window.appConfig.touchStart = true;
-          window.appConfig.currentX = e.touches[0].clientX;
-          window.appConfig.currentY = e.touches[0].clientY;
+          if(!window.appConfig.stageResultsBallZoom.userHasEnded) {
+            window.appConfig.touchEnd = false;
+            window.appConfig.touchStart = true;
+            window.appConfig.currentX = e.touches[0].clientX;
+            window.appConfig.currentY = e.touches[0].clientY;
 
-          window.appConfig.prevX = e.touches[0].clientX;
-          window.appConfig.prevY = e.touches[0].clientY;
-          window.appConfig.diffX =
-            window.appConfig.currentX - window.appConfig.prevX;
-          window.appConfig.diffY =
-            window.appConfig.currentY - window.appConfig.prevY;
-          console.log("TOUCHSTART", e);
-          console.log("APPCONFIG", window.appConfig);
+            window.appConfig.prevX = e.touches[0].clientX;
+            window.appConfig.prevY = e.touches[0].clientY;
+            window.appConfig.diffX =
+              window.appConfig.currentX - window.appConfig.prevX;
+            window.appConfig.diffY =
+              window.appConfig.currentY - window.appConfig.prevY;
+            console.log("TOUCHSTART", e);
+            console.log("APPCONFIG", window.appConfig);
+          }
         });
         // document.addEventListener('mousemove', (e) => {
         // 	console.log('MOUSEMOVE', e.clientX, e.clientY)
@@ -726,34 +728,38 @@
         document.body.addEventListener(
           "touchmove",
           (e) => {
-            window.appConfig.prevX = window.appConfig.currentX;
-            window.appConfig.prevY = window.appConfig.currentY;
-            window.appConfig.currentX = e.touches[0].clientX;
-            window.appConfig.currentY = e.touches[0].clientY;
-            window.appConfig.diffX =
-              e.touches[0].clientX - window.appConfig.prevX;
-            window.appConfig.diffY =
-              e.touches[0].clientY - window.appConfig.prevY;
-            console.log(
-              "TOUCHMOVE",
-              e.touches[0].clientX,
-              e.touches[0].clientY
-            );
-            console.log("APPCONFIG", window.appConfig);
-            console.log(window.appConfig.diffX, window.appConfig.diffY);
-            e.preventDefault();
+            if(!window.appConfig.stageResultsBallZoom.userHasEnded) {
+              window.appConfig.prevX = window.appConfig.currentX;
+              window.appConfig.prevY = window.appConfig.currentY;
+              window.appConfig.currentX = e.touches[0].clientX;
+              window.appConfig.currentY = e.touches[0].clientY;
+              window.appConfig.diffX =
+                e.touches[0].clientX - window.appConfig.prevX;
+              window.appConfig.diffY =
+                e.touches[0].clientY - window.appConfig.prevY;
+              console.log(
+                "TOUCHMOVE",
+                e.touches[0].clientX,
+                e.touches[0].clientY
+              );
+              console.log("APPCONFIG", window.appConfig);
+              console.log(window.appConfig.diffX, window.appConfig.diffY);
+              e.preventDefault();
+            }
           },
           true
         );
         document.addEventListener("touchend", (e) => {
-          window.appConfig.touchEnd = true;
-          window.appConfig.touchStart = false;
-          window.appConfig.currentX = 0;
-          window.appConfig.currentY = 0;
-          window.appConfig.diffX = 0;
-          window.appConfig.diffY = 0;
-          console.log("TOUCHEND", e);
-          console.log("APPCONFIG", window.appConfig);
+          if(!window.appConfig.stageResultsBallZoom.userHasEnded) {
+            window.appConfig.touchEnd = true;
+            window.appConfig.touchStart = false;
+            window.appConfig.currentX = 0;
+            window.appConfig.currentY = 0;
+            window.appConfig.diffX = 0;
+            window.appConfig.diffY = 0;
+            console.log("TOUCHEND", e);
+            console.log("APPCONFIG", window.appConfig);
+          }
         });
         document.addEventListener("click", (e) => {
           e.preventDefault();
@@ -768,6 +774,8 @@
           );
           console.log("APPCONFIG", window.appConfig);
         });
+
+        document.querySelector('#curtain').classList.add('opacity-0')
       };
 
       spawnBox = (function () {
@@ -781,6 +789,7 @@
             console.log("collision");
             console.log("collided_with", collided_with);
             if (collided_with.featureType === "STAGEFLOOR") {
+              window.appConfig.stageResultsBallZoom.userHasEnded = true
               window.appConfig.timer.pause();
               window.appConfig.results[`stage${window.appConfig.level}`]
                 ? (window.appConfig.results[
@@ -797,7 +806,7 @@
                   });
               //now performance report and start level transition
               console.dir(window.appConfig.results);
-              document.querySelector("#report").innerText =
+              document.querySelector("#report #time").innerText =
                 window.appConfig.results[
                   `stage${window.appConfig.level}`
                 ].finalTime;
@@ -1021,45 +1030,118 @@
           scene.add(stageFloor);
           scene.add(catchWall);
 
-          window.appConfig.initialBallZoom = {
-            started: 0,
-            ended: 0,
-            z: scene.children.find((obj) => obj.gameName === "SPHERE0").position
-              .z,
-            percentComplete: 0,
-            time: 2000,
-            timeLeft: 1000,
-            currentTime: 0,
-            finalCameraZPosition: 100,
-          };
+          window.appConfig.initialBallZoomReset = () => {
+            window.appConfig.initialBallZoom = {
+              userHasClickedStart: false,
+              started: 0,
+              ended: 0,
+              z: scene.children.find((obj) => obj.gameName === "SPHERE0").position.z,
+              percentComplete: 0,
+              time: 2000,
+              timeLeft: 1000,
+              currentTime: 0
+            }            
+          }
+
+          window.appConfig.stageResultsBallZoomReset = () => {
+            window.appConfig.stageResultsBallZoom = {
+              userHasEnded: false,
+              started: 0,
+              ended: 0,
+              z: scene.children.find((obj) => obj.gameName === "SPHERE0").position.z,
+              percentComplete: 0,
+              time: 2000,
+              timeLeft: 1000,
+              currentTime: 0
+            }
+          }          
+
+          window.appConfig.stageResetReset = () => {
+            window.appConfig.stageReset = {
+              userHasEndedReport: false,
+              started: 0,
+              ended: 0,
+              z: scene.children.find((obj) => obj.gameName === "SPHERE0").position.z,
+              percentComplete: 0,
+              time: 2000,
+              timeLeft: 1000,
+              currentTime: 0
+            }
+          }
+
+          window.appConfig.initialBallZoomReset()
+          window.appConfig.stageResultsBallZoomReset()
+          window.appConfig.stageResetReset()
+
         };
       })();
 
-      let startTime = new Date().getTime();
+      let appStartTime = new Date().getTime()
+      let initialBallZoomTime = 0
 
       render = function () {
-        if (
-          window.appConfig.initialBallZoom.started === 0 &&
-          window.appConfig.initialBallZoom.ended === 0
-        ) {
-          window.appConfig.initialBallZoom.started = startTime;
-          window.appConfig.initialBallZoom.currentTime = startTime;
+
+        if(window.appConfig.stageReset.userHasEndedReport && window.appConfig.stageReset.started === 0 && window.appConfig.stageReset.ended === 0) {
+          window.appConfig.stageReset.started = new Date().getTime()
+          window.appConfig.stageReset.currentTime = new Date().getTime()
         }
 
-        if (
-          window.appConfig.initialBallZoom.started !== 0 &&
-          window.appConfig.initialBallZoom.ended === 0
-        ) {
-          let currentTime = new Date().getTime();
-          window.appConfig.initialBallZoom.currentTime = currentTime;
-          let percentComplete =
-            (currentTime - startTime) / window.appConfig.initialBallZoom.time;
-          window.appConfig.initialBallZoom.percentComplete = percentComplete;
-          console.log("time left: " + (currentTime - startTime));
-          console.log("time left %: " + percentComplete);
-          if (currentTime - startTime > window.appConfig.initialBallZoom.time) {
-            window.appConfig.initialBallZoom.ended = new Date().getTime();
-            console.log(appConfig.initialBallZoom);
+        if(window.appConfig.stageReset.started !== 0 && window.appConfig.stageReset.ended === 0) {
+          let currentTime = new Date().getTime()
+          window.appConfig.stageReset.currentTime = currentTime
+          let percentComplete = ((currentTime - window.appConfig.stageReset.started) / window.appConfig.stageReset.time)
+          window.appConfig.stageReset.percentComplete = percentComplete
+          console.log('time left: ' + (currentTime - window.appConfig.stageReset.started))
+          console.log('time left %: ' + percentComplete)
+          let mesh = scene.children.find((obj) => obj.gameName === "SPHERE0")
+          if(currentTime - window.appConfig.stageReset.started > window.appConfig.stageReset.time) {
+            window.appConfig.stageReset.ended = new Date().getTime()
+            mesh.position.set(0,0,0)
+            mesh.__dirtyPosition = true
+            camera.position.set(0, 10, 10);
+            camera.lookAt(new THREE.Vector3(0, 10, 0));
+            document.querySelector("#start-button").classList.remove("hide");
+            document.querySelector("#report").classList.add("hide");
+            window.appConfig.start = false
+            window.appConfig.stageResultsBallZoomReset() 
+            window.appConfig.initialBallZoomReset()
+            window.appConfig.stageResetReset()
+          }
+        }
+
+        if(window.appConfig.stageResultsBallZoom.userHasEnded && window.appConfig.stageResultsBallZoom.started === 0 && window.appConfig.stageResultsBallZoom.ended === 0) {
+          window.appConfig.stageResultsBallZoom.started = new Date().getTime()
+          window.appConfig.stageResultsBallZoom.currentTime = new Date().getTime()
+        }
+
+        if(window.appConfig.stageResultsBallZoom.started !== 0 && window.appConfig.stageResultsBallZoom.ended === 0) {
+          let currentTime = new Date().getTime()
+          window.appConfig.stageResultsBallZoom.currentTime = currentTime
+          let percentComplete = ((currentTime - window.appConfig.stageResultsBallZoom.started) / window.appConfig.stageResultsBallZoom.time)
+          window.appConfig.stageResultsBallZoom.percentComplete = percentComplete
+          console.log('time left: ' + (currentTime - window.appConfig.stageResultsBallZoom.started))
+          console.log('time left %: ' + percentComplete)
+          if(currentTime - window.appConfig.stageResultsBallZoom.started > window.appConfig.stageResultsBallZoom.time) {
+            window.appConfig.stageResultsBallZoom.ended = new Date().getTime()
+            console.log(appConfig.stageResultsBallZoom)
+          }
+        }
+
+        if(window.appConfig.initialBallZoom.userHasClickedStart && window.appConfig.initialBallZoom.started === 0 && window.appConfig.initialBallZoom.ended === 0) {
+          window.appConfig.initialBallZoom.started = new Date().getTime()
+          window.appConfig.initialBallZoom.currentTime = new Date().getTime()
+        }
+
+        if(window.appConfig.initialBallZoom.started !== 0 && window.appConfig.initialBallZoom.ended === 0) {
+          let currentTime = new Date().getTime()
+          window.appConfig.initialBallZoom.currentTime = currentTime
+          let percentComplete = ((currentTime - window.appConfig.initialBallZoom.started) / window.appConfig.initialBallZoom.time)
+          window.appConfig.initialBallZoom.percentComplete = percentComplete
+          console.log('time left: ' + (currentTime - window.appConfig.initialBallZoom.started))
+          console.log('time left %: ' + percentComplete)
+          if(currentTime - window.appConfig.initialBallZoom.started > window.appConfig.initialBallZoom.time) {
+            window.appConfig.initialBallZoom.ended = new Date().getTime()
+            console.log(appConfig.initialBallZoom)
           }
         }
 
@@ -1126,10 +1208,21 @@
             "%)";
         }
         // if (distanceSphereToStageFloor > 50) {
-        // camera.position.y = sphere.position.y + adjustCamera;
+          // camera.position.y = sphere.position.y + adjustCamera;
+        camera.position.x = sphere.position.x
         camera.position.y = sphere.position.y;
-        camera.position.z =
-          10 + 90 * window.appConfig.initialBallZoom.percentComplete;
+        // zoom into ball for reset
+        // (window.appConfig.stageResultsBallZoom.percentComplete * 93.75)
+        camera.position.z = (10 + (90 * window.appConfig.initialBallZoom.percentComplete)) - (window.appConfig.stageResultsBallZoom.percentComplete * 90) - (window.appConfig.stageReset.percentComplete * 5)
+
+        if(window.appConfig.stageResultsBallZoom.userHasEnded) {
+          scene.children.find(
+            (obj) => obj.gameName === "SPHERE0"
+          ).setLinearVelocity(new THREE.Vector3(0, 0, 0))
+          scene.children.find(
+            (obj) => obj.gameName === "SPHERE0"
+          ).setAngularVelocity(new THREE.Vector3(0, 0, 0))
+        }
         // }
 
         const timerElement = document.querySelector("#timer");
@@ -1150,13 +1243,16 @@
         requestAnimationFrame(render);
         renderer.render(scene, camera);
         render_stats.update();
+        // toggleCurtain()
       };
 
       const start = () => {
         window.appConfig.start = true;
         document.querySelector("#start-button").classList.add("hide");
         document.querySelector("#pause-button").disabled = false;
+        window.appConfig.initialBallZoom.userHasClickedStart = true
         window.appConfig.timer.start();
+        document.querySelector("#pause-button").disabled = false;
       };
 
       const pause = () => {
@@ -1169,6 +1265,21 @@
         } else {
           window.appConfig.timer.start();
         }
+      };
+
+      const reset = () => {
+        window.appConfig.stageReset.userHasEndedReport = true
+        document.querySelector('#curtain').classList.remove('opacity-0')
+        document.querySelector("#report").classList.add("hide");
+        setTimeout(() => {
+          console.log('fired')
+          document.querySelector('#curtain').classList.add('opacity-0')
+        }, 2000)
+        // debugger
+        // document.querySelector('#curtain').style.opacity = 1
+        // window.appConfig.initialBallZoom.userHasClickedStart = true
+        window.appConfig.timer.reset();
+        window.appConfig.timer.pause();
       };
 
       window.onload = initScene;
@@ -1215,14 +1326,40 @@
         border-radius: 5px;
         opacity: 0.75;
       }
+
+      #curtain {
+        transition: all 2000ms;
+        pointer-events: none;
+        background-color: white;
+        z-index: 1;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 1;
+      }
+
+      .opacity-0 {
+        opacity: 0 !important;
+      }
+
+      .opacity-1 {
+        opacity: 1 !important;
+      }
+
     </style>
   </head>
 
   <body>
     <div id="viewport"></div>
     <div id="timer"></div>
-    <div id="report" class="hide"></div>
+    <div id="report" class="hide">
+      <div id="time"></div>
+      <button id="reset-button" onClick="reset()">Reset</button>
+    </div>
     <button id="start-button" onClick="start()">Start</button>
     <button id="pause-button" disabled onClick="pause()">Pause</button>
+    <div id="curtain"></div>
   </body>
 </html>
