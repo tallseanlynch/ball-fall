@@ -814,13 +814,15 @@
             const suonousFeatureTypes = [
               "BOX",
               "ICOSAHEDRON",
-              "GLASS",
-              "STAGEFLOOR",
+              "SIDEGLASS",
+              // "STAGEFLOOR",
               "TETRAHEDRON",
               "CONE",
               "DISC",
+              "TORUS",
+              "PLINKO",
             ];
-            if (collided_with.featureType === "BOX") {
+            if (suonousFeatureTypes.indexOf(collided_with.featureType) > -1) {
               switch (++this.collisions % 8) {
                 case 1:
                   howlSound0.play();
