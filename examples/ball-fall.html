@@ -287,8 +287,12 @@
 
         loader = new THREE.TextureLoader();
 
-        let level = 17;
+        let level = 25;
         window.appConfig.level = level;
+        let score = {
+          coins: 0,
+        };
+        window.appConfig.score = score;
         let features = [
           [
             { appearAtLevel: 16, type: "tetrahedron" },
@@ -357,308 +361,363 @@
           disc: [],
         };
         window.appConfig.featureTypes = featureTypes;
-        features.forEach((row, rowIndex) => {
-          const rowYLanes = [16, 8, 0, -8, -16];
+        const defaultYLanes = [16, 8, 0, -8, -16]; // to copy, splice, and then populate openSpots
+        const openSpots = [];
+        window.appConfig.openSpots = openSpots;
+        const populateFeatures = () => {
+          features.forEach((row, rowIndex) => {
+            const rowYLanes = [16, 8, 0, -8, -16];
 
-          row.forEach((zone, zoneIndex) => {
-            // console.log(zone);
-            const xPercent = zoneIndex / row.length;
-            const yPercent = rowIndex / features.length;
-            const xPosition = xPercent * 25 - 12.5;
-            const yLaneModIndex = Math.floor(Math.random() * rowYLanes.length);
-            const yLaneMod = rowYLanes[yLaneModIndex];
-            rowYLanes.splice(yLaneModIndex, 1);
-            const yPosition =
-              rowIndex !== 7 ? -(yPercent * 375) + yLaneMod : -(yPercent * 375);
-            // console.log("xPercent", xPercent);
-            // console.log("yPercent", yPercent);
-            // console.log("xPosition", xPosition);
-            // console.log("yPosition", yPosition);
-            // if (zone) {
-            //   if (zone) {
+            row.forEach((zone, zoneIndex) => {
+              // console.log(zone);
+              const xPercent = zoneIndex / row.length;
+              const yPercent = rowIndex / features.length;
+              const xPosition = xPercent * 25 - 12.5;
+              const yLaneModIndex = Math.floor(
+                Math.random() * rowYLanes.length
+              );
+              const yLaneMod = rowYLanes[yLaneModIndex];
+              rowYLanes.splice(yLaneModIndex, 1);
+              const yPosition =
+                rowIndex !== 7
+                  ? -(yPercent * 375) + yLaneMod
+                  : -(yPercent * 375);
 
-            if (zone.appearAtLevel <= level) {
-              if (zone.type === "ramp") {
-                const obj = new Physijs.BoxMesh(
-                  new THREE.BoxGeometry(
-                    Math.random() * 12 + 3,
-                    Math.random() * 0.5 + 0.9,
-                    Math.random() * 0.5 + 0.9
-                  ),
-                  Physijs.createMaterial(
-                    new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-                    // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
-                    0.6, // medium friction
-                    0.3 // low restitution
-                  ),
-                  0 // mass
-                );
-                // console.dir(obj);
-                zone.obj = obj;
-                // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
-
-                obj.position.x = xPosition + 2.5;
-                obj.position.y = yPosition - 12;
-                obj.position.z = 0;
-                obj.__dirtyPosition = true;
-                obj.position.__dirtyPosition = true;
-                obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-                obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-                obj.castShadow = true;
-                obj.receiveShadow = true;
-                // obj.rotation.x = Math.random() * 2 * Math.PI;
-                // obj.rotation.y = 0.3 * Math.PI;
-                obj.rotation.z = Math.random() * 2 * Math.PI;
-                obj.featureType = "BOX";
-                scene.add(obj);
-                // console.dir(JSON.stringify(obj.position));
-              } else if (zone.type === "plinko") {
-                const plinkoColor = getRandomColor();
-                const obj = new Physijs.BoxMesh(
-                  new THREE.BoxGeometry(1, 10, 3),
-                  Physijs.createMaterial(
-                    new THREE.MeshPhongMaterial({ color: plinkoColor }),
-                    // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
-                    0.6, // medium friction
-                    0.3 // low restitution
-                  ),
-                  0 // mass
-                );
-                // console.dir(obj);
-                zone.obj = obj;
-                // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
-
-                obj.position.x = xPosition;
-                obj.position.y = yPosition + 10;
-                obj.position.z = 0;
-                obj.__dirtyPosition = true;
-                obj.position.__dirtyPosition = true;
-                obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-                obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-                obj.castShadow = true;
-                obj.receiveShadow = true;
-                // obj.rotation.x = Math.random() * 2 * Math.PI;
-                // obj.rotation.y = 0.3 * Math.PI;
-                // obj.rotation.z = Math.random() * 2 * Math.PI;
-                obj.featureType = "PLINKO";
-                scene.add(obj);
-                const wall = new Physijs.BoxMesh(
-                  new THREE.BoxGeometry(1, 3, 10),
-                  Physijs.createMaterial(
-                    new THREE.MeshPhongMaterial({ color: plinkoColor }),
-                    // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
-                    0.6, // medium friction
-                    0.3 // low restitution
-                  ),
-                  0 // mass
-                );
-                // console.dir(obj);
-                zone.wall = wall;
-                // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
-
-                wall.position.x = xPosition;
-                wall.position.y = yPosition + 3.5;
-                wall.position.z = 3.5;
-                wall.position.__dirtyPosition = true;
-                wall.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-                wall.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-                wall.castShadow = true;
-                wall.receiveShadow = true;
-                // obj.rotation.x = Math.random() * 2 * Math.PI;
-                // obj.rotation.y = 0.3 * Math.PI;
-                // obj.rotation.z = Math.random() * 2 * Math.PI;
-                wall.featureType = "PLINKOWALL";
-                // console.dir(JSON.stringify(obj.position));
-                scene.add(wall);
-              } else if (zone.type === "cone") {
-                const obj = new Physijs.ConeMesh(
-                  new THREE.CylinderGeometry(0, 4.75, 3.75, 32),
-                  Physijs.createMaterial(
-                    new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-                    // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
-                    0.6, // medium friction
-                    0.3 // low restitution
-                  ),
-                  0 // mass
-                );
-                // console.dir(obj);
-                zone.obj = obj;
-                // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
-
-                obj.position.x = xPosition + 2.5;
-                obj.position.y = yPosition - 12;
-                obj.position.z = 0;
-                // obj.__dirtyPosition = true;
-                // obj.__dirtyRotation = true;
-                obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-                obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-                obj.castShadow = true;
-                obj.receiveShadow = true;
-                obj.rotation.x = Math.random() * 2 * Math.PI;
-                obj.rotation.y = Math.random() * 2 * Math.PI;
-                obj.rotation.z = Math.random() * 2 * Math.PI;
-                obj.featureType = "CONE";
-                scene.add(obj);
-                // console.dir(JSON.stringify(obj.position));
-                console.dir(obj);
-                // debugger;
-              } else if (zone.type === "icosahedron") {
-                const obj = new Physijs.ConvexMesh(
-                  new THREE.IcosahedronGeometry(Math.random() * 3 + 1, 0),
-                  Physijs.createMaterial(
-                    new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-                    // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
-                    0.6, // medium friction
-                    0.3 // low restitution
-                  ),
-                  0 // mass
-                );
-                // console.dir(obj);
-                zone.obj = obj;
-                // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
-
-                obj.position.x = xPosition + 2.5;
-                obj.position.y = yPosition - 12;
-                obj.position.z = 0;
-                obj.position.__dirtyPosition = true;
-                obj.rotation.__dirtyRotation = true;
-                obj.__dirtyPosition = true;
-                obj.__dirtyRotation = true;
-                obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-                obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-                obj.castShadow = true;
-                obj.receiveShadow = true;
-                obj.rotation.x = Math.random() * 2 * Math.PI;
-                obj.rotation.y = Math.random() * 2 * Math.PI;
-                obj.rotation.z = Math.random() * 2 * Math.PI;
-                obj.featureType = "ICOSAHEDRON";
-                scene.add(obj);
-                // console.dir(JSON.stringify(obj.position));
-                console.dir(obj);
-                // debugger;
-              } else if (zone.type === "disc") {
-                const radius = Math.random() * 3 + 1;
-                const obj = new Physijs.CylinderMesh(
-                  new THREE.CylinderGeometry(
-                    radius,
-                    radius,
-                    Math.random() * 3,
-                    Math.ceil(Math.random() * 16 + 2)
-                  ),
-                  Physijs.createMaterial(
-                    new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-                    // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
-                    0.6, // medium friction
-                    0.3 // low restitution
-                  ),
-                  0 // mass
-                );
-                // console.dir(obj);
-                zone.obj = obj;
-                // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
-
-                obj.position.x = xPosition + 2.5;
-                obj.position.y = yPosition - 12;
-                obj.position.z = 0;
-                obj.position.__dirtyPosition = true;
-                obj.rotation.__dirtyRotation = true;
-                obj.__dirtyPosition = true;
-                obj.__dirtyRotation = true;
-                obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-                obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-                obj.castShadow = true;
-                obj.receiveShadow = true;
-                obj.rotation.x = Math.random() * 2 * Math.PI;
-                obj.rotation.y = Math.random() * 2 * Math.PI;
-                obj.rotation.z = Math.random() * 2 * Math.PI;
-                obj.featureType = "DISC";
-                scene.add(obj);
-                // console.dir(JSON.stringify(obj.position));
-                console.dir(obj);
-                // debugger;
-              } else if (zone.type === "tetrahedron") {
-                const radius = Math.random() * 3 + 1;
-                const obj = new Physijs.CylinderMesh(
-                  new THREE.TetrahedronGeometry(Math.random() * 3 + 2),
-                  Physijs.createMaterial(
-                    new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-                    // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
-                    0.6, // medium friction
-                    0.3 // low restitution
-                  ),
-                  0 // mass
-                );
-                // console.dir(obj);
-                zone.obj = obj;
-                // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
-
-                obj.position.x = xPosition + 2.5;
-                obj.position.y = yPosition - 12;
-                obj.position.z = 0;
-                obj.position.__dirtyPosition = true;
-                obj.rotation.__dirtyRotation = true;
-                obj.__dirtyPosition = true;
-                obj.__dirtyRotation = true;
-                obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-                obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-                obj.castShadow = true;
-                obj.receiveShadow = true;
-                obj.rotation.x = Math.random() * 2 * Math.PI;
-                obj.rotation.y = Math.random() * 2 * Math.PI;
-                obj.rotation.z = Math.random() * 2 * Math.PI;
-                obj.featureType = "TETRAHEDRON";
-                scene.add(obj);
-                // console.dir(JSON.stringify(obj.position));
-                console.dir(obj);
-                // debugger;
-              } else if (zone.type === "torus") {
-                const radiusMod = Math.random() * 3 + 1;
-                const obj = new Physijs.ConvexMesh(
-                  new THREE.TorusGeometry(
-                    Math.random() + 1,
-                    0.2,
-                    6,
-                    Math.random() > 0.5 ? 4 : 5
-                  ),
-                  Physijs.createMaterial(
-                    new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-                    // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
-                    0.6, // medium friction
-                    0.3 // low restitution
-                  ),
-                  0 // mass
-                );
-                // console.dir(obj);
-                zone.obj = obj;
-                // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
-
-                obj.position.x = xPosition + 2.5;
-                obj.position.y = yPosition - 12;
-                obj.position.z = 0;
-                obj.position.__dirtyPosition = true;
-                obj.rotation.__dirtyRotation = true;
-                obj.__dirtyPosition = true;
-                obj.__dirtyRotation = true;
-                obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-                obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-                obj.castShadow = true;
-                obj.receiveShadow = true;
-                obj.rotation.x = Math.random() * 2 * Math.PI;
-                obj.rotation.y = Math.random() * 2 * Math.PI;
-                obj.rotation.z = Math.random() * 2 * Math.PI;
-                obj.featureType = "TORUS";
-                scene.add(obj);
-                // console.dir(JSON.stringify(obj.position));
-                console.dir(obj);
-                // debugger;
+              if (rowIndex !== 7) {
+                defaultYLanes.forEach((yLane, yLaneIndex) => {
+                  if (yLane !== yLaneMod) {
+                    const spot = {
+                      xPosition: xPosition,
+                      yPosition: -(yPercent * 375) + yLane,
+                    };
+                    openSpots.push(spot);
+                  }
+                });
               }
-              zone.obj && Object.keys(featureTypes).indexOf(zone.type) > -1
-                ? featureTypes[zone.type].push(zone.obj)
-                : null;
-            }
-          });
-        });
+              // console.log("xPercent", xPercent);
+              // console.log("yPercent", yPercent);
+              // console.log("xPosition", xPosition);
+              // console.log("yPosition", yPosition);
+              // if (zone) {
+              //   if (zone) {
 
+              if (zone.appearAtLevel <= level) {
+                if (zone.type === "ramp") {
+                  const obj = new Physijs.BoxMesh(
+                    new THREE.BoxGeometry(
+                      Math.random() * 12 + 3,
+                      Math.random() * 0.5 + 0.9,
+                      Math.random() * 0.5 + 0.9
+                    ),
+                    Physijs.createMaterial(
+                      new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+                      // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
+                      0.6, // medium friction
+                      0.3 // low restitution
+                    ),
+                    0 // mass
+                  );
+                  // console.dir(obj);
+                  zone.obj = obj;
+                  // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
+
+                  obj.position.x = xPosition + 2.5;
+                  obj.position.y = yPosition - 12;
+                  obj.position.z = 0;
+                  obj.__dirtyPosition = true;
+                  obj.position.__dirtyPosition = true;
+                  obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                  obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+                  obj.castShadow = true;
+                  obj.receiveShadow = true;
+                  // obj.rotation.x = Math.random() * 2 * Math.PI;
+                  // obj.rotation.y = 0.3 * Math.PI;
+                  obj.rotation.z = Math.random() * 2 * Math.PI;
+                  obj.featureType = "BOX";
+                  scene.add(obj);
+                  // console.dir(JSON.stringify(obj.position));
+                } else if (zone.type === "plinko") {
+                  const plinkoColor = getRandomColor();
+                  const obj = new Physijs.BoxMesh(
+                    new THREE.BoxGeometry(1, 10, 3),
+                    Physijs.createMaterial(
+                      new THREE.MeshPhongMaterial({ color: plinkoColor }),
+                      // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
+                      0.6, // medium friction
+                      0.3 // low restitution
+                    ),
+                    0 // mass
+                  );
+                  // console.dir(obj);
+                  zone.obj = obj;
+                  // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
+
+                  obj.position.x = xPosition;
+                  obj.position.y = yPosition + 10;
+                  obj.position.z = 0;
+                  obj.__dirtyPosition = true;
+                  obj.position.__dirtyPosition = true;
+                  obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                  obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+                  obj.castShadow = true;
+                  obj.receiveShadow = true;
+                  // obj.rotation.x = Math.random() * 2 * Math.PI;
+                  // obj.rotation.y = 0.3 * Math.PI;
+                  // obj.rotation.z = Math.random() * 2 * Math.PI;
+                  obj.featureType = "PLINKO";
+                  scene.add(obj);
+                  const wall = new Physijs.BoxMesh(
+                    new THREE.BoxGeometry(1, 3, 10),
+                    Physijs.createMaterial(
+                      new THREE.MeshPhongMaterial({ color: plinkoColor }),
+                      // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
+                      0.6, // medium friction
+                      0.3 // low restitution
+                    ),
+                    0 // mass
+                  );
+                  // console.dir(obj);
+                  zone.wall = wall;
+                  // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
+
+                  wall.position.x = xPosition;
+                  wall.position.y = yPosition + 3.5;
+                  wall.position.z = 3.5;
+                  wall.position.__dirtyPosition = true;
+                  wall.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                  wall.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+                  wall.castShadow = true;
+                  wall.receiveShadow = true;
+                  // obj.rotation.x = Math.random() * 2 * Math.PI;
+                  // obj.rotation.y = 0.3 * Math.PI;
+                  // obj.rotation.z = Math.random() * 2 * Math.PI;
+                  wall.featureType = "PLINKOWALL";
+                  // console.dir(JSON.stringify(obj.position));
+                  scene.add(wall);
+                } else if (zone.type === "cone") {
+                  const obj = new Physijs.ConeMesh(
+                    new THREE.CylinderGeometry(0, 4.75, 3.75, 32),
+                    Physijs.createMaterial(
+                      new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+                      // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
+                      0.6, // medium friction
+                      0.3 // low restitution
+                    ),
+                    0 // mass
+                  );
+                  // console.dir(obj);
+                  zone.obj = obj;
+                  // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
+
+                  obj.position.x = xPosition + 2.5;
+                  obj.position.y = yPosition - 12;
+                  obj.position.z = 0;
+                  // obj.__dirtyPosition = true;
+                  // obj.__dirtyRotation = true;
+                  obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                  obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+                  obj.castShadow = true;
+                  obj.receiveShadow = true;
+                  obj.rotation.x = Math.random() * 2 * Math.PI;
+                  obj.rotation.y = Math.random() * 2 * Math.PI;
+                  obj.rotation.z = Math.random() * 2 * Math.PI;
+                  obj.featureType = "CONE";
+                  scene.add(obj);
+                  // console.dir(JSON.stringify(obj.position));
+                  console.dir(obj);
+                  // debugger;
+                } else if (zone.type === "icosahedron") {
+                  const obj = new Physijs.ConvexMesh(
+                    new THREE.IcosahedronGeometry(Math.random() * 3 + 1, 0),
+                    Physijs.createMaterial(
+                      new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+                      // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
+                      0.6, // medium friction
+                      0.3 // low restitution
+                    ),
+                    0 // mass
+                  );
+                  // console.dir(obj);
+                  zone.obj = obj;
+                  // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
+
+                  obj.position.x = xPosition + 2.5;
+                  obj.position.y = yPosition - 12;
+                  obj.position.z = 0;
+                  obj.position.__dirtyPosition = true;
+                  obj.rotation.__dirtyRotation = true;
+                  obj.__dirtyPosition = true;
+                  obj.__dirtyRotation = true;
+                  obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                  obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+                  obj.castShadow = true;
+                  obj.receiveShadow = true;
+                  obj.rotation.x = Math.random() * 2 * Math.PI;
+                  obj.rotation.y = Math.random() * 2 * Math.PI;
+                  obj.rotation.z = Math.random() * 2 * Math.PI;
+                  obj.featureType = "ICOSAHEDRON";
+                  scene.add(obj);
+                  // console.dir(JSON.stringify(obj.position));
+                  console.dir(obj);
+                  // debugger;
+                } else if (zone.type === "disc") {
+                  const radius = Math.random() * 3 + 1;
+                  const obj = new Physijs.CylinderMesh(
+                    new THREE.CylinderGeometry(
+                      radius,
+                      radius,
+                      Math.random() * 3,
+                      Math.ceil(Math.random() * 16 + 2)
+                    ),
+                    Physijs.createMaterial(
+                      new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+                      // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
+                      0.6, // medium friction
+                      0.3 // low restitution
+                    ),
+                    0 // mass
+                  );
+                  // console.dir(obj);
+                  zone.obj = obj;
+                  // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
+
+                  obj.position.x = xPosition + 2.5;
+                  obj.position.y = yPosition - 12;
+                  obj.position.z = 0;
+                  obj.position.__dirtyPosition = true;
+                  obj.rotation.__dirtyRotation = true;
+                  obj.__dirtyPosition = true;
+                  obj.__dirtyRotation = true;
+                  obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                  obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+                  obj.castShadow = true;
+                  obj.receiveShadow = true;
+                  obj.rotation.x = Math.random() * 2 * Math.PI;
+                  obj.rotation.y = Math.random() * 2 * Math.PI;
+                  obj.rotation.z = Math.random() * 2 * Math.PI;
+                  obj.featureType = "DISC";
+                  scene.add(obj);
+                  // console.dir(JSON.stringify(obj.position));
+                  console.dir(obj);
+                  // debugger;
+                } else if (zone.type === "tetrahedron") {
+                  const radius = Math.random() * 3 + 1;
+                  const obj = new Physijs.CylinderMesh(
+                    new THREE.TetrahedronGeometry(Math.random() * 3 + 2),
+                    Physijs.createMaterial(
+                      new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+                      // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
+                      0.6, // medium friction
+                      0.3 // low restitution
+                    ),
+                    0 // mass
+                  );
+                  // console.dir(obj);
+                  zone.obj = obj;
+                  // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
+
+                  obj.position.x = xPosition + 2.5;
+                  obj.position.y = yPosition - 12;
+                  obj.position.z = 0;
+                  obj.position.__dirtyPosition = true;
+                  obj.rotation.__dirtyRotation = true;
+                  obj.__dirtyPosition = true;
+                  obj.__dirtyRotation = true;
+                  obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                  obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+                  obj.castShadow = true;
+                  obj.receiveShadow = true;
+                  obj.rotation.x = Math.random() * 2 * Math.PI;
+                  obj.rotation.y = Math.random() * 2 * Math.PI;
+                  obj.rotation.z = Math.random() * 2 * Math.PI;
+                  obj.featureType = "TETRAHEDRON";
+                  scene.add(obj);
+                  // console.dir(JSON.stringify(obj.position));
+                  console.dir(obj);
+                  // debugger;
+                } else if (zone.type === "torus") {
+                  const radiusMod = Math.random() * 3 + 1;
+                  const obj = new Physijs.ConvexMesh(
+                    new THREE.TorusGeometry(
+                      Math.random() + 1,
+                      0.2,
+                      6,
+                      Math.random() > 0.5 ? 4 : 5
+                    ),
+                    Physijs.createMaterial(
+                      new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+                      // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
+                      0.6, // medium friction
+                      0.3 // low restitution
+                    ),
+                    0 // mass
+                  );
+                  // console.dir(obj);
+                  zone.obj = obj;
+                  // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
+
+                  obj.position.x = xPosition + 2.5;
+                  obj.position.y = yPosition - 12;
+                  obj.position.z = 0;
+                  obj.position.__dirtyPosition = true;
+                  obj.rotation.__dirtyRotation = true;
+                  obj.__dirtyPosition = true;
+                  obj.__dirtyRotation = true;
+                  obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                  obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+                  obj.castShadow = true;
+                  obj.receiveShadow = true;
+                  obj.rotation.x = Math.random() * 2 * Math.PI;
+                  obj.rotation.y = Math.random() * 2 * Math.PI;
+                  obj.rotation.z = Math.random() * 2 * Math.PI;
+                  obj.featureType = "TORUS";
+                  scene.add(obj);
+                  // console.dir(JSON.stringify(obj.position));
+                  console.dir(obj);
+                  // debugger;
+                }
+                zone.obj && Object.keys(featureTypes).indexOf(zone.type) > -1
+                  ? featureTypes[zone.type].push(zone.obj)
+                  : null;
+              }
+            });
+          });
+        };
+
+        populateFeatures();
+        const coinSpriteMap = new THREE.TextureLoader().load(
+          "images/circle-16.png"
+        );
+        const coinSpriteMaterial = new THREE.SpriteMaterial({
+          map: coinSpriteMap,
+          color: 0xffffff,
+        });
+        const populateCoins = () => {
+          //first make one coin
+          //this is a THREE.Sprite
+          const baseSprite = new THREE.Sprite(coinSpriteMaterial);
+          for (let i = 0; i < 60; i++) {
+            const randomIndex = Math.floor(Math.random() * openSpots.length);
+
+            const sprite = baseSprite.clone();
+            sprite.position.set(
+              openSpots[randomIndex].xPosition + 2.5 + (Math.random() * 2 - 1),
+              openSpots[randomIndex].yPosition -
+                12.5 +
+                (Math.random() * 3 - 1.5),
+              0
+            );
+            openSpots.splice(randomIndex, 1);
+            sprite.featureType = "COIN";
+            scene.add(sprite);
+          }
+          // openSpots.forEach((spot) => {
+          //   const sprite = baseSprite.clone();
+          //   sprite.position.set(spot.xPosition + 2.5, spot.yPosition - 12.5, 0);
+          //   scene.add(sprite);
+          // });
+        };
+        populateCoins();
         spawnBox();
 
         requestAnimationFrame(render);
@@ -821,6 +880,7 @@
               "DISC",
               "TORUS",
               "PLINKO",
+              "COIN",
             ];
             if (suonousFeatureTypes.indexOf(collided_with.featureType) > -1) {
               switch (++this.collisions % 8) {
@@ -856,7 +916,11 @@
                   howlSound7.play();
                   break;
               }
-
+              if (collided_with.featureType === "COIN") {
+                debugger;
+                scene.remove(collided_with);
+                window.appConfig.score.coins++;
+              }
               console.log("AFTERPLAY");
             }
           },
