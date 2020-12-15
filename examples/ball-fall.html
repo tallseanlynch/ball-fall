@@ -364,6 +364,9 @@
         const defaultYLanes = [16, 8, 0, -8, -16]; // to copy, splice, and then populate openSpots
         const openSpots = [];
         window.appConfig.openSpots = openSpots;
+        const coins = [];
+        window.appConfig.coins = coins;
+
         const populateFeatures = () => {
           features.forEach((row, rowIndex) => {
             const rowYLanes = [16, 8, 0, -8, -16];
@@ -710,6 +713,7 @@
             openSpots.splice(randomIndex, 1);
             sprite.featureType = "COIN";
             scene.add(sprite);
+            coins.push(sprite);
           }
           // openSpots.forEach((spot) => {
           //   const sprite = baseSprite.clone();
@@ -915,11 +919,6 @@
                 case 8:
                   howlSound7.play();
                   break;
-              }
-              if (collided_with.featureType === "COIN") {
-                debugger;
-                scene.remove(collided_with);
-                window.appConfig.score.coins++;
               }
               console.log("AFTERPLAY");
             }
@@ -1363,7 +1362,6 @@
         }
         // }
 
-        const timerElement = document.querySelector("#timer");
         Object.keys(window.appConfig.featureTypes).forEach((key) => {
           window.appConfig.featureTypes[key].forEach(
             (feature, featureIndex) => {
@@ -1376,6 +1374,15 @@
               feature.__dirtyRotation = true;
             }
           );
+        });
+        window.appConfig.coins.forEach((coin, coinIndex) => {
+          if (
+            Math.abs(coin.position.x - sphere.position.x) < 1 &&
+            Math.abs(coin.position.y - sphere.position.y) < 1
+          ) {
+            scene.remove(coin);
+            window.appConfig.score.coins++;
+          }
         });
 
         requestAnimationFrame(render);
