@@ -924,7 +924,9 @@
         };
         return () => {
           createSphere();
+
           const sidesColor = getRandomColor();
+
           const glassMesh0 = new Physijs.BoxMesh(
             /*geometry*/ new THREE.BoxGeometry(25, 370, 1),
             /*material*/ new THREE.MeshBasicMaterial({
@@ -950,29 +952,52 @@
           );
           glassMesh1.gameName = "BACKGLASS";
           glassMesh1.name = "glassMesh1";
-          const glassMesh2 = new Physijs.BoxMesh(
-            /*geometry*/ new THREE.BoxGeometry(3, 375, 1),
-            /*material*/ new THREE.MeshBasicMaterial({
+
+          const sideGlassMaterial = Physijs.createMaterial(
+            new THREE.MeshBasicMaterial({
               color: sidesColor,
               opacity: 0.5,
               transparent: true,
             }),
-            /*mass*/ 0
+            0.8,
+            0.4
           );
 
+          const glassMesh2 = new Physijs.BoxMesh(
+            /*geometry*/ new THREE.BoxGeometry(3, 375, 1),
+            /*material*/ Physijs.createMaterial(
+              new THREE.MeshBasicMaterial({
+                color: sidesColor,
+                opacity: 0.5,
+                transparent: true,
+              }),
+              0.8,
+              0.4
+            ),
+            /*mass*/ 0,
+            { restitution: 0.2 }
+          );
           glassMesh2.gameName = "LEFTGLASS";
           glassMesh2.name = "glassMesh2";
+          glassMesh2.featureType = "SIDEGLASS";
+
           const glassMesh3 = new Physijs.BoxMesh(
             /*geometry*/ new THREE.BoxGeometry(3, 375, 1),
-            /*material*/ new THREE.MeshBasicMaterial({
-              color: sidesColor,
-              opacity: 0.5,
-              transparent: true,
-            }),
-            /*mass*/ 0
+            /*material*/ Physijs.createMaterial(
+              new THREE.MeshBasicMaterial({
+                color: sidesColor,
+                opacity: 0.5,
+                transparent: true,
+              }),
+              0.8,
+              0.4
+            ),
+            /*mass*/ 0,
+            { restitution: 1 }
           );
           glassMesh3.gameName = "RIGHTGLASS";
           glassMesh3.name = "glassMesh3";
+          glassMesh3.featureType = "SIDEGLASS";
           const stageFloor = new Physijs.BoxMesh(
             /*geometry*/ new THREE.BoxGeometry(25, 1, 10),
             /*material*/ new THREE.MeshBasicMaterial({
@@ -1276,8 +1301,12 @@
         Object.keys(window.appConfig.featureTypes).forEach((key) => {
           window.appConfig.featureTypes[key].forEach(
             (feature, featureIndex) => {
-              const newXRotation = (feature.rotation.x + 0.001) % (Math.PI * 2);
+              const newXRotation = feature.rotation.x + 0.01;
+              const newYRotation = feature.rotation.y + 0.01;
+              const newZRotation = feature.rotation.z + 0.01;
               feature.rotation.x = newXRotation;
+              feature.rotation.y = newYRotation;
+              feature.rotation.z = newZRotation;
               feature.__dirtyRotation = true;
             }
           );
