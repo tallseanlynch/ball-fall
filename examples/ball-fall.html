@@ -713,30 +713,61 @@
           const tripleScale = 2;
           const doubleScale = 1.5;
           const singleScale = 1;
-          const xScaleMod = 0.8;
+          const xScaleMod = 0.5;
           const yScaleMod = 1;
-          const zScaleMod = 1;
+          const zScaleMod = 0.5;
+
+          const crystalMaterialOptions = {
+            color: 0x000000,
+            emissive: 0xffffff,
+            transparent: true,
+            opacity: 0.85,
+            shininess: 150,
+            roughness: 0.2,
+            metalness: 0.2,
+          };
+
           for (let i = 0; i < 60; i++) {
             const randomIndex = Math.floor(Math.random() * openSpots.length);
+            const coin = new THREE.Mesh();
+            const crystalTop = new THREE.Mesh(
+              new THREE.CylinderGeometry(0, 1, 0.5, 6),
+              // new THREE.MeshStandardMaterial(crystalMaterialOptions)
+              new THREE.MeshPhongMaterial()
+            );
+            crystalTop.translateY(0.75);
+            const crystalMiddle = new THREE.Mesh(
+              new THREE.CylinderGeometry(1, 1, 1, 6),
+              // new THREE.MeshStandardMaterial(crystalMaterialOptions)
+              new THREE.MeshPhongMaterial()
+            );
 
-            const coin = new THREE.Mesh(
-              new THREE.BoxGeometry(1, 1, 0.1),
-              new THREE.MeshStandardMaterial({
-                color: 0x000000,
-                emissive: 0xffffff,
-                transparent: true,
-                opacity: 0.85,
-                shininess: 150,
-                roughness: 0.2,
-                metalness: 0.2,
-                flatShading: true,
-              })
+            const crystalBottom = new THREE.Mesh(
+              new THREE.CylinderGeometry(1, 0, 0.5, 6),
+              // new THREE.MeshStandardMaterial(crystalMaterialOptions)
+              new THREE.MeshPhongMaterial()
             );
-            coin.geometry.applyMatrix(
-              new THREE.Matrix4().makeRotationFromEuler(
-                new THREE.Euler(0, 0, Math.PI * 0.25)
-              )
-            );
+            crystalBottom.translateY(-0.75);
+            coin.add(crystalTop);
+            coin.add(crystalMiddle);
+            coin.add(crystalBottom);
+            // const coin = new THREE.Mesh(
+            //   new THREE.BoxGeometry(1, 1, 0.1),
+            //   new THREE.MeshStandardMaterial({
+            //     color: 0x000000,
+            //     emissive: 0xffffff,
+            //     transparent: true,
+            //     opacity: 0.85,
+            //     shininess: 150,
+            //     roughness: 0.2,
+            //     metalness: 0.2,
+            //   })
+            // );
+            // coin.geometry.applyMatrix(
+            //   new THREE.Matrix4().makeRotationFromEuler(
+            //     new THREE.Euler(0, Math.PI * 0.25, Math.PI * 0.25)
+            //   )
+            // );
             coin.position.set(
               openSpots[randomIndex].xPosition + 2.5 + (Math.random() * 2 - 1),
               openSpots[randomIndex].yPosition -
@@ -754,7 +785,10 @@
               );
               coin.coinType = "triple";
               coin.coinValue = 3;
-              coin.material.emissive.setHex(tripleHex);
+              // coin.material.color.setHex(tripleHex);
+              coin.children.forEach((child) => {
+                child.material.color.setHex(tripleHex);
+              });
               tripleCoinsLeft--;
             } else if (doubleCoinsLeft > 0) {
               coin.scale.set(
@@ -764,7 +798,10 @@
               );
               coin.coinType = "double";
               coin.coinValue = 2;
-              coin.material.emissive.setHex(doubleHex);
+              // coin.material.color.setHex(doubleHex);
+              coin.children.forEach((child) => {
+                child.material.color.setHex(doubleHex);
+              });
               doubleCoinsLeft--;
             } else {
               coin.scale.set(
@@ -774,7 +811,10 @@
               );
               coin.coinType = "single";
               coin.coinValue = 1;
-              coin.material.emissive.setHex(singleHex);
+              // coin.material.color.setHex(singleHex);
+              coin.children.forEach((child) => {
+                child.material.color.setHex(singleHex);
+              });
             }
             // coin.rotation.z = Math.PI * 0.25;
             scene.add(coin);
