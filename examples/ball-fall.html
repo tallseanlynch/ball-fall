@@ -33,7 +33,7 @@
     <script type="text/javascript" src="js/THREEOrbitControls.js"></script>
     <script type="text/javascript" src="js/easytimer.js"></script>
     <script type="text/javascript" src="js/howler.min.js"></script>
-
+    <script src="https://unpkg.com/three@0.112.0/examples/js/loaders/GLTFLoader.js"></script>
     <script type="text/javascript">
       "use strict";
 
@@ -688,24 +688,56 @@
         };
 
         populateFeatures();
-        const coinSpriteMap = new THREE.TextureLoader().load(
-          "images/circle-16.png"
-        );
-        const coinSpriteMaterial = new THREE.SpriteMaterial({
-          map: coinSpriteMap,
-          color: 0xffffff,
+        var loader = new THREE.GLTFLoader();
+        loader.load("models/model.gltf", (root) => {
+          const shard = root.scene;
+          shard.scale.set(10, 10, 10);
+          scene.add(shard);
         });
+        //SAVE THIS TO SHOW HOW TO LOAD TEXTURES
+        // const coinSpriteMap = new THREE.TextureLoader().load(
+        //   "images/circle-16.png"
+        // );
+        // const coinSpriteMaterial = new THREE.SpriteMaterial({
+        //   map: coinSpriteMap,
+        //   color: 0xffffff,
+        // });
+
         const populateCoins = () => {
-          //first make one coin
-          //this is a THREE.Sprite
           let doubleCoinsLeft = 20;
           let tripleCoinsLeft = 20;
-          const baseSprite = new THREE.Sprite(coinSpriteMaterial);
+
+          const tripleHex = 0x159294;
+          const doubleHex = 0xffa6bb;
+          const singleHex = 0xffd5c9;
+          const tripleScale = 2;
+          const doubleScale = 1.5;
+          const singleScale = 1;
+          const xScaleMod = 0.8;
+          const yScaleMod = 1;
+          const zScaleMod = 1;
           for (let i = 0; i < 60; i++) {
             const randomIndex = Math.floor(Math.random() * openSpots.length);
 
-            const sprite = baseSprite.clone();
-            sprite.position.set(
+            const coin = new THREE.Mesh(
+              new THREE.BoxGeometry(1, 1, 0.1),
+              new THREE.MeshStandardMaterial({
+                color: 0x000000,
+                emissive: 0xffffff,
+                transparent: true,
+                opacity: 0.85,
+                shininess: 150,
+                roughness: 0.2,
+                metalness: 0.2,
+                flatShading: true,
+              })
+            );
+            coin.geometry.applyMatrix(
+              new THREE.Matrix4().makeRotationFromEuler(
+                new THREE.Euler(0, 0, Math.PI * 0.25)
+              )
+            );
+            coin.position.set(
               openSpots[randomIndex].xPosition + 2.5 + (Math.random() * 2 - 1),
               openSpots[randomIndex].yPosition -
                 12.5 +
@@ -713,24 +745,40 @@
               0
             );
             openSpots.splice(randomIndex, 1);
-            sprite.featureType = "COIN";
+            coin.featureType = "COIN";
             if (tripleCoinsLeft > 0) {
-              sprite.scale.set(2.01, 2.01, 2.01);
-              sprite.coinType = "triple";
-              sprite.coinValue = 3;
+              coin.scale.set(
+                tripleScale * xScaleMod,
+                tripleScale * yScaleMod,
+                tripleScale * zScaleMod
+              );
+              coin.coinType = "triple";
+              coin.coinValue = 3;
+              coin.material.emissive.setHex(tripleHex);
               tripleCoinsLeft--;
             } else if (doubleCoinsLeft > 0) {
-              sprite.scale.set(1.5, 1.5, 1.5);
-              sprite.coinType = "double";
-              sprite.coinValue = 2;
+              coin.scale.set(
+                doubleScale * xScaleMod,
+                doubleScale * yScaleMod,
+                doubleScale * zScaleMod
+              );
+              coin.coinType = "double";
+              coin.coinValue = 2;
+              coin.material.emissive.setHex(doubleHex);
               doubleCoinsLeft--;
             } else {
-              sprite.coinType = "single";
-              sprite.coinValue = 1;
+              coin.scale.set(
+                singleScale * xScaleMod,
+                singleScale * yScaleMod,
+                singleScale * zScaleMod
+              );
+              coin.coinType = "single";
+              coin.coinValue = 1;
+              coin.material.emissive.setHex(singleHex);
             }
-            sprite.exists = true;
-            scene.add(sprite);
-            coins.push(sprite);
+            // coin.rotation.z = Math.PI * 0.25;
+            scene.add(coin);
+            coins.push(coin);
           }
         };
         populateCoins();
@@ -1389,19 +1437,24 @@
             }
           );
         });
-        const potentiallyGrabbedCoin = window.appConfig.coins.find((coin) => {
-          return (
-            coin.exists &&
-            Math.abs(coin.position.x - sphere.position.x) <
-              coin.scale.x * 1.3 &&
-            Math.abs(coin.position.y - sphere.position.y) < coin.scale.x * 1.3
-          );
-        });
+        let coinIndexToRemove = undefined;
+        const potentiallyGrabbedCoin = window.appConfig.coins.find(
+          (coin, coinIndex) => {
+            coinIndexToRemove = coinIndex;
+            return (
+              Math.abs(coin.position.x - sphere.position.x) <
+                coin.scale.z * 1.3 &&
+              Math.abs(coin.position.y - sphere.position.y) < coin.scale.z * 1.3
+            );
+          }
+        );
 
         if (potentiallyGrabbedCoin) {
-          scene.remove(potentiallyGrabbedCoin);
-          potentiallyGrabbedCoin.exists = false;
           window.appConfig.score.coins += potentiallyGrabbedCoin.coinValue;
+          scene.remove(potentiallyGrabbedCoin);
+          window.appConfig.coins.splice(coinIndexToRemove, 1);
+          potentiallyGrabbedCoin.geometry.dispose();
+          potentiallyGrabbedCoin.material.dispose();
           document.querySelector("#score").innerText =
             window.appConfig.score.coins;
         }
