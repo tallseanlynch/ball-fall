@@ -406,38 +406,46 @@
 
               if (zone.appearAtLevel <= level) {
                 if (zone.type === "ramp") {
-                  const obj = new Physijs.BoxMesh(
-                    new THREE.BoxGeometry(
-                      Math.random() * 12 + 3,
-                      Math.random() * 0.5 + 0.9,
-                      Math.random() * 0.5 + 0.9
-                    ),
-                    Physijs.createMaterial(
-                      new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-                      // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
-                      0.6, // medium friction
-                      0.3 // low restitution
-                    ),
-                    0 // mass
-                  );
-                  // console.dir(obj);
-                  zone.obj = obj;
-                  // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
 
-                  obj.position.x = xPosition + 2.5;
-                  obj.position.y = yPosition - 12;
-                  obj.position.z = 0;
-                  obj.__dirtyPosition = true;
-                  obj.position.__dirtyPosition = true;
-                  obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-                  obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-                  obj.castShadow = true;
-                  obj.receiveShadow = true;
-                  // obj.rotation.x = Math.random() * 2 * Math.PI;
-                  // obj.rotation.y = 0.3 * Math.PI;
-                  obj.rotation.z = Math.random() * 2 * Math.PI;
-                  obj.featureType = "BOX";
-                  scene.add(obj);
+                  // const tubeGeometry = new THREE.TubeBufferGeometry(new THREE.Path(tubeGeometryInfo.path.points), 4, 4, 4, tubeGeometryInfo.closed)
+
+                  // instantiate a loader
+
+
+
+                  // const obj = new Physijs.BoxMesh(
+                  //   // new THREE.BoxGeometry(
+                  //   //   Math.random() * 12 + 3,
+                  //   //   Math.random() * 0.5 + 0.9,
+                  //   //   Math.random() * 0.5 + 0.9
+                  //   // ),
+                  //   tubeGeometry,
+                  //   Physijs.createMaterial(
+                  //     new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+                  //     // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
+                  //     0.6, // medium friction
+                  //     0.3 // low restitution
+                  //   ),
+                  //   0 // mass
+                  // );
+                  // console.dir(obj);
+                  // zone.obj = obj;
+                  // // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
+
+                  // obj.position.x = xPosition + 2.5;
+                  // obj.position.y = yPosition - 12;
+                  // obj.position.z = 0;
+                  // obj.__dirtyPosition = true;
+                  // obj.position.__dirtyPosition = true;
+                  // obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                  // obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+                  // obj.castShadow = true;
+                  // obj.receiveShadow = true;
+                  // // obj.rotation.x = Math.random() * 2 * Math.PI;
+                  // // obj.rotation.y = 0.3 * Math.PI;
+                  // obj.rotation.z = Math.random() * 2 * Math.PI;
+                  // obj.featureType = "BOX";
+                  // scene.add(obj);
                   // console.dir(JSON.stringify(obj.position));
                 } else if (zone.type === "plinko") {
                   const plinkoColor = getRandomColor();
@@ -689,11 +697,61 @@
 
         populateFeatures();
         var loader = new THREE.GLTFLoader();
-        loader.load("models/model.gltf", (root) => {
-          const shard = root.scene;
-          shard.scale.set(10, 10, 10);
-          scene.add(shard);
+        loader.load("models/stage-0e.gltf", (root) => {
+          const shard = new THREE.Geometry().fromBufferGeometry(root.scene.children[0].geometry);
+          // shard.vertices.forEach(function( v ){ v.multiplyScalar( 5 ) });
+          // scene.add(shard);
+
+          // debugger
+          
+// let shardClone = shard.clone()
+// shardClone.geometry.computeBoundingBox()
+
+          const stage0 = new Physijs.ConcaveMesh(
+//            new THREE.Mesh().copy(shard),
+            shard,
+            Physijs.createMaterial(
+              new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+              // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
+              0.6, // medium friction
+              0.3 // low restitution
+            ),
+            0 // mass
+          );
+
+          // const stage0 = new THREE.Mesh(
+          //   shard,
+          //   new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+          // );
+
+          // stage0.scale.set(1, 1, 1)
+          // stage0.scale.set(1, 1, 5)
+          scene.add(stage0)
+          // stage0.rotation.x = 1 * Math.PI
+          // stage0.rotation.y = .5 * Math.PI
+          // stage0.rotation.z = Math.PI
+          // stage0.__dirtyRotation = true
+          // stage0.position.x = 20
+          // stage0.__dirtyPosition = true
+          window.stage0 = stage0
+          window.rs0 = (axis, degree) => {
+            window.stage0.rotation[axis] = degree
+            window.stage0.__dirtyRotation = true
+          }
+          // debugger
         });
+
+
+
+
+
+        // loader.load("models/scene.gltf", (root) => {
+        //   //now make as physijs
+        //   const shart = root.scene;
+        //   shart.scale.set(10, 10, 10);
+        //   scene.add(shart);
+        // });
+
         //SAVE THIS TO SHOW HOW TO LOAD TEXTURES
         // const coinSpriteMap = new THREE.TextureLoader().load(
         //   "images/circle-16.png"
@@ -1076,7 +1134,7 @@
           sphere = new Physijs.SphereMesh(sphere_geometry, material);
           sphere.collisions = 0;
 
-          sphere.position.set(0, 10, 0);
+          sphere.position.set(0, -10, 0);
 
           sphere.rotation.set(
             Math.random() * Math.PI,
@@ -1095,7 +1153,7 @@
           const sidesColor = getRandomColor();
 
           const glassMesh0 = new Physijs.BoxMesh(
-            /*geometry*/ new THREE.BoxGeometry(25, 370, 1),
+            /*geometry*/ new THREE.BoxGeometry(500, 370, 1),
             /*material*/ new THREE.MeshBasicMaterial({
               color: getRandomColor(),
               opacity: 0,
@@ -1108,7 +1166,7 @@
           glassMesh0.name = "glassMesh0";
 
           const glassMesh1 = new Physijs.BoxMesh(
-            /*geometry*/ new THREE.BoxGeometry(25, 375, 1),
+            /*geometry*/ new THREE.BoxGeometry(500, 375, 1),
             /*material*/ new THREE.MeshBasicMaterial({
               color: getRandomColor(),
               opacity: 0.0,
@@ -1120,51 +1178,51 @@
           glassMesh1.gameName = "BACKGLASS";
           glassMesh1.name = "glassMesh1";
 
-          const sideGlassMaterial = Physijs.createMaterial(
-            new THREE.MeshBasicMaterial({
-              color: sidesColor,
-              opacity: 0.5,
-              transparent: true,
-            }),
-            0.8,
-            0.4
-          );
+          // const sideGlassMaterial = Physijs.createMaterial(
+          //   new THREE.MeshBasicMaterial({
+          //     color: sidesColor,
+          //     opacity: 0.5,
+          //     transparent: true,
+          //   }),
+          //   0.8,
+          //   0.4
+          // );
 
-          const glassMesh2 = new Physijs.BoxMesh(
-            /*geometry*/ new THREE.BoxGeometry(3, 375, 1),
-            /*material*/ Physijs.createMaterial(
-              new THREE.MeshBasicMaterial({
-                color: sidesColor,
-                opacity: 0.5,
-                transparent: true,
-              }),
-              0.8,
-              0.4
-            ),
-            /*mass*/ 0,
-            { restitution: 0.2 }
-          );
-          glassMesh2.gameName = "LEFTGLASS";
-          glassMesh2.name = "glassMesh2";
-          glassMesh2.featureType = "SIDEGLASS";
+          // const glassMesh2 = new Physijs.BoxMesh(
+          //   /*geometry*/ new THREE.BoxGeometry(3, 375, 1),
+          //   /*material*/ Physijs.createMaterial(
+          //     new THREE.MeshBasicMaterial({
+          //       color: sidesColor,
+          //       opacity: 0.5,
+          //       transparent: true,
+          //     }),
+          //     0.8,
+          //     0.4
+          //   ),
+          //   /*mass*/ 0,
+          //   { restitution: 0.2 }
+          // );
+          // glassMesh2.gameName = "LEFTGLASS";
+          // glassMesh2.name = "glassMesh2";
+          // glassMesh2.featureType = "SIDEGLASS";
 
-          const glassMesh3 = new Physijs.BoxMesh(
-            /*geometry*/ new THREE.BoxGeometry(3, 375, 1),
-            /*material*/ Physijs.createMaterial(
-              new THREE.MeshBasicMaterial({
-                color: sidesColor,
-                opacity: 0.5,
-                transparent: true,
-              }),
-              0.8,
-              0.4
-            ),
-            /*mass*/ 0,
-            { restitution: 1 }
-          );
-          glassMesh3.gameName = "RIGHTGLASS";
-          glassMesh3.name = "glassMesh3";
-          glassMesh3.featureType = "SIDEGLASS";
+          // const glassMesh3 = new Physijs.BoxMesh(
+          //   /*geometry*/ new THREE.BoxGeometry(3, 375, 1),
+          //   /*material*/ Physijs.createMaterial(
+          //     new THREE.MeshBasicMaterial({
+          //       color: sidesColor,
+          //       opacity: 0.5,
+          //       transparent: true,
+          //     }),
+          //     0.8,
+          //     0.4
+          //   ),
+          //   /*mass*/ 0,
+          //   { restitution: 1 }
+          // );
+          // glassMesh3.gameName = "RIGHTGLASS";
+          // glassMesh3.name = "glassMesh3";
+          // glassMesh3.featureType = "SIDEGLASS";
           const stageFloor = new Physijs.BoxMesh(
             /*geometry*/ new THREE.BoxGeometry(25, 1, 10),
             /*material*/ new THREE.MeshBasicMaterial({
@@ -1194,31 +1252,99 @@
           catchWall.position.z = 5;
           glassMesh0.position.z = 1.5;
           glassMesh1.position.z = -1.5;
-          glassMesh2.position.x = -12.5;
-          glassMesh2.rotation.y = Math.PI * 0.5;
-          glassMesh3.position.x = 12.5;
-          glassMesh3.rotation.y = Math.PI * -0.5;
+          // glassMesh2.position.x = -12.5;
+          // glassMesh2.rotation.y = Math.PI * 0.5;
+          // glassMesh3.position.x = 12.5;
+          // glassMesh3.rotation.y = Math.PI * -0.5;
           glassMesh0.position.y = -137.5;
           glassMesh1.position.y = -140;
-          glassMesh2.position.y = -140;
-          glassMesh3.position.y = -140;
+          // glassMesh2.position.y = -140;
+          // glassMesh3.position.y = -140;
           stageFloor.position.y = -327;
           stageFloor.rotation.x = Math.PI * 0.125;
           glassMesh0.__dirtyPosition = true;
           glassMesh0.__dirtyRotation = true;
           glassMesh1.__dirtyPosition = true;
           glassMesh1.__dirtyRotation = true;
-          glassMesh2.__dirtyPosition = true;
-          glassMesh2.__dirtyRotation = true;
-          glassMesh3.__dirtyPosition = true;
-          glassMesh3.__dirtyRotation = true;
+          // glassMesh2.__dirtyPosition = true;
+          // glassMesh2.__dirtyRotation = true;
+          // glassMesh3.__dirtyPosition = true;
+          // glassMesh3.__dirtyRotation = true;
 
           scene.add(glassMesh0);
           scene.add(glassMesh1);
-          scene.add(glassMesh2);
-          scene.add(glassMesh3);
+          // scene.add(glassMesh2);
+          // scene.add(glassMesh3);
           scene.add(stageFloor);
           scene.add(catchWall);
+
+          // const loader = new THREE.BufferGeometryLoader();
+
+          // // load a resource
+          // loader.load(
+          //   // resource URL
+          //   'geometries/geometry.json',
+
+          //   // onLoad callback
+          //   function ( geometry ) {
+
+          //     const obj = new Physijs.BoxMesh(
+          //       geometry,
+          //       Physijs.createMaterial(
+          //           new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+          //           0.6, // medium friction
+          //           0.3 // low restitution
+          //         ),
+          //         0 // mass
+          //     );
+
+          //     scene.add( obj );
+          //   },
+
+          //   // onProgress callback
+          //   function ( xhr ) {
+          //     console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+          //   },
+
+          //   // onError callback
+          //   function ( err ) {
+          //     console.log( 'An error happened' );
+          //   }
+          // );
+
+          // const geoTest = () => {
+          //   const length = 12, width = 8;
+
+          //   const shape = new THREE.Shape();
+          //   const start = new THREE.Vector2(0,-10)
+          //   const end = new THREE.Vector2(0,0)
+          //   shape.setFromPoints([start, end])
+          //   // shape.moveTo( 0,0 );
+          //   // shape.lineTo( 0, width );
+          //   // shape.lineTo( length, width );
+          //   // shape.lineTo( length, 0 );
+          //   // shape.lineTo( 0, 0 );
+
+          //   const extrudeSettings = {
+          //     steps: 1,
+          //     // depth: 16,
+          //     // depth: 1,
+          //     // bevelEnabled: true,
+          //     // bevelThickness: 1,
+          //     // bevelSize: 1,
+          //     // bevelOffset: 0,
+          //     // bevelSegments: 1
+          //   };
+
+          //   const geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
+          //   const material = new THREE.MeshPhongMaterial( { color: 0xffffff } );
+          //   const mesh = new THREE.Mesh( geometry, material ) ;
+          //   mesh.position.z = -25
+          //   mesh.rotation.y = .5 * Math.PI
+          //   scene.add( mesh );
+          // }
+          // geoTest()
+
 
           window.appConfig.initialBallZoomReset = () => {
             window.appConfig.initialBallZoom = {

@@ -1,0 +1,26 @@
+{
+	"metadata": {
+		"version": 4.5,
+		"type": "BufferGeometry",
+		"generator": "BufferGeometry.toJSON"
+	},
+	"uuid": "9B386561-EB4F-433B-B90F-13E7E1B21DAD",
+	"type": "TubeBufferGeometry",
+	"path": {
+		"metadata": {
+			"version": 4.5,
+			"type": "Curve",
+			"generator": "Curve.toJSON"
+		},
+		"arcLengthDivisions": 200,
+		"type": "CatmullRomCurve3",
+		"points": [[2,2,0],[2,-2,0],[-2,-2,0],[-2,2,0]],
+		"closed": false,
+		"curveType": "centripetal",
+		"tension": 0.5
+	},
+	"tubularSegments": 3,
+	"radius": 1,
+	"radialSegments": 4,
+	"closed": false
+}

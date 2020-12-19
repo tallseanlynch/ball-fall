@@ -1,0 +1,174 @@
+{
+  "asset": {
+    "version": "2.0",
+    "generator": "GLTFExporter"
+  },
+  "scenes": [
+    {
+      "name": "Scene",
+      "nodes": [
+        0,
+        1
+      ]
+    }
+  ],
+  "scene": 0,
+  "nodes": [
+    {
+      "name": "Tube",
+      "mesh": 0
+    },
+    {
+      "name": "PointLight",
+      "extensions": {
+        "KHR_lights_punctual": {
+          "light": 0
+        }
+      }
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 240,
+      "target": 34962,
+      "byteStride": 12
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 240,
+      "byteLength": 240,
+      "target": 34962,
+      "byteStride": 12
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 480,
+      "byteLength": 160,
+      "target": 34962,
+      "byteStride": 8
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 640,
+      "byteLength": 144,
+      "target": 34963
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 784,
+      "uri": "data:application/octet-stream;base64,AAAAQAAAAEAAAIA/AABAQHUCAEAyMY0kAAAAQAAAAEAAAIC/AACAPxb7/z/KyVOlAAAAQAAAAEAAAIA/tl38P+u4AcAAAIA/hf8oQL1KMcAyMY0ktl38P+u4AcAAAIC/Y7ymPzJOpL/KyVOltl38P+u4AcAAAIA/tl38v+u4AcAAAIA/hf8owL1KMcAyMY0ktl38v+u4AcAAAIC/Y7ymvzJOpL/KyVOltl38v+u4AcAAAIA/AAAAwAAAAEAAAIA/AABAwHUCAEAyMY0kAAAAwAAAAEAAAIC/AACAvxb7/z/KyVOlAAAAwAAAAEAAAIA/AAAAAAAAAAAAAIA/AACAPzQ3HTkyMY0kMTENJTtrrR4AAIC/AACAvzQ3HbnKyVOlMTGNpTtrLZ8AAIA/AAAAAAAAAIAAAIA/qEIrP0hHPr8yMY0kP+m8JKbj0aQAAIC/qEIrv0hHPj/KyVOlP+k8pabjUSUAAIA/AAAAgAAAAIAAAIA/qEIrv0hHPr8yMY0kP+m8pKbj0aQAAIC/qEIrP0hHPj/KyVOlP+k8JabjUSUAAIA/AAAAgAAAAAAAAIA/AACAvzQ3HTkyMY0kMTENpTtrrR4AAIC/AACAPzQ3HbnKyVOlMTGNJTtrLZ8AAIA/AAAAAAAAAAAAAAAAAACAPgAAAAAAAAA/AAAAAAAAQD8AAAAAAACAP6uqqj4AAAAAq6qqPgAAgD6rqqo+AAAAP6uqqj4AAEA/q6qqPgAAgD+rqio/AAAAAKuqKj8AAIA+q6oqPwAAAD+rqio/AABAP6uqKj8AAIA/AACAPwAAAAAAAIA/AACAPgAAgD8AAAA/AACAPwAAQD8AAIA/AACAPwAABQABAAUABgABAAEABgACAAYABwACAAIABwADAAcACAADAAMACAAEAAgACQAEAAUACgAGAAoACwAGAAYACwAHAAsADAAHAAcADAAIAAwADQAIAAgADQAJAA0ADgAJAAoADwALAA8AEAALAAsAEAAMABAAEQAMAAwAEQANABEAEgANAA0AEgAOABIAEwAOAA=="
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5126,
+      "count": 20,
+      "max": [
+        3,
+        2.000149965286255,
+        1
+      ],
+      "min": [
+        -3,
+        -2.77018666267395,
+        -1
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 20,
+      "max": [
+        1,
+        0.7432751655578613,
+        1
+      ],
+      "min": [
+        -1,
+        -0.7432751655578613,
+        -1
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 20,
+      "max": [
+        1,
+        1
+      ],
+      "min": [
+        0,
+        0
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5123,
+      "count": 72,
+      "max": [
+        19
+      ],
+      "min": [
+        0
+      ],
+      "type": "SCALAR"
+    }
+  ],
+  "materials": [
+    {
+      "pbrMetallicRoughness": {
+        "metallicFactor": 0.5,
+        "roughnessFactor": 0.5
+      },
+      "emissiveFactor": [
+        0.6509803921568628,
+        0.18823529411764706,
+        0.18823529411764706
+      ],
+      "doubleSided": true
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "mode": 4,
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0
+        }
+      ]
+    }
+  ],
+  "extensions": {
+    "KHR_lights_punctual": {
+      "lights": [
+        {
+          "name": "PointLight",
+          "color": [
+            1,
+            1,
+            1
+          ],
+          "intensity": 1,
+          "type": "point"
+        }
+      ]
+    }
+  },
+  "extensionsUsed": [
+    "KHR_lights_punctual"
+  ]
+}
