@@ -613,7 +613,7 @@
                   // debugger;
                 } else if (zone.type === "tetrahedron") {
                   const radius = Math.random() * 3 + 1;
-                  const obj = new Physijs.CylinderMesh(
+                  const obj = new Physijs.ConvexMesh(
                     new THREE.TetrahedronGeometry(Math.random() * 3 + 2),
                     Physijs.createMaterial(
                       new THREE.MeshPhongMaterial({ color: getRandomColor() }),
@@ -696,20 +696,20 @@
         };
 
         populateFeatures();
-        var loader = new THREE.GLTFLoader();
-        loader.load("models/stage-0e.gltf", (root) => {
-          const shard = new THREE.Geometry().fromBufferGeometry(root.scene.children[0].geometry);
-          // shard.vertices.forEach(function( v ){ v.multiplyScalar( 5 ) });
-          // scene.add(shard);
 
-          // debugger
-          
-// let shardClone = shard.clone()
-// shardClone.geometry.computeBoundingBox()
-
-          const stage0 = new Physijs.ConcaveMesh(
-//            new THREE.Mesh().copy(shard),
-            shard,
+        const createBeam = (config) => {
+          const beam0 = new Physijs.BoxMesh(
+          new THREE.BoxGeometry(10 * config.s, 2, 2),
+          Physijs.createMaterial(
+            new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+            // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
+            0.6, // medium friction
+            0.3 // low restitution
+          ),
+          0 // mass
+          );
+          const beam0cap0 = new Physijs.BoxMesh(
+            new THREE.BoxGeometry(1.45, 2, 1.45),
             Physijs.createMaterial(
               new THREE.MeshPhongMaterial({ color: getRandomColor() }),
               // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
@@ -718,30 +718,48 @@
             ),
             0 // mass
           );
+          const beam0cap1 = new Physijs.BoxMesh(
+            new THREE.BoxGeometry(1.45, 2, 1.45),
+            Physijs.createMaterial(
+              new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+              // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
+              0.6, // medium friction
+              0.3 // low restitution
+            ),
+            0 // mass
+          );
+          beam0cap0.rotation.y = .25 * Math.PI
+          beam0cap0.position.x = -5 * config.s
+          beam0.add(beam0cap0)
+          beam0cap1.rotation.y = .25 * Math.PI
+          beam0cap1.position.x = 5 * config.s
+          beam0.add(beam0cap1)
+          beam0.position.set(config.p[0], config.p[1], config.p[2])
+          beam0.rotation.set(config.r[0], config.r[1], config.r[2])
+          return beam0
+        }
 
-          // const stage0 = new THREE.Mesh(
-          //   shard,
-          //   new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-          // );
+        const stage0 = {
+          beams: [
+            createBeam({p: [-19.5,15,0], r: [0,0, .25 * Math.PI], s: 5}),
+            createBeam({p: [19.5,15,0], r: [0,0, -.25 * Math.PI], s: 5}),
+            createBeam({p: [-19.5,-24,0], r: [0,0, -.25 * Math.PI], s: 5}),
+            createBeam({p: [19.5,-24,0], r: [0,0, .25 * Math.PI], s: 5}),
+            createBeam({p: [0,-5,0], r: [0,0,0], s: 1}),
+            // createBeam({p: [0,-15,0], r: [0,0,0], s: 1}),
+            // createBeam({p: [0,-25,0], r: [0,0,0], s: 1}),
+            // createBeam({p: [0,-35,0], r: [0,0,0], s: 1}),
+            // createBeam({p: [0,-45,0], r: [0,0,0], s: 1}),
+            // createBeam({p: [0,-55,0], r: [0,0,0], s: 1}),
+            // createBeam({p: [0,-65,0], r: [0,0,0], s: 1}),
+            // createBeam({p: [0,-75,0], r: [0,0,0], s: 1}),
+          ]
+        }
 
-          // stage0.scale.set(1, 1, 1)
-          // stage0.scale.set(1, 1, 5)
-          scene.add(stage0)
-          // stage0.rotation.x = 1 * Math.PI
-          // stage0.rotation.y = .5 * Math.PI
-          // stage0.rotation.z = Math.PI
-          // stage0.__dirtyRotation = true
-          // stage0.position.x = 20
-          // stage0.__dirtyPosition = true
-          window.stage0 = stage0
-          window.rs0 = (axis, degree) => {
-            window.stage0.rotation[axis] = degree
-            window.stage0.__dirtyRotation = true
-          }
-          // debugger
-        });
-
-
+        stage0.beams.forEach((beam) => {
+          scene.add(beam)
+        })
+          
 
 
 
@@ -1134,7 +1152,7 @@
           sphere = new Physijs.SphereMesh(sphere_geometry, material);
           sphere.collisions = 0;
 
-          sphere.position.set(0, -10, 0);
+          sphere.position.set(0, 0, 0);
 
           sphere.rotation.set(
             Math.random() * Math.PI,
