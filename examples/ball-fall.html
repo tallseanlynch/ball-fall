@@ -701,7 +701,16 @@
 
 
 const svgLoader = new THREE.SVGLoader();
-
+const extrudeSettings = {
+	steps: 2,
+	depth: 16,
+	bevelEnabled: false,
+	bevelThickness: 1,
+	bevelSize: 1,
+	bevelOffset: 0,
+  bevelSegments: 1,
+  curveSegments: 12
+};
 // load a SVG resource
 svgLoader.load(
 	// resource URL
@@ -725,7 +734,7 @@ svgLoader.load(
 			for ( let j = 0; j < shapes.length; j ++ ) {
 
         const shape = shapes[ j ];
-				const geometry = new THREE.ShapeGeometry( shape );
+				const geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
         const mesh = new THREE.Mesh( geometry, material );
         
       const physiMesh = new Physijs.ConvexMesh(geometry, Physijs.createMaterial(material, 0.6, 0.3),0)
