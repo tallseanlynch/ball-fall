@@ -34,6 +34,7 @@
     <script type="text/javascript" src="js/easytimer.js"></script>
     <script type="text/javascript" src="js/howler.min.js"></script>
     <script src="https://unpkg.com/three@0.112.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script type="text/javascript" src="js/svg-loader-121.js"></script>
     <script type="text/javascript">
       "use strict";
 
@@ -696,53 +697,64 @@
         };
 
         populateFeatures();
-        var loader = new THREE.GLTFLoader();
-        loader.load("models/stage-0e.gltf", (root) => {
-          const shard = new THREE.Geometry().fromBufferGeometry(root.scene.children[0].geometry);
-          // shard.vertices.forEach(function( v ){ v.multiplyScalar( 5 ) });
-          // scene.add(shard);
-
-          // debugger
-          
-// let shardClone = shard.clone()
-// shardClone.geometry.computeBoundingBox()
-
-          const stage0 = new Physijs.ConcaveMesh(
-//            new THREE.Mesh().copy(shard),
-            shard,
-            Physijs.createMaterial(
-              new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-              // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
-              0.6, // medium friction
-              0.3 // low restitution
-            ),
-            0 // mass
-          );
-
-          // const stage0 = new THREE.Mesh(
-          //   shard,
-          //   new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-          // );
-
-          // stage0.scale.set(1, 1, 1)
-          // stage0.scale.set(1, 1, 5)
-          scene.add(stage0)
-          // stage0.rotation.x = 1 * Math.PI
-          // stage0.rotation.y = .5 * Math.PI
-          // stage0.rotation.z = Math.PI
-          // stage0.__dirtyRotation = true
-          // stage0.position.x = 20
-          // stage0.__dirtyPosition = true
-          window.stage0 = stage0
-          window.rs0 = (axis, degree) => {
-            window.stage0.rotation[axis] = degree
-            window.stage0.__dirtyRotation = true
-          }
-          // debugger
-        });
 
 
 
+const svgLoader = new THREE.SVGLoader();
+
+// load a SVG resource
+svgLoader.load(
+	// resource URL
+	'images/ian-vectors-25x375.svg',
+	// called when the resource is loaded
+	function ( data ) {
+
+		const paths = data.paths;
+
+		for ( let i = 0; i < paths.length; i ++ ) {
+
+			const path = paths[ i ];
+			const material = new THREE.MeshBasicMaterial( {
+				color: 0xffffff,
+				side: THREE.DoubleSide,
+				depthWrite: false
+      } );
+      
+			const shapes = path.toShapes( true );
+
+			for ( let j = 0; j < shapes.length; j ++ ) {
+
+        const shape = shapes[ j ];
+				const geometry = new THREE.ShapeGeometry( shape );
+        const mesh = new THREE.Mesh( geometry, material );
+        
+      const physiMesh = new Physijs.ConvexMesh(geometry, Physijs.createMaterial(material, 0.6, 0.3),0)
+
+        
+      physiMesh.name = "svgGroup"
+      physiMesh.translateY(-375)
+        scene.add( physiMesh );
+        // debugger
+			}
+
+		}
+
+
+	},
+	// called when loading is in progresses
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+    console.log( 'An error happened' );
+    console.log(error)
+
+	}
+);
 
 
         // loader.load("models/scene.gltf", (root) => {
