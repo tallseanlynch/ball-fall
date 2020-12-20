@@ -701,7 +701,8 @@
           const beam0 = new Physijs.BoxMesh(
           new THREE.BoxGeometry(10 * config.s, 2, 2),
           Physijs.createMaterial(
-            new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+            new THREE.MeshPhongMaterial({ color: 0xffffff }),
+            // new THREE.MeshPhongMaterial({ color: getRandomColor() }),
             // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
             0.6, // medium friction
             0.3 // low restitution
@@ -711,7 +712,8 @@
           const beam0cap0 = new Physijs.BoxMesh(
             new THREE.BoxGeometry(1.45, 2, 1.45),
             Physijs.createMaterial(
-              new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+              // new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+              new THREE.MeshPhongMaterial({ color: 0xffffff }),
               // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
               0.6, // medium friction
               0.3 // low restitution
@@ -721,7 +723,8 @@
           const beam0cap1 = new Physijs.BoxMesh(
             new THREE.BoxGeometry(1.45, 2, 1.45),
             Physijs.createMaterial(
-              new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+              // new THREE.MeshPhongMaterial({ color: getRandomColor() }),
+              new THREE.MeshPhongMaterial({ color: 0xffffff }),
               // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
               0.6, // medium friction
               0.3 // low restitution
@@ -739,13 +742,30 @@
           return beam0
         }
 
+        const vAdj = -70
+        const sAdj = 3
         const stage0 = {
           beams: [
+            // diamond shape
+            // createBeam({p: [-19.5,15,0], r: [0,0, .25 * Math.PI], s: 5}),
+            // createBeam({p: [19.5,15,0], r: [0,0, -.25 * Math.PI], s: 5}),
+            // createBeam({p: [-19.5,-24,0], r: [0,0, -.25 * Math.PI], s: 5}),
+            // createBeam({p: [19.5,-24,0], r: [0,0, .25 * Math.PI], s: 5}),
+            // diamond shape
+            createBeam({p: [-19.5 * sAdj, 15 * sAdj, 0 * sAdj], r: [0,0, .25 * Math.PI], s: 5.35 * sAdj}),
+            createBeam({p: [19.5 * sAdj,15 * sAdj,0 * sAdj], r: [0,0, -.25 * Math.PI], s: 5.35 * sAdj}),
+            createBeam({p: [-19.5 * sAdj,-24 * sAdj,0 * sAdj], r: [0,0, -.25 * Math.PI], s: 5.35 * sAdj}),
+            createBeam({p: [19.5 * sAdj,-24 * sAdj,0 * sAdj], r: [0,0, .25 * Math.PI], s: 5.35 * sAdj}),
             createBeam({p: [-19.5,15,0], r: [0,0, .25 * Math.PI], s: 5}),
             createBeam({p: [19.5,15,0], r: [0,0, -.25 * Math.PI], s: 5}),
-            createBeam({p: [-19.5,-24,0], r: [0,0, -.25 * Math.PI], s: 5}),
-            createBeam({p: [19.5,-24,0], r: [0,0, .25 * Math.PI], s: 5}),
+            createBeam({p: [-21.5,-22,0], r: [0,0, -.25 * Math.PI], s: 4.5}),
+            createBeam({p: [21.5,-22,0], r: [0,0, .25 * Math.PI], s: 4.5}),
             createBeam({p: [0,-5,0], r: [0,0,0], s: 1}),
+            createBeam({p: [-19.5,5+vAdj,0], r: [0,0, .25 * Math.PI], s: 2}),
+            createBeam({p: [19.5,5+vAdj,0], r: [0,0, -.25 * Math.PI], s: 2}),
+            createBeam({p: [-21.5,-22+vAdj,0], r: [0,0, -.25 * Math.PI], s: 2}),
+            createBeam({p: [21.5,-22+vAdj,0], r: [0,0, .25 * Math.PI], s: 2}),
+            createBeam({p: [0,-5+vAdj,0], r: [0,0,0], s: 1}),
             // createBeam({p: [0,-15,0], r: [0,0,0], s: 1}),
             // createBeam({p: [0,-25,0], r: [0,0,0], s: 1}),
             // createBeam({p: [0,-35,0], r: [0,0,0], s: 1}),
