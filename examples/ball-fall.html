@@ -268,7 +268,11 @@
         function onWindowResize(event) {
           //put the start button right in the middle!
           centerElement({ id: "start-button", offsetTop: 0, offsetLeft: 0 });
+          centerElement({ id: "level-select", offsetTop: 0, offsetLeft: 0 });
+          centerElement({ id: "report", offsetTop: 0, offsetLeft: 0 });
+          centerElement({ id: "pause-menu", offsetTop: 0, offsetLeft: 0 });
           centerElement({ id: "title", offsetTop: -200, offsetLeft: 0 });
+          centerElement({ id: "start-menu", offsetTop: 200, offsetLeft: 0 });
           // remember these initial values
           var tanFOV = Math.tan(((Math.PI / 180) * camera.fov) / 2);
           var windowHeight = window.innerHeight;
@@ -1071,7 +1075,7 @@
 
       spawnBox = (function () {
         var box_geometry = new THREE.BoxGeometry(4, 4, 4),
-          sphere_geometry = new THREE.SphereGeometry(1, 16, 16),
+          sphere_geometry = new THREE.SphereGeometry(1, 32, 32),
           handleCollision = function (
             collided_with,
             linearVelocity,
@@ -1079,7 +1083,7 @@
           ) {
             console.log("collision");
             console.log("collided_with", collided_with);
-            if (collided_with.featureType === "STAGEFLOOR") {
+            if (collided_with.featureType === "TORUS") {
               window.appConfig.stageResultsBallZoom.userHasEnded = true;
               window.appConfig.timer.pause();
               window.appConfig.results[`stage${window.appConfig.level}`]
@@ -1097,13 +1101,15 @@
                   });
               //now performance report and start level transition
               console.dir(window.appConfig.results);
-              document.querySelector("#report #time").innerText =
+              document.querySelector("#report-time").innerText =
                 window.appConfig.results[
                   `stage${window.appConfig.level}`
                 ].finalTime;
-              document.querySelector("#report #coins").innerText =
+              document.querySelector("#report-coins").innerText =
                 window.appConfig.score.coins;
               document.querySelector("#report").classList.remove("hide");
+              centerElement({ id: "report", offsetTop: 0, offsetLeft: 0 });
+              document.querySelector("#pause-button").classList.add("hide");
               document.querySelector("#pause-button").disabled = true;
             }
             const suonousFeatureTypes = [
@@ -1704,7 +1710,10 @@
       const start = () => {
         window.appConfig.start = true;
         document.querySelector("#start-button").classList.add("hide");
-        document.querySelector("#pause-button").disabled = false;
+        document.querySelector("#title").classList.add("hide");
+        document.querySelector("#start-menu").classList.add("hide");
+        document.querySelector("#game-scoreboard").classList.remove("hide");
+        document.querySelector("#pause-button").classList.remove("hide");
         window.appConfig.initialBallZoom.userHasClickedStart = true;
         window.appConfig.timer.start();
         document.querySelector("#pause-button").disabled = false;
@@ -1724,20 +1733,29 @@
 
       const reset = () => {
         window.appConfig.stageReset.userHasEndedReport = true;
+        document.querySelector("#level-select").classList.add("hide");
         document.querySelector("#curtain").classList.remove("opacity-0");
         document.querySelector("#report").classList.add("hide");
+        document.querySelector("#game-scoreboard").classList.add("hide");
+
         setTimeout(() => {
           console.log("fired");
           document.querySelector("#curtain").classList.add("opacity-0");
         }, 2000);
-        // debugger
+        // debugger;
         // document.querySelector('#curtain').style.opacity = 1
         // window.appConfig.initialBallZoom.userHasClickedStart = true
         window.appConfig.timer.reset();
         window.appConfig.timer.pause();
       };
       const showLevelSelect = () => {
-        console.log("clicked level select");
+        document.querySelector("#level-select").classList.remove("hide");
+        centerElement({ id: "level-select", offsetTop: 0, offsetLeft: 0 });
+        document.querySelector("#start-menu").classList.add("hide");
+        document.querySelector("#pause-menu").classList.add("hide");
+        document.querySelector("#start-button").classList.add("hide");
+        document.querySelector("#report").classList.add("hide");
+        document.querySelector("#title").classList.add("hide");
       };
       const showSettings = () => {
         console.log("clicked settings");
@@ -1755,6 +1773,9 @@
         const offsetWidth =
           window.innerWidth / 2 - buttonWidth / 2 + offsetLeft;
         const root = document.documentElement;
+        if (id === "level-select") {
+          debugger;
+        }
         root.style.setProperty(`--${id}-offset-top`, offsetHeight + "px");
         root.style.setProperty(`--${id}-offset-left`, offsetWidth + "px");
       };
@@ -1775,9 +1796,13 @@
         font-family: "Luz Sans Book";
         src: url("./fonts/LUZRO.ttf") format("truetype");
       }
+      button:focus {
+        outline: none;
+        box-shadow: none;
+      }
       #start-button {
         font-family: "Luz Sans Book";
-        font-size: 2em;
+        font-size: 2.5em;
         position: fixed;
         left: var(--start-button-offset-left);
         top: var(--start-button-offset-top);
@@ -1787,6 +1812,13 @@
         opacity: 0.75;
         background-color: rgba(0, 0, 0, 0);
         color: #ffffff;
+      }
+      #level-select-title {
+        font-family: "Luz Sans Book";
+        font-size: 2em;
+        color: #ffffff;
+        margin: 0 auto;
+        text-align: center;
       }
       #title {
         font-family: "Aadhunik";
@@ -1800,30 +1832,68 @@
         background-color: rgba(0, 0, 0, 0);
         color: #ffffff;
       }
+      #report {
+        position: fixed;
+        left: var(--report-offset-left);
+        top: var(--report-offset-top);
+        /* border: 3px solid black; */
+        border: 0;
+        border-radius: 5px;
+        opacity: 0.75;
+        background-color: rgba(0, 0, 0, 0);
+      }
+      #pause-menu {
+        position: fixed;
+        left: var(--pause-menu-offset-left);
+        top: var(--pause-menu-offset-top);
+        /* border: 3px solid black; */
+        border: 0;
+        border-radius: 5px;
+        opacity: 0.75;
+        background-color: rgba(0, 0, 0, 0);
+      }
+      #level-select {
+        position: fixed;
+        left: var(--level-select-offset-left);
+        top: var(--level-select-offset-top);
+        /* border: 3px solid black; */
+        border: 0;
+        border-radius: 5px;
+        opacity: 0.75;
+        background-color: rgba(0, 0, 0, 0);
+      }
+      #level-select table,
+      #level-select table td {
+        padding: 5px;
+        margin: 0 auto;
+        text-align: center;
+      }
       #start-menu {
         font-family: "Coves Light";
         position: fixed;
-        left: 40%;
-        top: 60%;
+        left: var(--start-menu-offset-left);
+        top: var(--start-menu-offset-top);
         border: 0;
         border-radius: 5px;
         background-color: rgba(0, 0, 0, 0);
         opacity: 0.75;
       }
       .start-menu-button {
+        display: block;
         font-family: "Coves Light";
-        position: fixed;
-        left: 40%;
-        top: 50%;
-        padding: 10px 30px;
+        font-size: 1.75em;
+        font-weight: 500;
         border: 0;
         border-radius: 5px;
-        opacity: 0.75;
+        opacity: 1;
         background-color: rgba(0, 0, 0, 0);
         color: #ffffff;
       }
+
       #pause-button {
         position: fixed;
+        font-family: "Luz Sans Book";
+        font-size: 2em;
         left: 3%;
         bottom: 3%;
         padding: 10px 30px;
@@ -1835,32 +1905,29 @@
         display: none;
         visibility: hidden;
       }
-      #timer {
-        padding: 10px 30px;
-        height: 100px;
-        width: 200px;
-        position: absolute;
+      #game-scoreboard {
+        position: fixed;
         top: 3%;
         right: 3%;
       }
-
-      #score {
-        padding: 10px 30px;
-        height: 100px;
-        width: 200px;
-        position: absolute;
-        top: 6%;
-        right: 3%;
+      #timer,
+      #score,
+      #report-time,
+      #report-coins,
+      #report td {
+        font-family: "Coves Light";
+        font-size: 2em;
+        color: #ffffff;
       }
-      #report {
-        position: fixed;
-        left: 40%;
-        top: 50%;
-        padding: 10px 30px;
-        /* border: 3px solid black; */
+      .level-select-button {
+        font-family: "Coves Light";
+        font-size: 1.75em;
+        font-weight: 500;
         border: 0;
         border-radius: 5px;
-        opacity: 0.75;
+        opacity: 1;
+        background-color: rgba(0, 0, 0, 0);
+        color: #ffffff;
       }
 
       #curtain {
@@ -1888,23 +1955,117 @@
 
   <body>
     <div id="viewport"></div>
-    <div id="timer"></div>
-    <div id="score"></div>
-    <div id="report" class="hide">
-      <div id="time"></div>
-      <div id="coins"></div>
-      <button id="reset-button" onClick="reset()">Reset</button>
+    <div id="game-scoreboard">
+      <div id="timer"></div>
+      <div id="score"></div>
     </div>
-    <div id="title">BALLSINKI</div>
-    <button id="start-button" onClick="start()">Start</button>
-    <!-- <div id="start-menu">
-      <button id="level-select-button" class="start-menu-button" onClick="showLevelSelect()">
+    <div id="report" class="hide">
+      <table>
+        <tr>
+          <td>Time:</td>
+          <td id="report-time"></td>
+        </tr>
+        <tr>
+          <td>Crystals:</td>
+          <td id="report-coins"></td>
+        </tr>
+        <tr>
+          <td>Score:</td>
+          <td id="report-score"></td>
+        </tr>
+      </table>
+      <button
+        id="report-level-select-button"
+        class="start-menu-button"
+        onClick="showLevelSelect()"
+      >
         Level Select
       </button>
-      <button id="settings-button" class="start-menu-button" onClick="showSettings()">Settings</button>
-      <button id="credits-button" class="start-menu-button" onClick="showCredits()">Credits</button>
-    </div> -->
-    <button id="pause-button" disabled onClick="pause()">Pause</button>
+      <button
+        id="report-reset-button"
+        class="start-menu-button"
+        onClick="reset({action:'reset'})"
+      >
+        Try Again
+      </button>
+      <button
+        id="report-reset-button"
+        class="start-menu-button"
+        onClick="reset({action:'next'})"
+      >
+        Next Level
+      </button>
+    </div>
+    <div id="level-select" class="hide">
+      <div id="level-select-title">Level Select</div>
+      <table>
+        <tr>
+          <td class="level-select-button" onClick="reset({action:1})">1</td>
+          <td class="level-select-button" onClick="reset({action:2})">2</td>
+          <td class="level-select-button" onClick="reset({action:3})">3</td>
+          <td class="level-select-button" onClick="reset({action:4})">4</td>
+          <td class="level-select-button" onClick="reset({action:5})">5</td>
+        </tr>
+        <tr>
+          <td class="level-select-button" onClick="reset({action:6})">6</td>
+          <td class="level-select-button" onClick="reset({action:7})">7</td>
+          <td class="level-select-button" onClick="reset({action:8})">8</td>
+          <td class="level-select-button" onClick="reset({action:9})">9</td>
+          <td class="level-select-button" onClick="reset({action:10})">10</td>
+        </tr>
+        <tr>
+          <td class="level-select-button" onClick="reset({action:11})">11</td>
+          <td class="level-select-button" onClick="reset({action:12})">12</td>
+          <td class="level-select-button" onClick="reset({action:13})">13</td>
+          <td class="level-select-button" onClick="reset({action:14})">14</td>
+          <td class="level-select-button" onClick="reset({action:15})">15</td>
+        </tr>
+        <tr>
+          <td class="level-select-button" onClick="reset({action:16})">16</td>
+          <td class="level-select-button" onClick="reset({action:17})">17</td>
+          <td class="level-select-button" onClick="reset({action:18})">18</td>
+          <td class="level-select-button" onClick="reset({action:19})">19</td>
+          <td class="level-select-button" onClick="reset({action:20})">20</td>
+        </tr>
+        <tr>
+          <td class="level-select-button" onClick="reset({action:21})">21</td>
+          <td class="level-select-button" onClick="reset({action:22})">22</td>
+          <td class="level-select-button" onClick="reset({action:23})">23</td>
+          <td class="level-select-button" onClick="reset({action:24})">24</td>
+          <td class="level-select-button" onClick="reset({action:25})">25</td>
+        </tr>
+      </table>
+    </div>
+
+    <div id="pause-menu" class="hide"></div>
+    <div id="title">BALLSINKI</div>
+    <button id="start-button" onClick="start()">Start</button>
+    <div id="start-menu">
+      <button
+        id="start-level-select-button"
+        class="start-menu-button"
+        onClick="showLevelSelect()"
+      >
+        Level Select
+      </button>
+      <button
+        id="start-settings-button"
+        class="start-menu-button"
+        onClick="showSettings()"
+      >
+        Settings
+      </button>
+      <button
+        id="start-credits-button"
+        class="start-menu-button"
+        onClick="showCredits()"
+      >
+        Credits
+      </button>
+    </div>
+    <button id="pause-button" disabled class="hide" onClick="pause()">
+      II
+    </button>
     <div id="curtain"></div>
   </body>
 </html>
