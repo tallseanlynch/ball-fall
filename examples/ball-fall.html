@@ -145,6 +145,16 @@
         return basicColors[Math.floor(Math.random() * basicColors.length)];
       };
 
+      // LFO
+      const lfoPositive = (t = 1000) => {
+        let lfoValue = (0.5 + 0.5 * Math.cos(Date.now() / t)) * 1;
+        return lfoValue;
+      };
+
+      const lfo = (t = 1000) => {
+        return (0.5 - lfoPositive(t)) * 2;
+      };
+
       var initScene,
         render,
         _boxes = [],
@@ -249,16 +259,6 @@
         pointLight0.decay = 1;
         pointLight0.distance = 5;
         scene.add(pointLight0);
-
-        // LFO
-        const lfoPositive = (t = 1000) => {
-          let lfoValue = (0.5 + 0.5 * Math.cos(Date.now() / t)) * 1;
-          return lfoValue;
-        };
-
-        const lfo = (t = 1000) => {
-          return (0.5 - lfoPositive(t)) * 2;
-        };
 
         // Orbit Controls
         // orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -516,7 +516,7 @@
         const vAdj = -70
         const sAdj = 2
 
-        const createStage0MainBeamStructure = (scale, scaleAdj = 0, name) => {
+        const createStage0MainBeamStructure = (scale, scaleAdj = 0, name, p = {x: 0, y: 0}) => {
           const mainStructure = new Physijs.BoxMesh(
             new THREE.BoxGeometry(.01,.01,.01),
             new Physijs.createMaterial(
@@ -526,7 +526,7 @@
             ),
             0
           )
-          mainStructure.position.set(0,0,1.5)
+          mainStructure.position.set(0 + p.x, 0 + p.y, 1.5)
           mainStructure.add(createBeam({p: [0 * scale, -8 * scale, -1], r: [0,0,0], s: (1 + scaleAdj) * scale}))
           mainStructure.add(createBeam({p: [-8 * scale, 0 * scale, -1], r: [0,0,.5 * Math.PI], s: (1 + scaleAdj) * scale}))
           mainStructure.add(createBeam({p: [8 * scale, 0 * scale, -1], r: [0,0,.5 * Math.PI], s: (1 + scaleAdj) * scale}))
@@ -542,26 +542,56 @@
         scene.add(stage0MainBeamStructure1)
         const stage0MainBeamStructure2 = createStage0MainBeamStructure(8, .525, 'STAGE0MAINSTRUCTURE2')
         scene.add(stage0MainBeamStructure2)
+        const stage0MinorBeamStructure = createStage0MainBeamStructure(1, -.5, 'STAGE0MINORSTRUCTURE', {x:45,y:45})
+        scene.add(stage0MinorBeamStructure)
+        const stage0MinorBeamStructure1 = createStage0MainBeamStructure(1, -.5, 'STAGE0MINORSTRUCTURE1', {x:45,y:-45})
+        scene.add(stage0MinorBeamStructure1)
+        const stage0MinorBeamStructure2 = createStage0MainBeamStructure(1, -.5, 'STAGE0MINORSTRUCTURE2', {x:-45,y:-45})
+        scene.add(stage0MinorBeamStructure2)
+        const stage0MinorBeamStructure3 = createStage0MainBeamStructure(1, -.5, 'STAGE0MINORSTRUCTURE3', {x:-45,y:45})
+        scene.add(stage0MinorBeamStructure3)
 
-        const stage0 = {
-          beams: [
-            createBeam({p: [-19.5,15,0], r: [0,0, .25 * Math.PI], s: 5}),
-            createBeam({p: [19.5,15,0], r: [0,0, -.25 * Math.PI], s: 5}),
-            createBeam({p: [-21.5,-22,0], r: [0,0, -.25 * Math.PI], s: 4.5}),
-            createBeam({p: [21.5,-22,0], r: [0,0, .25 * Math.PI], s: 4.5}),
-            createBeam({p: [0,-5,0], r: [0,0,0], s: 1}),
-            createBeam({p: [-19.5,5+vAdj,0], r: [0,0, .25 * Math.PI], s: 2}),
-            createBeam({p: [19.5,5+vAdj,0], r: [0,0, -.25 * Math.PI], s: 2}),
-            createBeam({p: [-21.5,-22+vAdj,0], r: [0,0, -.25 * Math.PI], s: 2}),
-            createBeam({p: [21.5,-22+vAdj,0], r: [0,0, .25 * Math.PI], s: 2}),
-            createBeam({p: [0,-5+vAdj,0], r: [0,0,0], s: 1}),
-            createBeam({p: [-19.5+xAdj,15,0], r: [0,0, .25 * Math.PI], s: 1}),
-            createBeam({p: [19.5+xAdj,15,0], r: [0,0, -.25 * Math.PI], s: 1}),
-            createBeam({p: [-21.5+xAdj,-22,0], r: [0,0, -.25 * Math.PI], s: 1}),
-            createBeam({p: [21.5+xAdj,-22,0], r: [0,0, .25 * Math.PI], s: 1}),
-            createBeam({p: [0+xAdj,-5,0], r: [0,0,0], s: 1}),
-          ]
-        }
+        const prize0Group = new THREE.Group()
+        const prize0 = new THREE.Mesh(
+          new THREE.BoxGeometry(.75,.75,.75),
+          new THREE.MeshPhongMaterial()
+        )
+        const prize0Top = new THREE.Mesh(
+          new THREE.ConeGeometry(1,1,8),
+          new THREE.MeshPhongMaterial()
+        )
+        const prize0Bottom = new THREE.Mesh(
+          new THREE.ConeGeometry(1,-1,8),
+          new THREE.MeshPhongMaterial()
+        )
+        prize0Group.name = 'PRIZE0GROUP'
+        prize0.name = 'PRIZE0'
+        prize0Top.name = 'PRIZE0TOP'
+        prize0Bottom.name = 'PRIZE0BOTTOM'
+
+        prize0.rotation.set(.25 * Math.PI, .25 * Math.PI, 0)
+        prize0Group.add(prize0)
+        prize0Group.add(prize0Top)
+        prize0Group.add(prize0Bottom)
+
+        prize0Top.position.y += 1.5
+        prize0Bottom.position.y += -1.5
+        prize0Group.position.set(45, 45, 0)
+
+        scene.add(prize0Group)
+        const prize1Group = prize0Group.clone()
+        prize1Group.position.set(45,-45,0)
+        const prize2Group = prize0Group.clone()
+        prize2Group.position.set(-45,-45,0)
+        const prize3Group = prize0Group.clone()
+        prize3Group.position.set(-45,45,0)
+        prize1Group.name = 'PRIZE1GROUP'
+        prize2Group.name = 'PRIZE2GROUP'
+        prize3Group.name = 'PRIZE3GROUP'
+        scene.add(prize1Group)
+        scene.add(prize2Group)
+        scene.add(prize3Group)
+
 
         const crystal = (size = 0, p = {x: 0, y:0, z:0}) => {
 
@@ -586,70 +616,70 @@
           };
 
           const coin = new THREE.Mesh();
-            const crystalTop = new THREE.Mesh(
-              new THREE.CylinderGeometry(0, 1, 0.5, 6),
-              new THREE.MeshPhongMaterial()
-            );
-            crystalTop.translateY(0.75);
-            const crystalMiddle = new THREE.Mesh(
-              new THREE.CylinderGeometry(1, 1, 1, 6),
-              new THREE.MeshPhongMaterial()
-            );
+          const crystalTop = new THREE.Mesh(
+            new THREE.CylinderGeometry(0, 1, 0.5, 6),
+            new THREE.MeshPhongMaterial()
+          );
+          crystalTop.translateY(0.75);
+          const crystalMiddle = new THREE.Mesh(
+            new THREE.CylinderGeometry(1, 1, 1, 6),
+            new THREE.MeshPhongMaterial()
+          );
 
-            const crystalBottom = new THREE.Mesh(
-              new THREE.CylinderGeometry(1, 0, 0.5, 6),
-              new THREE.MeshPhongMaterial()
-            );
-            crystalBottom.translateY(-0.75);
-            coin.add(crystalTop);
-            coin.add(crystalMiddle);
-            coin.add(crystalBottom);
-            coin.position.set(
-              p.x,
-              p.y,
-              0
-            );
-            coin.featureType = "COIN";
-            if(size === 0){
-              coin.scale.set(
-                  singleScale * xScaleMod,
-                  singleScale * yScaleMod,
-                  singleScale * zScaleMod
-                );
-                coin.coinType = "single";
-                coin.coinValue = 1;
-                coin.children.forEach((child) => {
-                  child.material.color.setHex(singleHex);
-                });
-              
-            }
-            if(size === 1){
-              coin.scale.set(
-                  doubleScale * xScaleMod,
-                  doubleScale * yScaleMod,
-                  doubleScale * zScaleMod
-                );
-                coin.coinType = "double";
-                coin.coinValue = 2;
-                coin.children.forEach((child) => {
-                  child.material.color.setHex(doubleHex);
-                });
-            }
-
-            if(size === 2) {
-              coin.scale.set(
-                tripleScale * xScaleMod,
-                tripleScale * yScaleMod,
-                tripleScale * zScaleMod
+          const crystalBottom = new THREE.Mesh(
+            new THREE.CylinderGeometry(1, 0, 0.5, 6),
+            new THREE.MeshPhongMaterial()
+          );
+          crystalBottom.translateY(-0.75);
+          coin.add(crystalTop);
+          coin.add(crystalMiddle);
+          coin.add(crystalBottom);
+          coin.position.set(
+            p.x,
+            p.y,
+            0
+          );
+          coin.featureType = "COIN";
+          if(size === 0){
+            coin.scale.set(
+                singleScale * xScaleMod,
+                singleScale * yScaleMod,
+                singleScale * zScaleMod
               );
-              coin.coinType = "triple";
-              coin.coinValue = 3;
+              coin.coinType = "single";
+              coin.coinValue = 1;
               coin.children.forEach((child) => {
-                child.material.color.setHex(tripleHex);
+                child.material.color.setHex(singleHex);
               });
-            }
-            coins.push(coin)
-            return coin
+            
+          }
+          if(size === 1){
+            coin.scale.set(
+                doubleScale * xScaleMod,
+                doubleScale * yScaleMod,
+                doubleScale * zScaleMod
+              );
+              coin.coinType = "double";
+              coin.coinValue = 2;
+              coin.children.forEach((child) => {
+                child.material.color.setHex(doubleHex);
+              });
+          }
+
+          if(size === 2) {
+            coin.scale.set(
+              tripleScale * xScaleMod,
+              tripleScale * yScaleMod,
+              tripleScale * zScaleMod
+            );
+            coin.coinType = "triple";
+            coin.coinValue = 3;
+            coin.children.forEach((child) => {
+              child.material.color.setHex(tripleHex);
+            });
+          }
+          coins.push(coin)
+          return coin
         }
 
         const createCrystalCross = (s, t = {x: 0, y: 0}, size=0) => {
@@ -692,16 +722,16 @@
         createCrystalCross(3, {x: -35, y: 35}, 0)
         createCrystalCross(3, {x: -55, y: 35}, 0)
         createCrystalLine(10, {x:-47.5, y:-20}, 2, 5, 'y')
-        createCrystalLine(5, {x:54.5, y:-22}, 1, 10, 'y')
+        createCrystalLine(5, {x:54.5, y:-22}, 0, 10, 'y')
         createCrystalLine(5, {x:40.5, y:-22.5}, 0, 10, 'y')
         createCrystalLine(10, {x:47.5, y:-20}, 2, 5, 'y')
-        createCrystalLine(5, {x:-54.5, y:-22}, 1, 10, 'y')
+        createCrystalLine(5, {x:-54.5, y:-22}, 0, 10, 'y')
         createCrystalLine(5, {x:-40.5, y:-22.5}, 0, 10, 'y')
         createCrystalLine(10, {x:-20, y:-47.5}, 2, 5, 'x')
-        createCrystalLine(5, {x:-22.5, y:-40}, 1, 10, 'x')
+        createCrystalLine(5, {x:-22.5, y:-40}, 0, 10, 'x')
         createCrystalLine(5, {x:-22.5, y:-54.5}, 0, 10, 'x')
         createCrystalLine(10, {x:-20, y:47.5}, 2, 5, 'x')
-        createCrystalLine(5, {x:-22.5, y:40}, 1, 10, 'x')
+        createCrystalLine(5, {x:-22.5, y:40}, 0, 10, 'x')
         createCrystalLine(5, {x:-22.5, y:54.5}, 0, 10, 'x')
 
         spawnBox();
@@ -1083,9 +1113,37 @@
 
       render = function () {
 
-        const stage0 = scene.children.find((obj) => obj.name === "STAGE0MAINSTRUCTURE")
-        stage0.rotation.z += .001
-        stage0.__dirtyRotation = true
+        const stage0MajorSpin = scene.children.find((obj) => obj.name === "STAGE0MAINSTRUCTURE")
+        stage0MajorSpin.rotation.z += .001
+        stage0MajorSpin.__dirtyRotation = true
+        const stage0MinorSpin = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE")
+        const stage0MinorSpin1 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE1")
+        const stage0MinorSpin2 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE2")
+        const stage0MinorSpin3 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE3")
+        stage0MinorSpin.rotation.z -= .001
+        stage0MinorSpin.__dirtyRotation = true
+        stage0MinorSpin1.rotation.z -= .001
+        stage0MinorSpin1.__dirtyRotation = true
+        stage0MinorSpin2.rotation.z -= .001
+        stage0MinorSpin2.__dirtyRotation = true
+        stage0MinorSpin3.rotation.z -= .001
+        stage0MinorSpin3.__dirtyRotation = true
+
+        // prize animations
+        let prizeI = 0
+        if(new Date().getTime() % 1.5 < 1) {
+          for(prizeI;prizeI<4;prizeI++){
+            const stage0Prize0Group = scene.children.find((obj) => obj.name === "PRIZE"+prizeI+"GROUP")
+            stage0Prize0Group.rotation.x += .005
+            stage0Prize0Group.rotation.y += .005
+            stage0Prize0Group.rotation.z += .005
+            stage0Prize0Group.children[0].rotation.y -= .01
+            stage0Prize0Group.children[1].position.y = 1.75 + (lfo()/4)
+            stage0Prize0Group.children[1].scale.set(1 -(lfo(500)/4), 1 -(lfo(500)/4), 1 -(lfo(500)/4))
+            stage0Prize0Group.children[2].position.y = -1.75 + -(lfo()/4)
+            stage0Prize0Group.children[2].scale.set(1 -(lfo(500)/4), 1 -(lfo(500)/4), 1 -(lfo(500)/4))
+          }
+        }
 
         if (
           window.appConfig.stageReset.userHasEndedReport &&
@@ -1275,40 +1333,43 @@
         }
         // }
 
-        Object.keys(window.appConfig.featureTypes).forEach((key) => {
-          window.appConfig.featureTypes[key].forEach(
-            (feature, featureIndex) => {
-              const newXRotation = feature.rotation.x + 0.01;
-              const newYRotation = feature.rotation.y + 0.01;
-              const newZRotation = feature.rotation.z + 0.01;
-              feature.rotation.x = newXRotation;
-              feature.rotation.y = newYRotation;
-              feature.rotation.z = newZRotation;
-              feature.__dirtyRotation = true;
+        // Object.keys(window.appConfig.featureTypes).forEach((key) => {
+        //   window.appConfig.featureTypes[key].forEach(
+        //     (feature, featureIndex) => {
+        //       const newXRotation = feature.rotation.x + 0.01;
+        //       const newYRotation = feature.rotation.y + 0.01;
+        //       const newZRotation = feature.rotation.z + 0.01;
+        //       feature.rotation.x = newXRotation;
+        //       feature.rotation.y = newYRotation;
+        //       feature.rotation.z = newZRotation;
+        //       feature.__dirtyRotation = true;
+        //     }
+        //   );
+        // });
+        let coinIndexToRemove = undefined;
+        if(new Date().getTime() % 3 < 1) {
+          const potentiallyGrabbedCoin = window.appConfig.coins.find(
+            (coin, coinIndex) => {
+              coinIndexToRemove = coinIndex;
+              return (
+                Math.abs(coin.position.x - sphere.position.x) <
+                  coin.scale.z * 2 &&
+                Math.abs(coin.position.y - sphere.position.y) < coin.scale.z * 2
+              );
             }
           );
-        });
-        let coinIndexToRemove = undefined;
-        const potentiallyGrabbedCoin = window.appConfig.coins.find(
-          (coin, coinIndex) => {
-            coinIndexToRemove = coinIndex;
-            return (
-              Math.abs(coin.position.x - sphere.position.x) <
-                coin.scale.z * 1.3 &&
-              Math.abs(coin.position.y - sphere.position.y) < coin.scale.z * 1.3
-            );
-          }
-        );
 
-        if (potentiallyGrabbedCoin) {
-          window.appConfig.score.coins += potentiallyGrabbedCoin.coinValue;
-          scene.remove(potentiallyGrabbedCoin);
-          window.appConfig.coins.splice(coinIndexToRemove, 1);
-          potentiallyGrabbedCoin.geometry.dispose();
-          potentiallyGrabbedCoin.material.dispose();
-          document.querySelector("#score").innerText =
-            window.appConfig.score.coins;
+          if (potentiallyGrabbedCoin) {
+            window.appConfig.score.coins += potentiallyGrabbedCoin.coinValue;
+            scene.remove(potentiallyGrabbedCoin);
+            window.appConfig.coins.splice(coinIndexToRemove, 1);
+            potentiallyGrabbedCoin.geometry.dispose();
+            potentiallyGrabbedCoin.material.dispose();
+            document.querySelector("#score").innerText =
+              window.appConfig.score.coins;
+          }          
         }
+
         requestAnimationFrame(render);
         renderer.render(scene, camera);
         render_stats.update();
