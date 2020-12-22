@@ -266,6 +266,13 @@
 
         //resize event handler
         function onWindowResize(event) {
+          //put the start button right in the middle!
+          centerElement({ id: "start-button", offsetTop: 0, offsetLeft: 0 });
+          centerElement({ id: "level-select", offsetTop: 0, offsetLeft: 0 });
+          centerElement({ id: "report", offsetTop: 0, offsetLeft: 0 });
+          centerElement({ id: "pause-menu", offsetTop: 0, offsetLeft: 0 });
+          centerElement({ id: "title", offsetTop: -200, offsetLeft: 0 });
+          centerElement({ id: "start-menu", offsetTop: 200, offsetLeft: 0 });
           // remember these initial values
           var tanFOV = Math.tan(((Math.PI / 180) * camera.fov) / 2);
           var windowHeight = window.innerHeight;
@@ -321,15 +328,10 @@
             ),
             0 // mass
           );
-          // console.dir(obj);
           zone.obj = obj;
-          // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
-
           obj.position.x = xPosition + 2.5;
           obj.position.y = yPosition - 12;
           obj.position.z = 0;
-          // obj.__dirtyPosition = true;
-          // obj.__dirtyRotation = true;
           obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
           obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
           obj.castShadow = true;
@@ -339,9 +341,6 @@
           obj.rotation.z = Math.random() * 2 * Math.PI;
           obj.featureType = "CONE";
           scene.add(obj);
-          // console.dir(JSON.stringify(obj.position));
-          console.dir(obj);
-          // debugger;
         } 
                 
         const icosahedron = () => {
@@ -349,15 +348,12 @@
             new THREE.IcosahedronGeometry(Math.random() * 3 + 1, 0),
             Physijs.createMaterial(
               new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-              // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
               0.6, // medium friction
               0.3 // low restitution
             ),
             0 // mass
           );
-          // console.dir(obj);
           zone.obj = obj;
-          // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
 
           obj.position.x = xPosition + 2.5;
           obj.position.y = yPosition - 12;
@@ -375,9 +371,6 @@
           obj.rotation.z = Math.random() * 2 * Math.PI;
           obj.featureType = "ICOSAHEDRON";
           scene.add(obj);
-          // console.dir(JSON.stringify(obj.position));
-          console.dir(obj);
-          // debugger;
         } 
 
         const disc = () => {
@@ -391,16 +384,12 @@
             ),
             Physijs.createMaterial(
               new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-              // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
               0.6, // medium friction
               0.3 // low restitution
             ),
             0 // mass
           );
-          // console.dir(obj);
           zone.obj = obj;
-          // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
-
           obj.position.x = xPosition + 2.5;
           obj.position.y = yPosition - 12;
           obj.position.z = 0;
@@ -417,9 +406,6 @@
           obj.rotation.z = Math.random() * 2 * Math.PI;
           obj.featureType = "DISC";
           scene.add(obj);
-          // console.dir(JSON.stringify(obj.position));
-          console.dir(obj);
-          // debugger;
         } 
                 
         const tetrahedron = () => {
@@ -428,16 +414,11 @@
             new THREE.TetrahedronGeometry(Math.random() * 3 + 2),
             Physijs.createMaterial(
               new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-              // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
               0.6, // medium friction
               0.3 // low restitution
             ),
             0 // mass
           );
-          // console.dir(obj);
-          zone.obj = obj;
-          // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
-
           obj.position.x = xPosition + 2.5;
           obj.position.y = yPosition - 12;
           obj.position.z = 0;
@@ -454,9 +435,6 @@
           obj.rotation.z = Math.random() * 2 * Math.PI;
           obj.featureType = "TETRAHEDRON";
           scene.add(obj);
-          // console.dir(JSON.stringify(obj.position));
-          console.dir(obj);
-          // debugger;
         } 
 
         const torus = () => {
@@ -470,16 +448,11 @@
             ),
             Physijs.createMaterial(
               new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-              // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
               0.6, // medium friction
               0.3 // low restitution
             ),
             0 // mass
           );
-          // console.dir(obj);
-          zone.obj = obj;
-          // obj.position.set(new THREE.Vector3(xPosition, yPosition, 0));
-
           obj.position.x = xPosition + 2.5;
           obj.position.y = yPosition - 12;
           obj.position.z = 0;
@@ -496,9 +469,6 @@
           obj.rotation.z = Math.random() * 2 * Math.PI;
           obj.featureType = "TORUS";
           scene.add(obj);
-          // console.dir(JSON.stringify(obj.position));
-          console.dir(obj);
-          // debugger;
         }
       
 
@@ -507,8 +477,6 @@
           new THREE.BoxGeometry(10 * config.s, 2, 2),
           Physijs.createMaterial(
             new THREE.MeshPhongMaterial({ color: config.color ? config.color : 0xffffff }),
-            // new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-            // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
             0.6, // medium friction
             0.3 // low restitution
           ),
@@ -517,9 +485,7 @@
           const beam0cap0 = new Physijs.BoxMesh(
             new THREE.BoxGeometry(1.45, 2, 1.45),
             Physijs.createMaterial(
-              // new THREE.MeshPhongMaterial({ color: getRandomColor() }),
               new THREE.MeshPhongMaterial({ color: config.color ? config.color : 0xffffff }),
-              // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
               0.6, // medium friction
               0.3 // low restitution
             ),
@@ -528,32 +494,28 @@
           const beam0cap1 = new Physijs.BoxMesh(
             new THREE.BoxGeometry(1.45, 2, 1.45),
             Physijs.createMaterial(
-              // new THREE.MeshPhongMaterial({ color: getRandomColor() }),
               new THREE.MeshPhongMaterial({ color: config.color ? config.color : 0xffffff }),
-              // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
               0.6, // medium friction
               0.3 // low restitution
             ),
             0 // mass
           );
-          beam0cap0.rotation.y = .25 * Math.PI
-          beam0cap0.position.x = -5 * config.s
-          beam0.add(beam0cap0)
-          beam0cap1.rotation.y = .25 * Math.PI
-          beam0cap1.position.x = 5 * config.s
-          beam0.add(beam0cap1)
-          beam0.position.set(config.p[0], config.p[1], config.p[2])
-          beam0.rotation.set(config.r[0], config.r[1], config.r[2])
-          return beam0
-        }
+          beam0cap0.rotation.y = 0.25 * Math.PI;
+          beam0cap0.position.x = -5 * config.s;
+          beam0.add(beam0cap0);
+          beam0cap1.rotation.y = 0.25 * Math.PI;
+          beam0cap1.position.x = 5 * config.s;
+          beam0.add(beam0cap1);
+          beam0.position.set(config.p[0], config.p[1], config.p[2]);
+          beam0.rotation.set(config.r[0], config.r[1], config.r[2]);
+          return beam0;
+        };
 
 
         const xAdj = -60
         const vAdj = -70
         const sAdj = 2
-        // const origin = new THREE.Mesh(new THREE.BoxGeometry(.1,.1,.1), new THREE.MeshPhongMaterial({color:"red"}))
-        // origin.position.set(0,0,0)
-        // scene.add(origin)
+
         const createStage0MainBeamStructure = (scale, scaleAdj = 0, name) => {
           const mainStructure = new Physijs.BoxMesh(
             new THREE.BoxGeometry(.01,.01,.01),
@@ -573,16 +535,13 @@
           mainStructure.__dirtyPosition = true
           return mainStructure
         }
+
         const stage0MainBeamStructure = createStage0MainBeamStructure(2, 0, 'STAGE0MAINSTRUCTURE')
         scene.add(stage0MainBeamStructure)
         const stage0MainBeamStructure1 = createStage0MainBeamStructure(4, 0, 'STAGE0MAINSTRUCTURE1')
         scene.add(stage0MainBeamStructure1)
         const stage0MainBeamStructure2 = createStage0MainBeamStructure(8, .525, 'STAGE0MAINSTRUCTURE2')
         scene.add(stage0MainBeamStructure2)
-
-
-
-        // gonna make functions to automate the creation of shapes of beams and items
 
         const stage0 = {
           beams: [
@@ -604,28 +563,6 @@
           ]
         }
 
-        // stage0.beams.forEach((beam) => {
-        //   scene.add(beam)
-        // })
-          
-
-
-
-        // loader.load("models/scene.gltf", (root) => {
-        //   //now make as physijs
-        //   const shart = root.scene;
-        //   shart.scale.set(10, 10, 10);
-        //   scene.add(shart);
-        // });
-
-        //SAVE THIS TO SHOW HOW TO LOAD TEXTURES
-        // const coinSpriteMap = new THREE.TextureLoader().load(
-        //   "images/circle-16.png"
-        // );
-        // const coinSpriteMaterial = new THREE.SpriteMaterial({
-        //   map: coinSpriteMap,
-        //   color: 0xffffff,
-        // });
         const crystal = (size = 0, p = {x: 0, y:0, z:0}) => {
 
           const tripleHex = 0x159294;
@@ -651,19 +588,16 @@
           const coin = new THREE.Mesh();
             const crystalTop = new THREE.Mesh(
               new THREE.CylinderGeometry(0, 1, 0.5, 6),
-              // new THREE.MeshStandardMaterial(crystalMaterialOptions)
               new THREE.MeshPhongMaterial()
             );
             crystalTop.translateY(0.75);
             const crystalMiddle = new THREE.Mesh(
               new THREE.CylinderGeometry(1, 1, 1, 6),
-              // new THREE.MeshStandardMaterial(crystalMaterialOptions)
               new THREE.MeshPhongMaterial()
             );
 
             const crystalBottom = new THREE.Mesh(
               new THREE.CylinderGeometry(1, 0, 0.5, 6),
-              // new THREE.MeshStandardMaterial(crystalMaterialOptions)
               new THREE.MeshPhongMaterial()
             );
             crystalBottom.translateY(-0.75);
@@ -684,7 +618,6 @@
                 );
                 coin.coinType = "single";
                 coin.coinValue = 1;
-                // coin.material.color.setHex(singleHex);
                 coin.children.forEach((child) => {
                   child.material.color.setHex(singleHex);
                 });
@@ -698,7 +631,6 @@
                 );
                 coin.coinType = "double";
                 coin.coinValue = 2;
-                // coin.material.color.setHex(doubleHex);
                 coin.children.forEach((child) => {
                   child.material.color.setHex(doubleHex);
                 });
@@ -712,7 +644,6 @@
               );
               coin.coinType = "triple";
               coin.coinValue = 3;
-              // coin.material.color.setHex(tripleHex);
               coin.children.forEach((child) => {
                 child.material.color.setHex(tripleHex);
               });
@@ -720,7 +651,6 @@
             coins.push(coin)
             return coin
         }
-
 
         const createCrystalCross = (s, t = {x: 0, y: 0}, size=0) => {
           scene.add(crystal(size, {x: 0 * s + t.x, y:1 * s + t.y, z:0}))
@@ -741,8 +671,6 @@
 
         createCrystalCross(5)
         createCrystalCross(10)
-        // createCrystalCross(15)
-        // createCrystalCross(25)
         createCrystalCross(5, {x: 20, y: 20}, 1)
         createCrystalCross(5, {x: -20, y: 20}, 1)
         createCrystalCross(5, {x: -20, y: -20}, 1)
@@ -767,29 +695,12 @@
         createCrystalLine(10, {x:47.5, y:-20}, 2, 5, 'y')
         createCrystalLine(10, {x:-20, y:-47.5}, 2, 5, 'x')
         createCrystalLine(10, {x:-20, y:47.5}, 2, 5, 'x')
-        // createCrystalCross(5, {x: 50, y: -50}, 0)
-        // createCrystalCross(5, {x: 30, y: -50}, 0)
-        // createCrystalCross(5, {x: 30, y: -30}, 0)
-        // createCrystalCross(5, {x: 50, y: -30}, 0)
-
 
         spawnBox();
 
         requestAnimationFrame(render);
         scene.simulate();
         const clickRay = new THREE.Raycaster();
-
-        // const initialCameraPosition = camera.position.z
-        // const cameraPositionTimer = new easytimer.Timer({ countdown: true, startValues: {seconds: 2}});
-        // cameraPositionTimer.addEventListener("secondTenthsUpdated", function () {
-        //   console.log(cameraPositionTimer.getTimeValues().toString(['minutes', 'seconds', 'secondTenths']))
-        //   camera.position.z += 1
-        // });
-
-        // window.cameraPositionTimer = cameraPositionTimer
-        // const initialCameraTimeout = setTimeout(() => {
-        //   cameraPositionTimer.start({precision: 'secondTenths'})
-        // }, 1000)
 
         const timer = new easytimer.Timer({ precision: "secondTenths" });
         timer.addEventListener("secondTenthsUpdated", function (e) {
@@ -892,7 +803,7 @@
 
       spawnBox = (function () {
         var box_geometry = new THREE.BoxGeometry(4, 4, 4),
-          sphere_geometry = new THREE.SphereGeometry(1, 16, 16),
+          sphere_geometry = new THREE.SphereGeometry(1, 32, 32),
           handleCollision = function (
             collided_with,
             linearVelocity,
@@ -900,7 +811,7 @@
           ) {
             console.log("collision");
             console.log("collided_with", collided_with);
-            if (collided_with.featureType === "STAGEFLOOR") {
+            if (collided_with.featureType === "TORUS") {
               window.appConfig.stageResultsBallZoom.userHasEnded = true;
               window.appConfig.timer.pause();
               window.appConfig.results[`stage${window.appConfig.level}`]
@@ -918,13 +829,15 @@
                   });
               //now performance report and start level transition
               console.dir(window.appConfig.results);
-              document.querySelector("#report #time").innerText =
+              document.querySelector("#report-time").innerText =
                 window.appConfig.results[
                   `stage${window.appConfig.level}`
                 ].finalTime;
-              document.querySelector("#report #coins").innerText =
+              document.querySelector("#report-coins").innerText =
                 window.appConfig.score.coins;
               document.querySelector("#report").classList.remove("hide");
+              centerElement({ id: "report", offsetTop: 0, offsetLeft: 0 });
+              document.querySelector("#pause-button").classList.add("hide");
               document.querySelector("#pause-button").disabled = true;
             }
             const suonousFeatureTypes = [
@@ -981,13 +894,9 @@
 
             material = Physijs.createMaterial(
               new THREE.MeshPhongMaterial(),
-              // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
               0.6, // medium friction
               0.3 // low restitution
             );
-
-            //material = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture( 'images/rocks.jpg' ) });
-
             box = new Physijs.BoxMesh(box_geometry, material);
             box.collisions = 0;
 
@@ -1004,7 +913,6 @@
             );
 
             box.castShadow = true;
-            // box.addEventListener("collision", handleCollision);
             box.addEventListener("ready", spawnBox);
             scene.add(box);
           };
@@ -1046,7 +954,7 @@
           const sidesColor = getRandomColor();
 
           const glassMesh0 = new Physijs.BoxMesh(
-            /*geometry*/ new THREE.BoxGeometry(500, 370, 1),
+            /*geometry*/ new THREE.BoxGeometry(1000, 1000, 1),
             /*material*/ new THREE.MeshBasicMaterial({
               color: getRandomColor(),
               opacity: 0,
@@ -1059,7 +967,7 @@
           glassMesh0.name = "glassMesh0";
 
           const glassMesh1 = new Physijs.BoxMesh(
-            /*geometry*/ new THREE.BoxGeometry(500, 375, 1),
+            /*geometry*/ new THREE.BoxGeometry(1000, 1000, 1),
             /*material*/ new THREE.MeshBasicMaterial({
               color: getRandomColor(),
               opacity: 0.0,
@@ -1071,51 +979,6 @@
           glassMesh1.gameName = "BACKGLASS";
           glassMesh1.name = "glassMesh1";
 
-          // const sideGlassMaterial = Physijs.createMaterial(
-          //   new THREE.MeshBasicMaterial({
-          //     color: sidesColor,
-          //     opacity: 0.5,
-          //     transparent: true,
-          //   }),
-          //   0.8,
-          //   0.4
-          // );
-
-          // const glassMesh2 = new Physijs.BoxMesh(
-          //   /*geometry*/ new THREE.BoxGeometry(3, 375, 1),
-          //   /*material*/ Physijs.createMaterial(
-          //     new THREE.MeshBasicMaterial({
-          //       color: sidesColor,
-          //       opacity: 0.5,
-          //       transparent: true,
-          //     }),
-          //     0.8,
-          //     0.4
-          //   ),
-          //   /*mass*/ 0,
-          //   { restitution: 0.2 }
-          // );
-          // glassMesh2.gameName = "LEFTGLASS";
-          // glassMesh2.name = "glassMesh2";
-          // glassMesh2.featureType = "SIDEGLASS";
-
-          // const glassMesh3 = new Physijs.BoxMesh(
-          //   /*geometry*/ new THREE.BoxGeometry(3, 375, 1),
-          //   /*material*/ Physijs.createMaterial(
-          //     new THREE.MeshBasicMaterial({
-          //       color: sidesColor,
-          //       opacity: 0.5,
-          //       transparent: true,
-          //     }),
-          //     0.8,
-          //     0.4
-          //   ),
-          //   /*mass*/ 0,
-          //   { restitution: 1 }
-          // );
-          // glassMesh3.gameName = "RIGHTGLASS";
-          // glassMesh3.name = "glassMesh3";
-          // glassMesh3.featureType = "SIDEGLASS";
           const stageFloor = new Physijs.BoxMesh(
             /*geometry*/ new THREE.BoxGeometry(25, 1, 10),
             /*material*/ new THREE.MeshBasicMaterial({
@@ -1145,99 +1008,19 @@
           catchWall.position.z = 5;
           glassMesh0.position.z = 1.5;
           glassMesh1.position.z = -1.5;
-          // glassMesh2.position.x = -12.5;
-          // glassMesh2.rotation.y = Math.PI * 0.5;
-          // glassMesh3.position.x = 12.5;
-          // glassMesh3.rotation.y = Math.PI * -0.5;
           glassMesh0.position.y = -137.5;
           glassMesh1.position.y = -140;
-          // glassMesh2.position.y = -140;
-          // glassMesh3.position.y = -140;
           stageFloor.position.y = -327;
           stageFloor.rotation.x = Math.PI * 0.125;
           glassMesh0.__dirtyPosition = true;
           glassMesh0.__dirtyRotation = true;
           glassMesh1.__dirtyPosition = true;
           glassMesh1.__dirtyRotation = true;
-          // glassMesh2.__dirtyPosition = true;
-          // glassMesh2.__dirtyRotation = true;
-          // glassMesh3.__dirtyPosition = true;
-          // glassMesh3.__dirtyRotation = true;
 
           scene.add(glassMesh0);
           scene.add(glassMesh1);
-          // scene.add(glassMesh2);
-          // scene.add(glassMesh3);
           scene.add(stageFloor);
           scene.add(catchWall);
-
-          // const loader = new THREE.BufferGeometryLoader();
-
-          // // load a resource
-          // loader.load(
-          //   // resource URL
-          //   'geometries/geometry.json',
-
-          //   // onLoad callback
-          //   function ( geometry ) {
-
-          //     const obj = new Physijs.BoxMesh(
-          //       geometry,
-          //       Physijs.createMaterial(
-          //           new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-          //           0.6, // medium friction
-          //           0.3 // low restitution
-          //         ),
-          //         0 // mass
-          //     );
-
-          //     scene.add( obj );
-          //   },
-
-          //   // onProgress callback
-          //   function ( xhr ) {
-          //     console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
-          //   },
-
-          //   // onError callback
-          //   function ( err ) {
-          //     console.log( 'An error happened' );
-          //   }
-          // );
-
-          // const geoTest = () => {
-          //   const length = 12, width = 8;
-
-          //   const shape = new THREE.Shape();
-          //   const start = new THREE.Vector2(0,-10)
-          //   const end = new THREE.Vector2(0,0)
-          //   shape.setFromPoints([start, end])
-          //   // shape.moveTo( 0,0 );
-          //   // shape.lineTo( 0, width );
-          //   // shape.lineTo( length, width );
-          //   // shape.lineTo( length, 0 );
-          //   // shape.lineTo( 0, 0 );
-
-          //   const extrudeSettings = {
-          //     steps: 1,
-          //     // depth: 16,
-          //     // depth: 1,
-          //     // bevelEnabled: true,
-          //     // bevelThickness: 1,
-          //     // bevelSize: 1,
-          //     // bevelOffset: 0,
-          //     // bevelSegments: 1
-          //   };
-
-          //   const geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
-          //   const material = new THREE.MeshPhongMaterial( { color: 0xffffff } );
-          //   const mesh = new THREE.Mesh( geometry, material ) ;
-          //   mesh.position.z = -25
-          //   mesh.rotation.y = .5 * Math.PI
-          //   scene.add( mesh );
-          // }
-          // geoTest()
-
 
           window.appConfig.initialBallZoomReset = () => {
             window.appConfig.initialBallZoom = {
@@ -1466,12 +1249,8 @@
             Math.round((1 - percentFinished) * 100) +
             "%)";
         }
-        // if (distanceSphereToStageFloor > 50) {
-        // camera.position.y = sphere.position.y + adjustCamera;
         camera.position.x = sphere.position.x;
         camera.position.y = sphere.position.y;
-        // zoom into ball for reset
-        // (window.appConfig.stageResultsBallZoom.percentComplete * 93.75)
         camera.position.z =
           10 +
           90 * window.appConfig.initialBallZoom.percentComplete -
@@ -1525,13 +1304,15 @@
         requestAnimationFrame(render);
         renderer.render(scene, camera);
         render_stats.update();
-        // toggleCurtain()
       };
 
       const start = () => {
         window.appConfig.start = true;
         document.querySelector("#start-button").classList.add("hide");
-        document.querySelector("#pause-button").disabled = false;
+        document.querySelector("#title").classList.add("hide");
+        document.querySelector("#start-menu").classList.add("hide");
+        document.querySelector("#game-scoreboard").classList.remove("hide");
+        document.querySelector("#pause-button").classList.remove("hide");
         window.appConfig.initialBallZoom.userHasClickedStart = true;
         window.appConfig.timer.start();
         document.querySelector("#pause-button").disabled = false;
@@ -1551,33 +1332,158 @@
 
       const reset = () => {
         window.appConfig.stageReset.userHasEndedReport = true;
+        document.querySelector("#level-select").classList.add("hide");
         document.querySelector("#curtain").classList.remove("opacity-0");
         document.querySelector("#report").classList.add("hide");
+        document.querySelector("#game-scoreboard").classList.add("hide");
+
         setTimeout(() => {
           console.log("fired");
           document.querySelector("#curtain").classList.add("opacity-0");
         }, 2000);
-        // debugger
-        // document.querySelector('#curtain').style.opacity = 1
-        // window.appConfig.initialBallZoom.userHasClickedStart = true
         window.appConfig.timer.reset();
         window.appConfig.timer.pause();
       };
-
+      const showLevelSelect = () => {
+        document.querySelector("#level-select").classList.remove("hide");
+        centerElement({ id: "level-select", offsetTop: 0, offsetLeft: 0 });
+        document.querySelector("#start-menu").classList.add("hide");
+        document.querySelector("#pause-menu").classList.add("hide");
+        document.querySelector("#start-button").classList.add("hide");
+        document.querySelector("#report").classList.add("hide");
+        document.querySelector("#title").classList.add("hide");
+      };
+      const showSettings = () => {
+        console.log("clicked settings");
+      };
+      const showCredits = () => {
+        console.log("clicked credits");
+      };
+      const centerElement = (options) => {
+        const { id, offsetLeft, offsetTop } = options;
+        const element = document.getElementById(id);
+        const buttonHeight = element.offsetHeight;
+        const buttonWidth = element.offsetWidth;
+        const offsetHeight =
+          window.innerHeight / 2 - buttonHeight / 2 + offsetTop;
+        const offsetWidth =
+          window.innerWidth / 2 - buttonWidth / 2 + offsetLeft;
+        const root = document.documentElement;
+        root.style.setProperty(`--${id}-offset-top`, offsetHeight + "px");
+        root.style.setProperty(`--${id}-offset-left`, offsetWidth + "px");
+      };
       window.onload = initScene;
     </script>
     <style>
+      :root {
+      }
+      @font-face {
+        font-family: "Aadhunik";
+        src: url("./fonts/Aadhunik.ttf") format("truetype");
+      }
+      @font-face {
+        font-family: "Coves Light";
+        src: url("./fonts/Coves Light.otf") format("opentype");
+      }
+      @font-face {
+        font-family: "Luz Sans Book";
+        src: url("./fonts/LUZRO.ttf") format("truetype");
+      }
+      button:focus {
+        outline: none;
+        box-shadow: none;
+      }
       #start-button {
+        font-family: "Luz Sans Book";
+        font-size: 2.5em;
         position: fixed;
-        left: 40%;
-        top: 50%;
+        left: var(--start-button-offset-left);
+        top: var(--start-button-offset-top);
         padding: 10px 30px;
         border: 0;
         border-radius: 5px;
         opacity: 0.75;
+        background-color: rgba(0, 0, 0, 0);
+        color: #ffffff;
       }
+      #level-select-title {
+        font-family: "Luz Sans Book";
+        font-size: 2em;
+        color: #ffffff;
+        margin: 0 auto;
+        text-align: center;
+      }
+      #title {
+        font-family: "Aadhunik";
+        position: fixed;
+        top: var(--title-offset-top);
+        left: var(--title-offset-left);
+        font-size: 4em;
+        border: 0;
+        border-radius: 5px;
+        opacity: 0.75;
+        background-color: rgba(0, 0, 0, 0);
+        color: #ffffff;
+      }
+      #report {
+        position: fixed;
+        left: var(--report-offset-left);
+        top: var(--report-offset-top);
+        border: 0;
+        border-radius: 5px;
+        opacity: 0.75;
+        background-color: rgba(0, 0, 0, 0);
+      }
+      #pause-menu {
+        position: fixed;
+        left: var(--pause-menu-offset-left);
+        top: var(--pause-menu-offset-top);
+        border: 0;
+        border-radius: 5px;
+        opacity: 0.75;
+        background-color: rgba(0, 0, 0, 0);
+      }
+      #level-select {
+        position: fixed;
+        left: var(--level-select-offset-left);
+        top: var(--level-select-offset-top);
+        border: 0;
+        border-radius: 5px;
+        opacity: 0.75;
+        background-color: rgba(0, 0, 0, 0);
+      }
+      #level-select table,
+      #level-select table td {
+        padding: 5px;
+        margin: 0 auto;
+        text-align: center;
+      }
+      #start-menu {
+        font-family: "Coves Light";
+        position: fixed;
+        left: var(--start-menu-offset-left);
+        top: var(--start-menu-offset-top);
+        border: 0;
+        border-radius: 5px;
+        background-color: rgba(0, 0, 0, 0);
+        opacity: 0.75;
+      }
+      .start-menu-button {
+        display: block;
+        font-family: "Coves Light";
+        font-size: 1.75em;
+        font-weight: 500;
+        border: 0;
+        border-radius: 5px;
+        opacity: 1;
+        background-color: rgba(0, 0, 0, 0);
+        color: #ffffff;
+      }
+
       #pause-button {
         position: fixed;
+        font-family: "Luz Sans Book";
+        font-size: 2em;
         left: 3%;
         bottom: 3%;
         padding: 10px 30px;
@@ -1589,32 +1495,29 @@
         display: none;
         visibility: hidden;
       }
-      #timer {
-        padding: 10px 30px;
-        height: 100px;
-        width: 200px;
-        position: absolute;
+      #game-scoreboard {
+        position: fixed;
         top: 3%;
         right: 3%;
       }
-
-      #score {
-        padding: 10px 30px;
-        height: 100px;
-        width: 200px;
-        position: absolute;
-        top: 6%;
-        right: 3%;
+      #timer,
+      #score,
+      #report-time,
+      #report-coins,
+      #report td {
+        font-family: "Coves Light";
+        font-size: 2em;
+        color: #ffffff;
       }
-      #report {
-        position: fixed;
-        left: 40%;
-        top: 50%;
-        padding: 10px 30px;
-        /* border: 3px solid black; */
+      .level-select-button {
+        font-family: "Coves Light";
+        font-size: 1.75em;
+        font-weight: 500;
         border: 0;
         border-radius: 5px;
-        opacity: 0.75;
+        opacity: 1;
+        background-color: rgba(0, 0, 0, 0);
+        color: #ffffff;
       }
 
       #curtain {
@@ -1642,15 +1545,117 @@
 
   <body>
     <div id="viewport"></div>
-    <div id="timer"></div>
-    <div id="score"></div>
-    <div id="report" class="hide">
-      <div id="time"></div>
-      <div id="coins"></div>
-      <button id="reset-button" onClick="reset()">Reset</button>
+    <div id="game-scoreboard">
+      <div id="timer"></div>
+      <div id="score"></div>
     </div>
+    <div id="report" class="hide">
+      <table>
+        <tr>
+          <td>Time:</td>
+          <td id="report-time"></td>
+        </tr>
+        <tr>
+          <td>Crystals:</td>
+          <td id="report-coins"></td>
+        </tr>
+        <tr>
+          <td>Score:</td>
+          <td id="report-score"></td>
+        </tr>
+      </table>
+      <button
+        id="report-level-select-button"
+        class="start-menu-button"
+        onClick="showLevelSelect()"
+      >
+        Level Select
+      </button>
+      <button
+        id="report-reset-button"
+        class="start-menu-button"
+        onClick="reset({action:'reset'})"
+      >
+        Try Again
+      </button>
+      <button
+        id="report-reset-button"
+        class="start-menu-button"
+        onClick="reset({action:'next'})"
+      >
+        Next Level
+      </button>
+    </div>
+    <div id="level-select" class="hide">
+      <div id="level-select-title">Level Select</div>
+      <table>
+        <tr>
+          <td class="level-select-button" onClick="reset({action:1})">1</td>
+          <td class="level-select-button" onClick="reset({action:2})">2</td>
+          <td class="level-select-button" onClick="reset({action:3})">3</td>
+          <td class="level-select-button" onClick="reset({action:4})">4</td>
+          <td class="level-select-button" onClick="reset({action:5})">5</td>
+        </tr>
+        <tr>
+          <td class="level-select-button" onClick="reset({action:6})">6</td>
+          <td class="level-select-button" onClick="reset({action:7})">7</td>
+          <td class="level-select-button" onClick="reset({action:8})">8</td>
+          <td class="level-select-button" onClick="reset({action:9})">9</td>
+          <td class="level-select-button" onClick="reset({action:10})">10</td>
+        </tr>
+        <tr>
+          <td class="level-select-button" onClick="reset({action:11})">11</td>
+          <td class="level-select-button" onClick="reset({action:12})">12</td>
+          <td class="level-select-button" onClick="reset({action:13})">13</td>
+          <td class="level-select-button" onClick="reset({action:14})">14</td>
+          <td class="level-select-button" onClick="reset({action:15})">15</td>
+        </tr>
+        <tr>
+          <td class="level-select-button" onClick="reset({action:16})">16</td>
+          <td class="level-select-button" onClick="reset({action:17})">17</td>
+          <td class="level-select-button" onClick="reset({action:18})">18</td>
+          <td class="level-select-button" onClick="reset({action:19})">19</td>
+          <td class="level-select-button" onClick="reset({action:20})">20</td>
+        </tr>
+        <tr>
+          <td class="level-select-button" onClick="reset({action:21})">21</td>
+          <td class="level-select-button" onClick="reset({action:22})">22</td>
+          <td class="level-select-button" onClick="reset({action:23})">23</td>
+          <td class="level-select-button" onClick="reset({action:24})">24</td>
+          <td class="level-select-button" onClick="reset({action:25})">25</td>
+        </tr>
+      </table>
+    </div>
+
+    <div id="pause-menu" class="hide"></div>
+    <div id="title">BALLSINKI</div>
     <button id="start-button" onClick="start()">Start</button>
-    <button id="pause-button" disabled onClick="pause()">Pause</button>
+    <div id="start-menu">
+      <button
+        id="start-level-select-button"
+        class="start-menu-button"
+        onClick="showLevelSelect()"
+      >
+        Level Select
+      </button>
+      <button
+        id="start-settings-button"
+        class="start-menu-button"
+        onClick="showSettings()"
+      >
+        Settings
+      </button>
+      <button
+        id="start-credits-button"
+        class="start-menu-button"
+        onClick="showCredits()"
+      >
+        Credits
+      </button>
+    </div>
+    <button id="pause-button" disabled class="hide" onClick="pause()">
+      II
+    </button>
     <div id="curtain"></div>
   </body>
 </html>
