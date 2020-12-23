@@ -36,98 +36,75 @@
     <script src="https://unpkg.com/three@0.112.0/examples/js/loaders/GLTFLoader.js"></script>
     <script type="text/javascript">
       "use strict";
-
-      var backgroundMusic0 = new Howl({
-        src: ["sounds/BALL FALL jingle flat 1.mp3"],
-        autoPlay: true,
-        loop: false,
-        onend: () => {
-          console.log("finished 1");
-        },
+      window.appConfig = {};
+      const backgroundMusics = [];
+      const howlSounds = [];
+      window.appConfig.howlSounds = howlSounds;
+      window.appConfig.backgroundMusics = backgroundMusics;
+      const loadSound = (options) => {
+        const { src, type } = options;
+        const sound = new Howl({
+          src: [src],
+          autoPlay: type === "backgroundMusic" ? true : false,
+          loop: type === "backgroundMusic" ? true : false,
+          volume: type === "backgroundMusic" ? 0.1 : 1,
+        }).once("load", () => {
+          if (type === "backgroundMusic") {
+            backgroundMusics.push(sound);
+            sound.play();
+          } else {
+            howlSounds.push(sound);
+          }
+        });
+        return sound;
+      };
+      const backgroundMusic0 = loadSound({
+        src: "sounds/BALL FALL jingle flat 1.mp3",
+        type: "backgroundMusic",
+      })
+        .on("playerror", (id, e) => {
+          console.log("playerror callback");
+          console.dir(id);
+          console.dir(e);
+        })
+        .on("fade", (e) => {
+          console.log("fade callback");
+          console.dir(e);
+          console.dir(this);
+        });
+      const howlSound0 = loadSound({
+        src: "sounds/Sound FX/BALL FALL fx a1.mp3",
+        type: "howlSound",
       });
-      backgroundMusic0.volume(0.1);
-
-      var howlSound0 = new Howl({
-        src: ["sounds/Sound FX/BALL FALL fx a1.mp3"],
-        onstart: () => {
-          console.log("started 0");
-        },
-        onend: () => {
-          console.log("finished 0");
-        },
+      const howlSound1 = loadSound({
+        src: "sounds/Sound FX/BALL FALL fx a2.mp3",
+        type: "howlSound",
       });
-
-      var howlSound1 = new Howl({
-        src: ["sounds/Sound FX/BALL FALL fx a2.mp3"],
-        onstart: () => {
-          console.log("started 1");
-        },
-        onend: () => {
-          console.log("finished 1");
-        },
+      const howlSound2 = loadSound({
+        src: "sounds/Sound FX/BALL FALL fx a3.mp3",
+        type: "howlSound",
       });
-
-      var howlSound2 = new Howl({
-        src: ["sounds/Sound FX/BALL FALL fx a3.mp3"],
-        onstart: () => {
-          console.log("started 2");
-        },
-        onend: () => {
-          console.log("finished 2");
-        },
+      const howlSound3 = loadSound({
+        src: "sounds/Sound FX/BALL FALL fx a4.mp3",
+        type: "howlSound",
       });
-
-      var howlSound3 = new Howl({
-        src: ["sounds/Sound FX/BALL FALL fx a4.mp3"],
-        onstart: () => {
-          console.log("started 3");
-        },
-        onend: () => {
-          console.log("finished 3");
-        },
+      const howlSound4 = loadSound({
+        src: "sounds/Sound FX/BALL FALL fx a5.mp3",
+        type: "howlSound",
       });
-
-      var howlSound4 = new Howl({
-        src: ["sounds/Sound FX/BALL FALL fx a5.mp3"],
-        onstart: () => {
-          console.log("started 4");
-        },
-        onend: () => {
-          console.log("finished 4");
-        },
+      const howlSound5 = loadSound({
+        src: "sounds/Sound FX/BALL FALL fx a6.mp3",
+        type: "howlSound",
       });
-
-      var howlSound5 = new Howl({
-        src: ["sounds/Sound FX/BALL FALL fx a6.mp3"],
-        onstart: () => {
-          console.log("started 5");
-        },
-        onend: () => {
-          console.log("finished 5");
-        },
+      const howlSound6 = loadSound({
+        src: "sounds/Sound FX/BALL FALL fx a7.mp3",
+        type: "howlSound",
+      });
+      const howlSound7 = loadSound({
+        src: "sounds/Sound FX/BALL FALL fx a8.mp3",
+        type: "howlSound",
       });
 
-      var howlSound6 = new Howl({
-        src: ["sounds/Sound FX/BALL FALL fx a7.mp3"],
-        onstart: () => {
-          console.log("started 6");
-        },
-        onend: () => {
-          console.log("finished 6");
-        },
-      });
-
-      var howlSound7 = new Howl({
-        src: ["sounds/Sound FX/BALL FALL fx a8.mp3"],
-        onstart: () => {
-          console.log("started 7");
-        },
-        onend: () => {
-          console.log("finished 7");
-        },
-      });
-
-      backgroundMusic0.play();
       Physijs.scripts.worker = "js/physijs_worker.js";
       Physijs.scripts.ammo = "ammo.js";
 
@@ -171,7 +148,7 @@
         orbitControls;
 
       initScene = function () {
-        window.appConfig = {};
+        window.appConfig.soundsBackDestination = "";
         renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setClearColor(0x000000, 0);
@@ -341,8 +318,8 @@
           obj.rotation.z = Math.random() * 2 * Math.PI;
           obj.featureType = "CONE";
           scene.add(obj);
-        } 
-                
+        };
+
         const icosahedron = () => {
           const obj = new Physijs.ConvexMesh(
             new THREE.IcosahedronGeometry(Math.random() * 3 + 1, 0),
@@ -371,7 +348,7 @@
           obj.rotation.z = Math.random() * 2 * Math.PI;
           obj.featureType = "ICOSAHEDRON";
           scene.add(obj);
-        } 
+        };
 
         const disc = () => {
           const radius = Math.random() * 3 + 1;
@@ -406,8 +383,8 @@
           obj.rotation.z = Math.random() * 2 * Math.PI;
           obj.featureType = "DISC";
           scene.add(obj);
-        } 
-                
+        };
+
         const tetrahedron = () => {
           const radius = Math.random() * 3 + 1;
           const obj = new Physijs.ConvexMesh(
@@ -435,7 +412,7 @@
           obj.rotation.z = Math.random() * 2 * Math.PI;
           obj.featureType = "TETRAHEDRON";
           scene.add(obj);
-        } 
+        };
 
         const torus = () => {
           const radiusMod = Math.random() * 3 + 1;
@@ -469,23 +446,26 @@
           obj.rotation.z = Math.random() * 2 * Math.PI;
           obj.featureType = "TORUS";
           scene.add(obj);
-        }
-      
+        };
 
         const createBeam = (config) => {
           const beam0 = new Physijs.BoxMesh(
-          new THREE.BoxGeometry(10 * config.s, 2, 2),
-          Physijs.createMaterial(
-            new THREE.MeshPhongMaterial({ color: config.color ? config.color : 0xffffff }),
-            0.6, // medium friction
-            0.3 // low restitution
-          ),
-          0 // mass
+            new THREE.BoxGeometry(10 * config.s, 2, 2),
+            Physijs.createMaterial(
+              new THREE.MeshPhongMaterial({
+                color: config.color ? config.color : 0xffffff,
+              }),
+              0.6, // medium friction
+              0.3 // low restitution
+            ),
+            0 // mass
           );
           const beam0cap0 = new Physijs.BoxMesh(
             new THREE.BoxGeometry(1.45, 2, 1.45),
             Physijs.createMaterial(
-              new THREE.MeshPhongMaterial({ color: config.color ? config.color : 0xffffff }),
+              new THREE.MeshPhongMaterial({
+                color: config.color ? config.color : 0xffffff,
+              }),
               0.6, // medium friction
               0.3 // low restitution
             ),
@@ -494,7 +474,9 @@
           const beam0cap1 = new Physijs.BoxMesh(
             new THREE.BoxGeometry(1.45, 2, 1.45),
             Physijs.createMaterial(
-              new THREE.MeshPhongMaterial({ color: config.color ? config.color : 0xffffff }),
+              new THREE.MeshPhongMaterial({
+                color: config.color ? config.color : 0xffffff,
+              }),
               0.6, // medium friction
               0.3 // low restitution
             ),
@@ -511,16 +493,15 @@
           return beam0;
         };
 
-
-        const xAdj = -60
-        const vAdj = -70
-        const sAdj = 2
+        const xAdj = -60;
+        const vAdj = -70;
+        const sAdj = 2;
 
         const createStage0MainBeamStructure = (scale, scaleAdj = 0, name, p = {x: 0, y: 0}) => {
           const mainStructure = new Physijs.BoxMesh(
-            new THREE.BoxGeometry(.01,.01,.01),
+            new THREE.BoxGeometry(0.01, 0.01, 0.01),
             new Physijs.createMaterial(
-              new THREE.MeshPhongMaterial({transparent:true, opacity: 0}),
+              new THREE.MeshPhongMaterial({ transparent: true, opacity: 0 }),
               0.6,
               0.3
             ),
@@ -592,9 +573,7 @@
         scene.add(prize2Group)
         scene.add(prize3Group)
 
-
-        const crystal = (size = 0, p = {x: 0, y:0, z:0}) => {
-
+        const crystal = (size = 0, p = { x: 0, y: 0, z: 0 }) => {
           const tripleHex = 0x159294;
           const doubleHex = 0xffa6bb;
           const singleHex = 0xffd5c9;
@@ -682,22 +661,28 @@
           return coin
         }
 
-        const createCrystalCross = (s, t = {x: 0, y: 0}, size=0) => {
-          scene.add(crystal(size, {x: 0 * s + t.x, y:1 * s + t.y, z:0}))
-          scene.add(crystal(size, {x: 0 * s + t.x, y:-1 * s + t.y, z:0}))
-          scene.add(crystal(size, {x: -1 * s + t.x, y:0 * s + t.y, z:0}))
-          scene.add(crystal(size, {x: 1 * s + t.x, y:0 * s + t.y, z:0}))
-        }
-        const createCrystalLine = (s, t = {x: 0, y: 0}, size=0, n, dir='x') => {
+        const createCrystalCross = (s, t = { x: 0, y: 0 }, size = 0) => {
+          scene.add(crystal(size, { x: 0 * s + t.x, y: 1 * s + t.y, z: 0 }));
+          scene.add(crystal(size, { x: 0 * s + t.x, y: -1 * s + t.y, z: 0 }));
+          scene.add(crystal(size, { x: -1 * s + t.x, y: 0 * s + t.y, z: 0 }));
+          scene.add(crystal(size, { x: 1 * s + t.x, y: 0 * s + t.y, z: 0 }));
+        };
+        const createCrystalLine = (
+          s,
+          t = { x: 0, y: 0 },
+          size = 0,
+          n,
+          dir = "x"
+        ) => {
           let i = 0;
-          for(i;i<n;i++){
-            if(dir==='x') {
-              scene.add(crystal(size, {x: i * (s) + t.x, y: t.y, z:0}))
+          for (i; i < n; i++) {
+            if (dir === "x") {
+              scene.add(crystal(size, { x: i * s + t.x, y: t.y, z: 0 }));
             } else {
-              scene.add(crystal(size, {x: t.x, y: i * s + t.y, z:0}))
+              scene.add(crystal(size, { x: t.x, y: i * s + t.y, z: 0 }));
             }
           }
-        }
+        };
 
         createCrystalCross(5)
         createCrystalCross(10)
@@ -1421,9 +1406,19 @@
         document.querySelector("#start-button").classList.add("hide");
         document.querySelector("#report").classList.add("hide");
         document.querySelector("#title").classList.add("hide");
+        document.querySelector("#sounds").classList.add("hide");
       };
-      const showSettings = () => {
-        console.log("clicked settings");
+      const showSounds = (options) => {
+        const { backDestination } = options;
+        document.querySelector("#sounds").classList.remove("hide");
+        centerElement({ id: "sounds", offsetTop: 0, offsetLeft: 0 });
+        document.querySelector("#start-menu").classList.add("hide");
+        document.querySelector("#pause-menu").classList.add("hide");
+        document.querySelector("#start-button").classList.add("hide");
+        document.querySelector("#report").classList.add("hide");
+        document.querySelector("#title").classList.add("hide");
+
+        document.querySelector("#level-select").classList.add("hide");
       };
       const showCredits = () => {
         console.log("clicked credits");
@@ -1440,6 +1435,18 @@
         const root = document.documentElement;
         root.style.setProperty(`--${id}-offset-top`, offsetHeight + "px");
         root.style.setProperty(`--${id}-offset-left`, offsetWidth + "px");
+      };
+      const changeMusicVolume = (val) => {
+        window.appConfig.backgroundMusics.forEach((m, mIndex) => {
+          const currentVol = m.volume();
+          m.fade(currentVol, val * 0.1 * 0.01, 1);
+        });
+      };
+      const changeSFXVolume = (val) => {
+        window.appConfig.howlSounds.forEach((m, mIndex) => {
+          const currentVol = m.volume();
+          m.fade(currentVol, val * 0.01, 1);
+        });
       };
       window.onload = initScene;
     </script>
@@ -1493,6 +1500,15 @@
         opacity: 0.75;
         background-color: rgba(0, 0, 0, 0);
         color: #ffffff;
+      }
+      #sounds {
+        position: fixed;
+        left: var(--sounds-offset-left);
+        top: var(--sounds-offset-top);
+        border: 0;
+        border-radius: 5px;
+        opacity: 0.75;
+        background-color: rgba(0, 0, 0, 0);
       }
       #report {
         position: fixed;
@@ -1550,9 +1566,9 @@
       }
 
       #pause-button {
+        height: 50px;
+        width: 50px;
         position: fixed;
-        font-family: "Luz Sans Book";
-        font-size: 2em;
         left: 3%;
         bottom: 3%;
         padding: 10px 30px;
@@ -1617,6 +1633,28 @@
     <div id="game-scoreboard">
       <div id="timer"></div>
       <div id="score"></div>
+    </div>
+    <div id="sounds" class="hide">
+      <div id="sounds-title">Level Select</div>
+
+      <span>SFX</span
+      ><input
+        value="100"
+        type="range"
+        min="0"
+        max="100"
+        onmouseup="changeSFXVolume(this.value)"
+        ontouchend="changeSFXVolume(this.value)"
+      />
+      <span>Music</span
+      ><input
+        value="100"
+        type="range"
+        min="0"
+        max="100"
+        onmouseup="changeMusicVolume(this.value)"
+        ontouchend="changeMusicVolume(this.value)"
+      />
     </div>
     <div id="report" class="hide">
       <table>
@@ -1708,11 +1746,11 @@
         Level Select
       </button>
       <button
-        id="start-settings-button"
+        id="start-sounds-button"
         class="start-menu-button"
-        onClick="showSettings()"
+        onClick="showSounds({backDestination:'start'})"
       >
-        Settings
+        Sounds
       </button>
       <button
         id="start-credits-button"
@@ -1722,9 +1760,13 @@
         Credits
       </button>
     </div>
-    <button id="pause-button" disabled class="hide" onClick="pause()">
-      II
-    </button>
+    <img
+      src="images/pause.png"
+      id="pause-button"
+      disabled
+      class="hide"
+      onClick="pause()"
+    />
     <div id="curtain"></div>
   </body>
 </html>
