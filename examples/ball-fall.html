@@ -901,35 +901,7 @@
           ) {
             console.log("collision");
             console.log("collided_with", collided_with);
-            if (collided_with.featureType === "TORUS") {
-              window.appConfig.stageResultsBallZoom.userHasEnded = true;
-              window.appConfig.timer.pause();
-              window.appConfig.results[`stage${window.appConfig.level}`]
-                ? (window.appConfig.results[
-                    `stage${window.appConfig.level}`
-                  ].finalTime = window.appConfig.timer
-                    .getTimeValues()
-                    .toString(["minutes", "seconds", "secondTenths"]))
-                : (window.appConfig.results[
-                    `stage${window.appConfig.level}`
-                  ] = {
-                    finalTime: window.appConfig.timer
-                      .getTimeValues()
-                      .toString(["minutes", "seconds", "secondTenths"]),
-                  });
-              //now performance report and start level transition
-              console.dir(window.appConfig.results);
-              document.querySelector("#report-time").innerText =
-                window.appConfig.results[
-                  `stage${window.appConfig.level}`
-                ].finalTime;
-              document.querySelector("#report-coins").innerText =
-                window.appConfig.score.coins;
-              document.querySelector("#report").classList.remove("hide");
-              centerElement({ id: "report", offsetTop: 0, offsetLeft: 0 });
-              document.querySelector("#pause-button").classList.add("hide");
-              document.querySelector("#pause-button").disabled = true;
-            }
+
             const suonousFeatureTypes = [
               "BOX",
               "ICOSAHEDRON",
@@ -1249,8 +1221,8 @@
             mesh.__dirtyPosition = true;
             camera.position.set(0, 10, 10);
             camera.lookAt(new THREE.Vector3(0, 10, 0));
-            document.querySelector("#start-button").classList.remove("hide");
-            document.querySelector("#report").classList.add("hide");
+            showHTMLElements(["start-button"]);
+            centerElement({ id: "start-button", offsetTop: 0, offsetLeft: 0 });
             window.appConfig.start = false;
             window.appConfig.stageResultsBallZoomReset();
             window.appConfig.initialBallZoomReset();
@@ -1470,9 +1442,8 @@
                 ].finalTime;
               document.querySelector("#report-coins").innerText =
                 window.appConfig.score.coins;
-              document.querySelector("#report").classList.remove("hide");
+              showHTMLElements(["report"]);
               centerElement({ id: "report", offsetTop: 0, offsetLeft: 0 });
-              document.querySelector("#pause-button").classList.add("hide");
               document.querySelector("#pause-button").disabled = true;
             }
           }
@@ -1485,11 +1456,7 @@
 
       const start = () => {
         window.appConfig.start = true;
-        document.querySelector("#start-button").classList.add("hide");
-        document.querySelector("#title").classList.add("hide");
-        document.querySelector("#start-menu").classList.add("hide");
-        document.querySelector("#game-scoreboard").classList.remove("hide");
-        document.querySelector("#pause-button").classList.remove("hide");
+        showHTMLElements(["pause-button", "game-scoreboard"]);
         window.appConfig.initialBallZoom.userHasClickedStart = true;
         window.appConfig.timer.start();
         document.querySelector("#pause-button").disabled = false;
@@ -1502,49 +1469,55 @@
         window.appConfig.pause = !window.appConfig.pause;
         if (window.appConfig.pause) {
           window.appConfig.timer.pause();
+          showPauseMenu();
         } else {
           window.appConfig.timer.start();
+          showGameMode();
         }
       };
 
       const reset = () => {
         window.appConfig.stageReset.userHasEndedReport = true;
-        document.querySelector("#level-select").classList.add("hide");
+        showHTMLElements([]);
         document.querySelector("#curtain").classList.remove("opacity-0");
-        document.querySelector("#report").classList.add("hide");
-        document.querySelector("#game-scoreboard").classList.add("hide");
 
         setTimeout(() => {
-          console.log("fired");
           document.querySelector("#curtain").classList.add("opacity-0");
         }, 2000);
         window.appConfig.timer.reset();
         window.appConfig.timer.pause();
       };
       const showLevelSelect = () => {
-        document.querySelector("#level-select").classList.remove("hide");
+        showHTMLElements(["level-select"]);
         centerElement({ id: "level-select", offsetTop: 0, offsetLeft: 0 });
-        document.querySelector("#start-menu").classList.add("hide");
-        document.querySelector("#pause-menu").classList.add("hide");
-        document.querySelector("#start-button").classList.add("hide");
-        document.querySelector("#report").classList.add("hide");
-        document.querySelector("#title").classList.add("hide");
-        document.querySelector("#sounds").classList.add("hide");
       };
-      const showSounds = (options) => {
-        const { backDestination } = options;
-        document.querySelector("#sounds").classList.remove("hide");
+      const showSounds = () => {
+        showHTMLElements(["sounds"]);
         centerElement({ id: "sounds", offsetTop: 0, offsetLeft: 0 });
-        document.querySelector("#start-menu").classList.add("hide");
-        document.querySelector("#pause-menu").classList.add("hide");
-        document.querySelector("#start-button").classList.add("hide");
-        document.querySelector("#report").classList.add("hide");
-        document.querySelector("#title").classList.add("hide");
-
-        document.querySelector("#level-select").classList.add("hide");
       };
       const showCredits = () => {
-        console.log("clicked credits");
+        showHTMLElements(["credits-menu"]);
+        centerElement({ id: "credits-menu", offsetTop: 0, offsetLeft: 0 });
+      };
+      const showStart = () => {
+        showHTMLElements(["start-menu", "title", "start-button"]);
+        centerElement({ id: "start-button", offsetTop: 0, offsetLeft: 0 });
+        centerElement({ id: "title", offsetTop: -200, offsetLeft: 0 });
+        centerElement({ id: "start-menu", offsetTop: 200, offsetLeft: 0 });
+      };
+      const showPauseMenu = () => {
+        showHTMLElements(["pause-menu", "game-scoreboard"]);
+        centerElement({ id: "pause-menu", offsetTop: 0, offsetLeft: 0 });
+      };
+      const showGameMode = () => {
+        showHTMLElements(["pause-button", "game-scoreboard"]);
+      };
+      const goBack = () => {
+        if (window.appConfig.pause) {
+          showPauseMenu();
+        } else {
+          showStart();
+        }
       };
       const centerElement = (options) => {
         const { id, offsetLeft, offsetTop } = options;
@@ -1569,6 +1542,27 @@
         window.appConfig.howlSounds.forEach((m, mIndex) => {
           const currentVol = m.volume();
           m.fade(currentVol, val * 0.01, 1);
+        });
+      };
+      const allElements = [
+        "sounds",
+        "start-menu",
+        "pause-menu",
+        "report",
+        "level-select",
+        "game-scoreboard",
+        "title",
+        "credits-menu",
+        "start-button",
+        "pause-button",
+      ];
+      const showHTMLElements = (elements) => {
+        // elements is an array of id strings
+        allElements.forEach((el) => {
+          document.getElementById(el).classList.add("hide");
+        });
+        elements.forEach((el) => {
+          document.getElementById(el).classList.remove("hide");
         });
       };
       window.onload = initScene;
@@ -1642,10 +1636,33 @@
         opacity: 0.75;
         background-color: rgba(0, 0, 0, 0);
       }
+      #report-options {
+        margin: 0 auto;
+      }
+      .report-options-button {
+        /* display: block; */
+        font-family: "Coves Light";
+        font-size: 1.75em;
+        font-weight: 500;
+        border: 0;
+        border-radius: 5px;
+        opacity: 1;
+        background-color: rgba(0, 0, 0, 0);
+        color: #ffffff;
+      }
       #pause-menu {
         position: fixed;
         left: var(--pause-menu-offset-left);
         top: var(--pause-menu-offset-top);
+        border: 0;
+        border-radius: 5px;
+        opacity: 0.75;
+        background-color: rgba(0, 0, 0, 0);
+      }
+      #credits-menu {
+        position: fixed;
+        left: var(--credits-menu-offset-left);
+        top: var(--credits-menu-offset-top);
         border: 0;
         border-radius: 5px;
         opacity: 0.75;
@@ -1688,12 +1705,50 @@
         color: #ffffff;
       }
 
+      .menu-title-text {
+        font-family: "Luz Sans Book";
+        font-size: 2em;
+        color: #ffffff;
+        margin: 0 auto;
+        text-align: center;
+      }
+      .menu-big-text {
+        display: block;
+        font-family: "Coves Light";
+        font-size: 1.75em;
+        font-weight: 500;
+        border: 0;
+        border-radius: 5px;
+        opacity: 1;
+        background-color: rgba(0, 0, 0, 0);
+        color: #ffffff;
+      }
+      .menu-small-text {
+        display: block;
+        font-family: "Coves Light";
+        font-size: 1.5em;
+        font-weight: 500;
+        border: 0;
+        border-radius: 5px;
+        opacity: 1;
+        background-color: rgba(0, 0, 0, 0);
+        color: #ffffff;
+      }
       #pause-button {
         height: 50px;
         width: 50px;
         position: fixed;
         left: 3%;
         bottom: 3%;
+        padding: 10px 30px;
+        border: 0;
+        border-radius: 5px;
+        opacity: 0.75;
+      }
+
+      #pause-menu-play-button {
+        height: 50px;
+        width: 50px;
         padding: 10px 30px;
         border: 0;
         border-radius: 5px;
@@ -1707,6 +1762,10 @@
         position: fixed;
         top: 3%;
         right: 3%;
+      }
+      #timer,
+      #score {
+        text-align: right;
       }
       #timer,
       #score,
@@ -1748,20 +1807,23 @@
       .opacity-1 {
         opacity: 1 !important;
       }
+      /* input[type="range"] {
+        background-color: #000000;
+      } */
     </style>
   </head>
 
   <body>
     <div id="viewport"></div>
-    <div id="game-scoreboard">
+    <div id="game-scoreboard" class="hide">
       <div id="timer"></div>
       <div id="score"></div>
     </div>
     <div id="sounds" class="hide">
-      <div id="sounds-title">Level Select</div>
+      <div id="sounds-title" class="menu-title-text">Sounds</div>
 
-      <span>SFX</span
-      ><input
+      <div class="menu-big-text">SFX</div>
+      <input
         value="100"
         type="range"
         min="0"
@@ -1769,8 +1831,8 @@
         onmouseup="changeSFXVolume(this.value)"
         ontouchend="changeSFXVolume(this.value)"
       />
-      <span>Music</span
-      ><input
+      <div class="menu-big-text">Music</div>
+      <input
         value="100"
         type="range"
         min="0"
@@ -1778,6 +1840,23 @@
         onmouseup="changeMusicVolume(this.value)"
         ontouchend="changeMusicVolume(this.value)"
       />
+      <button class="start-menu-button" onClick="goBack()">Back</button>
+    </div>
+    <div id="credits-menu" class="hide">
+      <div id="credits-title" class="menu-big-text">Credits</div>
+      <div>
+        <div class="menu-big-text">Ian Lynch, Sean Lynch</div>
+        <div class="menu-small-text">Programming Design</div>
+      </div>
+      <div>
+        <div class="menu-big-text">Ian Lynch, Sean Lynch</div>
+        <div class="menu-small-text">Programming Design</div>
+      </div>
+      <div>
+        <div class="menu-big-text">Ian Lynch, Sean Lynch</div>
+        <div class="menu-small-text">Programming Design</div>
+      </div>
+      <button class="start-menu-button" onClick="goBack()">Back</button>
     </div>
     <div id="report" class="hide">
       <table>
@@ -1794,27 +1873,29 @@
           <td id="report-score"></td>
         </tr>
       </table>
-      <button
-        id="report-level-select-button"
-        class="start-menu-button"
-        onClick="showLevelSelect()"
-      >
-        Level Select
-      </button>
-      <button
-        id="report-reset-button"
-        class="start-menu-button"
-        onClick="reset({action:'reset'})"
-      >
-        Try Again
-      </button>
-      <button
-        id="report-reset-button"
-        class="start-menu-button"
-        onClick="reset({action:'next'})"
-      >
-        Next Level
-      </button>
+      <div id="report-options">
+        <button
+          id="report-level-select-button"
+          class="start-menu-button"
+          onClick="showLevelSelect()"
+        >
+          Level Select
+        </button>
+        <button
+          id="report-reset-button"
+          class="start-menu-button"
+          onClick="reset({action:'reset'})"
+        >
+          Try Again
+        </button>
+        <button
+          id="report-reset-button"
+          class="start-menu-button"
+          onClick="reset({action:'next'})"
+        >
+          Next Level
+        </button>
+      </div>
     </div>
     <div id="level-select" class="hide">
       <div id="level-select-title">Level Select</div>
@@ -1855,9 +1936,38 @@
           <td class="level-select-button" onClick="reset({action:25})">25</td>
         </tr>
       </table>
+      <button class="start-menu-button" onClick="goBack()">Back</button>
     </div>
 
-    <div id="pause-menu" class="hide"></div>
+    <div id="pause-menu" class="hide">
+      <img
+        src="images/pause.png"
+        id="pause-menu-play-button"
+        disabled
+        onClick="pause()"
+      />
+      <button
+        id="pause-level-select-button"
+        class="start-menu-button"
+        onClick="showLevelSelect()"
+      >
+        Level Select
+      </button>
+      <button
+        id="pause-sounds-button"
+        class="start-menu-button"
+        onClick="showSounds()"
+      >
+        Sounds
+      </button>
+      <button
+        id="pause-reset-button"
+        class="start-menu-button"
+        onClick="reset({action:'reset'})"
+      >
+        Restart Level
+      </button>
+    </div>
     <div id="title">BALLSINKI</div>
     <button id="start-button" onClick="start()">Start</button>
     <div id="start-menu">
@@ -1871,7 +1981,7 @@
       <button
         id="start-sounds-button"
         class="start-menu-button"
-        onClick="showSounds({backDestination:'start'})"
+        onClick="showSounds()"
       >
         Sounds
       </button>
