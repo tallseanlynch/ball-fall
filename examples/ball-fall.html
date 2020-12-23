@@ -1565,11 +1565,13 @@
           document.getElementById(el).classList.remove("hide");
         });
       };
+      const setLevel = (level) => {
+        window.appConfig.level = level;
+      };
       window.onload = initScene;
     </script>
     <style>
-      :root {
-      }
+
       @font-face {
         font-family: "Aadhunik";
         src: url("./fonts/Aadhunik.ttf") format("truetype");
@@ -1694,6 +1696,9 @@
         opacity: 0.75;
       }
       .start-menu-button {
+        width: max-content;
+        margin: 0 auto;
+        margin-top: 10px;
         display: block;
         font-family: "Coves Light";
         font-size: 1.75em;
@@ -1807,6 +1812,9 @@
       .opacity-1 {
         opacity: 1 !important;
       }
+      .margin-bottom-2 {
+        margin-bottom: 10px;
+      }
       /* input[type="range"] {
         background-color: #000000;
       } */
@@ -1843,15 +1851,15 @@
       <button class="start-menu-button" onClick="goBack()">Back</button>
     </div>
     <div id="credits-menu" class="hide">
-      <div id="credits-title" class="menu-big-text">Credits</div>
-      <div>
+      <div id="credits-title" class="menu-title-text margin-bottom-2">Credits</div>
+      <div class="margin-bottom-2">
         <div class="menu-big-text">Ian Lynch, Sean Lynch</div>
         <div class="menu-small-text">Programming Design</div>
       </div>
-      <div>
+      <div class="margin-bottom-2">
         <div class="menu-big-text">Ian Lynch, Sean Lynch</div>
         <div class="menu-small-text">Programming Design</div>
-      </div>
+      </div class="margin-bottom-2">
       <div>
         <div class="menu-big-text">Ian Lynch, Sean Lynch</div>
         <div class="menu-small-text">Programming Design</div>
@@ -1901,39 +1909,39 @@
       <div id="level-select-title">Level Select</div>
       <table>
         <tr>
-          <td class="level-select-button" onClick="reset({action:1})">1</td>
-          <td class="level-select-button" onClick="reset({action:2})">2</td>
-          <td class="level-select-button" onClick="reset({action:3})">3</td>
-          <td class="level-select-button" onClick="reset({action:4})">4</td>
-          <td class="level-select-button" onClick="reset({action:5})">5</td>
+          <td class="level-select-button" onClick="setLevel(1)">1</td>
+          <td class="level-select-button" onClick="setLevel(2)">2</td>
+          <td class="level-select-button" onClick="setLevel(3)">3</td>
+          <td class="level-select-button" onClick="setLevel(4)">4</td>
+          <td class="level-select-button" onClick="setLevel(5)">5</td>
         </tr>
         <tr>
-          <td class="level-select-button" onClick="reset({action:6})">6</td>
-          <td class="level-select-button" onClick="reset({action:7})">7</td>
-          <td class="level-select-button" onClick="reset({action:8})">8</td>
-          <td class="level-select-button" onClick="reset({action:9})">9</td>
-          <td class="level-select-button" onClick="reset({action:10})">10</td>
+          <td class="level-select-button" onClick="setLevel(6)">6</td>
+          <td class="level-select-button" onClick="setLevel(7)">7</td>
+          <td class="level-select-button" onClick="setLevel(8)">8</td>
+          <td class="level-select-button" onClick="setLevel(9)">9</td>
+          <td class="level-select-button" onClick="setLevel(10)">10</td>
         </tr>
         <tr>
-          <td class="level-select-button" onClick="reset({action:11})">11</td>
-          <td class="level-select-button" onClick="reset({action:12})">12</td>
-          <td class="level-select-button" onClick="reset({action:13})">13</td>
-          <td class="level-select-button" onClick="reset({action:14})">14</td>
-          <td class="level-select-button" onClick="reset({action:15})">15</td>
+          <td class="level-select-button" onClick="setLevel(11)">11</td>
+          <td class="level-select-button" onClick="setLevel(12)">12</td>
+          <td class="level-select-button" onClick="setLevel(13)">13</td>
+          <td class="level-select-button" onClick="setLevel(14)">14</td>
+          <td class="level-select-button" onClick="setLevel(15)">15</td>
         </tr>
         <tr>
-          <td class="level-select-button" onClick="reset({action:16})">16</td>
-          <td class="level-select-button" onClick="reset({action:17})">17</td>
-          <td class="level-select-button" onClick="reset({action:18})">18</td>
-          <td class="level-select-button" onClick="reset({action:19})">19</td>
-          <td class="level-select-button" onClick="reset({action:20})">20</td>
+          <td class="level-select-button" onClick="setLevel(16)">16</td>
+          <td class="level-select-button" onClick="setLevel(17)">17</td>
+          <td class="level-select-button" onClick="setLevel(18)">18</td>
+          <td class="level-select-button" onClick="setLevel(19)">19</td>
+          <td class="level-select-button" onClick="setLevel(20)">20</td>
         </tr>
         <tr>
-          <td class="level-select-button" onClick="reset({action:21})">21</td>
-          <td class="level-select-button" onClick="reset({action:22})">22</td>
-          <td class="level-select-button" onClick="reset({action:23})">23</td>
-          <td class="level-select-button" onClick="reset({action:24})">24</td>
-          <td class="level-select-button" onClick="reset({action:25})">25</td>
+          <td class="level-select-button" onClick="setLevel(21)">21</td>
+          <td class="level-select-button" onClick="setLevel(22)">22</td>
+          <td class="level-select-button" onClick="setLevel(23)">23</td>
+          <td class="level-select-button" onClick="setLevel(24)">24</td>
+          <td class="level-select-button" onClick="setLevel(25)">25</td>
         </tr>
       </table>
       <button class="start-menu-button" onClick="goBack()">Back</button>
