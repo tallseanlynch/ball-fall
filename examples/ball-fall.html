@@ -36,7 +36,28 @@
     <script src="https://unpkg.com/three@0.112.0/examples/js/loaders/GLTFLoader.js"></script>
     <script type="text/javascript">
       "use strict";
-      window.appConfig = {};
+
+      window.appConfig = {
+        touchStart: false,
+        touchEnd: false,
+        currentX: 0,
+        currentY: 0,
+        prevX: 0,
+        prevY: 0,
+        diffX: 0,
+        diffY: 0,
+        start: false,
+        pause: false,
+        results: {},
+        pause: false,
+        itemAmounts: {
+          crystalCross: 0,
+          crystalLine: 0,
+          bumperGroup: 0,
+          prize: 0
+        }
+      };
+
       const backgroundMusics = [];
       const howlSounds = [];
       window.appConfig.howlSounds = howlSounds;
@@ -146,6 +167,19 @@
         light,
         camera,
         orbitControls;
+
+        // const raycaster = new THREE.Raycaster();
+        //   const mouse = new THREE.Vector2();
+
+        //   function onMouseMove( event ) {
+
+        //     // calculate mouse position in normalized device coordinates
+        //     // (-1 to +1) for both components
+
+        //     mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        //     mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+        //   }
 
       initScene = function () {
         window.appConfig.soundsBackDestination = "";
@@ -514,6 +548,10 @@
           mainStructure.add(createBeam({p: [0 * scale, 8 * scale, -1], r: [0,0,0], s: (1 + scaleAdj) * scale}))
           mainStructure.name = name
           mainStructure.__dirtyPosition = true
+          mainStructure.debugTypeIndex = window.appConfig.itemAmounts.bumperGroup
+          mainStructure.debugType = 'BUMPERGROUP'
+          mainStructure.debugName = 'BUMPERGROUP' + window.appConfig.itemAmounts.bumperGroup
+          window.appConfig.itemAmounts.bumperGroup++
           return mainStructure
         }
 
@@ -545,10 +583,16 @@
           new THREE.ConeGeometry(1,-1,8),
           new THREE.MeshPhongMaterial()
         )
-        prize0Group.name = 'PRIZE0GROUP'
+        prize0Group.name = 'STAGE0PRIZE0'
+        prize0Group.debugTypeIndex = window.appConfig.itemAmounts.prize
+        prize0Group.debugType = 'PRIZE' 
+        prize0Group.debugName = 'PRIZE' + window.appConfig.itemAmounts.prize
+        window.appConfig.itemAmounts.prize++
+
         prize0.name = 'PRIZE0'
         prize0Top.name = 'PRIZE0TOP'
         prize0Bottom.name = 'PRIZE0BOTTOM'
+
 
         prize0.rotation.set(.25 * Math.PI, .25 * Math.PI, 0)
         prize0Group.add(prize0)
@@ -566,9 +610,9 @@
         prize2Group.position.set(-45,-45,0)
         const prize3Group = prize0Group.clone()
         prize3Group.position.set(-45,45,0)
-        prize1Group.name = 'PRIZE1GROUP'
-        prize2Group.name = 'PRIZE2GROUP'
-        prize3Group.name = 'PRIZE3GROUP'
+        prize1Group.name = 'STAGE0PRIZE1'
+        prize2Group.name = 'STAGE0PRIZE2'
+        prize3Group.name = 'STAGE0PRIZE3'
         scene.add(prize1Group)
         scene.add(prize2Group)
         scene.add(prize3Group)
@@ -660,13 +704,21 @@
           coins.push(coin)
           return coin
         }
-
+      
         const createCrystalCross = (s, t = { x: 0, y: 0 }, size = 0) => {
-          scene.add(crystal(size, { x: 0 * s + t.x, y: 1 * s + t.y, z: 0 }));
-          scene.add(crystal(size, { x: 0 * s + t.x, y: -1 * s + t.y, z: 0 }));
-          scene.add(crystal(size, { x: -1 * s + t.x, y: 0 * s + t.y, z: 0 }));
-          scene.add(crystal(size, { x: 1 * s + t.x, y: 0 * s + t.y, z: 0 }));
+          const crystalCross = new THREE.Group()
+          crystalCross.debugTypeIndex = window.appConfig.itemAmounts.crystalCross
+          crystalCross.debugType = 'CRYSTALCROSS' 
+          crystalCross.debugName = 'CRYSTALCROSS' + window.appConfig.itemAmounts.crystalCross
+          
+          crystalCross.add(crystal(size, { x: 0 * s + t.x, y: 1 * s + t.y, z: 0 }));
+          crystalCross.add(crystal(size, { x: 0 * s + t.x, y: -1 * s + t.y, z: 0 }));
+          crystalCross.add(crystal(size, { x: -1 * s + t.x, y: 0 * s + t.y, z: 0 }));
+          crystalCross.add(crystal(size, { x: 1 * s + t.x, y: 0 * s + t.y, z: 0 }));
+          scene.add(crystalCross)
+          window.appConfig.itemAmounts.crystalCross++
         };
+
         const createCrystalLine = (
           s,
           t = { x: 0, y: 0 },
@@ -674,6 +726,10 @@
           n,
           dir = "x"
         ) => {
+          const crystalLine = new THREE.Group()
+          crystalLine.debugTypeIndex = window.appConfig.itemAmounts.crystalLine
+          crystalLine.debugType = 'CRYSTALLINE' 
+          crystalLine.debugName = 'CRYSTALLINE' + window.appConfig.itemAmounts.crystalLine
           let i = 0;
           for (i; i < n; i++) {
             if (dir === "x") {
@@ -682,6 +738,7 @@
               scene.add(crystal(size, { x: t.x, y: i * s + t.y, z: 0 }));
             }
           }
+          window.appConfig.itemAmounts.crystalLine++
         };
 
         createCrystalCross(5)
@@ -726,6 +783,7 @@
         const clickRay = new THREE.Raycaster();
 
         const timer = new easytimer.Timer({ precision: "secondTenths" });
+        window.appConfig.timer = timer
         timer.addEventListener("secondTenthsUpdated", function (e) {
           document.querySelector(
             "#timer"
@@ -734,22 +792,6 @@
             .toString(["minutes", "seconds", "secondTenths"])}`;
         });
         const results = {};
-        window.appConfig = {
-          ...window.appConfig,
-          touchStart: false,
-          touchEnd: false,
-          currentX: 0,
-          currentY: 0,
-          prevX: 0,
-          prevY: 0,
-          diffX: 0,
-          diffY: 0,
-          start: false,
-          pause: false,
-          timer: timer,
-          results: results,
-          pause: false,
-        };
 
         document.addEventListener("touchstart", (e) => {
           if (!window.appConfig.stageResultsBallZoom.userHasEnded) {
@@ -823,6 +865,68 @@
 
         document.querySelector("#curtain").classList.add("opacity-0");
       };
+
+      window.appConfig.debug = {
+        stage: 0,
+        debugKeyCodes: {
+          left: 37,
+          right: 39,
+          up: 38,
+          down: 40,
+          leftBracket: 188,
+          rightBracket: 190
+        },
+        currentDebugMeshIndex: 4
+      }
+
+      const incrementDebugObject = () => {
+        window.appConfig.debug.currentDebugMeshIndex++
+        if(window.appConfig.debug.currentDebugMeshIndex >= scene.children.length) {
+          currentDebugMeshIndex = 4
+        }
+        console.log(window.appConfig.debug)
+      }
+
+      const decrementDebugObject = () => {
+        window.appConfig.debug.currentDebugMeshIndex--
+        if(window.appConfig.debug.currentDebugMeshIndex <= 4) {
+          currentDebugMeshIndex = scene.children.length
+        }
+        console.log(window.appConfig.debug)
+      }
+
+      const translateObject = (e) => {
+        const s = 5
+        const objectToTranslate = scene.children[window.appConfig.debug.currentDebugMeshIndex]
+        const dirs = {
+          37: {x: -5, y: 0, z: 0},
+          39: {x: 5, y: 0, z: 0},
+          38: {x: 0, y: 5, z: 0},
+          40: {x: 0, y: -5, z: 0}
+        }
+        objectToTranslate.position.x += dirs[e.keyCode].x
+        objectToTranslate.position.y += dirs[e.keyCode].y
+        console.log(window.appConfig.debug)
+      }
+
+      const keydownFunctions = {
+        37:(e) => translateObject(e),
+        39:(e) => translateObject(e),
+        38:(e) => translateObject(e),
+        40:(e) => translateObject(e),
+        188:decrementDebugObject,
+        190:incrementDebugObject
+      }
+
+      const keycodesArray = Object.values(window.appConfig.debug.debugKeyCodes)
+      document.addEventListener('keydown', function(e) {
+        if(keycodesArray.indexOf(e.keyCode) > -1) {
+          console.log('Keydown event fired')
+          console.log(e)
+          console.log(e.keyCode)
+          keydownFunctions[e.keyCode](e)
+        }
+      }); 
 
       spawnBox = (function () {
         var box_geometry = new THREE.BoxGeometry(4, 4, 4),
@@ -1096,40 +1200,72 @@
       let appStartTime = new Date().getTime();
       let initialBallZoomTime = 0;
 
+      const transforms = {
+        'STAGE0PRIZE0': {r: {x: .005, y: .005, z:.005}}, 
+        'STAGE0PRIZE1': {r: {x: .005, y: .005, z:.005}}, 
+        'STAGE0PRIZE2': {r: {x: .005, y: .005, z:.005}}, 
+        'STAGE0PRIZE3': {r: {x: .005, y: .005, z:.005}},
+        'STAGE0MAINSTRUCTURE': {r: {x: 0, y: 0, z:.001}},
+        'STAGE0MINORSTRUCTURE': {r: {x: 0, y: 0, z:-.001}},
+        'STAGE0MINORSTRUCTURE1': {r: {x: 0, y: 0, z:-.001}},
+        'STAGE0MINORSTRUCTURE2': {r: {x: 0, y: 0, z:-.001}},
+        'STAGE0MINORSTRUCTURE3': {r: {x: 0, y: 0, z:-.001}}
+      }
+
+      const activeTransforms = [
+        'STAGE0PRIZE0', 
+        'STAGE0PRIZE1', 
+        'STAGE0PRIZE2', 
+        'STAGE0PRIZE3', 
+        'STAGE0MAINSTRUCTURE',
+        'STAGE0MINORSTRUCTURE',
+        'STAGE0MINORSTRUCTURE1',
+        'STAGE0MINORSTRUCTURE2',
+        'STAGE0MINORSTRUCTURE3'
+      ]
+
+      let STAGE0 = {
+        started: false
+      }
+
+      const initStage0 = () => {
+        STAGE0.STAGE0PRIZE0 = scene.children.find((obj) => obj.name === "STAGE0PRIZE0")
+        STAGE0.STAGE0PRIZE1 = scene.children.find((obj) => obj.name === "STAGE0PRIZE1")
+        STAGE0.STAGE0PRIZE2 = scene.children.find((obj) => obj.name === "STAGE0PRIZE2")
+        STAGE0.STAGE0PRIZE3 = scene.children.find((obj) => obj.name === "STAGE0PRIZE3")
+        STAGE0.STAGE0MAINSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MAINSTRUCTURE")
+        STAGE0.STAGE0MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE")
+        STAGE0.STAGE0MINORSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE1")
+        STAGE0.STAGE0MINORSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE2")
+        STAGE0.STAGE0MINORSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE3")
+        STAGE0.started = true
+      }
+
       render = function () {
+        if(!STAGE0.started) {
+          initStage0()
+        } else {
+          activeTransforms.length > 0 && activeTransforms.forEach(t => {
+            if(transforms[t].r && STAGE0[t]) {
+              STAGE0[t].rotation.x += transforms[t].r.x
+              STAGE0[t].rotation.y += transforms[t].r.y
+              STAGE0[t].rotation.z += transforms[t].r.z
+              STAGE0[t].__dirtyRotation = true
+            }
+            if(transforms[t].t && STAGE0[t]) {
+              STAGE0[t].position.x += transforms[t].t.x
+              STAGE0[t].position.y += transforms[t].t.y
+              STAGE0[t].position.z += transforms[t].t.z
+              STAGE0[t].__dirtyPosition = true
+            }
+            if(transforms[t].callback && STAGE0[t]) {
+              callback(t, transforms[t])
+            }
+          })
 
-        const stage0MajorSpin = scene.children.find((obj) => obj.name === "STAGE0MAINSTRUCTURE")
-        stage0MajorSpin.rotation.z += .001
-        stage0MajorSpin.__dirtyRotation = true
-        const stage0MinorSpin = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE")
-        const stage0MinorSpin1 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE1")
-        const stage0MinorSpin2 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE2")
-        const stage0MinorSpin3 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE3")
-        stage0MinorSpin.rotation.z -= .001
-        stage0MinorSpin.__dirtyRotation = true
-        stage0MinorSpin1.rotation.z -= .001
-        stage0MinorSpin1.__dirtyRotation = true
-        stage0MinorSpin2.rotation.z -= .001
-        stage0MinorSpin2.__dirtyRotation = true
-        stage0MinorSpin3.rotation.z -= .001
-        stage0MinorSpin3.__dirtyRotation = true
-
-        // prize animations
-        let prizeI = 0
-        if(new Date().getTime() % 1.5 < 1) {
-          for(prizeI;prizeI<4;prizeI++){
-            const stage0Prize0Group = scene.children.find((obj) => obj.name === "PRIZE"+prizeI+"GROUP")
-            stage0Prize0Group.rotation.x += .005
-            stage0Prize0Group.rotation.y += .005
-            stage0Prize0Group.rotation.z += .005
-            stage0Prize0Group.children[0].rotation.y -= .01
-            stage0Prize0Group.children[1].position.y = 1.75 + (lfo()/4)
-            stage0Prize0Group.children[1].scale.set(1 -(lfo(500)/4), 1 -(lfo(500)/4), 1 -(lfo(500)/4))
-            stage0Prize0Group.children[2].position.y = -1.75 + -(lfo()/4)
-            stage0Prize0Group.children[2].scale.set(1 -(lfo(500)/4), 1 -(lfo(500)/4), 1 -(lfo(500)/4))
-          }
         }
 
+        // camera and menu stuff
         if (
           window.appConfig.stageReset.userHasEndedReport &&
           window.appConfig.stageReset.started === 0 &&
@@ -1332,28 +1468,32 @@
         //   );
         // });
         let coinIndexToRemove = undefined;
-        if(new Date().getTime() % 3 < 1) {
+        // if(new Date().getTime() % 3 < 1) {
           const potentiallyGrabbedCoin = window.appConfig.coins.find(
             (coin, coinIndex) => {
               coinIndexToRemove = coinIndex;
               return (
                 Math.abs(coin.position.x - sphere.position.x) <
-                  coin.scale.z * 2 &&
-                Math.abs(coin.position.y - sphere.position.y) < coin.scale.z * 2
+                  coin.scale.z * 3 &&
+                Math.abs(coin.position.y - sphere.position.y) < coin.scale.z * 3
               );
             }
           );
 
           if (potentiallyGrabbedCoin) {
             window.appConfig.score.coins += potentiallyGrabbedCoin.coinValue;
-            scene.remove(potentiallyGrabbedCoin);
+            if(potentiallyGrabbedCoin.parent && potentiallyGrabbedCoin.parent.type === "Group") {
+              potentiallyGrabbedCoin.parent.remove(potentiallyGrabbedCoin)
+            } else {
+              scene.remove(potentiallyGrabbedCoin);
+            }
             window.appConfig.coins.splice(coinIndexToRemove, 1);
             potentiallyGrabbedCoin.geometry.dispose();
             potentiallyGrabbedCoin.material.dispose();
             document.querySelector("#score").innerText =
               window.appConfig.score.coins;
           }          
-        }
+        // }
 
         requestAnimationFrame(render);
         renderer.render(scene, camera);
@@ -1769,4 +1909,9 @@
     />
     <div id="curtain"></div>
   </body>
+  <script>
+    window.console.log = () => {}
+    window.console.warn = () => {}
+    window.console.dir = () => {}
+  </script>
 </html>
