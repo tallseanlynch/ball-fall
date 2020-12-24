@@ -490,7 +490,7 @@
                 color: config.color ? config.color : 0xffffff,
               }),
               0.6, // medium friction
-              0.3 // low restitution
+              0.1 // low restitution
             ),
             0 // mass
           );
@@ -501,7 +501,7 @@
                 color: config.color ? config.color : 0xffffff,
               }),
               0.6, // medium friction
-              0.3 // low restitution
+              0.1 // low restitution
             ),
             0 // mass
           );
@@ -512,7 +512,7 @@
                 color: config.color ? config.color : 0xffffff,
               }),
               0.6, // medium friction
-              0.3 // low restitution
+              0.1 // low restitution
             ),
             0 // mass
           );
@@ -811,10 +811,13 @@
           }
         });
 
+        window.appConfig.events = {touchmove: {throttle: 50, active: false}}
+
         document.body.addEventListener(
           "touchmove",
           (e) => {
-            if (!window.appConfig.stageResultsBallZoom.userHasEnded) {
+            if (!window.appConfig.stageResultsBallZoom.userHasEnded && window.appConfig.events.touchmove.active === false) {
+              window.appConfig.events.touchmove.active = true
               window.appConfig.prevX = window.appConfig.currentX;
               window.appConfig.prevY = window.appConfig.currentY;
               window.appConfig.currentX = e.touches[0].clientX;
@@ -831,6 +834,9 @@
               console.log("APPCONFIG", window.appConfig);
               console.log(window.appConfig.diffX, window.appConfig.diffY);
               e.preventDefault();
+              setTimeout(() => {
+                window.appConfig.events.touchmove.active = false
+              }, window.appConfig.events.touchmove.throttle)
             }
           },
           true
@@ -1057,7 +1063,7 @@
               // opacity: 0.98
             }),
             0.5, // medium friction
-            3 // low restitution
+            1 // low restitution
           );
           sphere = new Physijs.SphereMesh(sphere_geometry, material);
           sphere.collisions = 0;
@@ -1392,7 +1398,7 @@
             window.appConfig.touchEnd === false
           ) {
             console.log("ACTIVE!!!");
-            const scaleV = 0.5;
+            const scaleV = 0.25;
             scene.children
               .find((obj) => obj.gameName === "SPHERE0")
               .setLinearVelocity(
