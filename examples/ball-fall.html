@@ -856,7 +856,7 @@
         const results = {};
 
         document.addEventListener("touchstart", (e) => {
-          if (!window.appConfig.stageResultsBallZoom.userHasEnded) {
+          if (!window.appConfig.userHasEnded) {
             window.appConfig.touchEnd = false;
             window.appConfig.touchStart = true;
             window.appConfig.currentX = e.touches[0].clientX;
@@ -878,7 +878,7 @@
         document.body.addEventListener(
           "touchmove",
           (e) => {
-            if (!window.appConfig.stageResultsBallZoom.userHasEnded && window.appConfig.events.touchmove.active === false) {
+            if (!window.appConfig.userHasEnded && window.appConfig.events.touchmove.active === false) {
               window.appConfig.events.touchmove.active = true
               window.appConfig.prevX = window.appConfig.currentX;
               window.appConfig.prevY = window.appConfig.currentY;
@@ -905,7 +905,7 @@
         );
 
         document.addEventListener("touchend", (e) => {
-          if (!window.appConfig.stageResultsBallZoom.userHasEnded) {
+          if (!window.appConfig.userHasEnded) {
             window.appConfig.touchEnd = true;
             window.appConfig.touchStart = false;
             window.appConfig.currentX = 0;
@@ -1189,51 +1189,10 @@
           scene.add(stageFloor);
           scene.add(catchWall);
 
-          window.appConfig.initialBallZoomReset = () => {
-            window.appConfig.initialBallZoom = {
-              userHasClickedStart: false,
-              started: 0,
-              ended: 0,
-              z: scene.children.find((obj) => obj.gameName === "SPHERE0")
-                .position.z,
-              percentComplete: 0,
-              time: 2000,
-              timeLeft: 1000,
-              currentTime: 0,
-            };
-          };
 
-          window.appConfig.stageResultsBallZoomReset = () => {
-            window.appConfig.stageResultsBallZoom = {
-              userHasEnded: false,
-              started: 0,
-              ended: 0,
-              z: scene.children.find((obj) => obj.gameName === "SPHERE0")
-                .position.z,
-              percentComplete: 0,
-              time: 2000,
-              timeLeft: 1000,
-              currentTime: 0,
-            };
-          };
-
-          window.appConfig.stageResetReset = () => {
-            window.appConfig.stageReset = {
-              userHasEndedReport: false,
-              started: 0,
-              ended: 0,
-              z: scene.children.find((obj) => obj.gameName === "SPHERE0")
-                .position.z,
-              percentComplete: 0,
-              time: 2000,
-              timeLeft: 1000,
-              currentTime: 0,
-            };
-          };
-
-          window.appConfig.initialBallZoomReset();
-          window.appConfig.stageResultsBallZoomReset();
-          window.appConfig.stageResetReset();
+          // window.appConfig.initialBallZoomReset();
+          // window.appConfig.stageResultsBallZoomReset();
+          // window.appConfig.stageResetReset();
         };
       })();
 
@@ -1264,155 +1223,232 @@
         'STAGE0MINORSTRUCTURE3'
       ]
 
-      let STAGE0 = {
-        started: false
-      }
+      let currentTime = new Date().getTime();
 
       const initStage0 = () => {
-        STAGE0.STAGE0PRIZE0 = scene.children.find((obj) => obj.name === "STAGE0PRIZE0")
-        STAGE0.STAGE0PRIZE1 = scene.children.find((obj) => obj.name === "STAGE0PRIZE1")
-        STAGE0.STAGE0PRIZE2 = scene.children.find((obj) => obj.name === "STAGE0PRIZE2")
-        STAGE0.STAGE0PRIZE3 = scene.children.find((obj) => obj.name === "STAGE0PRIZE3")
-        STAGE0.STAGE0MAINSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MAINSTRUCTURE")
-        STAGE0.STAGE0MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE")
-        STAGE0.STAGE0MINORSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE1")
-        STAGE0.STAGE0MINORSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE2")
-        STAGE0.STAGE0MINORSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE3")
-        STAGE0.started = true
+        stages.STAGE0.STAGE0PRIZE0 = scene.children.find((obj) => obj.name === "STAGE0PRIZE0")
+        stages.STAGE0.STAGE0PRIZE1 = scene.children.find((obj) => obj.name === "STAGE0PRIZE1")
+        stages.STAGE0.STAGE0PRIZE2 = scene.children.find((obj) => obj.name === "STAGE0PRIZE2")
+        stages.STAGE0.STAGE0PRIZE3 = scene.children.find((obj) => obj.name === "STAGE0PRIZE3")
+        stages.STAGE0.STAGE0MAINSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MAINSTRUCTURE")
+        stages.STAGE0.STAGE0MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE")
+        stages.STAGE0.STAGE0MINORSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE1")
+        stages.STAGE0.STAGE0MINORSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE2")
+        stages.STAGE0.STAGE0MINORSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE3")
+        stages.STAGE0.started = true
       }
 
+      const currentStage = 0
+
+      const stages = {
+        STAGE0: {
+          started: false
+        }        
+      }
+
+      const timers = {
+        initialBallZoom: () => {
+          return {
+            started: 0,
+            ended: 0,
+            z: scene.children.find((obj) => obj.gameName === "SPHERE0")
+              .position.z,
+            percentComplete: 0,
+            time: 2000,
+            timeLeft: 1000,
+            currentTime: 0,
+            name: 'INITIALBALLZOOM',
+            id: Math.round(Math.random() * 10000),
+            activeCallback: (percentComplete) => {
+              window.appConfig.timers.data.initialBallZoom.percentComplete = percentComplete
+            }
+          }
+        },
+        stageReset: () => {
+          return {
+            started: 0,
+            ended: 0,
+            z: scene.children.find((obj) => obj.gameName === "SPHERE0")
+              .position.z,
+            percentComplete: 0,
+            time: 2000,
+            timeLeft: 1000,
+            currentTime: 0,
+            name: 'STAGERESET',
+            id: Math.round(Math.random() * 10000),
+            activeCallback: (percentComplete) => {
+              window.appConfig.timers.data.stageReset.percentComplete = percentComplete
+            }
+          }
+        },
+        stageResultsBallZoom: () => {
+          return {
+            started: 0,
+            ended: 0,
+            z: scene.children.find((obj) => obj.gameName === "SPHERE0")
+              .position.z,
+            percentComplete: 0,
+            time: 2000,
+            timeLeft: 1000,
+            currentTime: 0,
+            id: Math.round(Math.random() * 10000),
+            activeCallback: (percentComplete) => {
+              window.appConfig.timers.data.stageResultsBallZoom.percentComplete = percentComplete
+            }
+          }
+        },
+        data: {
+          initialBallZoom: {
+            percentComplete: 0
+          },
+          stageReset: {
+            percentComplete: 0
+          },
+          stageResultsBallZoom: {
+            percentComplete: 0
+          }
+        },
+        activeTimers: []
+      }
+
+      window.appConfig.timers = timers
+      const appTimers = window.appConfig.timers
       render = function () {
-        if(!STAGE0.started) {
+        
+        currentTime = new Date().getTime();
+
+        if(!stages.STAGE0.started) {
           initStage0()
         } else {
           activeTransforms.length > 0 && activeTransforms.forEach(t => {
-            if(transforms[t].r && STAGE0[t]) {
-              STAGE0[t].rotation.x += transforms[t].r.x
-              STAGE0[t].rotation.y += transforms[t].r.y
-              STAGE0[t].rotation.z += transforms[t].r.z
-              STAGE0[t].__dirtyRotation = true
+            if(transforms[t].r && stages.STAGE0[t]) {
+              stages.STAGE0[t].rotation.x += transforms[t].r.x
+              stages.STAGE0[t].rotation.y += transforms[t].r.y
+              stages.STAGE0[t].rotation.z += transforms[t].r.z
+              stages.STAGE0[t].__dirtyRotation = true
             }
-            if(transforms[t].t && STAGE0[t]) {
-              STAGE0[t].position.x += transforms[t].t.x
-              STAGE0[t].position.y += transforms[t].t.y
-              STAGE0[t].position.z += transforms[t].t.z
-              STAGE0[t].__dirtyPosition = true
+            if(transforms[t].t && stages.STAGE0[t]) {
+              stages.STAGE0[t].position.x += transforms[t].t.x
+              stages.STAGE0[t].position.y += transforms[t].t.y
+              stages.STAGE0[t].position.z += transforms[t].t.z
+              stages.STAGE0[t].__dirtyPosition = true
             }
-            if(transforms[t].callback && STAGE0[t]) {
+            if(transforms[t].callback && stages.STAGE0[t]) {
               callback(t, transforms[t])
             }
           })
-
         }
 
-        // camera and menu stuff
-        if (
-          window.appConfig.stageReset.userHasEndedReport &&
-          window.appConfig.stageReset.started === 0 &&
-          window.appConfig.stageReset.ended === 0
-        ) {
-          window.appConfig.stageReset.started = new Date().getTime();
-          window.appConfig.stageReset.currentTime = new Date().getTime();
-        }
-
-        if (
-          window.appConfig.stageReset.started !== 0 &&
-          window.appConfig.stageReset.ended === 0
-        ) {
-          let currentTime = new Date().getTime();
-          window.appConfig.stageReset.currentTime = currentTime;
-          let percentComplete =
-            (currentTime - window.appConfig.stageReset.started) /
-            window.appConfig.stageReset.time;
-          window.appConfig.stageReset.percentComplete = percentComplete;
-          console.log(
-            "time left: " + (currentTime - window.appConfig.stageReset.started)
-          );
-          console.log("time left %: " + percentComplete);
-          let mesh = scene.children.find((obj) => obj.gameName === "SPHERE0");
-          if (
-            currentTime - window.appConfig.stageReset.started >
-            window.appConfig.stageReset.time
-          ) {
-            window.appConfig.stageReset.ended = new Date().getTime();
-            mesh.position.set(0, 0, 0);
-            mesh.__dirtyPosition = true;
-            camera.position.set(0, 10, 10);
-            camera.lookAt(new THREE.Vector3(0, 10, 0));
-            showHTMLElements(["start-button"]);
-            centerElement({ id: "start-button", offsetTop: 0, offsetLeft: 0 });
-            window.appConfig.start = false;
-            window.appConfig.stageResultsBallZoomReset();
-            window.appConfig.initialBallZoomReset();
-            window.appConfig.stageResetReset();
+        if(appTimers.activeTimers.length > 0) {
+          let removeTimersArray = []
+          appTimers.activeTimers.forEach((t, ti) => {
+              if(appTimers.activeTimers[ti].started === 0) {
+                appTimers.activeTimers[ti].started = currentTime
+                appTimers.activeTimers[ti].currentTime = currentTime
+              }
+              if(appTimers.activeTimers[ti].started !== 0 && appTimers.activeTimers[ti].ended === 0) {
+                appTimers.activeTimers[ti].currentTime = currentTime
+                appTimers.activeTimers[ti].percentComplete = (currentTime - appTimers.activeTimers[ti].started) / appTimers.activeTimers[ti].time;
+                appTimers.activeTimers[ti].timeLeft = (currentTime - appTimers.activeTimers[ti].started)
+                console.log("time left: " + appTimers.activeTimers[ti].timeLeft);
+                console.log("% complete: " + appTimers.activeTimers[ti].percentComplete);
+                if(appTimers.activeTimers[ti].activeCallback) {
+                  appTimers.activeTimers[ti].activeCallback(appTimers.activeTimers[ti].percentComplete)
+                }
+                if (appTimers.activeTimers[ti].timeLeft > appTimers.activeTimers[ti].time) {
+                  // end the timer --> this will make the first check not fire the function since ended has a value
+                  appTimers.activeTimers[ti].ended = currentTime
+                  console.log('timer ended: ', appTimers.activeTimers[ti]);
+                  removeTimersArray.push(appTimers.activeTimers[ti].name)
+                }
+              }
+          })
+          if(removeTimersArray.length > 0) {
+            removeTimersArray.forEach(rt => {
+              appTimers.activeTimers.forEach((at, ati) => {
+                if(at.name === rt) {
+                  appTimers.activeTimers.splice(ati, 1)
+                }
+              })
+            })
           }
         }
 
-        if (
-          window.appConfig.stageResultsBallZoom.userHasEnded &&
-          window.appConfig.stageResultsBallZoom.started === 0 &&
-          window.appConfig.stageResultsBallZoom.ended === 0
-        ) {
-          window.appConfig.stageResultsBallZoom.started = new Date().getTime();
-          window.appConfig.stageResultsBallZoom.currentTime = new Date().getTime();
-        }
+        // // camera and menu stuff
+        // if (
+        //   window.appConfig.stageReset.userHasEndedReport &&
+        //   window.appConfig.stageReset.started === 0 &&
+        //   window.appConfig.stageReset.ended === 0
+        // ) {
+        //   window.appConfig.stageReset.started = new Date().getTime();
+        //   window.appConfig.stageReset.currentTime = new Date().getTime();
+        // }
 
-        if (
-          window.appConfig.stageResultsBallZoom.started !== 0 &&
-          window.appConfig.stageResultsBallZoom.ended === 0
-        ) {
-          let currentTime = new Date().getTime();
-          window.appConfig.stageResultsBallZoom.currentTime = currentTime;
-          let percentComplete =
-            (currentTime - window.appConfig.stageResultsBallZoom.started) /
-            window.appConfig.stageResultsBallZoom.time;
-          window.appConfig.stageResultsBallZoom.percentComplete = percentComplete;
-          console.log(
-            "time left: " +
-              (currentTime - window.appConfig.stageResultsBallZoom.started)
-          );
-          console.log("time left %: " + percentComplete);
-          if (
-            currentTime - window.appConfig.stageResultsBallZoom.started >
-            window.appConfig.stageResultsBallZoom.time
-          ) {
-            window.appConfig.stageResultsBallZoom.ended = new Date().getTime();
-            console.log(appConfig.stageResultsBallZoom);
-          }
-        }
+        // if (
+        //   window.appConfig.stageReset.started !== 0 &&
+        //   window.appConfig.stageReset.ended === 0
+        // ) {
+        //   let currentTime = new Date().getTime();
+        //   window.appConfig.stageReset.currentTime = currentTime;
+        //   let percentComplete =
+        //     (currentTime - window.appConfig.stageReset.started) /
+        //     window.appConfig.stageReset.time;
+        //   window.appConfig.stageReset.percentComplete = percentComplete;
+        //   console.log(
+        //     "time left: " + (currentTime - window.appConfig.stageReset.started)
+        //   );
+        //   console.log("time left %: " + percentComplete);
+        //   let mesh = scene.children.find((obj) => obj.gameName === "SPHERE0");
+        //   if (
+        //     currentTime - window.appConfig.stageReset.started >
+        //     window.appConfig.stageReset.time
+        //   ) {
+        //     window.appConfig.stageReset.ended = new Date().getTime();
+        //     mesh.position.set(0, 0, 0);
+        //     mesh.__dirtyPosition = true;
+        //     camera.position.set(0, 10, 10);
+        //     camera.lookAt(new THREE.Vector3(0, 10, 0));
+        //     showHTMLElements(["start-button"]);
+        //     centerElement({ id: "start-button", offsetTop: 0, offsetLeft: 0 });
+        //     window.appConfig.start = false;
+        //     window.appConfig.stageResultsBallZoomReset();
+        //     window.appConfig.initialBallZoomReset();
+        //     window.appConfig.stageResetReset();
+        //   }
+        // }
 
-        if (
-          window.appConfig.initialBallZoom.userHasClickedStart &&
-          window.appConfig.initialBallZoom.started === 0 &&
-          window.appConfig.initialBallZoom.ended === 0
-        ) {
-          window.appConfig.initialBallZoom.started = new Date().getTime();
-          window.appConfig.initialBallZoom.currentTime = new Date().getTime();
-        }
+        // if (
+        //   window.appConfig.stageResultsBallZoom.userHasEnded &&
+        //   window.appConfig.stageResultsBallZoom.started === 0 &&
+        //   window.appConfig.stageResultsBallZoom.ended === 0
+        // ) {
+        //   window.appConfig.stageResultsBallZoom.started = new Date().getTime();
+        //   window.appConfig.stageResultsBallZoom.currentTime = new Date().getTime();
+        // }
 
-        if (
-          window.appConfig.initialBallZoom.started !== 0 &&
-          window.appConfig.initialBallZoom.ended === 0
-        ) {
-          let currentTime = new Date().getTime();
-          window.appConfig.initialBallZoom.currentTime = currentTime;
-          let percentComplete =
-            (currentTime - window.appConfig.initialBallZoom.started) /
-            window.appConfig.initialBallZoom.time;
-          window.appConfig.initialBallZoom.percentComplete = percentComplete;
-          console.log(
-            "time left: " +
-              (currentTime - window.appConfig.initialBallZoom.started)
-          );
-          console.log("time left %: " + percentComplete);
-          if (
-            currentTime - window.appConfig.initialBallZoom.started >
-            window.appConfig.initialBallZoom.time
-          ) {
-            window.appConfig.initialBallZoom.ended = new Date().getTime();
-            console.log(appConfig.initialBallZoom);
-          }
-        }
+        // if (
+        //   window.appConfig.stageResultsBallZoom.started !== 0 &&
+        //   window.appConfig.stageResultsBallZoom.ended === 0
+        // ) {
+        //   let currentTime = new Date().getTime();
+        //   window.appConfig.stageResultsBallZoom.currentTime = currentTime;
+        //   let percentComplete =
+        //     (currentTime - window.appConfig.stageResultsBallZoom.started) /
+        //     window.appConfig.stageResultsBallZoom.time;
+        //   window.appConfig.stageResultsBallZoom.percentComplete = percentComplete;
+        //   console.log(
+        //     "time left: " +
+        //       (currentTime - window.appConfig.stageResultsBallZoom.started)
+        //   );
+        //   console.log("time left %: " + percentComplete);
+        //   if (
+        //     currentTime - window.appConfig.stageResultsBallZoom.started >
+        //     window.appConfig.stageResultsBallZoom.time
+        //   ) {
+        //     window.appConfig.stageResultsBallZoom.ended = new Date().getTime();
+        //     console.log(appConfig.stageResultsBallZoom);
+        //   }
+        // }
 
         const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0");
 
@@ -1476,15 +1512,18 @@
             Math.round((1 - percentFinished) * 100) +
             "%)";
         }
+
+
+        // camera positioning
         camera.position.x = sphere.position.x;
         camera.position.y = sphere.position.y;
         camera.position.z =
-          10 +
-          90 * window.appConfig.initialBallZoom.percentComplete -
-          window.appConfig.stageResultsBallZoom.percentComplete * 90 -
-          window.appConfig.stageReset.percentComplete * 5;
+          10 + 
+          90 * window.appConfig.timers.data.initialBallZoom.percentComplete -
+          window.appConfig.timers.data.stageResultsBallZoom.percentComplete * 90 -
+          window.appConfig.timers.data.stageReset.percentComplete * 5;
 
-        if (window.appConfig.stageResultsBallZoom.userHasEnded) {
+        if (window.appConfig.userHasEnded) {
           scene.children
             .find((obj) => obj.gameName === "SPHERE0")
             .setLinearVelocity(new THREE.Vector3(0, 0, 0));
@@ -1529,13 +1568,14 @@
               document.querySelector("#score").innerText =
                 window.appConfig.score.coins;
             } else if (prizeValue > 0) {
+              window.appConfig.userHasEnded = true
               window.appConfig.score.coins += potentiallyGrabbedCoin.prizeValue;
               window.appConfig.coins.splice(coinIndexToRemove, 1);
               document.querySelector("#score").innerText =
                 window.appConfig.score.coins;
 
               //now start end of stage
-              window.appConfig.stageResultsBallZoom.userHasEnded = true;
+              window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageResultsBallZoom)
               window.appConfig.timer.pause();
               window.appConfig.results[`stage${window.appConfig.level}`]
                 ? (window.appConfig.results[
@@ -1570,9 +1610,11 @@
       };
 
       const start = () => {
+        window.appConfig.userHasEnded = false
         window.appConfig.start = true;
         showHTMLElements(["pause-button", "game-scoreboard"]);
-        window.appConfig.initialBallZoom.userHasClickedStart = true;
+        // window.appConfig.initialBallZoom.userHasClickedStart = true;
+        window.appConfig.timers.activeTimers.push(timers.initialBallZoom())
         window.appConfig.timer.start();
         document.querySelector("#pause-button").disabled = false;
       };
@@ -1592,7 +1634,7 @@
       };
 
       const reset = () => {
-        window.appConfig.stageReset.userHasEndedReport = true;
+        window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageReset)
         showHTMLElements([]);
         document.querySelector("#curtain").classList.remove("opacity-0");
 
