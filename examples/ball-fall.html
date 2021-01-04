@@ -266,9 +266,9 @@
 
         const pointLight0 = new THREE.PointLight(getRandomColor(), 1);
         pointLight0.gameName = "POINTLIGHT0";
-        pointLight0.power = 5;
+        pointLight0.power = 25;
         pointLight0.decay = 1;
-        pointLight0.distance = 5;
+        pointLight0.distance = 25;
         scene.add(pointLight0);
 
         // Orbit Controls
@@ -691,28 +691,30 @@
 
           const crystalMaterialOptions = {
             color: 0x000000,
-            emissive: 0xffffff,
-            transparent: true,
-            opacity: 0.85,
-            shininess: 150,
-            roughness: 0.2,
-            metalness: 0.2,
+            // emissive: 0xffffff,
+            // transparent: true,
+            // opacity: 0.75,
+            // shininess: 150,
+            // roughness: 0.2,
+            // metalness: 0.2,
+            specular: 0x050505,
+            shininess: 100
           };
 
           const coin = new THREE.Mesh();
           const crystalTop = new THREE.Mesh(
             new THREE.CylinderGeometry(0, 1, 0.5, 6),
-            new THREE.MeshPhongMaterial()
+            new THREE.MeshPhongMaterial(crystalMaterialOptions)
           );
           crystalTop.translateY(0.75);
           const crystalMiddle = new THREE.Mesh(
             new THREE.CylinderGeometry(1, 1, 1, 6),
-            new THREE.MeshPhongMaterial()
+            new THREE.MeshPhongMaterial(crystalMaterialOptions)
           );
 
           const crystalBottom = new THREE.Mesh(
             new THREE.CylinderGeometry(1, 0, 0.5, 6),
-            new THREE.MeshPhongMaterial()
+            new THREE.MeshPhongMaterial(crystalMaterialOptions)
           );
           crystalBottom.translateY(-0.75);
           coin.add(crystalTop);
@@ -934,6 +936,8 @@
         document.querySelector("#curtain").classList.add("opacity-0");
       };
 
+      // app debug menu for items
+
       window.appConfig.debug = {
         stage: 0,
         debugKeyCodes: {
@@ -1087,13 +1091,15 @@
           var sphere, material;
 
           material = Physijs.createMaterial(
-            new THREE.MeshLambertMaterial({
-              color: getRandomColor(),
+            new THREE.MeshPhongMaterial({
+              color: 0xffffff,
               // envMap: scene.background,
               // combine: THREE.MixOperation,
-              // reflectivity: 0.1,
-              // transparent: true,
-              // opacity: 0.98
+              reflectivity: 100,
+              transparent: true,
+              opacity: 0.95,
+              specular: 0x050505,
+              shininess: 200
             }),
             0.5, // medium friction
             1 // low restitution
@@ -1246,6 +1252,9 @@
             id: Math.round(Math.random() * 10000),
             activeCallback: (percentComplete) => {
               window.appConfig.timers.data.stageReset.percentComplete = percentComplete
+            },
+            completedCallback: (percentComplete) => {
+              window.appConfig.gameModeFunctions.start()
             }
           }
         },
@@ -1313,6 +1322,9 @@
               if(appTimers.activeTimers[ti].started === 0) {
                 appTimers.activeTimers[ti].started = currentTime
                 appTimers.activeTimers[ti].currentTime = currentTime
+                if(appTimers.activeTimers[ti].startedCallback) {
+                    appTimers.activeTimers[ti].startedCallback(appTimers.activeTimers[ti].percentComplete)
+                }
               }
               if(appTimers.activeTimers[ti].started !== 0 && appTimers.activeTimers[ti].ended === 0) {
                 appTimers.activeTimers[ti].currentTime = currentTime
@@ -1328,6 +1340,9 @@
                   appTimers.activeTimers[ti].ended = currentTime
                   console.log('timer ended: ', appTimers.activeTimers[ti]);
                   removeTimersArray.push(appTimers.activeTimers[ti].name)
+                  if(appTimers.activeTimers[ti].completedCallback) {
+                    appTimers.activeTimers[ti].completedCallback(appTimers.activeTimers[ti].percentComplete)
+                  }
                 }
               }
           })
@@ -1512,7 +1527,7 @@
                 window.appConfig.score.coins;
 
               //now start end of stage
-              window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageResultsBallZoom)
+              window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageResultsBallZoom())
               window.appConfig.timer.pause();
               window.appConfig.results[`stage${window.appConfig.level}`]
                 ? (window.appConfig.results[
@@ -1551,6 +1566,9 @@
         window.appConfig.start = true;
         showHTMLElements(["pause-button", "game-scoreboard"]);
         // window.appConfig.initialBallZoom.userHasClickedStart = true;
+        window.appConfig.timers.data.initialBallZoom.percentComplete = 0
+        window.appConfig.timers.data.stageReset.percentComplete = 0
+        window.appConfig.timers.data.stageResultsBallZoom.percentComplete = 0
         window.appConfig.timers.activeTimers.push(timers.initialBallZoom())
         window.appConfig.timer.start();
         document.querySelector("#pause-button").disabled = false;
@@ -1571,7 +1589,7 @@
       };
 
       const reset = () => {
-        window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageReset)
+        window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageReset())
         showHTMLElements([]);
         document.querySelector("#curtain").classList.remove("opacity-0");
 
@@ -1581,6 +1599,12 @@
         window.appConfig.timer.reset();
         window.appConfig.timer.pause();
       };
+
+      window.appConfig.gameModeFunctions = {
+        start: start,
+        reset: reset,
+        pause: pause
+      }
       const showLevelSelect = () => {
         showHTMLElements(["level-select"]);
         centerElement({ id: "level-select", offsetTop: 0, offsetLeft: 0 });
