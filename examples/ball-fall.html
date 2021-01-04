@@ -266,9 +266,9 @@
 
         const pointLight0 = new THREE.PointLight(getRandomColor(), 1);
         pointLight0.gameName = "POINTLIGHT0";
-        pointLight0.power = 5;
+        pointLight0.power = 25;
         pointLight0.decay = 1;
-        pointLight0.distance = 5;
+        pointLight0.distance = 25;
         scene.add(pointLight0);
 
         // Orbit Controls
@@ -691,28 +691,30 @@
 
           const crystalMaterialOptions = {
             color: 0x000000,
-            emissive: 0xffffff,
-            transparent: true,
-            opacity: 0.85,
-            shininess: 150,
-            roughness: 0.2,
-            metalness: 0.2,
+            // emissive: 0xffffff,
+            // transparent: true,
+            // opacity: 0.75,
+            // shininess: 150,
+            // roughness: 0.2,
+            // metalness: 0.2,
+            specular: 0x050505,
+            shininess: 100
           };
 
           const coin = new THREE.Mesh();
           const crystalTop = new THREE.Mesh(
             new THREE.CylinderGeometry(0, 1, 0.5, 6),
-            new THREE.MeshPhongMaterial()
+            new THREE.MeshPhongMaterial(crystalMaterialOptions)
           );
           crystalTop.translateY(0.75);
           const crystalMiddle = new THREE.Mesh(
             new THREE.CylinderGeometry(1, 1, 1, 6),
-            new THREE.MeshPhongMaterial()
+            new THREE.MeshPhongMaterial(crystalMaterialOptions)
           );
 
           const crystalBottom = new THREE.Mesh(
             new THREE.CylinderGeometry(1, 0, 0.5, 6),
-            new THREE.MeshPhongMaterial()
+            new THREE.MeshPhongMaterial(crystalMaterialOptions)
           );
           crystalBottom.translateY(-0.75);
           coin.add(crystalTop);
@@ -1090,13 +1092,15 @@
           var sphere, material;
 
           material = Physijs.createMaterial(
-            new THREE.MeshLambertMaterial({
-              color: getRandomColor(),
+            new THREE.MeshPhongMaterial({
+              color: 0xffffff,
               // envMap: scene.background,
               // combine: THREE.MixOperation,
-              // reflectivity: 0.1,
-              // transparent: true,
-              // opacity: 0.98
+              reflectivity: 100,
+              transparent: true,
+              opacity: 0.95,
+              specular: 0x050505,
+              shininess: 200
             }),
             0.5, // medium friction
             1 // low restitution
