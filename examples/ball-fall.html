@@ -1011,7 +1011,6 @@
               "BOX",
               "ICOSAHEDRON",
               "SIDEGLASS",
-              // "STAGEFLOOR",
               "TETRAHEDRON",
               "CONE",
               "DISC",
@@ -1146,39 +1145,10 @@
           glassMesh1.gameName = "BACKGLASS";
           glassMesh1.name = "glassMesh1";
 
-          const stageFloor = new Physijs.BoxMesh(
-            /*geometry*/ new THREE.BoxGeometry(25, 1, 10),
-            /*material*/ new THREE.MeshBasicMaterial({
-              color: getRandomColor(),
-              opacity: 0,
-              transparent: true,
-            }),
-            /*mass*/ 0
-          );
-
-          stageFloor.name = "stageFloor";
-          stageFloor.featureType = "STAGEFLOOR";
-          const catchWall = new Physijs.BoxMesh(
-            /*geometry*/ new THREE.BoxGeometry(25, 10, 1),
-            /*material*/ new THREE.MeshBasicMaterial({
-              color: getRandomColor(),
-              opacity: 0,
-              transparent: true,
-            }),
-            /*mass*/ 0
-          );
-
-          catchWall.name = "catchWall";
-          catchWall.featureType = "CATCHWALL";
-
-          catchWall.position.y = -327;
-          catchWall.position.z = 5;
           glassMesh0.position.z = 1.5;
           glassMesh1.position.z = -1.5;
           glassMesh0.position.y = -137.5;
           glassMesh1.position.y = -140;
-          stageFloor.position.y = -327;
-          stageFloor.rotation.x = Math.PI * 0.125;
           glassMesh0.__dirtyPosition = true;
           glassMesh0.__dirtyRotation = true;
           glassMesh1.__dirtyPosition = true;
@@ -1186,8 +1156,6 @@
 
           scene.add(glassMesh0);
           scene.add(glassMesh1);
-          scene.add(stageFloor);
-          scene.add(catchWall);
 
 
           // window.appConfig.initialBallZoomReset();
@@ -1451,7 +1419,8 @@
         // }
 
         const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0");
-
+        const pointLight0 = scene.children
+          .find((obj) => obj.gameName === "POINTLIGHT0")
         if (
           window.appConfig.start === false ||
           window.appConfig.pause === true
@@ -1459,8 +1428,7 @@
           if (window.appConfig.start === false) {
             sphere.position.set(0, 10, 0);
           }
-          scene.children
-            .find((obj) => obj.gameName === "SPHERE0")
+          sphere
             .setLinearVelocity(new THREE.Vector3(0, 0, 0));
         } else {
           if (
@@ -1469,8 +1437,7 @@
           ) {
             console.log("ACTIVE!!!");
             const scaleV = 0.25;
-            scene.children
-              .find((obj) => obj.gameName === "SPHERE0")
+            sphere
               .setLinearVelocity(
                 new THREE.Vector3(
                   window.appConfig.diffX * scaleV,
@@ -1481,30 +1448,16 @@
           }
         }
 
-        const spherePosition = scene.children.find(
-          (obj) => obj.gameName === "SPHERE0"
-        ).position;
-        scene.children
-          .find((obj) => obj.gameName === "POINTLIGHT0")
-          .position.set(
-            spherePosition.x,
-            spherePosition.y + 1,
-            spherePosition.z
+        
+          pointLight0.position.set(
+            sphere.position.x,
+            sphere.position.y + 1,
+            sphere.position.z
           );
 
-        const stageFloor = scene.children.find(
-          (obj) => obj.name === "stageFloor"
-        );
-        const compareVector = new THREE.Vector3();
-        const distanceSphereToStageFloor = compareVector
-          .subVectors(
-            new THREE.Vector3().setFromMatrixPosition(sphere.matrixWorld),
-            new THREE.Vector3().setFromMatrixPosition(stageFloor.matrixWorld)
-          )
-          .length();
-        const percentFinished = distanceSphereToStageFloor / 375;
+        const percentFinished = Math.abs(sphere.position.y) / 375;
         window.appConfig.percentFinished = percentFinished;
-        if (new Date().getTime() % 10 < 3) {
+        if (currentTime % 10 < 3) {
           document.body.style.background =
             "linear-gradient(180deg, rgba(2,0,36,0) 0%, rgba(121,9,117,1) 0%, rgba(252,231,183,1) " +
             Math.round((1 - percentFinished) * 100) / 3 +
@@ -1524,28 +1477,12 @@
           window.appConfig.timers.data.stageReset.percentComplete * 5;
 
         if (window.appConfig.userHasEnded) {
-          scene.children
-            .find((obj) => obj.gameName === "SPHERE0")
+          sphere
             .setLinearVelocity(new THREE.Vector3(0, 0, 0));
-          scene.children
-            .find((obj) => obj.gameName === "SPHERE0")
+          sphere
             .setAngularVelocity(new THREE.Vector3(0, 0, 0));
         }
-        // }
 
-        // Object.keys(window.appConfig.featureTypes).forEach((key) => {
-        //   window.appConfig.featureTypes[key].forEach(
-        //     (feature, featureIndex) => {
-        //       const newXRotation = feature.rotation.x + 0.01;
-        //       const newYRotation = feature.rotation.y + 0.01;
-        //       const newZRotation = feature.rotation.z + 0.01;
-        //       feature.rotation.x = newXRotation;
-        //       feature.rotation.y = newYRotation;
-        //       feature.rotation.z = newZRotation;
-        //       feature.__dirtyRotation = true;
-        //     }
-        //   );
-        // });
         let coinIndexToRemove = undefined;
           const potentiallyGrabbedCoin = window.appConfig.coins.find(
             (coin, coinIndex) => {
@@ -2168,8 +2105,8 @@
     <div id="curtain"></div>
   </body>
   <script>
-    window.console.log = () => {}
-    window.console.warn = () => {}
-    window.console.dir = () => {}
+    // window.console.log = () => {}
+    // window.console.warn = () => {}
+    // window.console.dir = () => {}
   </script>
 </html>
