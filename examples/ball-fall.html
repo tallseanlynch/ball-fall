@@ -934,6 +934,8 @@
         document.querySelector("#curtain").classList.add("opacity-0");
       };
 
+      // app debug menu for items
+
       window.appConfig.debug = {
         stage: 0,
         debugKeyCodes: {
@@ -1278,6 +1280,9 @@
             id: Math.round(Math.random() * 10000),
             activeCallback: (percentComplete) => {
               window.appConfig.timers.data.stageReset.percentComplete = percentComplete
+            },
+            completedCallback: (percentComplete) => {
+              window.appConfig.gameModeFunctions.start()
             }
           }
         },
@@ -1345,6 +1350,9 @@
               if(appTimers.activeTimers[ti].started === 0) {
                 appTimers.activeTimers[ti].started = currentTime
                 appTimers.activeTimers[ti].currentTime = currentTime
+                if(appTimers.activeTimers[ti].startedCallback) {
+                    appTimers.activeTimers[ti].startedCallback(appTimers.activeTimers[ti].percentComplete)
+                }
               }
               if(appTimers.activeTimers[ti].started !== 0 && appTimers.activeTimers[ti].ended === 0) {
                 appTimers.activeTimers[ti].currentTime = currentTime
@@ -1360,6 +1368,9 @@
                   appTimers.activeTimers[ti].ended = currentTime
                   console.log('timer ended: ', appTimers.activeTimers[ti]);
                   removeTimersArray.push(appTimers.activeTimers[ti].name)
+                  if(appTimers.activeTimers[ti].completedCallback) {
+                    appTimers.activeTimers[ti].completedCallback(appTimers.activeTimers[ti].percentComplete)
+                  }
                 }
               }
           })
@@ -1575,7 +1586,7 @@
                 window.appConfig.score.coins;
 
               //now start end of stage
-              window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageResultsBallZoom)
+              window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageResultsBallZoom())
               window.appConfig.timer.pause();
               window.appConfig.results[`stage${window.appConfig.level}`]
                 ? (window.appConfig.results[
@@ -1614,6 +1625,9 @@
         window.appConfig.start = true;
         showHTMLElements(["pause-button", "game-scoreboard"]);
         // window.appConfig.initialBallZoom.userHasClickedStart = true;
+        window.appConfig.timers.data.initialBallZoom.percentComplete = 0
+        window.appConfig.timers.data.stageReset.percentComplete = 0
+        window.appConfig.timers.data.stageResultsBallZoom.percentComplete = 0
         window.appConfig.timers.activeTimers.push(timers.initialBallZoom())
         window.appConfig.timer.start();
         document.querySelector("#pause-button").disabled = false;
@@ -1634,7 +1648,7 @@
       };
 
       const reset = () => {
-        window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageReset)
+        window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageReset())
         showHTMLElements([]);
         document.querySelector("#curtain").classList.remove("opacity-0");
 
@@ -1644,6 +1658,12 @@
         window.appConfig.timer.reset();
         window.appConfig.timer.pause();
       };
+
+      window.appConfig.gameModeFunctions = {
+        start: start,
+        reset: reset,
+        pause: pause
+      }
       const showLevelSelect = () => {
         showHTMLElements(["level-select"]);
         centerElement({ id: "level-select", offsetTop: 0, offsetLeft: 0 });
@@ -2168,8 +2188,8 @@
     <div id="curtain"></div>
   </body>
   <script>
-    window.console.log = () => {}
-    window.console.warn = () => {}
-    window.console.dir = () => {}
+    // window.console.log = () => {}
+    // window.console.warn = () => {}
+    // window.console.dir = () => {}
   </script>
 </html>
