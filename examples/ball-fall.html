@@ -555,6 +555,7 @@
           );
           mainStructure.name = name;
           mainStructure.__dirtyPosition = true;
+          mainStructure.featureType = "BEAM"
           return mainStructure;
         };
 
@@ -973,8 +974,9 @@
       }); 
 
       spawnBox = (function () {
-        var box_geometry = new THREE.BoxGeometry(4, 4, 4),
-          sphere_geometry = new THREE.SphereGeometry(1, 32, 32),
+        var sphere_geometry = new THREE.SphereGeometry(1, 32, 32),
+          collisionInc = 0,
+          lastCollisions = ["","",""],
           handleCollision = function (
             collided_with,
             linearVelocity,
@@ -984,9 +986,9 @@
             console.log("collided_with", collided_with);
 
             const suonousFeatureTypes = [
+              "BEAM",
               "BOX",
               "ICOSAHEDRON",
-              "SIDEGLASS",
               "TETRAHEDRON",
               "CONE",
               "DISC",
@@ -994,70 +996,51 @@
               "PLINKO",
               "COIN",
             ];
-            if (suonousFeatureTypes.indexOf(collided_with.featureType) > -1) {
-              switch (++this.collisions % 8) {
-                case 1:
+            
+            const playHowlOnCollision = [
+              function () {
                   howlSound0.play();
-                  break;
-
-                case 2:
+              },
+              function () {
                   howlSound1.play();
-                  break;
-
-                case 3:
+              },
+              function () {
                   howlSound2.play();
-                  break;
-
-                case 4:
+              },
+              function () {
                   howlSound3.play();
-                  break;
-
-                case 5:
+              },
+              function () {
                   howlSound4.play();
-                  break;
-
-                case 6:
+              },
+              function () {
                   howlSound5.play();
-                  break;
-
-                case 7:
+              },
+              function () {
                   howlSound6.play();
-                  break;
-
-                case 8:
+              },
+              function () {
                   howlSound7.play();
-                  break;
+              }
+              ]
+            if (suonousFeatureTypes.indexOf(collided_with.featureType) > -1) {
+              
+              const sphere = scene.children.find(obj => {
+                if(obj.gameName==="SPHERE0" && obj.type==="Mesh") {
+                  return obj
+                }
+              })
+              const i = Math.floor(collisionInc % playHowlOnCollision.length)
+              if (!(lastCollisions[0]===collided_with.uuid && lastCollisions[1]===collided_with.uuid && lastCollisions[2]===collided_with.uuid) ){
+              playHowlOnCollision[i]()
+              collisionInc++
+              lastCollisions.push(collided_with.uuid)}
+              if (lastCollisions.length >3) {
+              lastCollisions.shift()
               }
               console.log("AFTERPLAY");
             }
-          },
-          createBox = function () {
-            var box, material;
-
-            material = Physijs.createMaterial(
-              new THREE.MeshPhongMaterial(),
-              0.6, // medium friction
-              0.3 // low restitution
-            );
-            box = new Physijs.BoxMesh(box_geometry, material);
-            box.collisions = 0;
-
-            box.position.set(
-              Math.random() * 15 - 7.5,
-              25,
-              Math.random() * 15 - 7.5
-            );
-
-            box.rotation.set(
-              Math.random() * Math.PI,
-              Math.random() * Math.PI,
-              Math.random() * Math.PI
-            );
-
-            box.castShadow = true;
-            box.addEventListener("ready", spawnBox);
-            scene.add(box);
-          };
+          }
 
         let createSphere = function () {
           var sphere, material;
