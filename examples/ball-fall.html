@@ -26,6 +26,7 @@
   <script type="text/javascript" src="js/howler.min.js"></script>
   <!-- <script src="https://unpkg.com/three@0.112.0/examples/js/loaders/GLTFLoader.js"></script> -->
   <script type="text/javascript" src="./features.js"></script>
+  <!-- <script type="text/javascript" src="./debug.js"></script> -->
   <script type="text/javascript">
     "use strict";
 
@@ -433,11 +434,12 @@
         return coin;
       };
 
-      const createCrystalCross = (s, t = { x: 0, y: 0 }, size = 0) => {
+      const createCrystalCross = (name = "NO_NAME", s, t = { x: 0, y: 0 }, size = 0) => {
         const crystalCross = new THREE.Group()
         crystalCross.debugTypeIndex = window.appConfig.itemAmounts.crystalCross
         crystalCross.debugType = 'CRYSTALCROSS'
         crystalCross.debugName = 'CRYSTALCROSS' + window.appConfig.itemAmounts.crystalCross
+        crystalCross.name = name + '_' + crystalCross.debugName
 
         crystalCross.add(crystal(size, { x: 0 * s + t.x, y: 1 * s + t.y, z: 0 }));
         crystalCross.add(crystal(size, { x: 0 * s + t.x, y: -1 * s + t.y, z: 0 }));
@@ -448,6 +450,7 @@
       };
 
       const createCrystalLine = (
+        name = 'NO_NAME',
         s,
         t = { x: 0, y: 0 },
         size = 0,
@@ -458,6 +461,7 @@
         crystalLine.debugTypeIndex = window.appConfig.itemAmounts.crystalLine
         crystalLine.debugType = 'CRYSTALLINE'
         crystalLine.debugName = 'CRYSTALLINE' + window.appConfig.itemAmounts.crystalLine
+        crystalLine.name = name + '_' + crystalLine.debugName
         let i = 0;
         for (i; i < n; i++) {
           if (dir === "x") {
@@ -478,6 +482,35 @@
             vAdj: -70,
             sAdj: 2,
             startingPosition: new THREE.Vector3(0, 0, 0)
+          },
+          transforms: {
+            'STAGE0PRIZE0': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE0PRIZE1': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE0PRIZE2': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE0PRIZE3': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE0MAINSTRUCTURE': { r: { x: 0, y: 0, z: .001 } },
+            'STAGE0MINORSTRUCTURE': { r: { x: 0, y: 0, z: -.001 } },
+            'STAGE0MINORSTRUCTURE1': { r: { x: 0, y: 0, z: -.001 } },
+            'STAGE0MINORSTRUCTURE2': { r: { x: 0, y: 0, z: -.001 } },
+            'STAGE0MINORSTRUCTURE3': { r: { x: 0, y: 0, z: -.001 } }
+          },
+          teardown: () => {
+            scene.remove(window.appConfig.stages.STAGE0.STAGE0PRIZE0)
+            scene.remove(window.appConfig.stages.STAGE0.STAGE0PRIZE1)
+            scene.remove(window.appConfig.stages.STAGE0.STAGE0PRIZE2)
+            scene.remove(window.appConfig.stages.STAGE0.STAGE0PRIZE3)
+            scene.remove(window.appConfig.stages.STAGE0.STAGE0MAINSTRUCTURE)
+            scene.remove(window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE)
+            scene.remove(window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE1)
+            scene.remove(window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE2)
+            scene.remove(window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE3)
+            // remove all coins
+            scene.children.forEach(c => {
+              if(c.name && c.name.indexOf('STAGE0') > -1) {
+                scene.remove(c)
+              }
+            })
+            window.appConfig.stages.STAGE0.data.started = false
           },
           init: () => {
             const createStage0MainBeamStructure = (
@@ -634,41 +667,52 @@
             coins.push(prize2Group);
             coins.push(prize3Group);
 
-            createCrystalCross(5);
-            createCrystalCross(10);
-            createCrystalCross(5, { x: 20, y: 20 }, 1);
-            createCrystalCross(5, { x: -20, y: 20 }, 1);
-            createCrystalCross(5, { x: -20, y: -20 }, 1);
-            createCrystalCross(5, { x: 20, y: -20 }, 1);
-            createCrystalCross(3, { x: 55, y: 55 }, 0);
-            createCrystalCross(3, { x: 35, y: 55 }, 0);
-            createCrystalCross(3, { x: 35, y: 35 }, 0);
-            createCrystalCross(3, { x: 55, y: 35 }, 0);
-            createCrystalCross(3, { x: 55, y: -55 }, 0);
-            createCrystalCross(3, { x: 35, y: -55 }, 0);
-            createCrystalCross(3, { x: 35, y: -35 }, 0);
-            createCrystalCross(3, { x: 55, y: -35 }, 0);
-            createCrystalCross(3, { x: -55, y: -55 }, 0);
-            createCrystalCross(3, { x: -35, y: -55 }, 0);
-            createCrystalCross(3, { x: -35, y: -35 }, 0);
-            createCrystalCross(3, { x: -55, y: -35 }, 0);
-            createCrystalCross(3, { x: -55, y: 55 }, 0);
-            createCrystalCross(3, { x: -35, y: 55 }, 0);
-            createCrystalCross(3, { x: -35, y: 35 }, 0);
-            createCrystalCross(3, { x: -55, y: 35 }, 0);
-            createCrystalLine(10, { x: -47.5, y: -20 }, 2, 5, "y");
-            createCrystalLine(5, { x: 54.5, y: -22 }, 0, 10, "y");
-            createCrystalLine(5, { x: 40.5, y: -22.5 }, 0, 10, "y");
-            createCrystalLine(10, { x: 47.5, y: -20 }, 2, 5, "y");
-            createCrystalLine(5, { x: -54.5, y: -22 }, 0, 10, "y");
-            createCrystalLine(5, { x: -40.5, y: -22.5 }, 0, 10, "y");
-            createCrystalLine(10, { x: -20, y: -47.5 }, 2, 5, "x");
-            createCrystalLine(5, { x: -22.5, y: -40 }, 0, 10, "x");
-            createCrystalLine(5, { x: -22.5, y: -54.5 }, 0, 10, "x");
-            createCrystalLine(10, { x: -20, y: 47.5 }, 2, 5, "x");
-            createCrystalLine(5, { x: -22.5, y: 40 }, 0, 10, "x");
-            createCrystalLine(5, { x: -22.5, y: 54.5 }, 0, 10, "x");
+            createCrystalCross('STAGE0', 5);
+            createCrystalCross('STAGE0', 10);
+            createCrystalCross('STAGE0', 5, { x: 20, y: 20 }, 1);
+            createCrystalCross('STAGE0', 5, { x: -20, y: 20 }, 1);
+            createCrystalCross('STAGE0', 5, { x: -20, y: -20 }, 1);
+            createCrystalCross('STAGE0', 5, { x: 20, y: -20 }, 1);
+            createCrystalCross('STAGE0', 3, { x: 55, y: 55 }, 0);
+            createCrystalCross('STAGE0', 3, { x: 35, y: 55 }, 0);
+            createCrystalCross('STAGE0', 3, { x: 35, y: 35 }, 0);
+            createCrystalCross('STAGE0', 3, { x: 55, y: 35 }, 0);
+            createCrystalCross('STAGE0', 3, { x: 55, y: -55 }, 0);
+            createCrystalCross('STAGE0', 3, { x: 35, y: -55 }, 0);
+            createCrystalCross('STAGE0', 3, { x: 35, y: -35 }, 0);
+            createCrystalCross('STAGE0', 3, { x: 55, y: -35 }, 0);
+            createCrystalCross('STAGE0', 3, { x: -55, y: -55 }, 0);
+            createCrystalCross('STAGE0', 3, { x: -35, y: -55 }, 0);
+            createCrystalCross('STAGE0', 3, { x: -35, y: -35 }, 0);
+            createCrystalCross('STAGE0', 3, { x: -55, y: -35 }, 0);
+            createCrystalCross('STAGE0', 3, { x: -55, y: 55 }, 0);
+            createCrystalCross('STAGE0', 3, { x: -35, y: 55 }, 0);
+            createCrystalCross('STAGE0', 3, { x: -35, y: 35 }, 0);
+            createCrystalCross('STAGE0', 3, { x: -55, y: 35 }, 0);
+            createCrystalLine('STAGE0', 10, { x: -47.5, y: -20 }, 2, 5, "y");
+            createCrystalLine('STAGE0', 5, { x: 54.5, y: -22 }, 0, 10, "y");
+            createCrystalLine('STAGE0', 5, { x: 40.5, y: -22.5 }, 0, 10, "y");
+            createCrystalLine('STAGE0', 10, { x: 47.5, y: -20 }, 2, 5, "y");
+            createCrystalLine('STAGE0', 5, { x: -54.5, y: -22 }, 0, 10, "y");
+            createCrystalLine('STAGE0', 5, { x: -40.5, y: -22.5 }, 0, 10, "y");
+            createCrystalLine('STAGE0', 10, { x: -20, y: -47.5 }, 2, 5, "x");
+            createCrystalLine('STAGE0', 5, { x: -22.5, y: -40 }, 0, 10, "x");
+            createCrystalLine('STAGE0', 5, { x: -22.5, y: -54.5 }, 0, 10, "x");
+            createCrystalLine('STAGE0', 10, { x: -20, y: 47.5 }, 2, 5, "x");
+            createCrystalLine('STAGE0', 5, { x: -22.5, y: 40 }, 0, 10, "x");
+            createCrystalLine('STAGE0', 5, { x: -22.5, y: 54.5 }, 0, 10, "x");
             // end stage 0
+
+            window.appConfig.stages.STAGE0.STAGE0PRIZE0 = scene.children.find((obj) => obj.name === "STAGE0PRIZE0")
+            window.appConfig.stages.STAGE0.STAGE0PRIZE1 = scene.children.find((obj) => obj.name === "STAGE0PRIZE1")
+            window.appConfig.stages.STAGE0.STAGE0PRIZE2 = scene.children.find((obj) => obj.name === "STAGE0PRIZE2")
+            window.appConfig.stages.STAGE0.STAGE0PRIZE3 = scene.children.find((obj) => obj.name === "STAGE0PRIZE3")
+            window.appConfig.stages.STAGE0.STAGE0MAINSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MAINSTRUCTURE")
+            window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE")
+            window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE1")
+            window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE2")
+            window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE3")
+            window.appConfig.stages.STAGE0.data.started = true
           }
         }
       }
@@ -771,70 +815,6 @@
       document.querySelector("#curtain").classList.add("opacity-0");
     };
 
-    // app debug menu for items
-
-    window.appConfig.debug = {
-      stage: 0,
-      debugKeyCodes: {
-        left: 37,
-        right: 39,
-        up: 38,
-        down: 40,
-        leftBracket: 188,
-        rightBracket: 190
-      },
-      currentDebugMeshIndex: 4
-    }
-
-    const incrementDebugObject = () => {
-      window.appConfig.debug.currentDebugMeshIndex++
-      if (window.appConfig.debug.currentDebugMeshIndex >= scene.children.length) {
-        currentDebugMeshIndex = 4
-      }
-      console.log(window.appConfig.debug)
-    }
-
-    const decrementDebugObject = () => {
-      window.appConfig.debug.currentDebugMeshIndex--
-      if (window.appConfig.debug.currentDebugMeshIndex <= 4) {
-        currentDebugMeshIndex = scene.children.length
-      }
-      console.log(window.appConfig.debug)
-    }
-
-    const translateObject = (e) => {
-      const s = 5
-      const objectToTranslate = scene.children[window.appConfig.debug.currentDebugMeshIndex]
-      const dirs = {
-        37: { x: -5, y: 0, z: 0 },
-        39: { x: 5, y: 0, z: 0 },
-        38: { x: 0, y: 5, z: 0 },
-        40: { x: 0, y: -5, z: 0 }
-      }
-      objectToTranslate.position.x += dirs[e.keyCode].x
-      objectToTranslate.position.y += dirs[e.keyCode].y
-      console.log(window.appConfig.debug)
-    }
-
-    const keydownFunctions = {
-      37: (e) => translateObject(e),
-      39: (e) => translateObject(e),
-      38: (e) => translateObject(e),
-      40: (e) => translateObject(e),
-      188: decrementDebugObject,
-      190: incrementDebugObject
-    }
-
-    const keycodesArray = Object.values(window.appConfig.debug.debugKeyCodes)
-    document.addEventListener('keydown', function (e) {
-      if (keycodesArray.indexOf(e.keyCode) > -1) {
-        console.log('Keydown event fired')
-        console.log(e)
-        console.log(e.keyCode)
-        keydownFunctions[e.keyCode](e)
-      }
-    });
-
     spawnBox = (function () {
       var sphere_geometry = new THREE.SphereGeometry(1, 32, 32),
         collisionInc = 0,
@@ -846,62 +826,63 @@
         ) {
           console.log("collision");
           console.log("collided_with", collided_with);
+          if(appConfig.pause === false) {
+            const suonousFeatureTypes = [
+              "BEAM",
+              "BOX",
+              "ICOSAHEDRON",
+              "TETRAHEDRON",
+              "CONE",
+              "DISC",
+              "TORUS",
+              "PLINKO",
+              "COIN",
+            ];
 
-          const suonousFeatureTypes = [
-            "BEAM",
-            "BOX",
-            "ICOSAHEDRON",
-            "TETRAHEDRON",
-            "CONE",
-            "DISC",
-            "TORUS",
-            "PLINKO",
-            "COIN",
-          ];
-
-          const playHowlOnCollision = [
-            function () {
-              howlSound0.play();
-            },
-            function () {
-              howlSound1.play();
-            },
-            function () {
-              howlSound2.play();
-            },
-            function () {
-              howlSound3.play();
-            },
-            function () {
-              howlSound4.play();
-            },
-            function () {
-              howlSound5.play();
-            },
-            function () {
-              howlSound6.play();
-            },
-            function () {
-              howlSound7.play();
-            }
-          ]
-          if (suonousFeatureTypes.indexOf(collided_with.featureType) > -1) {
-
-            const sphere = scene.children.find(obj => {
-              if (obj.gameName === "SPHERE0" && obj.type === "Mesh") {
-                return obj
+            const playHowlOnCollision = [
+              function () {
+                howlSound0.play();
+              },
+              function () {
+                howlSound1.play();
+              },
+              function () {
+                howlSound2.play();
+              },
+              function () {
+                howlSound3.play();
+              },
+              function () {
+                howlSound4.play();
+              },
+              function () {
+                howlSound5.play();
+              },
+              function () {
+                howlSound6.play();
+              },
+              function () {
+                howlSound7.play();
               }
-            })
-            const i = Math.floor(collisionInc % playHowlOnCollision.length)
-            if (!(lastCollisions[0] === collided_with.uuid && lastCollisions[1] === collided_with.uuid && lastCollisions[2] === collided_with.uuid)) {
-              playHowlOnCollision[i]()
-              collisionInc++
-              lastCollisions.push(collided_with.uuid)
+            ]
+            if (suonousFeatureTypes.indexOf(collided_with.featureType) > -1) {
+
+              const sphere = scene.children.find(obj => {
+                if (obj.gameName === "SPHERE0" && obj.type === "Mesh") {
+                  return obj
+                }
+              })
+              const i = Math.floor(collisionInc % playHowlOnCollision.length)
+              if (!(lastCollisions[0] === collided_with.uuid && lastCollisions[1] === collided_with.uuid && lastCollisions[2] === collided_with.uuid)) {
+                playHowlOnCollision[i]()
+                collisionInc++
+                lastCollisions.push(collided_with.uuid)
+              }
+              if (lastCollisions.length > 3) {
+                lastCollisions.shift()
+              }
+              console.log("AFTERPLAY");
             }
-            if (lastCollisions.length > 3) {
-              lastCollisions.shift()
-            }
-            console.log("AFTERPLAY");
           }
         }
 
@@ -936,6 +917,7 @@
         sphere.castShadow = true;
         sphere.addEventListener("collision", handleCollision);
         sphere.gameName = "SPHERE0";
+        sphere.name = "SPHERE0";
         scene.add(sphere);
       };
       return () => {
@@ -987,18 +969,6 @@
     let appStartTime = new Date().getTime();
     let initialBallZoomTime = 0;
 
-    const transforms = {
-      'STAGE0PRIZE0': { r: { x: .005, y: .005, z: .005 } },
-      'STAGE0PRIZE1': { r: { x: .005, y: .005, z: .005 } },
-      'STAGE0PRIZE2': { r: { x: .005, y: .005, z: .005 } },
-      'STAGE0PRIZE3': { r: { x: .005, y: .005, z: .005 } },
-      'STAGE0MAINSTRUCTURE': { r: { x: 0, y: 0, z: .001 } },
-      'STAGE0MINORSTRUCTURE': { r: { x: 0, y: 0, z: -.001 } },
-      'STAGE0MINORSTRUCTURE1': { r: { x: 0, y: 0, z: -.001 } },
-      'STAGE0MINORSTRUCTURE2': { r: { x: 0, y: 0, z: -.001 } },
-      'STAGE0MINORSTRUCTURE3': { r: { x: 0, y: 0, z: -.001 } }
-    }
-
     const activeTransforms = [
       'STAGE0PRIZE0',
       'STAGE0PRIZE1',
@@ -1012,19 +982,6 @@
     ]
 
     let currentTime = new Date().getTime();
-
-    const initStage0 = () => {
-      window.appConfig.stages.STAGE0.STAGE0PRIZE0 = scene.children.find((obj) => obj.name === "STAGE0PRIZE0")
-      window.appConfig.stages.STAGE0.STAGE0PRIZE1 = scene.children.find((obj) => obj.name === "STAGE0PRIZE1")
-      window.appConfig.stages.STAGE0.STAGE0PRIZE2 = scene.children.find((obj) => obj.name === "STAGE0PRIZE2")
-      window.appConfig.stages.STAGE0.STAGE0PRIZE3 = scene.children.find((obj) => obj.name === "STAGE0PRIZE3")
-      window.appConfig.stages.STAGE0.STAGE0MAINSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MAINSTRUCTURE")
-      window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE")
-      window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE1")
-      window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE2")
-      window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE3")
-      window.appConfig.stages.STAGE0.started = true
-    }
 
     const timers = {
       initialBallZoom: () => {
@@ -1100,26 +1057,28 @@
 
       currentTime = new Date().getTime();
 
-      if (!window.appConfig.stages.STAGE0.data.started) {
+      if (!window.appConfig.stages[window.appConfig.currentStage].data.started) {
         initStage0()
       } else {
-        activeTransforms.length > 0 && activeTransforms.forEach(t => {
-          if (transforms[t].r && stages.STAGE0[t]) {
-            stages.STAGE0[t].rotation.x += transforms[t].r.x
-            stages.STAGE0[t].rotation.y += transforms[t].r.y
-            stages.STAGE0[t].rotation.z += transforms[t].r.z
-            stages.STAGE0[t].__dirtyRotation = true
-          }
-          if (transforms[t].t && stages.STAGE0[t]) {
-            stages.STAGE0[t].position.x += transforms[t].t.x
-            stages.STAGE0[t].position.y += transforms[t].t.y
-            stages.STAGE0[t].position.z += transforms[t].t.z
-            stages.STAGE0[t].__dirtyPosition = true
-          }
-          if (transforms[t].callback && stages.STAGE0[t]) {
-            callback(t, transforms[t])
-          }
-        })
+        if(window.appConfig.pause === false) {
+          activeTransforms.length > 0 && activeTransforms.forEach(t => {
+            if (window.appConfig.stages[window.appConfig.currentStage].transforms[t].r && window.appConfig.stages[window.appConfig.currentStage][t]) {
+              window.appConfig.stages[window.appConfig.currentStage][t].rotation.x += window.appConfig.stages[window.appConfig.currentStage].transforms[t].r.x
+              window.appConfig.stages[window.appConfig.currentStage][t].rotation.y += window.appConfig.stages[window.appConfig.currentStage].transforms[t].r.y
+              window.appConfig.stages[window.appConfig.currentStage][t].rotation.z += window.appConfig.stages[window.appConfig.currentStage].transforms[t].r.z
+              window.appConfig.stages[window.appConfig.currentStage][t].__dirtyRotation = true
+            }
+            if (window.appConfig.stages[window.appConfig.currentStage].transforms[t].t && window.appConfig.stages[window.appConfig.currentStage][t]) {
+              window.appConfig.stages[window.appConfig.currentStage][t].position.x += window.appConfig.stages[window.appConfig.currentStage].transforms[t].t.x
+              window.appConfig.stages[window.appConfig.currentStage][t].position.y += window.appConfig.stages[window.appConfig.currentStage].transforms[t].t.y
+              window.appConfig.stages[window.appConfig.currentStage][t].position.z += window.appConfig.stages[window.appConfig.currentStage].transforms[t].t.z
+              window.appConfig.stages[window.appConfig.currentStage][t].__dirtyPosition = true
+            }
+            if (window.appConfig.stages[window.appConfig.currentStage].transforms[t].callback && window.appConfig.stages[window.appConfig.currentStage][t]) {
+              callback(t, window.appConfig.stages[window.appConfig.currentStage].transforms[t])
+            }
+          })
+        }
       }
 
       if (appTimers.activeTimers.length > 0) {
@@ -1310,6 +1269,8 @@
     const start = () => {
       window.appConfig.userHasEnded = false
       window.appConfig.start = true;
+      window.appConfig.pause = false;
+      scene.setGravity(new THREE.Vector3(0, -10, 0));
       showHTMLElements(["pause-button", "game-scoreboard"]);
       // window.appConfig.initialBallZoom.userHasClickedStart = true;
       window.appConfig.timers.data.initialBallZoom.percentComplete = 0
@@ -1329,9 +1290,11 @@
       window.appConfig.pause = !window.appConfig.pause;
       if (window.appConfig.pause) {
         window.appConfig.timer.pause();
+        scene.setGravity(new THREE.Vector3(0, 0, 0));
         showPauseMenu();
       } else {
         window.appConfig.timer.start();
+        scene.setGravity(new THREE.Vector3(0, -10, 0));
         showGameMode();
       }
     };
@@ -1340,6 +1303,7 @@
       window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageReset())
       showHTMLElements([]);
       document.querySelector("#curtain").classList.remove("opacity-0");
+      const restartBallPosition = window.appConfig.stages[window.appConfig.currentStage].data.startingPosition
 
       setTimeout(() => {
         document.querySelector("#curtain").classList.add("opacity-0");
@@ -1348,7 +1312,6 @@
       }, 2000);
       window.appConfig.timer.reset();
       window.appConfig.timer.pause();
-      const restartBallPosition = window.appConfig.stages.STAGE0.data.startingPosition
     };
 
     window.appConfig.gameModeFunctions = {
