@@ -1065,7 +1065,6 @@
         }
       }
 
-
       pointLight0.position.set(
         sphere.position.x,
         sphere.position.y + 1,
@@ -1234,6 +1233,9 @@
 
     const reset = () => {
       window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageReset())
+      window.appConfig.results = {}
+      window.appConfig.score.coins = 0
+      document.querySelector("#score").innerText = 0
       showHTMLElements([]);
       document.querySelector("#curtain").classList.remove("opacity-0");
       const restartBallPosition = window.appConfig.stages[window.appConfig.currentStage].data.startingPosition
