@@ -400,9 +400,10 @@
           );
           coin.coinType = "single";
           coin.coinValue = 1;
-          coin.children.forEach((child) => {
-            child.material.color.setHex(singleHex);
-          });
+          coin.coinHeight =
+            coin.children.forEach((child) => {
+              child.material.color.setHex(singleHex);
+            });
         }
         if (size === 1) {
           coin.scale.set(
@@ -681,7 +682,7 @@
       scene.simulate();
       const clickRay = new THREE.Raycaster();
 
-      const timer = new easytimer.Timer({ countdown: true, startValues: { seconds: 60 }, precision: "secondTenths" });
+      const timer = new easytimer.Timer({ countdown: true, startValues: { seconds: 30 }, precision: "secondTenths" });
       window.appConfig.timer = timer
       timer.addEventListener("secondTenthsUpdated", function (e) {
         document.querySelector(
@@ -1235,15 +1236,17 @@
       const potentiallyGrabbedCoin = window.appConfig.coins.find(
         (coin, coinIndex) => {
           coinIndexToRemove = coinIndex;
-          return (
+          if (
             Math.abs(coin.position.x - sphere.position.x) <
-            coin.scale.z * 2 &&
-            Math.abs(coin.position.y - sphere.position.y) < coin.scale.z * 2
-          );
+            coin.scale.x * 2 &&
+            Math.abs(coin.position.y - sphere.position.y) < coin.scale.x * 3) {
+            return true
+          } else return false;
         }
       );
 
       if (potentiallyGrabbedCoin) {
+        console.log(potentiallyGrabbedCoin)
         const coinValue = potentiallyGrabbedCoin.coinValue
         const prizeValue = potentiallyGrabbedCoin.prizeValue
         if (coinValue > 0) {
@@ -1281,6 +1284,16 @@
       cam.position.z = p.z
       cam.__dirtyPosition = true
     }
+
+    const calculateStageScore = (seconds, coins) => {
+      let normalizedSeconds = Math.floor(seconds)
+      if (normalizedSeconds < 1) {
+        normalizedSeconds = 1
+      }
+      let score = normalizedSeconds * coins
+      return score
+    }
+
     const startStageEnd = () => {
       //now start end of stage
       window.appConfig.userHasEnded = true
@@ -1301,12 +1314,16 @@
         });
       //now performance report and start level transition
       console.dir(window.appConfig.results);
+      const stageScore = calculateStageScore(window.appConfig.timer
+        .getTimeValues().seconds, window.appConfig.score.coins)
       document.querySelector("#report-time").innerText =
         window.appConfig.results[
           `stage${window.appConfig.level}`
         ].finalTime;
       document.querySelector("#report-coins").innerText =
         window.appConfig.score.coins;
+      document.querySelector("#report-score").innerText =
+        stageScore;
       showHTMLElements(["report"]);
       centerElement({ id: "report", offsetTop: 0, offsetLeft: 0 });
       document.querySelector("#pause-button").disabled = true;
