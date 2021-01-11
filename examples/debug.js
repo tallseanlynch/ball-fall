@@ -62,4 +62,4 @@ setTimeout(() => {
             keydownFunctions[e.keyCode](e)
         }
         });
-}, 1000)
+}, 5000)
