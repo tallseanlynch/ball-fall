@@ -1375,7 +1375,7 @@
       centerElement({ id: "start-menu", offsetTop: 200, offsetLeft: 0 });
     };
     const showPauseMenu = () => {
-      showHTMLElements(["pause-menu", "game-scoreboard"]);
+      showHTMLElements(["pause-button", "pause-menu", "game-scoreboard"]);
       centerElement({ id: "pause-menu", offsetTop: 0, offsetLeft: 0 });
     };
     const showGameMode = () => {
@@ -1544,7 +1544,9 @@
   </div>
 
   <div id="pause-menu" class="hide">
-    <img src="images/pause.png" id="pause-menu-play-button" disabled onClick="pause()" />
+    <button id="pause-level-select-button" class="start-menu-button" onClick="pause()">
+      Resume
+    </button>
     <button id="pause-level-select-button" class="start-menu-button" onClick="showLevelSelect()">
       Level Select
     </button>
