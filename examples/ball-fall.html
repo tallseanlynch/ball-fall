@@ -13,7 +13,7 @@
         touch-action: none;
       }
     </style>
-
+    <link rel="stylesheet" href="./ballsinki.css">
     <script type="text/javascript" src="js/ammo.js"></script>
     <script type="text/javascript" src="js/three-121.js"></script>
     <script type="text/javascript" src="js/stats.js"></script>
@@ -22,7 +22,8 @@
     <!-- <script type="text/javascript" src="js/THREEOrbitControls.js"></script> -->
     <script type="text/javascript" src="js/easytimer.js"></script>
     <script type="text/javascript" src="js/howler.min.js"></script>
-    <script src="https://unpkg.com/three@0.112.0/examples/js/loaders/GLTFLoader.js"></script>
+    <!-- <script src="https://unpkg.com/three@0.112.0/examples/js/loaders/GLTFLoader.js"></script> -->
+    <script type="text/javascript" src="./features.js"></script>
     <script type="text/javascript">
       "use strict";
 
@@ -44,7 +45,8 @@
           crystalLine: 0,
           bumperGroup: 0,
           prize: 0
-        }
+        },
+        currentStage: 'STAGE0'
       };
 
       const backgroundMusics = [];
@@ -197,7 +199,6 @@
 
         scene = new Physijs.Scene();
 
-        // scene.background = getRandomColor();
         scene.setGravity(new THREE.Vector3(0, -10, 0));
 
         scene.addEventListener("update", function () {
@@ -306,160 +307,6 @@
         const coins = [];
         window.appConfig.coins = coins;
 
-        const cone = () => {
-          const obj = new Physijs.ConeMesh(
-            new THREE.CylinderGeometry(0, 4.75, 3.75, 32),
-            Physijs.createMaterial(
-              new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-              // new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' ) }),
-              0.6, // medium friction
-              0.3 // low restitution
-            ),
-            0 // mass
-          );
-          zone.obj = obj;
-          obj.position.x = xPosition + 2.5;
-          obj.position.y = yPosition - 12;
-          obj.position.z = 0;
-          obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-          obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-          obj.castShadow = true;
-          obj.receiveShadow = true;
-          obj.rotation.x = Math.random() * 2 * Math.PI;
-          obj.rotation.y = Math.random() * 2 * Math.PI;
-          obj.rotation.z = Math.random() * 2 * Math.PI;
-          obj.featureType = "CONE";
-          scene.add(obj);
-        };
-
-        const icosahedron = () => {
-          const obj = new Physijs.ConvexMesh(
-            new THREE.IcosahedronGeometry(Math.random() * 3 + 1, 0),
-            Physijs.createMaterial(
-              new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-              0.6, // medium friction
-              0.3 // low restitution
-            ),
-            0 // mass
-          );
-          zone.obj = obj;
-
-          obj.position.x = xPosition + 2.5;
-          obj.position.y = yPosition - 12;
-          obj.position.z = 0;
-          obj.position.__dirtyPosition = true;
-          obj.rotation.__dirtyRotation = true;
-          obj.__dirtyPosition = true;
-          obj.__dirtyRotation = true;
-          obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-          obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-          obj.castShadow = true;
-          obj.receiveShadow = true;
-          obj.rotation.x = Math.random() * 2 * Math.PI;
-          obj.rotation.y = Math.random() * 2 * Math.PI;
-          obj.rotation.z = Math.random() * 2 * Math.PI;
-          obj.featureType = "ICOSAHEDRON";
-          scene.add(obj);
-        };
-
-        const disc = () => {
-          const radius = Math.random() * 3 + 1;
-          const obj = new Physijs.CylinderMesh(
-            new THREE.CylinderGeometry(
-              radius,
-              radius,
-              Math.random() * 3,
-              Math.ceil(Math.random() * 16 + 2)
-            ),
-            Physijs.createMaterial(
-              new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-              0.6, // medium friction
-              0.3 // low restitution
-            ),
-            0 // mass
-          );
-          zone.obj = obj;
-          obj.position.x = xPosition + 2.5;
-          obj.position.y = yPosition - 12;
-          obj.position.z = 0;
-          obj.position.__dirtyPosition = true;
-          obj.rotation.__dirtyRotation = true;
-          obj.__dirtyPosition = true;
-          obj.__dirtyRotation = true;
-          obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-          obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-          obj.castShadow = true;
-          obj.receiveShadow = true;
-          obj.rotation.x = Math.random() * 2 * Math.PI;
-          obj.rotation.y = Math.random() * 2 * Math.PI;
-          obj.rotation.z = Math.random() * 2 * Math.PI;
-          obj.featureType = "DISC";
-          scene.add(obj);
-        };
-
-        const tetrahedron = () => {
-          const radius = Math.random() * 3 + 1;
-          const obj = new Physijs.ConvexMesh(
-            new THREE.TetrahedronGeometry(Math.random() * 3 + 2),
-            Physijs.createMaterial(
-              new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-              0.6, // medium friction
-              0.3 // low restitution
-            ),
-            0 // mass
-          );
-          obj.position.x = xPosition + 2.5;
-          obj.position.y = yPosition - 12;
-          obj.position.z = 0;
-          obj.position.__dirtyPosition = true;
-          obj.rotation.__dirtyRotation = true;
-          obj.__dirtyPosition = true;
-          obj.__dirtyRotation = true;
-          obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-          obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-          obj.castShadow = true;
-          obj.receiveShadow = true;
-          obj.rotation.x = Math.random() * 2 * Math.PI;
-          obj.rotation.y = Math.random() * 2 * Math.PI;
-          obj.rotation.z = Math.random() * 2 * Math.PI;
-          obj.featureType = "TETRAHEDRON";
-          scene.add(obj);
-        };
-
-        const torus = () => {
-          const radiusMod = Math.random() * 3 + 1;
-          const obj = new Physijs.ConvexMesh(
-            new THREE.TorusGeometry(
-              Math.random() + 1,
-              0.2,
-              6,
-              Math.random() > 0.5 ? 4 : 5
-            ),
-            Physijs.createMaterial(
-              new THREE.MeshPhongMaterial({ color: getRandomColor() }),
-              0.6, // medium friction
-              0.3 // low restitution
-            ),
-            0 // mass
-          );
-          obj.position.x = xPosition + 2.5;
-          obj.position.y = yPosition - 12;
-          obj.position.z = 0;
-          obj.position.__dirtyPosition = true;
-          obj.rotation.__dirtyRotation = true;
-          obj.__dirtyPosition = true;
-          obj.__dirtyRotation = true;
-          obj.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-          obj.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-          obj.castShadow = true;
-          obj.receiveShadow = true;
-          obj.rotation.x = Math.random() * 2 * Math.PI;
-          obj.rotation.y = Math.random() * 2 * Math.PI;
-          obj.rotation.z = Math.random() * 2 * Math.PI;
-          obj.featureType = "TORUS";
-          scene.add(obj);
-        };
-
         const createBeam = (config) => {
           const beam0 = new Physijs.BoxMesh(
             new THREE.BoxGeometry(10 * config.s, 2, 2),
@@ -504,157 +351,6 @@
           beam0.rotation.set(config.r[0], config.r[1], config.r[2]);
           return beam0;
         };
-
-        const xAdj = -60;
-        const vAdj = -70;
-        const sAdj = 2;
-
-        const createStage0MainBeamStructure = (
-          scale,
-          scaleAdj = 0,
-          name,
-          p = { x: 0, y: 0 }
-        ) => {
-          const mainStructure = new Physijs.BoxMesh(
-            new THREE.BoxGeometry(0.01, 0.01, 0.01),
-            new Physijs.createMaterial(
-              new THREE.MeshPhongMaterial({ transparent: true, opacity: 0 }),
-              0.6,
-              0.3
-            ),
-            0
-          );
-          mainStructure.position.set(0 + p.x, 0 + p.y, 1.5);
-          mainStructure.add(
-            createBeam({
-              p: [0 * scale, -8 * scale, -1],
-              r: [0, 0, 0],
-              s: (1 + scaleAdj) * scale,
-            })
-          );
-          mainStructure.add(
-            createBeam({
-              p: [-8 * scale, 0 * scale, -1],
-              r: [0, 0, 0.5 * Math.PI],
-              s: (1 + scaleAdj) * scale,
-            })
-          );
-          mainStructure.add(
-            createBeam({
-              p: [8 * scale, 0 * scale, -1],
-              r: [0, 0, 0.5 * Math.PI],
-              s: (1 + scaleAdj) * scale,
-            })
-          );
-          mainStructure.add(
-            createBeam({
-              p: [0 * scale, 8 * scale, -1],
-              r: [0, 0, 0],
-              s: (1 + scaleAdj) * scale,
-            })
-          );
-          mainStructure.name = name;
-          mainStructure.__dirtyPosition = true;
-          return mainStructure;
-        };
-
-        const stage0MainBeamStructure = createStage0MainBeamStructure(
-          2,
-          0,
-          "STAGE0MAINSTRUCTURE"
-        );
-        scene.add(stage0MainBeamStructure);
-        const stage0MainBeamStructure1 = createStage0MainBeamStructure(
-          4,
-          0,
-          "STAGE0MAINSTRUCTURE1"
-        );
-        scene.add(stage0MainBeamStructure1);
-        const stage0MainBeamStructure2 = createStage0MainBeamStructure(
-          8,
-          0.525,
-          "STAGE0MAINSTRUCTURE2"
-        );
-        scene.add(stage0MainBeamStructure2);
-        const stage0MinorBeamStructure = createStage0MainBeamStructure(
-          1,
-          -0.5,
-          "STAGE0MINORSTRUCTURE",
-          { x: 45, y: 45 }
-        );
-        scene.add(stage0MinorBeamStructure);
-        const stage0MinorBeamStructure1 = createStage0MainBeamStructure(
-          1,
-          -0.5,
-          "STAGE0MINORSTRUCTURE1",
-          { x: 45, y: -45 }
-        );
-        scene.add(stage0MinorBeamStructure1);
-        const stage0MinorBeamStructure2 = createStage0MainBeamStructure(
-          1,
-          -0.5,
-          "STAGE0MINORSTRUCTURE2",
-          { x: -45, y: -45 }
-        );
-        scene.add(stage0MinorBeamStructure2);
-        const stage0MinorBeamStructure3 = createStage0MainBeamStructure(
-          1,
-          -0.5,
-          "STAGE0MINORSTRUCTURE3",
-          { x: -45, y: 45 }
-        );
-        scene.add(stage0MinorBeamStructure3);
-
-        const prize0Group = new THREE.Group();
-        const prize0 = new THREE.Mesh(
-          new THREE.BoxGeometry(0.75, 0.75, 0.75),
-          new THREE.MeshPhongMaterial()
-        );
-        const prize0Top = new THREE.Mesh(
-          new THREE.ConeGeometry(1, 1, 8),
-          new THREE.MeshPhongMaterial()
-        );
-        const prize0Bottom = new THREE.Mesh(
-          new THREE.ConeGeometry(1, -1, 8),
-          new THREE.MeshPhongMaterial()
-        )
-        prize0Group.name = 'STAGE0PRIZE0'
-        prize0Group.debugTypeIndex = window.appConfig.itemAmounts.prize
-        prize0Group.debugType = 'PRIZE' 
-        prize0Group.debugName = 'PRIZE' + window.appConfig.itemAmounts.prize
-        window.appConfig.itemAmounts.prize++
-
-        prize0.name = 'PRIZE0'
-        prize0Top.name = 'PRIZE0TOP'
-        prize0Bottom.name = 'PRIZE0BOTTOM'
-
-
-        prize0.rotation.set(.25 * Math.PI, .25 * Math.PI, 0)
-        prize0Group.add(prize0)
-        prize0Group.add(prize0Top)
-        prize0Group.add(prize0Bottom)
-
-        prize0Top.position.y += 1.5
-        prize0Bottom.position.y += -1.5
-        prize0Group.position.set(45, 45, 0)
-
-        scene.add(prize0Group)
-        const prize1Group = prize0Group.clone()
-        prize1Group.position.set(45,-45,0)
-        const prize2Group = prize0Group.clone()
-        prize2Group.position.set(-45,-45,0)
-        const prize3Group = prize0Group.clone()
-        prize3Group.position.set(-45,45,0)
-        prize1Group.name = 'STAGE0PRIZE1'
-        prize2Group.name = 'STAGE0PRIZE2'
-        prize3Group.name = 'STAGE0PRIZE3'
-        scene.add(prize1Group)
-        scene.add(prize2Group)
-        scene.add(prize3Group)
-        prize0Group.prizeValue = 10
-        prize1Group.prizeValue = 10
-        prize2Group.prizeValue = 20
-        prize3Group.prizeValue = 10
 
         const crystal = (size = 0, p = { x: 0, y: 0, z: 0 }) => {
           const tripleHex = 0x159294;
@@ -735,12 +431,6 @@
           return coin;
         };
 
-        //add prizes to the coins array so that they can be collected in the same manner
-        coins.push(prize0Group);
-        coins.push(prize1Group);
-        coins.push(prize2Group);
-        coins.push(prize3Group);
-
         const createCrystalCross = (s, t = { x: 0, y: 0 }, size = 0) => {
           const crystalCross = new THREE.Group()
           crystalCross.debugTypeIndex = window.appConfig.itemAmounts.crystalCross
@@ -777,40 +467,210 @@
           window.appConfig.itemAmounts.crystalLine++
         };
 
-        createCrystalCross(5);
-        createCrystalCross(10);
-        createCrystalCross(5, { x: 20, y: 20 }, 1);
-        createCrystalCross(5, { x: -20, y: 20 }, 1);
-        createCrystalCross(5, { x: -20, y: -20 }, 1);
-        createCrystalCross(5, { x: 20, y: -20 }, 1);
-        createCrystalCross(3, { x: 55, y: 55 }, 0);
-        createCrystalCross(3, { x: 35, y: 55 }, 0);
-        createCrystalCross(3, { x: 35, y: 35 }, 0);
-        createCrystalCross(3, { x: 55, y: 35 }, 0);
-        createCrystalCross(3, { x: 55, y: -55 }, 0);
-        createCrystalCross(3, { x: 35, y: -55 }, 0);
-        createCrystalCross(3, { x: 35, y: -35 }, 0);
-        createCrystalCross(3, { x: 55, y: -35 }, 0);
-        createCrystalCross(3, { x: -55, y: -55 }, 0);
-        createCrystalCross(3, { x: -35, y: -55 }, 0);
-        createCrystalCross(3, { x: -35, y: -35 }, 0);
-        createCrystalCross(3, { x: -55, y: -35 }, 0);
-        createCrystalCross(3, { x: -55, y: 55 }, 0);
-        createCrystalCross(3, { x: -35, y: 55 }, 0);
-        createCrystalCross(3, { x: -35, y: 35 }, 0);
-        createCrystalCross(3, { x: -55, y: 35 }, 0);
-        createCrystalLine(10, { x: -47.5, y: -20 }, 2, 5, "y");
-        createCrystalLine(5, { x: 54.5, y: -22 }, 0, 10, "y");
-        createCrystalLine(5, { x: 40.5, y: -22.5 }, 0, 10, "y");
-        createCrystalLine(10, { x: 47.5, y: -20 }, 2, 5, "y");
-        createCrystalLine(5, { x: -54.5, y: -22 }, 0, 10, "y");
-        createCrystalLine(5, { x: -40.5, y: -22.5 }, 0, 10, "y");
-        createCrystalLine(10, { x: -20, y: -47.5 }, 2, 5, "x");
-        createCrystalLine(5, { x: -22.5, y: -40 }, 0, 10, "x");
-        createCrystalLine(5, { x: -22.5, y: -54.5 }, 0, 10, "x");
-        createCrystalLine(10, { x: -20, y: 47.5 }, 2, 5, "x");
-        createCrystalLine(5, { x: -22.5, y: 40 }, 0, 10, "x");
-        createCrystalLine(5, { x: -22.5, y: 54.5 }, 0, 10, "x");
+        // start stage 0
+        window.appConfig.stages = {
+          STAGE0: {
+            data: {
+              started: false,
+              xAdj: -60,
+              vAdj: -70,
+              sAdj: 2,
+              startingPosition: new THREE.Vector3(0, 0, 0)
+            },
+            init: () => {
+              const createStage0MainBeamStructure = (
+              scale,
+              scaleAdj = 0,
+              name,
+              p = { x: 0, y: 0 }
+            ) => {
+              const mainStructure = new Physijs.BoxMesh(
+                new THREE.BoxGeometry(0.01, 0.01, 0.01),
+                new Physijs.createMaterial(
+                  new THREE.MeshPhongMaterial({ transparent: true, opacity: 0 }),
+                  0.6,
+                  0.3
+                ),
+                0
+              );
+              mainStructure.position.set(0 + p.x, 0 + p.y, 1.5);
+              mainStructure.add(
+                createBeam({
+                  p: [0 * scale, -8 * scale, -1],
+                  r: [0, 0, 0],
+                  s: (1 + scaleAdj) * scale,
+                })
+              );
+              mainStructure.add(
+                createBeam({
+                  p: [-8 * scale, 0 * scale, -1],
+                  r: [0, 0, 0.5 * Math.PI],
+                  s: (1 + scaleAdj) * scale,
+                })
+              );
+              mainStructure.add(
+                createBeam({
+                  p: [8 * scale, 0 * scale, -1],
+                  r: [0, 0, 0.5 * Math.PI],
+                  s: (1 + scaleAdj) * scale,
+                })
+              );
+              mainStructure.add(
+                createBeam({
+                  p: [0 * scale, 8 * scale, -1],
+                  r: [0, 0, 0],
+                  s: (1 + scaleAdj) * scale,
+                })
+              );
+              mainStructure.name = name;
+              mainStructure.__dirtyPosition = true;
+              return mainStructure;
+            };
+
+            const stage0MainBeamStructure = createStage0MainBeamStructure(
+              2,
+              0,
+              "STAGE0MAINSTRUCTURE"
+            );
+            scene.add(stage0MainBeamStructure);
+            const stage0MainBeamStructure1 = createStage0MainBeamStructure(
+              4,
+              0,
+              "STAGE0MAINSTRUCTURE1"
+            );
+            scene.add(stage0MainBeamStructure1);
+            const stage0MainBeamStructure2 = createStage0MainBeamStructure(
+              8,
+              0.525,
+              "STAGE0MAINSTRUCTURE2"
+            );
+            scene.add(stage0MainBeamStructure2);
+            const stage0MinorBeamStructure = createStage0MainBeamStructure(
+              1,
+              -0.5,
+              "STAGE0MINORSTRUCTURE",
+              { x: 45, y: 45 }
+            );
+            scene.add(stage0MinorBeamStructure);
+            const stage0MinorBeamStructure1 = createStage0MainBeamStructure(
+              1,
+              -0.5,
+              "STAGE0MINORSTRUCTURE1",
+              { x: 45, y: -45 }
+            );
+            scene.add(stage0MinorBeamStructure1);
+            const stage0MinorBeamStructure2 = createStage0MainBeamStructure(
+              1,
+              -0.5,
+              "STAGE0MINORSTRUCTURE2",
+              { x: -45, y: -45 }
+            );
+            scene.add(stage0MinorBeamStructure2);
+            const stage0MinorBeamStructure3 = createStage0MainBeamStructure(
+              1,
+              -0.5,
+              "STAGE0MINORSTRUCTURE3",
+              { x: -45, y: 45 }
+            );
+            scene.add(stage0MinorBeamStructure3);
+
+            const prize0Group = new THREE.Group();
+            const prize0 = new THREE.Mesh(
+              new THREE.BoxGeometry(0.75, 0.75, 0.75),
+              new THREE.MeshPhongMaterial()
+            );
+            const prize0Top = new THREE.Mesh(
+              new THREE.ConeGeometry(1, 1, 8),
+              new THREE.MeshPhongMaterial()
+            );
+            const prize0Bottom = new THREE.Mesh(
+              new THREE.ConeGeometry(1, -1, 8),
+              new THREE.MeshPhongMaterial()
+            )
+            prize0Group.name = 'STAGE0PRIZE0'
+            prize0Group.debugTypeIndex = window.appConfig.itemAmounts.prize
+            prize0Group.debugType = 'PRIZE' 
+            prize0Group.debugName = 'PRIZE' + window.appConfig.itemAmounts.prize
+            window.appConfig.itemAmounts.prize++
+
+            prize0.name = 'PRIZE0'
+            prize0Top.name = 'PRIZE0TOP'
+            prize0Bottom.name = 'PRIZE0BOTTOM'
+
+
+            prize0.rotation.set(.25 * Math.PI, .25 * Math.PI, 0)
+            prize0Group.add(prize0)
+            prize0Group.add(prize0Top)
+            prize0Group.add(prize0Bottom)
+
+            prize0Top.position.y += 1.5
+            prize0Bottom.position.y += -1.5
+            prize0Group.position.set(45, 45, 0)
+
+            scene.add(prize0Group)
+            const prize1Group = prize0Group.clone()
+            prize1Group.position.set(45,-45,0)
+            const prize2Group = prize0Group.clone()
+            prize2Group.position.set(-45,-45,0)
+            const prize3Group = prize0Group.clone()
+            prize3Group.position.set(-45,45,0)
+            prize1Group.name = 'STAGE0PRIZE1'
+            prize2Group.name = 'STAGE0PRIZE2'
+            prize3Group.name = 'STAGE0PRIZE3'
+            scene.add(prize1Group)
+            scene.add(prize2Group)
+            scene.add(prize3Group)
+            prize0Group.prizeValue = 10
+            prize1Group.prizeValue = 10
+            prize2Group.prizeValue = 20
+            prize3Group.prizeValue = 10
+
+            //add prizes to the coins array so that they can be collected in the same manner
+            coins.push(prize0Group);
+            coins.push(prize1Group);
+            coins.push(prize2Group);
+            coins.push(prize3Group);
+
+            createCrystalCross(5);
+            createCrystalCross(10);
+            createCrystalCross(5, { x: 20, y: 20 }, 1);
+            createCrystalCross(5, { x: -20, y: 20 }, 1);
+            createCrystalCross(5, { x: -20, y: -20 }, 1);
+            createCrystalCross(5, { x: 20, y: -20 }, 1);
+            createCrystalCross(3, { x: 55, y: 55 }, 0);
+            createCrystalCross(3, { x: 35, y: 55 }, 0);
+            createCrystalCross(3, { x: 35, y: 35 }, 0);
+            createCrystalCross(3, { x: 55, y: 35 }, 0);
+            createCrystalCross(3, { x: 55, y: -55 }, 0);
+            createCrystalCross(3, { x: 35, y: -55 }, 0);
+            createCrystalCross(3, { x: 35, y: -35 }, 0);
+            createCrystalCross(3, { x: 55, y: -35 }, 0);
+            createCrystalCross(3, { x: -55, y: -55 }, 0);
+            createCrystalCross(3, { x: -35, y: -55 }, 0);
+            createCrystalCross(3, { x: -35, y: -35 }, 0);
+            createCrystalCross(3, { x: -55, y: -35 }, 0);
+            createCrystalCross(3, { x: -55, y: 55 }, 0);
+            createCrystalCross(3, { x: -35, y: 55 }, 0);
+            createCrystalCross(3, { x: -35, y: 35 }, 0);
+            createCrystalCross(3, { x: -55, y: 35 }, 0);
+            createCrystalLine(10, { x: -47.5, y: -20 }, 2, 5, "y");
+            createCrystalLine(5, { x: 54.5, y: -22 }, 0, 10, "y");
+            createCrystalLine(5, { x: 40.5, y: -22.5 }, 0, 10, "y");
+            createCrystalLine(10, { x: 47.5, y: -20 }, 2, 5, "y");
+            createCrystalLine(5, { x: -54.5, y: -22 }, 0, 10, "y");
+            createCrystalLine(5, { x: -40.5, y: -22.5 }, 0, 10, "y");
+            createCrystalLine(10, { x: -20, y: -47.5 }, 2, 5, "x");
+            createCrystalLine(5, { x: -22.5, y: -40 }, 0, 10, "x");
+            createCrystalLine(5, { x: -22.5, y: -54.5 }, 0, 10, "x");
+            createCrystalLine(10, { x: -20, y: 47.5 }, 2, 5, "x");
+            createCrystalLine(5, { x: -22.5, y: 40 }, 0, 10, "x");
+            createCrystalLine(5, { x: -22.5, y: 54.5 }, 0, 10, "x");
+            // end stage 0
+            }       
+          }
+        }
+
+        window.appConfig.stages.STAGE0.init()
 
         spawnBox();
 
@@ -1078,8 +938,8 @@
           );
           sphere = new Physijs.SphereMesh(sphere_geometry, material);
           sphere.collisions = 0;
-
-          sphere.position.set(0, 0, 0);
+          // sphere.position.set(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition);
+          sphere.position.set(0,0,0);
 
           sphere.rotation.set(
             Math.random() * Math.PI,
@@ -1168,24 +1028,16 @@
       let currentTime = new Date().getTime();
 
       const initStage0 = () => {
-        stages.STAGE0.STAGE0PRIZE0 = scene.children.find((obj) => obj.name === "STAGE0PRIZE0")
-        stages.STAGE0.STAGE0PRIZE1 = scene.children.find((obj) => obj.name === "STAGE0PRIZE1")
-        stages.STAGE0.STAGE0PRIZE2 = scene.children.find((obj) => obj.name === "STAGE0PRIZE2")
-        stages.STAGE0.STAGE0PRIZE3 = scene.children.find((obj) => obj.name === "STAGE0PRIZE3")
-        stages.STAGE0.STAGE0MAINSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MAINSTRUCTURE")
-        stages.STAGE0.STAGE0MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE")
-        stages.STAGE0.STAGE0MINORSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE1")
-        stages.STAGE0.STAGE0MINORSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE2")
-        stages.STAGE0.STAGE0MINORSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE3")
-        stages.STAGE0.started = true
-      }
-
-      const currentStage = 0
-
-      const stages = {
-        STAGE0: {
-          started: false
-        }        
+        window.appConfig.stages.STAGE0.STAGE0PRIZE0 = scene.children.find((obj) => obj.name === "STAGE0PRIZE0")
+        window.appConfig.stages.STAGE0.STAGE0PRIZE1 = scene.children.find((obj) => obj.name === "STAGE0PRIZE1")
+        window.appConfig.stages.STAGE0.STAGE0PRIZE2 = scene.children.find((obj) => obj.name === "STAGE0PRIZE2")
+        window.appConfig.stages.STAGE0.STAGE0PRIZE3 = scene.children.find((obj) => obj.name === "STAGE0PRIZE3")
+        window.appConfig.stages.STAGE0.STAGE0MAINSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MAINSTRUCTURE")
+        window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE")
+        window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE1")
+        window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE2")
+        window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE3")
+        window.appConfig.stages.STAGE0.started = true
       }
 
       const timers = {
@@ -1262,7 +1114,7 @@
         
         currentTime = new Date().getTime();
 
-        if(!stages.STAGE0.started) {
+        if(!window.appConfig.stages.STAGE0.data.started) {
           initStage0()
         } else {
           activeTransforms.length > 0 && activeTransforms.forEach(t => {
@@ -1453,6 +1305,22 @@
         render_stats.update();
       };
 
+      window.appConfig.positionBall = (p) => {
+        const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
+        sphere.position.x = p.x
+        sphere.position.y = p.y
+        sphere.position.z = p.z
+        sphere.__dirtyPosition = true
+      }
+
+      window.appConfig.positionCamera = (p) => {
+        const cam = scene.children.find((obj) => obj.type === "PerspectiveCamera")
+        cam.position.x = p.x
+        cam.position.y = p.y
+        cam.position.z = p.z
+        cam.__dirtyPosition = true
+      }
+
       const start = () => {
         window.appConfig.userHasEnded = false
         window.appConfig.start = true;
@@ -1464,6 +1332,8 @@
         window.appConfig.timers.activeTimers.push(timers.initialBallZoom())
         window.appConfig.timer.start();
         document.querySelector("#pause-button").disabled = false;
+        const theBall = scene.children.find(c => c.gameName === 'SPHERE0')
+        theBall.position.set(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition);
       };
 
       const pause = () => {
@@ -1487,9 +1357,12 @@
 
         setTimeout(() => {
           document.querySelector("#curtain").classList.add("opacity-0");
+          window.appConfig.positionBall(restartBallPosition)
+          window.appConfig.positionCamera(restartBallPosition)        
         }, 2000);
         window.appConfig.timer.reset();
         window.appConfig.timer.pause();
+        const restartBallPosition = window.appConfig.stages.STAGE0.data.startingPosition
       };
 
       window.appConfig.gameModeFunctions = {
@@ -1580,255 +1453,6 @@
       };
       window.onload = initScene;
     </script>
-    <style>
-
-      @font-face {
-        font-family: "Aadhunik";
-        src: url("./fonts/Aadhunik.ttf") format("truetype");
-      }
-      @font-face {
-        font-family: "Coves Light";
-        src: url("./fonts/Coves Light.otf") format("opentype");
-      }
-      @font-face {
-        font-family: "Luz Sans Book";
-        src: url("./fonts/LUZRO.ttf") format("truetype");
-      }
-      button:focus {
-        outline: none;
-        box-shadow: none;
-      }
-      #start-button {
-        font-family: "Luz Sans Book";
-        font-size: 2.5em;
-        position: fixed;
-        left: var(--start-button-offset-left);
-        top: var(--start-button-offset-top);
-        padding: 10px 30px;
-        border: 0;
-        border-radius: 5px;
-        opacity: 0.75;
-        background-color: rgba(0, 0, 0, 0);
-        color: #ffffff;
-      }
-      #level-select-title {
-        font-family: "Luz Sans Book";
-        font-size: 2em;
-        color: #ffffff;
-        margin: 0 auto;
-        text-align: center;
-      }
-      #title {
-        font-family: "Aadhunik";
-        position: fixed;
-        top: var(--title-offset-top);
-        left: var(--title-offset-left);
-        font-size: 4em;
-        border: 0;
-        border-radius: 5px;
-        opacity: 0.75;
-        background-color: rgba(0, 0, 0, 0);
-        color: #ffffff;
-      }
-      #sounds {
-        position: fixed;
-        left: var(--sounds-offset-left);
-        top: var(--sounds-offset-top);
-        border: 0;
-        border-radius: 5px;
-        opacity: 0.75;
-        background-color: rgba(0, 0, 0, 0);
-      }
-      #report {
-        position: fixed;
-        left: var(--report-offset-left);
-        top: var(--report-offset-top);
-        border: 0;
-        border-radius: 5px;
-        opacity: 0.75;
-        background-color: rgba(0, 0, 0, 0);
-      }
-      #report-options {
-        margin: 0 auto;
-      }
-      .report-options-button {
-        /* display: block; */
-        font-family: "Coves Light";
-        font-size: 1.75em;
-        font-weight: 500;
-        border: 0;
-        border-radius: 5px;
-        opacity: 1;
-        background-color: rgba(0, 0, 0, 0);
-        color: #ffffff;
-      }
-      #pause-menu {
-        position: fixed;
-        left: var(--pause-menu-offset-left);
-        top: var(--pause-menu-offset-top);
-        border: 0;
-        border-radius: 5px;
-        opacity: 0.75;
-        background-color: rgba(0, 0, 0, 0);
-      }
-      #credits-menu {
-        position: fixed;
-        left: var(--credits-menu-offset-left);
-        top: var(--credits-menu-offset-top);
-        border: 0;
-        border-radius: 5px;
-        opacity: 0.75;
-        background-color: rgba(0, 0, 0, 0);
-      }
-      #level-select {
-        position: fixed;
-        left: var(--level-select-offset-left);
-        top: var(--level-select-offset-top);
-        border: 0;
-        border-radius: 5px;
-        opacity: 0.75;
-        background-color: rgba(0, 0, 0, 0);
-      }
-      #level-select table,
-      #level-select table td {
-        padding: 5px;
-        margin: 0 auto;
-        text-align: center;
-      }
-      #start-menu {
-        font-family: "Coves Light";
-        position: fixed;
-        left: var(--start-menu-offset-left);
-        top: var(--start-menu-offset-top);
-        border: 0;
-        border-radius: 5px;
-        background-color: rgba(0, 0, 0, 0);
-        opacity: 0.75;
-      }
-      .start-menu-button {
-        width: max-content;
-        margin: 0 auto;
-        margin-top: 10px;
-        display: block;
-        font-family: "Coves Light";
-        font-size: 1.75em;
-        font-weight: 500;
-        border: 0;
-        border-radius: 5px;
-        opacity: 1;
-        background-color: rgba(0, 0, 0, 0);
-        color: #ffffff;
-      }
-
-      .menu-title-text {
-        font-family: "Luz Sans Book";
-        font-size: 2em;
-        color: #ffffff;
-        margin: 0 auto;
-        text-align: center;
-      }
-      .menu-big-text {
-        display: block;
-        font-family: "Coves Light";
-        font-size: 1.75em;
-        font-weight: 500;
-        border: 0;
-        border-radius: 5px;
-        opacity: 1;
-        background-color: rgba(0, 0, 0, 0);
-        color: #ffffff;
-      }
-      .menu-small-text {
-        display: block;
-        font-family: "Coves Light";
-        font-size: 1.5em;
-        font-weight: 500;
-        border: 0;
-        border-radius: 5px;
-        opacity: 1;
-        background-color: rgba(0, 0, 0, 0);
-        color: #ffffff;
-      }
-      #pause-button {
-        height: 50px;
-        width: 50px;
-        position: fixed;
-        left: 3%;
-        bottom: 3%;
-        padding: 10px 30px;
-        border: 0;
-        border-radius: 5px;
-        opacity: 0.75;
-      }
-
-      #pause-menu-play-button {
-        height: 50px;
-        width: 50px;
-        padding: 10px 30px;
-        border: 0;
-        border-radius: 5px;
-        opacity: 0.75;
-      }
-      .hide {
-        display: none;
-        visibility: hidden;
-      }
-      #game-scoreboard {
-        position: fixed;
-        top: 3%;
-        right: 3%;
-      }
-      #timer,
-      #score {
-        text-align: right;
-      }
-      #timer,
-      #score,
-      #report-time,
-      #report-coins,
-      #report td {
-        font-family: "Coves Light";
-        font-size: 2em;
-        color: #ffffff;
-      }
-      .level-select-button {
-        font-family: "Coves Light";
-        font-size: 1.75em;
-        font-weight: 500;
-        border: 0;
-        border-radius: 5px;
-        opacity: 1;
-        background-color: rgba(0, 0, 0, 0);
-        color: #ffffff;
-      }
-
-      #curtain {
-        transition: all 2000ms;
-        pointer-events: none;
-        background-color: white;
-        z-index: 1;
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        opacity: 1;
-      }
-
-      .opacity-0 {
-        opacity: 0 !important;
-      }
-
-      .opacity-1 {
-        opacity: 1 !important;
-      }
-      .margin-bottom-2 {
-        margin-bottom: 10px;
-      }
-      /* input[type="range"] {
-        background-color: #000000;
-      } */
-    </style>
   </head>
 
   <body>
