@@ -259,25 +259,23 @@
 
       //resize event handler
       function onWindowResize(event) {
-        //put the start button right in the middle!
+
+        console.log('ran window resize', event)
+        setFontSizes()
         centerElement({ id: "start-button", offsetTop: 0, offsetLeft: 0 });
         centerElement({ id: "level-select", offsetTop: 0, offsetLeft: 0 });
         centerElement({ id: "report", offsetTop: 0, offsetLeft: 0 });
         centerElement({ id: "pause-menu", offsetTop: 0, offsetLeft: 0 });
         centerElement({ id: "title", offsetTop: "-25%", offsetLeft: 0 });
         centerElement({ id: "start-menu", offsetTop: "25%", offsetLeft: 0 });
-        // remember these initial values
         var tanFOV = Math.tan(((Math.PI / 180) * camera.fov) / 2);
         var windowHeight = window.innerHeight;
         camera.aspect = window.innerWidth / window.innerHeight;
-
-        // adjust the FOV
         camera.fov =
           (360 / Math.PI) *
           Math.atan(tanFOV * (window.innerHeight / windowHeight));
 
         camera.updateProjectionMatrix();
-        // camera.lookAt(scene.position);
 
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.render(scene, camera);
@@ -1402,6 +1400,18 @@
       root.style.setProperty(`--${id}-offset-top`, offsetHeight + "px");
       root.style.setProperty(`--${id}-offset-left`, offsetWidth + "px");
     };
+
+    const setFontSizes = () => {
+      let hSq = window.innerHeight * window.innerHeight
+      let wSq = window.innerWidth * window.innerWidth
+      let diagonalLength = Math.sqrt(hSq + wSq)
+      const root = document.documentElement;
+      root.style.setProperty(`--font-size-0`, diagonalLength * .01 + "px");
+      root.style.setProperty(`--font-size-1`, diagonalLength * .02 + "px");
+      root.style.setProperty(`--font-size-2`, diagonalLength * .03 + "px");
+      root.style.setProperty(`--font-size-3`, diagonalLength * .04 + "px");
+      root.style.setProperty(`--font-size-4`, diagonalLength * .05 + "px");
+    }
     const changeMusicVolume = (val) => {
       window.appConfig.backgroundMusics.forEach((m, mIndex) => {
         const currentVol = m.volume();

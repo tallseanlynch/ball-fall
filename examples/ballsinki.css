@@ -1,3 +1,11 @@
+:root {
+  --font-size-0: 1.5rem;
+  --font-size-1: 1.75rem;
+  --font-size-2: 2rem;
+  --font-size-3: 2.5rem;
+  --font-size-4: 4rem;
+}
+
 @font-face {
   font-family: "Aadhunik";
   src: url("./fonts/Aadhunik.ttf") format("truetype");
@@ -16,7 +24,7 @@ button:focus {
 }
 #start-button {
   font-family: "Luz Sans Book";
-  font-size: 2.5em;
+  font-size: var(--font-size-3);
   position: fixed;
   left: var(--start-button-offset-left);
   top: var(--start-button-offset-top);
@@ -29,7 +37,7 @@ button:focus {
 }
 #level-select-title {
   font-family: "Luz Sans Book";
-  font-size: 2em;
+  font-size: var(--font-size-2);
   color: #ffffff;
   margin: 0 auto;
   text-align: center;
@@ -39,7 +47,7 @@ button:focus {
   position: fixed;
   top: var(--title-offset-top);
   left: var(--title-offset-left);
-  font-size: 4em;
+  font-size: var(--font-size-4);
   border: 0;
   border-radius: 5px;
   opacity: 0.75;
@@ -70,7 +78,7 @@ button:focus {
 .report-options-button {
   /* display: block; */
   font-family: "Coves Light";
-  font-size: 1.75em;
+  font-size: var(--font-size-1);
   font-weight: 500;
   border: 0;
   border-radius: 5px;
@@ -127,7 +135,7 @@ button:focus {
   margin-top: 10px;
   display: block;
   font-family: "Coves Light";
-  font-size: 1.75em;
+  font-size: var(--font-size-1);
   font-weight: 500;
   border: 0;
   border-radius: 5px;
@@ -138,7 +146,7 @@ button:focus {
 
 .menu-title-text {
   font-family: "Luz Sans Book";
-  font-size: 2em;
+  font-size: 2rem;
   color: #ffffff;
   margin: 0 auto;
   text-align: center;
@@ -146,7 +154,7 @@ button:focus {
 .menu-big-text {
   display: block;
   font-family: "Coves Light";
-  font-size: 1.75em;
+  font-size: var(--font-size-1);
   font-weight: 500;
   border: 0;
   border-radius: 5px;
@@ -157,7 +165,7 @@ button:focus {
 .menu-small-text {
   display: block;
   font-family: "Coves Light";
-  font-size: 1.5em;
+  font-size: var(--font-size-0);
   font-weight: 500;
   border: 0;
   border-radius: 5px;
@@ -204,12 +212,12 @@ button:focus {
 #report-coins,
 #report td {
   font-family: "Coves Light";
-  font-size: 2em;
+  font-size: var(--font-size-3);
   color: #ffffff;
 }
 .level-select-button {
   font-family: "Coves Light";
-  font-size: 1.75em;
+  font-size: var(--font-size-2);
   font-weight: 500;
   border: 0;
   border-radius: 5px;
