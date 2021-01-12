@@ -260,25 +260,23 @@
 
       //resize event handler
       function onWindowResize(event) {
-        //put the start button right in the middle!
+
+        console.log('ran window resize', event)
+        setFontSizes()
         centerElement({ id: "start-button", offsetTop: 0, offsetLeft: 0 });
         centerElement({ id: "level-select", offsetTop: 0, offsetLeft: 0 });
         centerElement({ id: "report", offsetTop: 0, offsetLeft: 0 });
         centerElement({ id: "pause-menu", offsetTop: 0, offsetLeft: 0 });
-        centerElement({ id: "title", offsetTop: -200, offsetLeft: 0 });
-        centerElement({ id: "start-menu", offsetTop: 200, offsetLeft: 0 });
-        // remember these initial values
+        centerElement({ id: "title", offsetTop: "-25%", offsetLeft: 0 });
+        centerElement({ id: "start-menu", offsetTop: "25%", offsetLeft: 0 });
         var tanFOV = Math.tan(((Math.PI / 180) * camera.fov) / 2);
         var windowHeight = window.innerHeight;
         camera.aspect = window.innerWidth / window.innerHeight;
-
-        // adjust the FOV
         camera.fov =
           (360 / Math.PI) *
           Math.atan(tanFOV * (window.innerHeight / windowHeight));
 
         camera.updateProjectionMatrix();
-        // camera.lookAt(scene.position);
 
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.render(scene, camera);
@@ -495,7 +493,7 @@
             scene.remove(window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE3)
             // remove all coins
             scene.children.forEach(c => {
-              if(c.name && c.name.indexOf('STAGE0') > -1) {
+              if (c.name && c.name.indexOf('STAGE0') > -1) {
                 scene.remove(c)
               }
             })
@@ -738,7 +736,7 @@
         ) {
           console.log("collision");
           console.log("collided_with", collided_with);
-          if(appConfig.pause === false) {
+          if (appConfig.pause === false) {
             const suonousFeatureTypes = [
               "BEAM",
               "BOX",
@@ -978,7 +976,7 @@
       if (!window.appConfig.stages[window.appConfig.currentStage].data.started) {
         window.appConfig.stages[window.appConfig.currentStage].init()
       } else {
-        if(window.appConfig.pause === false) {
+        if (window.appConfig.pause === false) {
           activeTransforms.length > 0 && activeTransforms.forEach(t => {
             if (window.appConfig.stages[window.appConfig.currentStage].transforms[t].r && window.appConfig.stages[window.appConfig.currentStage][t]) {
               window.appConfig.stages[window.appConfig.currentStage][t].rotation.x += window.appConfig.stages[window.appConfig.currentStage].transforms[t].r.x
@@ -1206,7 +1204,9 @@
       window.appConfig.userHasEnded = false
       window.appConfig.start = true;
       window.appConfig.pause = false;
-      backgroundMusic0.play()
+      if (!backgroundMusic0.playing()) (
+        backgroundMusic0.play()
+      )
       scene.setGravity(new THREE.Vector3(0, -10, 0));
       showHTMLElements(["pause-button", "game-scoreboard"]);
       // window.appConfig.initialBallZoom.userHasClickedStart = true;
@@ -1271,8 +1271,8 @@
     const showStart = () => {
       showHTMLElements(["start-menu", "title", "start-button"]);
       centerElement({ id: "start-button", offsetTop: 0, offsetLeft: 0 });
-      centerElement({ id: "title", offsetTop: -200, offsetLeft: 0 });
-      centerElement({ id: "start-menu", offsetTop: 200, offsetLeft: 0 });
+      centerElement({ id: "title", offsetTop: "-25%", offsetLeft: 0 });
+      centerElement({ id: "start-menu", offsetTop: "25%", offsetLeft: 0 });
     };
     const showPauseMenu = () => {
       showHTMLElements(["pause-button", "pause-menu", "game-scoreboard"]);
@@ -1293,14 +1293,40 @@
       const element = document.getElementById(id);
       const buttonHeight = element.offsetHeight;
       const buttonWidth = element.offsetWidth;
-      const offsetHeight =
-        window.innerHeight / 2 - buttonHeight / 2 + offsetTop;
-      const offsetWidth =
-        window.innerWidth / 2 - buttonWidth / 2 + offsetLeft;
+      let offsetHeight
+      if (typeof offsetTop === "number") {
+        offsetHeight = window.innerHeight / 2 - buttonHeight / 2 + offsetTop;
+      } else {
+        const parsedNum = Number.parseInt(offsetTop)
+        const percentFromTop = (50 + parsedNum) / 100 //assume it's a percent between -50% and 50%
+        offsetHeight = window.innerHeight * percentFromTop - buttonHeight / 2;
+      }
+      let offsetWidth
+      if (typeof offsetLeft === "number") {
+        offsetWidth = window.innerWidth / 2 - buttonWidth / 2 + offsetLeft;
+      } else {
+        const parsedNum = Number.parseInt(offsetLeft)
+        const percentFromLeft = (50 + parsedNum) / 100 //assume it's a percent between -50% and 50%
+        offsetWidth = window.innerWidth * percentFromLeft - buttonWidth / 2;
+      }
+
+
       const root = document.documentElement;
       root.style.setProperty(`--${id}-offset-top`, offsetHeight + "px");
       root.style.setProperty(`--${id}-offset-left`, offsetWidth + "px");
     };
+
+    const setFontSizes = () => {
+      let hSq = window.innerHeight * window.innerHeight
+      let wSq = window.innerWidth * window.innerWidth
+      let diagonalLength = Math.sqrt(hSq + wSq)
+      const root = document.documentElement;
+      root.style.setProperty(`--font-size-0`, diagonalLength * .01 + "px");
+      root.style.setProperty(`--font-size-1`, diagonalLength * .02 + "px");
+      root.style.setProperty(`--font-size-2`, diagonalLength * .03 + "px");
+      root.style.setProperty(`--font-size-3`, diagonalLength * .04 + "px");
+      root.style.setProperty(`--font-size-4`, diagonalLength * .05 + "px");
+    }
     const changeMusicVolume = (val) => {
       window.appConfig.backgroundMusics.forEach((m, mIndex) => {
         const currentVol = m.volume();
