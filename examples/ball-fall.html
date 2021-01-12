@@ -929,8 +929,12 @@
             window.appConfig.timers.data.stageReset.percentComplete = percentComplete
           },
           completedCallback: (percentComplete) => {
-            window.appConfig.gameModeFunctions.start()
             window.appConfig.stages[window.appConfig.currentStage].teardown()
+            window.appConfig.gameModeFunctions.start()
+            document.querySelector("#curtain").classList.add("opacity-0");
+            const restartBallPosition = window.appConfig.stages[window.appConfig.currentStage].data.startingPosition
+            window.appConfig.positionBall(restartBallPosition)
+            window.appConfig.positionCamera(restartBallPosition)
           }
         }
       },
@@ -944,6 +948,7 @@
           time: 2000,
           timeLeft: 1000,
           currentTime: 0,
+          name: 'STAGERESULTSBALLZOOM',
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
             window.appConfig.timers.data.stageResultsBallZoom.percentComplete = percentComplete
@@ -1238,13 +1243,10 @@
       document.querySelector("#score").innerText = 0
       showHTMLElements([]);
       document.querySelector("#curtain").classList.remove("opacity-0");
-      const restartBallPosition = window.appConfig.stages[window.appConfig.currentStage].data.startingPosition
 
-      setTimeout(() => {
-        document.querySelector("#curtain").classList.add("opacity-0");
-        window.appConfig.positionBall(restartBallPosition)
-        window.appConfig.positionCamera(restartBallPosition)
-      }, 2000);
+      // setTimeout(() => {
+
+      // }, 2000);
       window.appConfig.timer.reset();
       window.appConfig.timer.pause();
     };
