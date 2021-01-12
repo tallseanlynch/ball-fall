@@ -264,8 +264,8 @@
         centerElement({ id: "level-select", offsetTop: 0, offsetLeft: 0 });
         centerElement({ id: "report", offsetTop: 0, offsetLeft: 0 });
         centerElement({ id: "pause-menu", offsetTop: 0, offsetLeft: 0 });
-        centerElement({ id: "title", offsetTop: -200, offsetLeft: 0 });
-        centerElement({ id: "start-menu", offsetTop: 200, offsetLeft: 0 });
+        centerElement({ id: "title", offsetTop: "-25%", offsetLeft: 0 });
+        centerElement({ id: "start-menu", offsetTop: "25%", offsetLeft: 0 });
         // remember these initial values
         var tanFOV = Math.tan(((Math.PI / 180) * camera.fov) / 2);
         var windowHeight = window.innerHeight;
@@ -507,7 +507,7 @@
             scene.remove(window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE3)
             // remove all coins
             scene.children.forEach(c => {
-              if(c.name && c.name.indexOf('STAGE0') > -1) {
+              if (c.name && c.name.indexOf('STAGE0') > -1) {
                 scene.remove(c)
               }
             })
@@ -830,7 +830,7 @@
         ) {
           console.log("collision");
           console.log("collided_with", collided_with);
-          if(appConfig.pause === false) {
+          if (appConfig.pause === false) {
             const suonousFeatureTypes = [
               "BEAM",
               "BOX",
@@ -1064,7 +1064,7 @@
       if (!window.appConfig.stages[window.appConfig.currentStage].data.started) {
         initStage0()
       } else {
-        if(window.appConfig.pause === false) {
+        if (window.appConfig.pause === false) {
           activeTransforms.length > 0 && activeTransforms.forEach(t => {
             if (window.appConfig.stages[window.appConfig.currentStage].transforms[t].r && window.appConfig.stages[window.appConfig.currentStage][t]) {
               window.appConfig.stages[window.appConfig.currentStage][t].rotation.x += window.appConfig.stages[window.appConfig.currentStage].transforms[t].r.x
@@ -1358,8 +1358,8 @@
     const showStart = () => {
       showHTMLElements(["start-menu", "title", "start-button"]);
       centerElement({ id: "start-button", offsetTop: 0, offsetLeft: 0 });
-      centerElement({ id: "title", offsetTop: -200, offsetLeft: 0 });
-      centerElement({ id: "start-menu", offsetTop: 200, offsetLeft: 0 });
+      centerElement({ id: "title", offsetTop: "-25%", offsetLeft: 0 });
+      centerElement({ id: "start-menu", offsetTop: "25%", offsetLeft: 0 });
     };
     const showPauseMenu = () => {
       showHTMLElements(["pause-button", "pause-menu", "game-scoreboard"]);
@@ -1380,10 +1380,24 @@
       const element = document.getElementById(id);
       const buttonHeight = element.offsetHeight;
       const buttonWidth = element.offsetWidth;
-      const offsetHeight =
-        window.innerHeight / 2 - buttonHeight / 2 + offsetTop;
-      const offsetWidth =
-        window.innerWidth / 2 - buttonWidth / 2 + offsetLeft;
+      let offsetHeight
+      if (typeof offsetTop === "number") {
+        offsetHeight = window.innerHeight / 2 - buttonHeight / 2 + offsetTop;
+      } else {
+        const parsedNum = Number.parseInt(offsetTop)
+        const percentFromTop = (50 + parsedNum) / 100 //assume it's a percent between -50% and 50%
+        offsetHeight = window.innerHeight * percentFromTop - buttonHeight / 2;
+      }
+      let offsetWidth
+      if (typeof offsetLeft === "number") {
+        offsetWidth = window.innerWidth / 2 - buttonWidth / 2 + offsetLeft;
+      } else {
+        const parsedNum = Number.parseInt(offsetLeft)
+        const percentFromLeft = (50 + parsedNum) / 100 //assume it's a percent between -50% and 50%
+        offsetWidth = window.innerWidth * percentFromLeft - buttonWidth / 2;
+      }
+
+
       const root = document.documentElement;
       root.style.setProperty(`--${id}-offset-top`, offsetHeight + "px");
       root.style.setProperty(`--${id}-offset-left`, offsetWidth + "px");
