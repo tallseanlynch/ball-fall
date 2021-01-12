@@ -722,29 +722,60 @@
             startingPosition: new THREE.Vector3(0, 0, 0)
           },
           defaultTransforms: [
-            'STAGE1MAINSTRUCTURE'
+            'STAGE1MAINSTRUCTURE',
+            'STAGE1MAINSTRUCTURE1',
+            'STAGE1MINORSTRUCTURE',
+            'STAGE1MINORSTRUCTURE1',
+            'STAGE1MINORSTRUCTURE2',
+            'STAGE1MINORSTRUCTURE3',
+            'STAGE1MINORSTRUCTURE4',
+            'STAGE1MINORSTRUCTURE5',
+            'STAGE1MINORSTRUCTURE6',
+            'STAGE1MINORSTRUCTURE7',
+            'STAGE1MINORSTRUCTURE8',
+            'STAGE1MINORSTRUCTURE9',
+            'STAGE1MINORSTRUCTURE10',
+            'STAGE1MINORSTRUCTURE11'
           ],
           transforms: {
-            // 'STAGE0PRIZE0': { r: { x: .005, y: .005, z: .005 } },
-            // 'STAGE0PRIZE1': { r: { x: .005, y: .005, z: .005 } },
-            // 'STAGE0PRIZE2': { r: { x: .005, y: .005, z: .005 } },
-            // 'STAGE0PRIZE3': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE1MAINSTRUCTURE': { r: { x: 0, y: 0, z: .001 } },
-            // 'STAGE0MINORSTRUCTURE': { r: { x: 0, y: 0, z: -.001 } },
-            // 'STAGE0MINORSTRUCTURE1': { r: { x: 0, y: 0, z: -.001 } },
-            // 'STAGE0MINORSTRUCTURE2': { r: { x: 0, y: 0, z: -.001 } },
-            // 'STAGE0MINORSTRUCTURE3': { r: { x: 0, y: 0, z: -.001 } }
+            'STAGE1PRIZE0': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE1PRIZE1': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE1PRIZE2': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE1PRIZE3': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE1MAINSTRUCTURE': { r: { x: 0, y: 0, z: .005 } },
+            'STAGE1MAINSTRUCTURE1': { r: { x: 0, y: 0, z: -.004 } },
+            'STAGE1MINORSTRUCTURE': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE1MINORSTRUCTURE1': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE1MINORSTRUCTURE2': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE1MINORSTRUCTURE3': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE1MINORSTRUCTURE4': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE1MINORSTRUCTURE5': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE1MINORSTRUCTURE6': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE1MINORSTRUCTURE7': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE1MINORSTRUCTURE8': { r: { x: 0, y: 0, z: .005 } },
+            'STAGE1MINORSTRUCTURE9': { r: { x: 0, y: 0, z: .005 } },
+            'STAGE1MINORSTRUCTURE10': { r: { x: 0, y: 0, z: .005 } },
+            'STAGE1MINORSTRUCTURE11': { r: { x: 0, y: 0, z: .005 } }
           },
           teardown: () => {
-            // scene.remove(window.appConfig.stages.STAGE0.STAGE0PRIZE0)
-            // scene.remove(window.appConfig.stages.STAGE0.STAGE0PRIZE1)
-            // scene.remove(window.appConfig.stages.STAGE0.STAGE0PRIZE2)
-            // scene.remove(window.appConfig.stages.STAGE0.STAGE0PRIZE3)
+            scene.remove(window.appConfig.stages.STAGE1.STAGE1PRIZE0)
+            scene.remove(window.appConfig.stages.STAGE1.STAGE1PRIZE1)
+            scene.remove(window.appConfig.stages.STAGE1.STAGE1PRIZE2)
+            scene.remove(window.appConfig.stages.STAGE1.STAGE1PRIZE3)
             scene.remove(window.appConfig.stages.STAGE1.STAGE1MAINSTRUCTURE)
-            // scene.remove(window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE)
-            // scene.remove(window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE1)
-            // scene.remove(window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE2)
-            // scene.remove(window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE3)
+            scene.remove(window.appConfig.stages.STAGE1.STAGE1MAINSTRUCTURE1)
+            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE)
+            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE1)
+            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE2)
+            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE3)
+            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE4)
+            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE5)
+            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE6)
+            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE7)
+            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE8)
+            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE9)
+            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE10)
+            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE11)
             // remove all coins
             scene.children.forEach(c => {
               if (c.name && c.name.indexOf('STAGE1') > -1) {
@@ -810,46 +841,110 @@
               "STAGE1MAINSTRUCTURE"
             );
             scene.add(stage1MainBeamStructure);
-            // const stage0MainBeamStructure1 = createStage0MainBeamStructure(
-            //   4,
-            //   0,
-            //   "STAGE0MAINSTRUCTURE1"
-            // );
-            // scene.add(stage0MainBeamStructure1);
-            // const stage0MainBeamStructure2 = createStage0MainBeamStructure(
-            //   8,
-            //   0.525,
-            //   "STAGE0MAINSTRUCTURE2"
-            // );
-            // scene.add(stage0MainBeamStructure2);
-            // const stage0MinorBeamStructure = createStage0MainBeamStructure(
-            //   1,
-            //   -0.5,
-            //   "STAGE0MINORSTRUCTURE",
-            //   { x: 45, y: 45 }
-            // );
-            // scene.add(stage0MinorBeamStructure);
-            // const stage0MinorBeamStructure1 = createStage0MainBeamStructure(
-            //   1,
-            //   -0.5,
-            //   "STAGE0MINORSTRUCTURE1",
-            //   { x: 45, y: -45 }
-            // );
-            // scene.add(stage0MinorBeamStructure1);
-            // const stage0MinorBeamStructure2 = createStage0MainBeamStructure(
-            //   1,
-            //   -0.5,
-            //   "STAGE0MINORSTRUCTURE2",
-            //   { x: -45, y: -45 }
-            // );
-            // scene.add(stage0MinorBeamStructure2);
-            // const stage0MinorBeamStructure3 = createStage0MainBeamStructure(
-            //   1,
-            //   -0.5,
-            //   "STAGE0MINORSTRUCTURE3",
-            //   { x: -45, y: 45 }
-            // );
-            // scene.add(stage0MinorBeamStructure3);
+            const stage1MainBeamStructure1 = createStage1MainBeamStructure(
+              3,
+              0,
+              "STAGE1MAINSTRUCTURE1"
+            );
+            scene.add(stage1MainBeamStructure1);
+            const stage1MainBeamStructure2 = createStage1MainBeamStructure(
+              8,
+              0.525,
+              "STAGE1MAINSTRUCTURE2"
+            );
+            scene.add(stage1MainBeamStructure2);
+            const stage1MinorBeamStructure = createStage1MainBeamStructure(
+              1,
+              -0.5,
+              "STAGE1MINORSTRUCTURE",
+              { x: 45, y: 45 }
+            );
+            scene.add(stage1MinorBeamStructure);
+            const stage1MinorBeamStructure1 = createStage1MainBeamStructure(
+              1,
+              -0.5,
+              "STAGE1MINORSTRUCTURE1",
+              { x: 45, y: -45 }
+            );
+            scene.add(stage1MinorBeamStructure1);
+            const stage1MinorBeamStructure2 = createStage1MainBeamStructure(
+              1,
+              -0.5,
+              "STAGE1MINORSTRUCTURE2",
+              { x: -45, y: -45 }
+            );
+            scene.add(stage1MinorBeamStructure2);
+            const stage1MinorBeamStructure3 = createStage1MainBeamStructure(
+              1,
+              -0.5,
+              "STAGE1MINORSTRUCTURE3",
+              { x: -45, y: 45 }
+            );
+            scene.add(stage1MinorBeamStructure3);
+            //now im going to put a bunch of minor structures in there
+            const stage1MinorBeamStructure4 = createStage1MainBeamStructure(
+              1,
+              -0.5,
+              "STAGE1MINORSTRUCTURE4",
+              { x: -45, y: 0 }
+            );
+            scene.add(stage1MinorBeamStructure4);
+            const stage1MinorBeamStructure5 = createStage1MainBeamStructure(
+              1,
+              -0.5,
+              "STAGE1MINORSTRUCTURE5",
+              { x: 45, y: 0 }
+            );
+            scene.add(stage1MinorBeamStructure5);
+            const stage1MinorBeamStructure6 = createStage1MainBeamStructure(
+              1,
+              -0.5,
+              "STAGE1MINORSTRUCTURE6",
+              { x: 0, y: -45 }
+            );
+            scene.add(stage1MinorBeamStructure6);
+            const stage1MinorBeamStructure7 = createStage1MainBeamStructure(
+              1,
+              -0.5,
+              "STAGE1MINORSTRUCTURE7",
+              { x: 0, y: 45 }
+            );
+            scene.add(stage1MinorBeamStructure7);
+            const stage1MinorBeamStructure8 = createStage1MainBeamStructure(
+              1,
+              -0.5,
+              "STAGE1MINORSTRUCTURE8",
+              { x: 27.5, y: 27.5 }
+            );
+            scene.add(stage1MinorBeamStructure8);
+            const stage1MinorBeamStructure9 = createStage1MainBeamStructure(
+              1,
+              -0.5,
+              "STAGE1MINORSTRUCTURE9",
+              { x: -27.5, y: 27.5 }
+            );
+            scene.add(stage1MinorBeamStructure9);
+            const stage1MinorBeamStructure10 = createStage1MainBeamStructure(
+              1,
+              -0.5,
+              "STAGE1MINORSTRUCTURE10",
+              { x: 27.5, y: -27.5 }
+            );
+            scene.add(stage1MinorBeamStructure10);
+            const stage1MinorBeamStructure11 = createStage1MainBeamStructure(
+              1,
+              -0.5,
+              "STAGE1MINORSTRUCTURE11",
+              { x: -27.5, y: -27.5 }
+            );
+            scene.add(stage1MinorBeamStructure11);
+
+
+
+
+
+
+
 
             const prize0Group = new THREE.Group();
             const prize0 = new THREE.Mesh(
@@ -864,7 +959,7 @@
               new THREE.ConeGeometry(1, -1, 8),
               new THREE.MeshPhongMaterial()
             )
-            prize0Group.name = 'STAGE0PRIZE0'
+            prize0Group.name = 'STAGE1PRIZE0'
             prize0Group.debugTypeIndex = window.appConfig.itemAmounts.prize
             prize0Group.debugType = 'PRIZE'
             prize0Group.debugName = 'PRIZE' + window.appConfig.itemAmounts.prize
@@ -891,9 +986,9 @@
             prize2Group.position.set(-45, -45, 0)
             const prize3Group = prize0Group.clone()
             prize3Group.position.set(-45, 45, 0)
-            prize1Group.name = 'STAGE0PRIZE1'
-            prize2Group.name = 'STAGE0PRIZE2'
-            prize3Group.name = 'STAGE0PRIZE3'
+            prize1Group.name = 'STAGE1PRIZE1'
+            prize2Group.name = 'STAGE1PRIZE2'
+            prize3Group.name = 'STAGE1PRIZE3'
             scene.add(prize1Group)
             scene.add(prize2Group)
             scene.add(prize3Group)
@@ -908,51 +1003,60 @@
             coins.push(prize2Group);
             coins.push(prize3Group);
 
-            // createCrystalCross('STAGE0', 5);
-            // createCrystalCross('STAGE0', 10);
-            // createCrystalCross('STAGE0', 5, { x: 20, y: 20 }, 1);
-            // createCrystalCross('STAGE0', 5, { x: -20, y: 20 }, 1);
-            // createCrystalCross('STAGE0', 5, { x: -20, y: -20 }, 1);
-            // createCrystalCross('STAGE0', 5, { x: 20, y: -20 }, 1);
-            // createCrystalCross('STAGE0', 3, { x: 55, y: 55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 35, y: 55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 35, y: 35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 55, y: 35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 55, y: -55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 35, y: -55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 35, y: -35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 55, y: -35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -55, y: -55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -35, y: -55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -35, y: -35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -55, y: -35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -55, y: 55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -35, y: 55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -35, y: 35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -55, y: 35 }, 0);
-            // createCrystalLine('STAGE0', 10, { x: -47.5, y: -20 }, 2, 5, "y");
-            // createCrystalLine('STAGE0', 5, { x: 54.5, y: -22 }, 0, 10, "y");
-            // createCrystalLine('STAGE0', 5, { x: 40.5, y: -22.5 }, 0, 10, "y");
-            // createCrystalLine('STAGE0', 10, { x: 47.5, y: -20 }, 2, 5, "y");
-            // createCrystalLine('STAGE0', 5, { x: -54.5, y: -22 }, 0, 10, "y");
-            // createCrystalLine('STAGE0', 5, { x: -40.5, y: -22.5 }, 0, 10, "y");
-            // createCrystalLine('STAGE0', 10, { x: -20, y: -47.5 }, 2, 5, "x");
-            // createCrystalLine('STAGE0', 5, { x: -22.5, y: -40 }, 0, 10, "x");
-            // createCrystalLine('STAGE0', 5, { x: -22.5, y: -54.5 }, 0, 10, "x");
-            // createCrystalLine('STAGE0', 10, { x: -20, y: 47.5 }, 2, 5, "x");
-            // createCrystalLine('STAGE0', 5, { x: -22.5, y: 40 }, 0, 10, "x");
-            // createCrystalLine('STAGE0', 5, { x: -22.5, y: 54.5 }, 0, 10, "x");
-            // end stage 0
+            createCrystalCross('STAGE1', 5);
+            createCrystalCross('STAGE1', 10);
+            createCrystalCross('STAGE1', 5, { x: 20, y: 20 }, 1);
+            createCrystalCross('STAGE1', 5, { x: -20, y: 20 }, 1);
+            createCrystalCross('STAGE1', 5, { x: -20, y: -20 }, 1);
+            createCrystalCross('STAGE1', 5, { x: 20, y: -20 }, 1);
+            createCrystalCross('STAGE1', 3, { x: 55, y: 55 }, 0);
+            createCrystalCross('STAGE1', 3, { x: 35, y: 55 }, 0);
+            createCrystalCross('STAGE1', 3, { x: 35, y: 35 }, 0);
+            createCrystalCross('STAGE1', 3, { x: 55, y: 35 }, 0);
+            createCrystalCross('STAGE1', 3, { x: 55, y: -55 }, 0);
+            createCrystalCross('STAGE1', 3, { x: 35, y: -55 }, 0);
+            createCrystalCross('STAGE1', 3, { x: 35, y: -35 }, 0);
+            createCrystalCross('STAGE1', 3, { x: 55, y: -35 }, 0);
+            createCrystalCross('STAGE1', 3, { x: -55, y: -55 }, 0);
+            createCrystalCross('STAGE1', 3, { x: -35, y: -55 }, 0);
+            createCrystalCross('STAGE1', 3, { x: -35, y: -35 }, 0);
+            createCrystalCross('STAGE1', 3, { x: -55, y: -35 }, 0);
+            createCrystalCross('STAGE1', 3, { x: -55, y: 55 }, 0);
+            createCrystalCross('STAGE1', 3, { x: -35, y: 55 }, 0);
+            createCrystalCross('STAGE1', 3, { x: -35, y: 35 }, 0);
+            createCrystalCross('STAGE1', 3, { x: -55, y: 35 }, 0);
+            createCrystalLine('STAGE1', 10, { x: -47.5, y: -20 }, 2, 5, "y");
+            createCrystalLine('STAGE1', 5, { x: 54.5, y: -22 }, 0, 10, "y");
+            createCrystalLine('STAGE1', 5, { x: 40.5, y: -22.5 }, 0, 10, "y");
+            createCrystalLine('STAGE1', 10, { x: 47.5, y: -20 }, 2, 5, "y");
+            createCrystalLine('STAGE1', 5, { x: -54.5, y: -22 }, 0, 10, "y");
+            createCrystalLine('STAGE1', 5, { x: -40.5, y: -22.5 }, 0, 10, "y");
+            createCrystalLine('STAGE1', 10, { x: -20, y: -47.5 }, 2, 5, "x");
+            createCrystalLine('STAGE1', 5, { x: -22.5, y: -40 }, 0, 10, "x");
+            createCrystalLine('STAGE1', 5, { x: -22.5, y: -54.5 }, 0, 10, "x");
+            createCrystalLine('STAGE1', 10, { x: -20, y: 47.5 }, 2, 5, "x");
+            createCrystalLine('STAGE1', 5, { x: -22.5, y: 40 }, 0, 10, "x");
+            createCrystalLine('STAGE1', 5, { x: -22.5, y: 54.5 }, 0, 10, "x");
+            // end stage 1
 
-            // window.appConfig.stages.STAGE0.STAGE0PRIZE0 = scene.children.find((obj) => obj.name === "STAGE0PRIZE0")
-            // window.appConfig.stages.STAGE0.STAGE0PRIZE1 = scene.children.find((obj) => obj.name === "STAGE0PRIZE1")
-            // window.appConfig.stages.STAGE0.STAGE0PRIZE2 = scene.children.find((obj) => obj.name === "STAGE0PRIZE2")
-            // window.appConfig.stages.STAGE0.STAGE0PRIZE3 = scene.children.find((obj) => obj.name === "STAGE0PRIZE3")
+            window.appConfig.stages.STAGE1.STAGE1PRIZE0 = scene.children.find((obj) => obj.name === "STAGE1PRIZE0")
+            window.appConfig.stages.STAGE1.STAGE1PRIZE1 = scene.children.find((obj) => obj.name === "STAGE1PRIZE1")
+            window.appConfig.stages.STAGE1.STAGE1PRIZE2 = scene.children.find((obj) => obj.name === "STAGE1PRIZE2")
+            window.appConfig.stages.STAGE1.STAGE1PRIZE3 = scene.children.find((obj) => obj.name === "STAGE1PRIZE3")
             window.appConfig.stages.STAGE1.STAGE1MAINSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE1MAINSTRUCTURE")
-            // window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE")
-            // window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE1")
-            // window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE2")
-            // window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE3")
+            window.appConfig.stages.STAGE1.STAGE1MAINSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE1MAINSTRUCTURE1")
+            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE")
+            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE1")
+            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE2")
+            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE3")
+            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE4 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE4")
+            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE5 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE5")
+            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE6 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE6")
+            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE7 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE7")
+            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE8 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE8")
+            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE9 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE9")
+            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE10 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE10")
+            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE11 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE11")
             window.appConfig.stages.STAGE1.data.started = true
           }
         }
@@ -1311,8 +1415,8 @@
           )
           const speedClamp = 50
           const newVelocityLength = newVelocity.length()
-          if(newVelocityLength > speedClamp) {
-//            debugger
+          if (newVelocityLength > speedClamp) {
+            //            debugger
             newVelocity = newVelocity.multiplyScalar(speedClamp / newVelocityLength)
           }
           console.log(newVelocity)
@@ -1477,7 +1581,7 @@
           return obj
         }
       })
-      sphere.setLinearVelocity(new THREE.Vector3(0,-10,0))
+      sphere.setLinearVelocity(new THREE.Vector3(0, -10, 0))
     };
 
     const pause = () => {
