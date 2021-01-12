@@ -1291,7 +1291,9 @@
       window.appConfig.userHasEnded = false
       window.appConfig.start = true;
       window.appConfig.pause = false;
-      backgroundMusic0.play()
+      if (!backgroundMusic0.playing()) (
+        backgroundMusic0.play()
+      )
       scene.setGravity(new THREE.Vector3(0, -10, 0));
       showHTMLElements(["pause-button", "game-scoreboard"]);
       // window.appConfig.initialBallZoom.userHasClickedStart = true;
