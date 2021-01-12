@@ -50,7 +50,7 @@
         bumperGroup: 0,
         prize: 0
       },
-      currentStage: 'STAGE0'
+      currentStage: 'STAGE1'
     };
 
     const backgroundMusics = [];
@@ -470,6 +470,17 @@
             sAdj: 2,
             startingPosition: new THREE.Vector3(0, 0, 0)
           },
+          defaultTransforms: [
+            'STAGE0PRIZE0',
+            'STAGE0PRIZE1',
+            'STAGE0PRIZE2',
+            'STAGE0PRIZE3',
+            'STAGE0MAINSTRUCTURE',
+            'STAGE0MINORSTRUCTURE',
+            'STAGE0MINORSTRUCTURE1',
+            'STAGE0MINORSTRUCTURE2',
+            'STAGE0MINORSTRUCTURE3'
+          ],
           transforms: {
             'STAGE0PRIZE0': { r: { x: .005, y: .005, z: .005 } },
             'STAGE0PRIZE1': { r: { x: .005, y: .005, z: .005 } },
@@ -701,10 +712,254 @@
             window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE3")
             window.appConfig.stages.STAGE0.data.started = true
           }
+        },
+        STAGE1: {
+          data: {
+            started: false,
+            xAdj: -60,
+            vAdj: -70,
+            sAdj: 2,
+            startingPosition: new THREE.Vector3(0, 0, 0)
+          },
+          defaultTransforms: [
+            'STAGE1MAINSTRUCTURE'
+          ],
+          transforms: {
+            // 'STAGE0PRIZE0': { r: { x: .005, y: .005, z: .005 } },
+            // 'STAGE0PRIZE1': { r: { x: .005, y: .005, z: .005 } },
+            // 'STAGE0PRIZE2': { r: { x: .005, y: .005, z: .005 } },
+            // 'STAGE0PRIZE3': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE1MAINSTRUCTURE': { r: { x: 0, y: 0, z: .001 } },
+            // 'STAGE0MINORSTRUCTURE': { r: { x: 0, y: 0, z: -.001 } },
+            // 'STAGE0MINORSTRUCTURE1': { r: { x: 0, y: 0, z: -.001 } },
+            // 'STAGE0MINORSTRUCTURE2': { r: { x: 0, y: 0, z: -.001 } },
+            // 'STAGE0MINORSTRUCTURE3': { r: { x: 0, y: 0, z: -.001 } }
+          },
+          teardown: () => {
+            // scene.remove(window.appConfig.stages.STAGE0.STAGE0PRIZE0)
+            // scene.remove(window.appConfig.stages.STAGE0.STAGE0PRIZE1)
+            // scene.remove(window.appConfig.stages.STAGE0.STAGE0PRIZE2)
+            // scene.remove(window.appConfig.stages.STAGE0.STAGE0PRIZE3)
+            scene.remove(window.appConfig.stages.STAGE1.STAGE1MAINSTRUCTURE)
+            // scene.remove(window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE)
+            // scene.remove(window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE1)
+            // scene.remove(window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE2)
+            // scene.remove(window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE3)
+            // remove all coins
+            scene.children.forEach(c => {
+              if (c.name && c.name.indexOf('STAGE1') > -1) {
+                scene.remove(c)
+              }
+            })
+            window.appConfig.stages.STAGE1.data.started = false
+          },
+          init: () => {
+            const createStage1MainBeamStructure = (
+              scale,
+              scaleAdj = 0,
+              name,
+              p = { x: 0, y: 0 }
+            ) => {
+              const mainStructure = new Physijs.BoxMesh(
+                new THREE.BoxGeometry(0.01, 0.01, 0.01),
+                new Physijs.createMaterial(
+                  new THREE.MeshPhongMaterial({ transparent: true, opacity: 0 }),
+                  0.6,
+                  0.3
+                ),
+                0
+              );
+              mainStructure.position.set(0 + p.x, 0 + p.y, 1.5);
+              mainStructure.add(
+                createBeam({
+                  p: [0 * scale, -8 * scale, -1],
+                  r: [0, 0, 0],
+                  s: (1 + scaleAdj) * scale,
+                })
+              );
+              mainStructure.add(
+                createBeam({
+                  p: [-8 * scale, 0 * scale, -1],
+                  r: [0, 0, 0.5 * Math.PI],
+                  s: (1 + scaleAdj) * scale,
+                })
+              );
+              mainStructure.add(
+                createBeam({
+                  p: [8 * scale, 0 * scale, -1],
+                  r: [0, 0, 0.5 * Math.PI],
+                  s: (1 + scaleAdj) * scale,
+                })
+              );
+              mainStructure.add(
+                createBeam({
+                  p: [0 * scale, 8 * scale, -1],
+                  r: [0, 0, 0],
+                  s: (1 + scaleAdj) * scale,
+                })
+              );
+              mainStructure.name = name;
+              mainStructure.__dirtyPosition = true;
+              mainStructure.featureType = "BEAM"
+              return mainStructure;
+            };
+
+            const stage1MainBeamStructure = createStage1MainBeamStructure(
+              2,
+              0,
+              "STAGE1MAINSTRUCTURE"
+            );
+            scene.add(stage1MainBeamStructure);
+            // const stage0MainBeamStructure1 = createStage0MainBeamStructure(
+            //   4,
+            //   0,
+            //   "STAGE0MAINSTRUCTURE1"
+            // );
+            // scene.add(stage0MainBeamStructure1);
+            // const stage0MainBeamStructure2 = createStage0MainBeamStructure(
+            //   8,
+            //   0.525,
+            //   "STAGE0MAINSTRUCTURE2"
+            // );
+            // scene.add(stage0MainBeamStructure2);
+            // const stage0MinorBeamStructure = createStage0MainBeamStructure(
+            //   1,
+            //   -0.5,
+            //   "STAGE0MINORSTRUCTURE",
+            //   { x: 45, y: 45 }
+            // );
+            // scene.add(stage0MinorBeamStructure);
+            // const stage0MinorBeamStructure1 = createStage0MainBeamStructure(
+            //   1,
+            //   -0.5,
+            //   "STAGE0MINORSTRUCTURE1",
+            //   { x: 45, y: -45 }
+            // );
+            // scene.add(stage0MinorBeamStructure1);
+            // const stage0MinorBeamStructure2 = createStage0MainBeamStructure(
+            //   1,
+            //   -0.5,
+            //   "STAGE0MINORSTRUCTURE2",
+            //   { x: -45, y: -45 }
+            // );
+            // scene.add(stage0MinorBeamStructure2);
+            // const stage0MinorBeamStructure3 = createStage0MainBeamStructure(
+            //   1,
+            //   -0.5,
+            //   "STAGE0MINORSTRUCTURE3",
+            //   { x: -45, y: 45 }
+            // );
+            // scene.add(stage0MinorBeamStructure3);
+
+            const prize0Group = new THREE.Group();
+            const prize0 = new THREE.Mesh(
+              new THREE.BoxGeometry(0.75, 0.75, 0.75),
+              new THREE.MeshPhongMaterial()
+            );
+            const prize0Top = new THREE.Mesh(
+              new THREE.ConeGeometry(1, 1, 8),
+              new THREE.MeshPhongMaterial()
+            );
+            const prize0Bottom = new THREE.Mesh(
+              new THREE.ConeGeometry(1, -1, 8),
+              new THREE.MeshPhongMaterial()
+            )
+            prize0Group.name = 'STAGE0PRIZE0'
+            prize0Group.debugTypeIndex = window.appConfig.itemAmounts.prize
+            prize0Group.debugType = 'PRIZE'
+            prize0Group.debugName = 'PRIZE' + window.appConfig.itemAmounts.prize
+            window.appConfig.itemAmounts.prize++
+
+            prize0.name = 'PRIZE0'
+            prize0Top.name = 'PRIZE0TOP'
+            prize0Bottom.name = 'PRIZE0BOTTOM'
+
+
+            prize0.rotation.set(.25 * Math.PI, .25 * Math.PI, 0)
+            prize0Group.add(prize0)
+            prize0Group.add(prize0Top)
+            prize0Group.add(prize0Bottom)
+
+            prize0Top.position.y += 1.5
+            prize0Bottom.position.y += -1.5
+            prize0Group.position.set(45, 45, 0)
+
+            scene.add(prize0Group)
+            const prize1Group = prize0Group.clone()
+            prize1Group.position.set(45, -45, 0)
+            const prize2Group = prize0Group.clone()
+            prize2Group.position.set(-45, -45, 0)
+            const prize3Group = prize0Group.clone()
+            prize3Group.position.set(-45, 45, 0)
+            prize1Group.name = 'STAGE0PRIZE1'
+            prize2Group.name = 'STAGE0PRIZE2'
+            prize3Group.name = 'STAGE0PRIZE3'
+            scene.add(prize1Group)
+            scene.add(prize2Group)
+            scene.add(prize3Group)
+            prize0Group.prizeValue = 10
+            prize1Group.prizeValue = 10
+            prize2Group.prizeValue = 20
+            prize3Group.prizeValue = 10
+
+            //add prizes to the coins array so that they can be collected in the same manner
+            coins.push(prize0Group);
+            coins.push(prize1Group);
+            coins.push(prize2Group);
+            coins.push(prize3Group);
+
+            // createCrystalCross('STAGE0', 5);
+            // createCrystalCross('STAGE0', 10);
+            // createCrystalCross('STAGE0', 5, { x: 20, y: 20 }, 1);
+            // createCrystalCross('STAGE0', 5, { x: -20, y: 20 }, 1);
+            // createCrystalCross('STAGE0', 5, { x: -20, y: -20 }, 1);
+            // createCrystalCross('STAGE0', 5, { x: 20, y: -20 }, 1);
+            // createCrystalCross('STAGE0', 3, { x: 55, y: 55 }, 0);
+            // createCrystalCross('STAGE0', 3, { x: 35, y: 55 }, 0);
+            // createCrystalCross('STAGE0', 3, { x: 35, y: 35 }, 0);
+            // createCrystalCross('STAGE0', 3, { x: 55, y: 35 }, 0);
+            // createCrystalCross('STAGE0', 3, { x: 55, y: -55 }, 0);
+            // createCrystalCross('STAGE0', 3, { x: 35, y: -55 }, 0);
+            // createCrystalCross('STAGE0', 3, { x: 35, y: -35 }, 0);
+            // createCrystalCross('STAGE0', 3, { x: 55, y: -35 }, 0);
+            // createCrystalCross('STAGE0', 3, { x: -55, y: -55 }, 0);
+            // createCrystalCross('STAGE0', 3, { x: -35, y: -55 }, 0);
+            // createCrystalCross('STAGE0', 3, { x: -35, y: -35 }, 0);
+            // createCrystalCross('STAGE0', 3, { x: -55, y: -35 }, 0);
+            // createCrystalCross('STAGE0', 3, { x: -55, y: 55 }, 0);
+            // createCrystalCross('STAGE0', 3, { x: -35, y: 55 }, 0);
+            // createCrystalCross('STAGE0', 3, { x: -35, y: 35 }, 0);
+            // createCrystalCross('STAGE0', 3, { x: -55, y: 35 }, 0);
+            // createCrystalLine('STAGE0', 10, { x: -47.5, y: -20 }, 2, 5, "y");
+            // createCrystalLine('STAGE0', 5, { x: 54.5, y: -22 }, 0, 10, "y");
+            // createCrystalLine('STAGE0', 5, { x: 40.5, y: -22.5 }, 0, 10, "y");
+            // createCrystalLine('STAGE0', 10, { x: 47.5, y: -20 }, 2, 5, "y");
+            // createCrystalLine('STAGE0', 5, { x: -54.5, y: -22 }, 0, 10, "y");
+            // createCrystalLine('STAGE0', 5, { x: -40.5, y: -22.5 }, 0, 10, "y");
+            // createCrystalLine('STAGE0', 10, { x: -20, y: -47.5 }, 2, 5, "x");
+            // createCrystalLine('STAGE0', 5, { x: -22.5, y: -40 }, 0, 10, "x");
+            // createCrystalLine('STAGE0', 5, { x: -22.5, y: -54.5 }, 0, 10, "x");
+            // createCrystalLine('STAGE0', 10, { x: -20, y: 47.5 }, 2, 5, "x");
+            // createCrystalLine('STAGE0', 5, { x: -22.5, y: 40 }, 0, 10, "x");
+            // createCrystalLine('STAGE0', 5, { x: -22.5, y: 54.5 }, 0, 10, "x");
+            // end stage 0
+
+            // window.appConfig.stages.STAGE0.STAGE0PRIZE0 = scene.children.find((obj) => obj.name === "STAGE0PRIZE0")
+            // window.appConfig.stages.STAGE0.STAGE0PRIZE1 = scene.children.find((obj) => obj.name === "STAGE0PRIZE1")
+            // window.appConfig.stages.STAGE0.STAGE0PRIZE2 = scene.children.find((obj) => obj.name === "STAGE0PRIZE2")
+            // window.appConfig.stages.STAGE0.STAGE0PRIZE3 = scene.children.find((obj) => obj.name === "STAGE0PRIZE3")
+            window.appConfig.stages.STAGE1.STAGE1MAINSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE1MAINSTRUCTURE")
+            // window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE")
+            // window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE1")
+            // window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE2")
+            // window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE3")
+            window.appConfig.stages.STAGE1.data.started = true
+          }
         }
       }
 
-      window.appConfig.stages.STAGE0.init()
+      // window.appConfig.stages.STAGE0.init()
+      window.appConfig.stages[window.appConfig.currentStage].init()
 
       spawnBox();
 
@@ -879,17 +1134,7 @@
     let appStartTime = new Date().getTime();
     let initialBallZoomTime = 0;
 
-    const activeTransforms = [
-      'STAGE0PRIZE0',
-      'STAGE0PRIZE1',
-      'STAGE0PRIZE2',
-      'STAGE0PRIZE3',
-      'STAGE0MAINSTRUCTURE',
-      'STAGE0MINORSTRUCTURE',
-      'STAGE0MINORSTRUCTURE1',
-      'STAGE0MINORSTRUCTURE2',
-      'STAGE0MINORSTRUCTURE3'
-    ]
+    window.appConfig.activeTransforms = []
 
     let currentTime = new Date().getTime();
 
@@ -977,7 +1222,7 @@
         window.appConfig.stages[window.appConfig.currentStage].init()
       } else {
         if (window.appConfig.pause === false) {
-          activeTransforms.length > 0 && activeTransforms.forEach(t => {
+          window.appConfig.activeTransforms.length > 0 && window.appConfig.activeTransforms.forEach(t => {
             if (window.appConfig.stages[window.appConfig.currentStage].transforms[t].r && window.appConfig.stages[window.appConfig.currentStage][t]) {
               window.appConfig.stages[window.appConfig.currentStage][t].rotation.x += window.appConfig.stages[window.appConfig.currentStage].transforms[t].r.x
               window.appConfig.stages[window.appConfig.currentStage][t].rotation.y += window.appConfig.stages[window.appConfig.currentStage].transforms[t].r.y
@@ -1057,14 +1302,22 @@
         ) {
           console.log("ACTIVE!!!");
           const scaleV = 0.25;
+          let newVelocity = new THREE.Vector3(
+            window.appConfig.diffX * scaleV,
+            window.appConfig.diffY * -scaleV,
+            // Math.abs(window.appConfig.diffX * scaleV) < 25 ? window.appConfig.diffX * scaleV : 25,
+            // Math.abs(window.appConfig.diffY * -scaleV) < 25 ? window.appConfig.diffY * -scaleV : -25,
+            0
+          )
+          const speedClamp = 50
+          const newVelocityLength = newVelocity.length()
+          if(newVelocityLength > speedClamp) {
+//            debugger
+            newVelocity = newVelocity.multiplyScalar(speedClamp / newVelocityLength)
+          }
+          console.log(newVelocity)
           sphere
-            .setLinearVelocity(
-              new THREE.Vector3(
-                window.appConfig.diffX * scaleV,
-                window.appConfig.diffY * -scaleV,
-                0
-              )
-            );
+            .setLinearVelocity(newVelocity)
         }
       }
 
@@ -1218,6 +1471,13 @@
       document.querySelector("#pause-button").disabled = false;
       const theBall = scene.children.find(c => c.gameName === 'SPHERE0')
       theBall.position.set(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition);
+      window.appConfig.activeTransforms = window.appConfig.stages[window.appConfig.currentStage].defaultTransforms
+      const sphere = scene.children.find(obj => {
+        if (obj.gameName === "SPHERE0" && obj.type === "Mesh") {
+          return obj
+        }
+      })
+      sphere.setLinearVelocity(new THREE.Vector3(0,-10,0))
     };
 
     const pause = () => {
@@ -1243,12 +1503,9 @@
       document.querySelector("#score").innerText = 0
       showHTMLElements([]);
       document.querySelector("#curtain").classList.remove("opacity-0");
-
-      // setTimeout(() => {
-
-      // }, 2000);
       window.appConfig.timer.reset();
       window.appConfig.timer.pause();
+      window.appConfig.activeTransforms = []
     };
 
     window.appConfig.gameModeFunctions = {
