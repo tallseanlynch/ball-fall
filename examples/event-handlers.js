@@ -65,14 +65,22 @@ setTimeout(() => {
       document.addEventListener("click", (e) => {
         e.preventDefault();
         console.log("CLICK", e);
-        const normalized = new THREE.Vector2(e.clientX, e.clientY);
-        clickRay.setFromCamera(normalized.normalize(), camera);
-    
-        console.log(
-          clickRay.intersectObject(
-            scene.children.find((obj) => obj.gameName === "FRONTGLASS")
-          )
-        );
+        const normalized = new THREE.Vector2((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
+        clickRay.setFromCamera(normalized, camera);
+
+        const intersects = clickRay.intersectObjects(
+          scene.children, true
+        )
+        const filteredIntersects = []
+        intersects.forEach(intersect => {
+          if (intersect.object.gameName && intersect.object.gameName !== "FRONTGLASS" && intersect.object.gameName !== "BACKGLASS") {
+            filteredIntersects.push(intersect)
+          } else {
+            filteredIntersects.push(intersect)
+          }
+        })
+        console.log('filteredIntersects', filteredIntersects)
+
         console.log("APPCONFIG", window.appConfig);
       });
     }, 1500)
