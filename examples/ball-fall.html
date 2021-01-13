@@ -50,7 +50,7 @@
         bumperGroup: 0,
         prize: 0
       },
-      currentStage: 'STAGE1'
+      currentStage: 'STAGE0'
     };
 
     const backgroundMusics = [];
@@ -493,20 +493,17 @@
             'STAGE0MINORSTRUCTURE3': { r: { x: 0, y: 0, z: -.001 } }
           },
           teardown: () => {
-            scene.remove(window.appConfig.stages.STAGE0.STAGE0PRIZE0)
-            scene.remove(window.appConfig.stages.STAGE0.STAGE0PRIZE1)
-            scene.remove(window.appConfig.stages.STAGE0.STAGE0PRIZE2)
-            scene.remove(window.appConfig.stages.STAGE0.STAGE0PRIZE3)
-            scene.remove(window.appConfig.stages.STAGE0.STAGE0MAINSTRUCTURE)
-            scene.remove(window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE)
-            scene.remove(window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE1)
-            scene.remove(window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE2)
-            scene.remove(window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE3)
+            console.log(scene.children.length)
             // remove all coins
+            const uuidsToRemove = []
             scene.children.forEach(c => {
-              if (c.name && c.name.indexOf('STAGE0') > -1) {
-                scene.remove(c)
+              if ((c.name.indexOf('STAGE0') > -1) || (c.featureType && c.featureType === "COIN")) {
+                uuidsToRemove.push(c.uuid)
               }
+            })
+            uuidsToRemove.forEach(uuid => {
+              const foundIt = scene.children.find(c => c.uuid === uuid)
+              scene.remove(foundIt)
             })
             window.appConfig.stages.STAGE0.data.started = false
           },
@@ -711,6 +708,7 @@
             window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE2")
             window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE3")
             window.appConfig.stages.STAGE0.data.started = true
+            console.error(scene.children.length)
           }
         },
         STAGE1: {
@@ -1554,7 +1552,7 @@
         window.appConfig.score.coins;
       document.querySelector("#report-score").innerText =
         stageScore;
-      showHTMLElements(["report"]);
+      showHTMLElements(["report", "tinted-overlay"]);
       centerElement({ id: "report", offsetTop: 0, offsetLeft: 0 });
       document.querySelector("#pause-button").disabled = true;
 
@@ -1621,25 +1619,25 @@
       pause: pause
     }
     const showLevelSelect = () => {
-      showHTMLElements(["level-select"]);
+      showHTMLElements(["level-select", "tinted-overlay"]);
       centerElement({ id: "level-select", offsetTop: 0, offsetLeft: 0 });
     };
     const showSounds = () => {
-      showHTMLElements(["sounds"]);
+      showHTMLElements(["sounds", "tinted-overlay"]);
       centerElement({ id: "sounds", offsetTop: 0, offsetLeft: 0 });
     };
     const showCredits = () => {
-      showHTMLElements(["credits-menu"]);
+      showHTMLElements(["credits-menu", "tinted-overlay"]);
       centerElement({ id: "credits-menu", offsetTop: 0, offsetLeft: 0 });
     };
     const showStart = () => {
-      showHTMLElements(["start-menu", "title", "start-button"]);
+      showHTMLElements(["start-menu", "title", "start-button", "tinted-overlay"]);
       centerElement({ id: "start-button", offsetTop: 0, offsetLeft: 0 });
       centerElement({ id: "title", offsetTop: "-25%", offsetLeft: 0 });
       centerElement({ id: "start-menu", offsetTop: "25%", offsetLeft: 0 });
     };
     const showPauseMenu = () => {
-      showHTMLElements(["pause-button", "pause-menu", "game-scoreboard"]);
+      showHTMLElements(["pause-button", "pause-menu", "game-scoreboard", "tinted-overlay"]);
       centerElement({ id: "pause-menu", offsetTop: 0, offsetLeft: 0 });
     };
     const showGameMode = () => {
@@ -1714,6 +1712,7 @@
       "credits-menu",
       "start-button",
       "pause-button",
+      "tinted-overlay"
     ];
     const showHTMLElements = (elements) => {
       // elements is an array of id strings
@@ -1733,6 +1732,7 @@
 
 <body>
   <div id="viewport"></div>
+  <div id="tinted-overlay"></div>
   <div id="game-scoreboard" class="hide">
     <div id="timer"></div>
     <div id="score"></div>
