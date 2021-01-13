@@ -1460,22 +1460,23 @@
         sphere
           .setAngularVelocity(new THREE.Vector3(0, 0, 0));
       }
-
+      const sphereLinearVelocityLength = sphere.getLinearVelocity().length()
+      const xCoinMod = 2 + sphereLinearVelocityLength * .03
+      const yCoinMod = 3 + sphereLinearVelocityLength * .03
       let coinIndexToRemove = undefined;
       const potentiallyGrabbedCoin = window.appConfig.coins.find(
         (coin, coinIndex) => {
           coinIndexToRemove = coinIndex;
           if (
             Math.abs(coin.position.x - sphere.position.x) <
-            coin.scale.x * 2 &&
-            Math.abs(coin.position.y - sphere.position.y) < coin.scale.x * 3) {
+            coin.scale.x * xCoinMod &&
+            Math.abs(coin.position.y - sphere.position.y) < coin.scale.x * yCoinMod) {
             return true
           } else return false;
         }
       );
 
       if (potentiallyGrabbedCoin) {
-        console.log(potentiallyGrabbedCoin)
         const coinValue = potentiallyGrabbedCoin.coinValue
         const prizeValue = potentiallyGrabbedCoin.prizeValue
         if (coinValue > 0) {
