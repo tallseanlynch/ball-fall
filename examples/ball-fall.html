@@ -1187,6 +1187,8 @@
         sphere.addEventListener("collision", handleCollision);
         sphere.gameName = "SPHERE0";
         sphere.name = "SPHERE0";
+        sphere.setCcdMotionThreshold(.5)
+        sphere.setCcdSweptSphereRadius(1)
         scene.add(sphere);
       };
       return () => {
