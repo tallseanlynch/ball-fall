@@ -50,7 +50,7 @@
         bumperGroup: 0,
         prize: 0
       },
-      currentStage: 'STAGE0'
+      currentStage: 'STAGE2'
     };
 
     const backgroundMusics = [];
@@ -460,6 +460,28 @@
         window.appConfig.itemAmounts.crystalLine++
       };
 
+      const teardownStage = (stage) => {
+        // remove all coins
+        const uuidsToRemove = []
+        scene.children.forEach(c => {
+          if ((c.name.indexOf(stage) > -1) || (c.featureType && c.featureType === "COIN")) {
+            uuidsToRemove.push(c.uuid)
+          }
+        })
+        uuidsToRemove.forEach(uuid => {
+          const foundIt = scene.children.find(c => c.uuid === uuid)
+          scene.remove(foundIt)
+        })
+      }
+      const registerStageObject = (stage, object) => {
+        if (typeof object === 'object') {
+          window.appConfig.stages[stage][object.name] = object
+        } else if (typeof object === 'string') {
+          const theObject = scene.children.find((obj) => obj.name === object)
+          window.appConfig.stages[stage][theObject.name] = theObject
+        }
+
+      }
       // start stage 0
       window.appConfig.stages = {
         STAGE0: {
@@ -493,18 +515,7 @@
             'STAGE0MINORSTRUCTURE3': { r: { x: 0, y: 0, z: -.001 } }
           },
           teardown: () => {
-            console.log(scene.children.length)
-            // remove all coins
-            const uuidsToRemove = []
-            scene.children.forEach(c => {
-              if ((c.name.indexOf('STAGE0') > -1) || (c.featureType && c.featureType === "COIN")) {
-                uuidsToRemove.push(c.uuid)
-              }
-            })
-            uuidsToRemove.forEach(uuid => {
-              const foundIt = scene.children.find(c => c.uuid === uuid)
-              scene.remove(foundIt)
-            })
+            teardownStage('STAGE0')
             window.appConfig.stages.STAGE0.data.started = false
           },
           init: () => {
@@ -564,18 +575,21 @@
               "STAGE0MAINSTRUCTURE"
             );
             scene.add(stage0MainBeamStructure);
+            registerStageObject("STAGE0", stage0MainBeamStructure)
             const stage0MainBeamStructure1 = createStage0MainBeamStructure(
               4,
               0,
               "STAGE0MAINSTRUCTURE1"
             );
             scene.add(stage0MainBeamStructure1);
+            registerStageObject("STAGE0", stage0MainBeamStructure1)
             const stage0MainBeamStructure2 = createStage0MainBeamStructure(
               8,
               0.525,
               "STAGE0MAINSTRUCTURE2"
             );
             scene.add(stage0MainBeamStructure2);
+            registerStageObject("STAGE0", stage0MainBeamStructure2)
             const stage0MinorBeamStructure = createStage0MainBeamStructure(
               1,
               -0.5,
@@ -583,6 +597,7 @@
               { x: 45, y: 45 }
             );
             scene.add(stage0MinorBeamStructure);
+            registerStageObject("STAGE0", stage0MinorBeamStructure)
             const stage0MinorBeamStructure1 = createStage0MainBeamStructure(
               1,
               -0.5,
@@ -590,6 +605,7 @@
               { x: 45, y: -45 }
             );
             scene.add(stage0MinorBeamStructure1);
+            registerStageObject("STAGE0", stage0MinorBeamStructure1)
             const stage0MinorBeamStructure2 = createStage0MainBeamStructure(
               1,
               -0.5,
@@ -597,6 +613,7 @@
               { x: -45, y: -45 }
             );
             scene.add(stage0MinorBeamStructure2);
+            registerStageObject("STAGE0", stage0MinorBeamStructure2)
             const stage0MinorBeamStructure3 = createStage0MainBeamStructure(
               1,
               -0.5,
@@ -604,6 +621,7 @@
               { x: -45, y: 45 }
             );
             scene.add(stage0MinorBeamStructure3);
+            registerStageObject("STAGE0", stage0MinorBeamStructure3)
 
             const prize0Group = new THREE.Group();
             const prize0 = new THREE.Mesh(
@@ -651,6 +669,10 @@
             scene.add(prize1Group)
             scene.add(prize2Group)
             scene.add(prize3Group)
+            registerStageObject('STAGE0', "STAGE0PRIZE0")
+            registerStageObject('STAGE0', prize1Group)
+            registerStageObject('STAGE0', prize2Group)
+            registerStageObject('STAGE0', prize3Group)
             prize0Group.prizeValue = 10
             prize1Group.prizeValue = 10
             prize2Group.prizeValue = 20
@@ -698,20 +720,11 @@
             createCrystalLine('STAGE0', 5, { x: -22.5, y: 54.5 }, 0, 10, "x");
             // end stage 0
 
-            window.appConfig.stages.STAGE0.STAGE0PRIZE0 = scene.children.find((obj) => obj.name === "STAGE0PRIZE0")
-            window.appConfig.stages.STAGE0.STAGE0PRIZE1 = scene.children.find((obj) => obj.name === "STAGE0PRIZE1")
-            window.appConfig.stages.STAGE0.STAGE0PRIZE2 = scene.children.find((obj) => obj.name === "STAGE0PRIZE2")
-            window.appConfig.stages.STAGE0.STAGE0PRIZE3 = scene.children.find((obj) => obj.name === "STAGE0PRIZE3")
-            window.appConfig.stages.STAGE0.STAGE0MAINSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MAINSTRUCTURE")
-            window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE")
-            window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE1")
-            window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE2")
-            window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE3")
             window.appConfig.stages.STAGE0.data.started = true
             console.error(scene.children.length)
           }
         },
-        STAGE1: {
+        STAGE2: {
           data: {
             started: false,
             xAdj: -60,
@@ -720,70 +733,47 @@
             startingPosition: new THREE.Vector3(0, 0, 0)
           },
           defaultTransforms: [
-            'STAGE1MAINSTRUCTURE',
-            'STAGE1MAINSTRUCTURE1',
-            'STAGE1MINORSTRUCTURE',
-            'STAGE1MINORSTRUCTURE1',
-            'STAGE1MINORSTRUCTURE2',
-            'STAGE1MINORSTRUCTURE3',
-            'STAGE1MINORSTRUCTURE4',
-            'STAGE1MINORSTRUCTURE5',
-            'STAGE1MINORSTRUCTURE6',
-            'STAGE1MINORSTRUCTURE7',
-            'STAGE1MINORSTRUCTURE8',
-            'STAGE1MINORSTRUCTURE9',
-            'STAGE1MINORSTRUCTURE10',
-            'STAGE1MINORSTRUCTURE11'
+            'STAGE2MAINSTRUCTURE',
+            'STAGE2MAINSTRUCTURE1',
+            'STAGE2MINORSTRUCTURE',
+            'STAGE2MINORSTRUCTURE1',
+            'STAGE2MINORSTRUCTURE2',
+            'STAGE2MINORSTRUCTURE3',
+            'STAGE2MINORSTRUCTURE4',
+            'STAGE2MINORSTRUCTURE5',
+            'STAGE2MINORSTRUCTURE6',
+            'STAGE2MINORSTRUCTURE7',
+            'STAGE2MINORSTRUCTURE8',
+            'STAGE2MINORSTRUCTURE9',
+            'STAGE2MINORSTRUCTURE10',
+            'STAGE2MINORSTRUCTURE11'
           ],
           transforms: {
-            'STAGE1PRIZE0': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE1PRIZE1': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE1PRIZE2': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE1PRIZE3': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE1MAINSTRUCTURE': { r: { x: 0, y: 0, z: .005 } },
-            'STAGE1MAINSTRUCTURE1': { r: { x: 0, y: 0, z: -.004 } },
-            'STAGE1MINORSTRUCTURE': { r: { x: 0, y: 0, z: -.005 } },
-            'STAGE1MINORSTRUCTURE1': { r: { x: 0, y: 0, z: -.005 } },
-            'STAGE1MINORSTRUCTURE2': { r: { x: 0, y: 0, z: -.005 } },
-            'STAGE1MINORSTRUCTURE3': { r: { x: 0, y: 0, z: -.005 } },
-            'STAGE1MINORSTRUCTURE4': { r: { x: 0, y: 0, z: -.005 } },
-            'STAGE1MINORSTRUCTURE5': { r: { x: 0, y: 0, z: -.005 } },
-            'STAGE1MINORSTRUCTURE6': { r: { x: 0, y: 0, z: -.005 } },
-            'STAGE1MINORSTRUCTURE7': { r: { x: 0, y: 0, z: -.005 } },
-            'STAGE1MINORSTRUCTURE8': { r: { x: 0, y: 0, z: .005 } },
-            'STAGE1MINORSTRUCTURE9': { r: { x: 0, y: 0, z: .005 } },
-            'STAGE1MINORSTRUCTURE10': { r: { x: 0, y: 0, z: .005 } },
-            'STAGE1MINORSTRUCTURE11': { r: { x: 0, y: 0, z: .005 } }
+            'STAGE2PRIZE0': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE2PRIZE1': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE2PRIZE2': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE2PRIZE3': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE2MAINSTRUCTURE': { r: { x: 0, y: 0, z: .005 } },
+            'STAGE2MAINSTRUCTURE1': { r: { x: 0, y: 0, z: -.004 } },
+            'STAGE2MINORSTRUCTURE': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE2MINORSTRUCTURE1': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE2MINORSTRUCTURE2': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE2MINORSTRUCTURE3': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE2MINORSTRUCTURE4': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE2MINORSTRUCTURE5': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE2MINORSTRUCTURE6': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE2MINORSTRUCTURE7': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE2MINORSTRUCTURE8': { r: { x: 0, y: 0, z: .005 } },
+            'STAGE2MINORSTRUCTURE9': { r: { x: 0, y: 0, z: .005 } },
+            'STAGE2MINORSTRUCTURE10': { r: { x: 0, y: 0, z: .005 } },
+            'STAGE2MINORSTRUCTURE11': { r: { x: 0, y: 0, z: .005 } }
           },
           teardown: () => {
-            scene.remove(window.appConfig.stages.STAGE1.STAGE1PRIZE0)
-            scene.remove(window.appConfig.stages.STAGE1.STAGE1PRIZE1)
-            scene.remove(window.appConfig.stages.STAGE1.STAGE1PRIZE2)
-            scene.remove(window.appConfig.stages.STAGE1.STAGE1PRIZE3)
-            scene.remove(window.appConfig.stages.STAGE1.STAGE1MAINSTRUCTURE)
-            scene.remove(window.appConfig.stages.STAGE1.STAGE1MAINSTRUCTURE1)
-            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE)
-            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE1)
-            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE2)
-            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE3)
-            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE4)
-            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE5)
-            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE6)
-            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE7)
-            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE8)
-            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE9)
-            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE10)
-            scene.remove(window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE11)
-            // remove all coins
-            scene.children.forEach(c => {
-              if (c.name && c.name.indexOf('STAGE1') > -1) {
-                scene.remove(c)
-              }
-            })
-            window.appConfig.stages.STAGE1.data.started = false
+            teardownStage('STAGE2')
+            window.appConfig.stages.STAGE2.data.started = false
           },
           init: () => {
-            const createStage1MainBeamStructure = (
+            const createSTAGE2MainBeamStructure = (
               scale,
               scaleAdj = 0,
               name,
@@ -833,109 +823,109 @@
               return mainStructure;
             };
 
-            const stage1MainBeamStructure = createStage1MainBeamStructure(
+            const STAGE2MainBeamStructure = createSTAGE2MainBeamStructure(
               2,
               0,
-              "STAGE1MAINSTRUCTURE"
+              "STAGE2MAINSTRUCTURE"
             );
-            scene.add(stage1MainBeamStructure);
-            const stage1MainBeamStructure1 = createStage1MainBeamStructure(
+            scene.add(STAGE2MainBeamStructure);
+            const STAGE2MainBeamStructure1 = createSTAGE2MainBeamStructure(
               3,
               0,
-              "STAGE1MAINSTRUCTURE1"
+              "STAGE2MAINSTRUCTURE1"
             );
-            scene.add(stage1MainBeamStructure1);
-            const stage1MainBeamStructure2 = createStage1MainBeamStructure(
+            scene.add(STAGE2MainBeamStructure1);
+            const STAGE2MainBeamStructure2 = createSTAGE2MainBeamStructure(
               8,
               0.525,
-              "STAGE1MAINSTRUCTURE2"
+              "STAGE2MAINSTRUCTURE2"
             );
-            scene.add(stage1MainBeamStructure2);
-            const stage1MinorBeamStructure = createStage1MainBeamStructure(
+            scene.add(STAGE2MainBeamStructure2);
+            const STAGE2MinorBeamStructure = createSTAGE2MainBeamStructure(
               1,
               -0.5,
-              "STAGE1MINORSTRUCTURE",
+              "STAGE2MINORSTRUCTURE",
               { x: 45, y: 45 }
             );
-            scene.add(stage1MinorBeamStructure);
-            const stage1MinorBeamStructure1 = createStage1MainBeamStructure(
+            scene.add(STAGE2MinorBeamStructure);
+            const STAGE2MinorBeamStructure1 = createSTAGE2MainBeamStructure(
               1,
               -0.5,
-              "STAGE1MINORSTRUCTURE1",
+              "STAGE2MINORSTRUCTURE1",
               { x: 45, y: -45 }
             );
-            scene.add(stage1MinorBeamStructure1);
-            const stage1MinorBeamStructure2 = createStage1MainBeamStructure(
+            scene.add(STAGE2MinorBeamStructure1);
+            const STAGE2MinorBeamStructure2 = createSTAGE2MainBeamStructure(
               1,
               -0.5,
-              "STAGE1MINORSTRUCTURE2",
+              "STAGE2MINORSTRUCTURE2",
               { x: -45, y: -45 }
             );
-            scene.add(stage1MinorBeamStructure2);
-            const stage1MinorBeamStructure3 = createStage1MainBeamStructure(
+            scene.add(STAGE2MinorBeamStructure2);
+            const STAGE2MinorBeamStructure3 = createSTAGE2MainBeamStructure(
               1,
               -0.5,
-              "STAGE1MINORSTRUCTURE3",
+              "STAGE2MINORSTRUCTURE3",
               { x: -45, y: 45 }
             );
-            scene.add(stage1MinorBeamStructure3);
+            scene.add(STAGE2MinorBeamStructure3);
             //now im going to put a bunch of minor structures in there
-            const stage1MinorBeamStructure4 = createStage1MainBeamStructure(
+            const STAGE2MinorBeamStructure4 = createSTAGE2MainBeamStructure(
               1,
               -0.5,
-              "STAGE1MINORSTRUCTURE4",
+              "STAGE2MINORSTRUCTURE4",
               { x: -45, y: 0 }
             );
-            scene.add(stage1MinorBeamStructure4);
-            const stage1MinorBeamStructure5 = createStage1MainBeamStructure(
+            scene.add(STAGE2MinorBeamStructure4);
+            const STAGE2MinorBeamStructure5 = createSTAGE2MainBeamStructure(
               1,
               -0.5,
-              "STAGE1MINORSTRUCTURE5",
+              "STAGE2MINORSTRUCTURE5",
               { x: 45, y: 0 }
             );
-            scene.add(stage1MinorBeamStructure5);
-            const stage1MinorBeamStructure6 = createStage1MainBeamStructure(
+            scene.add(STAGE2MinorBeamStructure5);
+            const STAGE2MinorBeamStructure6 = createSTAGE2MainBeamStructure(
               1,
               -0.5,
-              "STAGE1MINORSTRUCTURE6",
+              "STAGE2MINORSTRUCTURE6",
               { x: 0, y: -45 }
             );
-            scene.add(stage1MinorBeamStructure6);
-            const stage1MinorBeamStructure7 = createStage1MainBeamStructure(
+            scene.add(STAGE2MinorBeamStructure6);
+            const STAGE2MinorBeamStructure7 = createSTAGE2MainBeamStructure(
               1,
               -0.5,
-              "STAGE1MINORSTRUCTURE7",
+              "STAGE2MINORSTRUCTURE7",
               { x: 0, y: 45 }
             );
-            scene.add(stage1MinorBeamStructure7);
-            const stage1MinorBeamStructure8 = createStage1MainBeamStructure(
+            scene.add(STAGE2MinorBeamStructure7);
+            const STAGE2MinorBeamStructure8 = createSTAGE2MainBeamStructure(
               1,
               -0.5,
-              "STAGE1MINORSTRUCTURE8",
+              "STAGE2MINORSTRUCTURE8",
               { x: 27.5, y: 27.5 }
             );
-            scene.add(stage1MinorBeamStructure8);
-            const stage1MinorBeamStructure9 = createStage1MainBeamStructure(
+            scene.add(STAGE2MinorBeamStructure8);
+            const STAGE2MinorBeamStructure9 = createSTAGE2MainBeamStructure(
               1,
               -0.5,
-              "STAGE1MINORSTRUCTURE9",
+              "STAGE2MINORSTRUCTURE9",
               { x: -27.5, y: 27.5 }
             );
-            scene.add(stage1MinorBeamStructure9);
-            const stage1MinorBeamStructure10 = createStage1MainBeamStructure(
+            scene.add(STAGE2MinorBeamStructure9);
+            const STAGE2MinorBeamStructure10 = createSTAGE2MainBeamStructure(
               1,
               -0.5,
-              "STAGE1MINORSTRUCTURE10",
+              "STAGE2MINORSTRUCTURE10",
               { x: 27.5, y: -27.5 }
             );
-            scene.add(stage1MinorBeamStructure10);
-            const stage1MinorBeamStructure11 = createStage1MainBeamStructure(
+            scene.add(STAGE2MinorBeamStructure10);
+            const STAGE2MinorBeamStructure11 = createSTAGE2MainBeamStructure(
               1,
               -0.5,
-              "STAGE1MINORSTRUCTURE11",
+              "STAGE2MINORSTRUCTURE11",
               { x: -27.5, y: -27.5 }
             );
-            scene.add(stage1MinorBeamStructure11);
+            scene.add(STAGE2MinorBeamStructure11);
 
 
 
@@ -957,7 +947,7 @@
               new THREE.ConeGeometry(1, -1, 8),
               new THREE.MeshPhongMaterial()
             )
-            prize0Group.name = 'STAGE1PRIZE0'
+            prize0Group.name = 'STAGE2PRIZE0'
             prize0Group.debugTypeIndex = window.appConfig.itemAmounts.prize
             prize0Group.debugType = 'PRIZE'
             prize0Group.debugName = 'PRIZE' + window.appConfig.itemAmounts.prize
@@ -984,9 +974,9 @@
             prize2Group.position.set(-45, -45, 0)
             const prize3Group = prize0Group.clone()
             prize3Group.position.set(-45, 45, 0)
-            prize1Group.name = 'STAGE1PRIZE1'
-            prize2Group.name = 'STAGE1PRIZE2'
-            prize3Group.name = 'STAGE1PRIZE3'
+            prize1Group.name = 'STAGE2PRIZE1'
+            prize2Group.name = 'STAGE2PRIZE2'
+            prize3Group.name = 'STAGE2PRIZE3'
             scene.add(prize1Group)
             scene.add(prize2Group)
             scene.add(prize3Group)
@@ -1001,61 +991,62 @@
             coins.push(prize2Group);
             coins.push(prize3Group);
 
-            createCrystalCross('STAGE1', 5);
-            createCrystalCross('STAGE1', 10);
-            createCrystalCross('STAGE1', 5, { x: 20, y: 20 }, 1);
-            createCrystalCross('STAGE1', 5, { x: -20, y: 20 }, 1);
-            createCrystalCross('STAGE1', 5, { x: -20, y: -20 }, 1);
-            createCrystalCross('STAGE1', 5, { x: 20, y: -20 }, 1);
-            createCrystalCross('STAGE1', 3, { x: 55, y: 55 }, 0);
-            createCrystalCross('STAGE1', 3, { x: 35, y: 55 }, 0);
-            createCrystalCross('STAGE1', 3, { x: 35, y: 35 }, 0);
-            createCrystalCross('STAGE1', 3, { x: 55, y: 35 }, 0);
-            createCrystalCross('STAGE1', 3, { x: 55, y: -55 }, 0);
-            createCrystalCross('STAGE1', 3, { x: 35, y: -55 }, 0);
-            createCrystalCross('STAGE1', 3, { x: 35, y: -35 }, 0);
-            createCrystalCross('STAGE1', 3, { x: 55, y: -35 }, 0);
-            createCrystalCross('STAGE1', 3, { x: -55, y: -55 }, 0);
-            createCrystalCross('STAGE1', 3, { x: -35, y: -55 }, 0);
-            createCrystalCross('STAGE1', 3, { x: -35, y: -35 }, 0);
-            createCrystalCross('STAGE1', 3, { x: -55, y: -35 }, 0);
-            createCrystalCross('STAGE1', 3, { x: -55, y: 55 }, 0);
-            createCrystalCross('STAGE1', 3, { x: -35, y: 55 }, 0);
-            createCrystalCross('STAGE1', 3, { x: -35, y: 35 }, 0);
-            createCrystalCross('STAGE1', 3, { x: -55, y: 35 }, 0);
-            createCrystalLine('STAGE1', 10, { x: -47.5, y: -20 }, 2, 5, "y");
-            createCrystalLine('STAGE1', 5, { x: 54.5, y: -22 }, 0, 10, "y");
-            createCrystalLine('STAGE1', 5, { x: 40.5, y: -22.5 }, 0, 10, "y");
-            createCrystalLine('STAGE1', 10, { x: 47.5, y: -20 }, 2, 5, "y");
-            createCrystalLine('STAGE1', 5, { x: -54.5, y: -22 }, 0, 10, "y");
-            createCrystalLine('STAGE1', 5, { x: -40.5, y: -22.5 }, 0, 10, "y");
-            createCrystalLine('STAGE1', 10, { x: -20, y: -47.5 }, 2, 5, "x");
-            createCrystalLine('STAGE1', 5, { x: -22.5, y: -40 }, 0, 10, "x");
-            createCrystalLine('STAGE1', 5, { x: -22.5, y: -54.5 }, 0, 10, "x");
-            createCrystalLine('STAGE1', 10, { x: -20, y: 47.5 }, 2, 5, "x");
-            createCrystalLine('STAGE1', 5, { x: -22.5, y: 40 }, 0, 10, "x");
-            createCrystalLine('STAGE1', 5, { x: -22.5, y: 54.5 }, 0, 10, "x");
+            createCrystalCross('STAGE2', 5);
+            createCrystalCross('STAGE2', 10);
+            createCrystalCross('STAGE2', 5, { x: 20, y: 20 }, 1);
+            createCrystalCross('STAGE2', 5, { x: -20, y: 20 }, 1);
+            createCrystalCross('STAGE2', 5, { x: -20, y: -20 }, 1);
+            createCrystalCross('STAGE2', 5, { x: 20, y: -20 }, 1);
+            createCrystalCross('STAGE2', 3, { x: 55, y: 55 }, 0);
+            createCrystalCross('STAGE2', 3, { x: 35, y: 55 }, 0);
+            createCrystalCross('STAGE2', 3, { x: 35, y: 35 }, 0);
+            createCrystalCross('STAGE2', 3, { x: 55, y: 35 }, 0);
+            createCrystalCross('STAGE2', 3, { x: 55, y: -55 }, 0);
+            createCrystalCross('STAGE2', 3, { x: 35, y: -55 }, 0);
+            createCrystalCross('STAGE2', 3, { x: 35, y: -35 }, 0);
+            createCrystalCross('STAGE2', 3, { x: 55, y: -35 }, 0);
+            createCrystalCross('STAGE2', 3, { x: -55, y: -55 }, 0);
+            createCrystalCross('STAGE2', 3, { x: -35, y: -55 }, 0);
+            createCrystalCross('STAGE2', 3, { x: -35, y: -35 }, 0);
+            createCrystalCross('STAGE2', 3, { x: -55, y: -35 }, 0);
+            createCrystalCross('STAGE2', 3, { x: -55, y: 55 }, 0);
+            createCrystalCross('STAGE2', 3, { x: -35, y: 55 }, 0);
+            createCrystalCross('STAGE2', 3, { x: -35, y: 35 }, 0);
+            createCrystalCross('STAGE2', 3, { x: -55, y: 35 }, 0);
+            createCrystalLine('STAGE2', 10, { x: -47.5, y: -20 }, 2, 5, "y");
+            createCrystalLine('STAGE2', 5, { x: 54.5, y: -22 }, 0, 10, "y");
+            createCrystalLine('STAGE2', 5, { x: 40.5, y: -22.5 }, 0, 10, "y");
+            createCrystalLine('STAGE2', 10, { x: 47.5, y: -20 }, 2, 5, "y");
+            createCrystalLine('STAGE2', 5, { x: -54.5, y: -22 }, 0, 10, "y");
+            createCrystalLine('STAGE2', 5, { x: -40.5, y: -22.5 }, 0, 10, "y");
+            createCrystalLine('STAGE2', 10, { x: -20, y: -47.5 }, 2, 5, "x");
+            createCrystalLine('STAGE2', 5, { x: -22.5, y: -40 }, 0, 10, "x");
+            createCrystalLine('STAGE2', 5, { x: -22.5, y: -54.5 }, 0, 10, "x");
+            createCrystalLine('STAGE2', 10, { x: -20, y: 47.5 }, 2, 5, "x");
+            createCrystalLine('STAGE2', 5, { x: -22.5, y: 40 }, 0, 10, "x");
+            createCrystalLine('STAGE2', 5, { x: -22.5, y: 54.5 }, 0, 10, "x");
             // end stage 1
 
-            window.appConfig.stages.STAGE1.STAGE1PRIZE0 = scene.children.find((obj) => obj.name === "STAGE1PRIZE0")
-            window.appConfig.stages.STAGE1.STAGE1PRIZE1 = scene.children.find((obj) => obj.name === "STAGE1PRIZE1")
-            window.appConfig.stages.STAGE1.STAGE1PRIZE2 = scene.children.find((obj) => obj.name === "STAGE1PRIZE2")
-            window.appConfig.stages.STAGE1.STAGE1PRIZE3 = scene.children.find((obj) => obj.name === "STAGE1PRIZE3")
-            window.appConfig.stages.STAGE1.STAGE1MAINSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE1MAINSTRUCTURE")
-            window.appConfig.stages.STAGE1.STAGE1MAINSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE1MAINSTRUCTURE1")
-            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE")
-            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE1")
-            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE2")
-            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE3")
-            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE4 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE4")
-            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE5 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE5")
-            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE6 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE6")
-            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE7 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE7")
-            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE8 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE8")
-            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE9 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE9")
-            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE10 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE10")
-            window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE11 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE11")
-            window.appConfig.stages.STAGE1.data.started = true
+            window.appConfig.stages.STAGE2.STAGE2PRIZE0 = scene.children.find((obj) => obj.name === "STAGE2PRIZE0")
+            window.appConfig.stages.STAGE2.STAGE2PRIZE1 = scene.children.find((obj) => obj.name === "STAGE2PRIZE1")
+            window.appConfig.stages.STAGE2.STAGE2PRIZE2 = scene.children.find((obj) => obj.name === "STAGE2PRIZE2")
+            window.appConfig.stages.STAGE2.STAGE2PRIZE3 = scene.children.find((obj) => obj.name === "STAGE2PRIZE3")
+            window.appConfig.stages.STAGE2.STAGE2MAINSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE2MAINSTRUCTURE")
+            window.appConfig.stages.STAGE2.STAGE2MAINSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE2MAINSTRUCTURE1")
+            window.appConfig.stages.STAGE2.STAGE2MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE2MINORSTRUCTURE")
+            window.appConfig.stages.STAGE2.STAGE2MINORSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE2MINORSTRUCTURE1")
+            window.appConfig.stages.STAGE2.STAGE2MINORSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE2MINORSTRUCTURE2")
+            window.appConfig.stages.STAGE2.STAGE2MINORSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE2MINORSTRUCTURE3")
+            window.appConfig.stages.STAGE2.STAGE2MINORSTRUCTURE4 = scene.children.find((obj) => obj.name === "STAGE2MINORSTRUCTURE4")
+            window.appConfig.stages.STAGE2.STAGE2MINORSTRUCTURE5 = scene.children.find((obj) => obj.name === "STAGE2MINORSTRUCTURE5")
+            window.appConfig.stages.STAGE2.STAGE2MINORSTRUCTURE6 = scene.children.find((obj) => obj.name === "STAGE2MINORSTRUCTURE6")
+            window.appConfig.stages.STAGE2.STAGE2MINORSTRUCTURE7 = scene.children.find((obj) => obj.name === "STAGE2MINORSTRUCTURE7")
+            window.appConfig.stages.STAGE2.STAGE2MINORSTRUCTURE8 = scene.children.find((obj) => obj.name === "STAGE2MINORSTRUCTURE8")
+            window.appConfig.stages.STAGE2.STAGE2MINORSTRUCTURE9 = scene.children.find((obj) => obj.name === "STAGE2MINORSTRUCTURE9")
+            window.appConfig.stages.STAGE2.STAGE2MINORSTRUCTURE10 = scene.children.find((obj) => obj.name === "STAGE2MINORSTRUCTURE10")
+            window.appConfig.stages.STAGE2.STAGE2MINORSTRUCTURE11 = scene.children.find((obj) => obj.name === "STAGE2MINORSTRUCTURE11")
+            window.appConfig.stages.STAGE2.data.started = true
+            console.error(scene.children.length)
           }
         }
       }
@@ -1739,13 +1730,18 @@
   </div>
   <div id="sounds" class="hide">
     <div id="sounds-title" class="menu-title-text">Sounds</div>
-
-    <div class="menu-big-text">SFX</div>
-    <input value="100" type="range" min="0" max="100" onmouseup="changeSFXVolume(this.value)"
-      ontouchend="changeSFXVolume(this.value)" />
-    <div class="menu-big-text">Music</div>
-    <input value="100" type="range" min="0" max="100" onmouseup="changeMusicVolume(this.value)"
-      ontouchend="changeMusicVolume(this.value)" />
+    <div class="menu-container">
+      <div class="menu-big-text">
+        <div class="justify-left">SFX</div>
+        <div class="justify-right range-container"><input value="100" type="range" min="0" max="100"
+            onmouseup="changeSFXVolume(this.value)" ontouchend="changeSFXVolume(this.value)" /></div>
+      </div>
+      <div class="menu-big-text">
+        <div class="justify-left">Music</div>
+        <input class="justify-right" value="100" type="range" min="0" max="100"
+          onmouseup="changeMusicVolume(this.value)" ontouchend="changeMusicVolume(this.value)" />
+      </div>
+    </div>
     <button class="start-menu-button" onClick="goBack()">Back</button>
   </div>
   <div id="credits-menu" class="hide">
@@ -1755,12 +1751,12 @@
       <div class="menu-small-text">Programming Design</div>
     </div>
     <div class="margin-bottom-2">
-      <div class="menu-big-text">Ian Lynch, Sean Lynch</div>
-      <div class="menu-small-text">Programming Design</div>
+      <div class="menu-big-text">Haley Rheinhart, Sean Lynch</div>
+      <div class="menu-small-text">UX Design</div>
     </div class="margin-bottom-2">
     <div>
-      <div class="menu-big-text">Ian Lynch, Sean Lynch</div>
-      <div class="menu-small-text">Programming Design</div>
+      <div class="menu-big-text">Haley Rheinhart</div>
+      <div class="menu-small-text">Music & Sound Design</div>
     </div>
     <button class="start-menu-button" onClick="goBack()">Back</button>
   </div>
