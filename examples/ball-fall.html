@@ -51,7 +51,9 @@
         bumperGroup: 0,
         prize: 0
       },
-      currentStage: 'STAGE1'
+      currentStage: 'STAGE1',
+      stagesArray: ['STAGE0', 'STAGE1'],
+      currentStageIndex: 1
     };
 
     const backgroundMusics = [];
@@ -1415,7 +1417,7 @@
           }
         }
       },
-      stageReset: () => {
+      stageReset: (action) => {
         return {
           started: 0,
           ended: 0,
@@ -1432,6 +1434,15 @@
           },
           completedCallback: (percentComplete) => {
             window.appConfig.stages[window.appConfig.currentStage].teardown()
+
+            if(action && action.action === 'next') {
+              window.appConfig.currentStageIndex++
+              if(window.appConfig.currentStageIndex >= window.appConfig.stagesArray.length) {
+                window.appConfig.currentStageIndex = 0
+              }
+              window.appConfig.currentStage = window.appConfig.stagesArray[window.appConfig.currentStageIndex]
+            }
+
             window.appConfig.gameModeFunctions.start()
             document.querySelector("#curtain").classList.add("opacity-0");
             const restartBallPosition = window.appConfig.stages[window.appConfig.currentStage].data.startingPosition
@@ -1758,8 +1769,8 @@
       }
     };
 
-    const reset = () => {
-      window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageReset())
+    const reset = (action) => {
+      window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageReset(action))
       window.appConfig.results = {}
       window.appConfig.score.coins = 0
       document.querySelector("#score").innerText = 0
