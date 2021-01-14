@@ -988,7 +988,7 @@
               4,
               0,
               "STAGE1MAINSTRUCTURE",
-              { x: 0, y: 10}
+              { x: 0, y: 10 }
             );
             scene.add(stage1MainBeamStructure);
 
@@ -1389,6 +1389,8 @@
         sphere.addEventListener("collision", handleCollision);
         sphere.gameName = "SPHERE0";
         sphere.name = "SPHERE0";
+        sphere.setCcdMotionThreshold(.5)
+        sphere.setCcdSweptSphereRadius(1)
         scene.add(sphere);
       };
       return () => {
@@ -1617,8 +1619,8 @@
           )
           const speedClamp = 50
           const newVelocityLength = newVelocity.length()
-          if(newVelocityLength > speedClamp) {
-//            debugger
+          if (newVelocityLength > speedClamp) {
+            //            debugger
             newVelocity = newVelocity.multiplyScalar(speedClamp / newVelocityLength)
           }
           console.log(newVelocity)
@@ -1660,6 +1662,9 @@
         sphere
           .setAngularVelocity(new THREE.Vector3(0, 0, 0));
       }
+      const sphereLinearVelocityLength = sphere.getLinearVelocity().length()
+      const xCoinMod = 2 + sphereLinearVelocityLength * .03
+      const yCoinMod = 3 + sphereLinearVelocityLength * .03
 
       let coinIndexToRemove = undefined;
       const potentiallyGrabbedCoin = window.appConfig.coins.find(
@@ -1667,8 +1672,8 @@
           coinIndexToRemove = coinIndex;
           if (
             Math.abs(coin.position.x - sphere.position.x) <
-            coin.scale.x * 2 &&
-            Math.abs(coin.position.y - sphere.position.y) < coin.scale.x * 3) {
+            coin.scale.x * xCoinMod &&
+            Math.abs(coin.position.y - sphere.position.y) < coin.scale.x * yCoinMod) {
             return true
           } else return false;
         }
@@ -1783,7 +1788,7 @@
           return obj
         }
       })
-      sphere.setLinearVelocity(new THREE.Vector3(0,-10,0))
+      sphere.setLinearVelocity(new THREE.Vector3(0, -10, 0))
     };
 
     const pause = () => {
@@ -1931,146 +1936,146 @@
   </script>
 </head>
 
-  <body>
-    <div class="debug hide">
-    </div>
-    <div id="viewport"></div>
-    <div id="tinted-overlay"></div>
-    <div id="game-scoreboard" class="hide">
-      <div id="timer"></div>
-      <div id="score"></div>
-    </div>
-    <div id="sounds" class="hide">
-      <div id="sounds-title" class="menu-title-text">Sounds</div>
-      <div class="menu-container">
-        <div class="menu-big-text">
-          <div class="justify-left">SFX</div>
-          <div class="justify-right range-container"><input value="100" type="range" min="0" max="100"
-              onmouseup="changeSFXVolume(this.value)" ontouchend="changeSFXVolume(this.value)" /></div>
-        </div>
-        <div class="menu-big-text">
-          <div class="justify-left">Music</div>
-          <input class="justify-right" value="100" type="range" min="0" max="100"
-            onmouseup="changeMusicVolume(this.value)" ontouchend="changeMusicVolume(this.value)" />
-        </div>
+<body>
+  <div class="debug hide">
+  </div>
+  <div id="viewport"></div>
+  <div id="tinted-overlay"></div>
+  <div id="game-scoreboard" class="hide">
+    <div id="timer"></div>
+    <div id="score"></div>
+  </div>
+  <div id="sounds" class="hide">
+    <div id="sounds-title" class="menu-title-text">Sounds</div>
+    <div class="menu-container">
+      <div class="menu-big-text">
+        <div class="justify-left">SFX</div>
+        <div class="justify-right range-container"><input value="100" type="range" min="0" max="100"
+            onmouseup="changeSFXVolume(this.value)" ontouchend="changeSFXVolume(this.value)" /></div>
       </div>
-      <button class="start-menu-button" onClick="goBack()">Back</button>
-    </div>
-    <div id="credits-menu" class="hide">
-      <div id="credits-title" class="menu-title-text margin-bottom-2">Credits</div>
-      <div class="margin-bottom-2">
-        <div class="menu-big-text">Ian Lynch, Sean Lynch</div>
-        <div class="menu-small-text">Programming Design</div>
-      </div>
-      <div class="margin-bottom-2">
-        <div class="menu-big-text">Haley Rheinhart, Sean Lynch</div>
-        <div class="menu-small-text">UX Design</div>
-      </div class="margin-bottom-2">
-      <div>
-        <div class="menu-big-text">Haley Rheinhart</div>
-        <div class="menu-small-text">Music & Sound Design</div>
-      </div>
-      <button class="start-menu-button" onClick="goBack()">Back</button>
-    </div>
-    <div id="report" class="hide">
-      <table>
-        <tr>
-          <td>Time:</td>
-          <td id="report-time"></td>
-        </tr>
-        <tr>
-          <td>Crystals:</td>
-          <td id="report-coins"></td>
-        </tr>
-        <tr>
-          <td>Score:</td>
-          <td id="report-score"></td>
-        </tr>
-      </table>
-      <div id="report-options">
-        <button id="report-level-select-button" class="start-menu-button" onClick="showLevelSelect()">
-          Level Select
-        </button>
-        <button id="report-reset-button" class="start-menu-button" onClick="reset({action:'reset'})">
-          Try Again
-        </button>
-        <button id="report-reset-button" class="start-menu-button" onClick="reset({action:'next'})">
-          Next Level
-        </button>
+      <div class="menu-big-text">
+        <div class="justify-left">Music</div>
+        <input class="justify-right" value="100" type="range" min="0" max="100"
+          onmouseup="changeMusicVolume(this.value)" ontouchend="changeMusicVolume(this.value)" />
       </div>
     </div>
-    <div id="level-select" class="hide">
-      <div id="level-select-title">Level Select</div>
-      <table>
-        <tr>
-          <td class="level-select-button" onClick="setLevel(1)">1</td>
-          <td class="level-select-button" onClick="setLevel(2)">2</td>
-          <td class="level-select-button" onClick="setLevel(3)">3</td>
-          <td class="level-select-button" onClick="setLevel(4)">4</td>
-          <td class="level-select-button" onClick="setLevel(5)">5</td>
-        </tr>
-        <tr>
-          <td class="level-select-button" onClick="setLevel(6)">6</td>
-          <td class="level-select-button" onClick="setLevel(7)">7</td>
-          <td class="level-select-button" onClick="setLevel(8)">8</td>
-          <td class="level-select-button" onClick="setLevel(9)">9</td>
-          <td class="level-select-button" onClick="setLevel(10)">10</td>
-        </tr>
-        <tr>
-          <td class="level-select-button" onClick="setLevel(11)">11</td>
-          <td class="level-select-button" onClick="setLevel(12)">12</td>
-          <td class="level-select-button" onClick="setLevel(13)">13</td>
-          <td class="level-select-button" onClick="setLevel(14)">14</td>
-          <td class="level-select-button" onClick="setLevel(15)">15</td>
-        </tr>
-        <tr>
-          <td class="level-select-button" onClick="setLevel(16)">16</td>
-          <td class="level-select-button" onClick="setLevel(17)">17</td>
-          <td class="level-select-button" onClick="setLevel(18)">18</td>
-          <td class="level-select-button" onClick="setLevel(19)">19</td>
-          <td class="level-select-button" onClick="setLevel(20)">20</td>
-        </tr>
-        <tr>
-          <td class="level-select-button" onClick="setLevel(21)">21</td>
-          <td class="level-select-button" onClick="setLevel(22)">22</td>
-          <td class="level-select-button" onClick="setLevel(23)">23</td>
-          <td class="level-select-button" onClick="setLevel(24)">24</td>
-          <td class="level-select-button" onClick="setLevel(25)">25</td>
-        </tr>
-      </table>
-      <button class="start-menu-button" onClick="goBack()">Back</button>
+    <button class="start-menu-button" onClick="goBack()">Back</button>
+  </div>
+  <div id="credits-menu" class="hide">
+    <div id="credits-title" class="menu-title-text margin-bottom-2">Credits</div>
+    <div class="margin-bottom-2">
+      <div class="menu-big-text">Ian Lynch, Sean Lynch</div>
+      <div class="menu-small-text">Programming Design</div>
     </div>
-  
-    <div id="pause-menu" class="hide">
-      <button id="pause-level-select-button" class="start-menu-button" onClick="pause()">
-        Resume
-      </button>
-      <button id="pause-level-select-button" class="start-menu-button" onClick="showLevelSelect()">
+    <div class="margin-bottom-2">
+      <div class="menu-big-text">Haley Rheinhart, Sean Lynch</div>
+      <div class="menu-small-text">UX Design</div>
+    </div class="margin-bottom-2">
+    <div>
+      <div class="menu-big-text">Haley Rheinhart</div>
+      <div class="menu-small-text">Music & Sound Design</div>
+    </div>
+    <button class="start-menu-button" onClick="goBack()">Back</button>
+  </div>
+  <div id="report" class="hide">
+    <table>
+      <tr>
+        <td>Time:</td>
+        <td id="report-time"></td>
+      </tr>
+      <tr>
+        <td>Crystals:</td>
+        <td id="report-coins"></td>
+      </tr>
+      <tr>
+        <td>Score:</td>
+        <td id="report-score"></td>
+      </tr>
+    </table>
+    <div id="report-options">
+      <button id="report-level-select-button" class="start-menu-button" onClick="showLevelSelect()">
         Level Select
       </button>
-      <button id="pause-sounds-button" class="start-menu-button" onClick="showSounds()">
-        Sounds
+      <button id="report-reset-button" class="start-menu-button" onClick="reset({action:'reset'})">
+        Try Again
       </button>
-      <button id="pause-reset-button" class="start-menu-button" onClick="reset({action:'reset'})">
-        Restart Level
-      </button>
-    </div>
-    <div id="title">BALLSINKI</div>
-    <button id="start-button" onClick="start()">Start</button>
-    <div id="start-menu">
-      <button id="start-level-select-button" class="start-menu-button" onClick="showLevelSelect()">
-        Level Select
-      </button>
-      <button id="start-sounds-button" class="start-menu-button" onClick="showSounds()">
-        Sounds
-      </button>
-      <button id="start-credits-button" class="start-menu-button" onClick="showCredits()">
-        Credits
+      <button id="report-reset-button" class="start-menu-button" onClick="reset({action:'next'})">
+        Next Level
       </button>
     </div>
-    <img src="images/pause.png" id="pause-button" disabled class="hide" onClick="pause()" />
-    <div id="curtain"></div>
-  </body>
+  </div>
+  <div id="level-select" class="hide">
+    <div id="level-select-title">Level Select</div>
+    <table>
+      <tr>
+        <td class="level-select-button" onClick="setLevel(1)">1</td>
+        <td class="level-select-button" onClick="setLevel(2)">2</td>
+        <td class="level-select-button" onClick="setLevel(3)">3</td>
+        <td class="level-select-button" onClick="setLevel(4)">4</td>
+        <td class="level-select-button" onClick="setLevel(5)">5</td>
+      </tr>
+      <tr>
+        <td class="level-select-button" onClick="setLevel(6)">6</td>
+        <td class="level-select-button" onClick="setLevel(7)">7</td>
+        <td class="level-select-button" onClick="setLevel(8)">8</td>
+        <td class="level-select-button" onClick="setLevel(9)">9</td>
+        <td class="level-select-button" onClick="setLevel(10)">10</td>
+      </tr>
+      <tr>
+        <td class="level-select-button" onClick="setLevel(11)">11</td>
+        <td class="level-select-button" onClick="setLevel(12)">12</td>
+        <td class="level-select-button" onClick="setLevel(13)">13</td>
+        <td class="level-select-button" onClick="setLevel(14)">14</td>
+        <td class="level-select-button" onClick="setLevel(15)">15</td>
+      </tr>
+      <tr>
+        <td class="level-select-button" onClick="setLevel(16)">16</td>
+        <td class="level-select-button" onClick="setLevel(17)">17</td>
+        <td class="level-select-button" onClick="setLevel(18)">18</td>
+        <td class="level-select-button" onClick="setLevel(19)">19</td>
+        <td class="level-select-button" onClick="setLevel(20)">20</td>
+      </tr>
+      <tr>
+        <td class="level-select-button" onClick="setLevel(21)">21</td>
+        <td class="level-select-button" onClick="setLevel(22)">22</td>
+        <td class="level-select-button" onClick="setLevel(23)">23</td>
+        <td class="level-select-button" onClick="setLevel(24)">24</td>
+        <td class="level-select-button" onClick="setLevel(25)">25</td>
+      </tr>
+    </table>
+    <button class="start-menu-button" onClick="goBack()">Back</button>
+  </div>
+
+  <div id="pause-menu" class="hide">
+    <button id="pause-level-select-button" class="start-menu-button" onClick="pause()">
+      Resume
+    </button>
+    <button id="pause-level-select-button" class="start-menu-button" onClick="showLevelSelect()">
+      Level Select
+    </button>
+    <button id="pause-sounds-button" class="start-menu-button" onClick="showSounds()">
+      Sounds
+    </button>
+    <button id="pause-reset-button" class="start-menu-button" onClick="reset({action:'reset'})">
+      Restart Level
+    </button>
+  </div>
+  <div id="title">BALLSINKI</div>
+  <button id="start-button" onClick="start()">Start</button>
+  <div id="start-menu">
+    <button id="start-level-select-button" class="start-menu-button" onClick="showLevelSelect()">
+      Level Select
+    </button>
+    <button id="start-sounds-button" class="start-menu-button" onClick="showSounds()">
+      Sounds
+    </button>
+    <button id="start-credits-button" class="start-menu-button" onClick="showCredits()">
+      Credits
+    </button>
+  </div>
+  <img src="images/pause.png" id="pause-button" disabled class="hide" onClick="pause()" />
+  <div id="curtain"></div>
+</body>
 <script>
     // window.console.log = () => {}
     // window.console.warn = () => {}
