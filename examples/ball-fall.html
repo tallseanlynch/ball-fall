@@ -47,6 +47,7 @@
       itemAmounts: {
         crystalCross: 0,
         crystalLine: 0,
+        crystalCircle: 0,
         bumperGroup: 0,
         prize: 0
       },
@@ -435,6 +436,33 @@
         scene.add(crystalCross)
         window.appConfig.itemAmounts.crystalCross++
       };
+
+      const createCrystalCircle = (
+        name = 'NO_NAME',
+        s,
+        t = { x: 0, y: 0 },
+        size = 0,
+        n
+      ) => {
+        const crystalCircle = new THREE.Group()
+        crystalCircle.debugTypeIndex = window.appConfig.itemAmounts.crystalCircle
+        crystalCircle.debugType = 'CRYSTALCIRCLE'
+        crystalCircle.debugName = 'CRYSTALCIRCLE' + window.appConfig.itemAmounts.crystalCircle
+        crystalCircle.name = name + '_' + crystalCircle.debugName
+        var ellipse = new THREE.EllipseCurve(0, 0, s, s, 0, 2.0 * Math.PI, false);
+        var ellipsePath = new THREE.CurvePath();
+        ellipsePath.add(ellipse);
+        var ellipseGeometry = ellipsePath.createPointsGeometry(4);
+        console.log(ellipseGeometry)
+        // debugger
+        let i = 0;
+        for (i; i < ellipseGeometry.vertices.length; i++) {
+          crystalCircle.add(crystal(size, { x: ellipseGeometry.vertices[i].x * s + t.x, y: ellipseGeometry.vertices[i].y * s + t.y, z: 0 }));
+        }
+        scene.add(crystalCircle)
+        window.appConfig.itemAmounts.crystalCircle++
+      };
+
 
       const createCrystalLine = (
         name = 'NO_NAME',
@@ -1191,6 +1219,14 @@
             createCrystalCross('STAGE1', 5, { x: -20, y: 19 }, 1);
             createCrystalCross('STAGE1', 5, { x: -20, y: -19 }, 1);
             createCrystalCross('STAGE1', 5, { x: 20, y: -19 }, 1);
+
+            createCrystalCross('STAGE1', 5, { x: 85, y: 84 }, 2);
+            createCrystalCross('STAGE1', 5, { x: 85, y: -84 }, 2);
+            createCrystalCross('STAGE1', 5, { x: -85, y: -84 }, 2);
+            createCrystalCross('STAGE1', 5, { x: -85, y: 84 }, 2);
+
+            // createCrystalCross('STAGE1', 20, { x: -50, y: 50 }, 2);
+
             // createCrystalCross('STAGE0', 3, { x: 55, y: 55 }, 0);
             // createCrystalCross('STAGE0', 3, { x: 35, y: 55 }, 0);
             // createCrystalCross('STAGE0', 3, { x: 35, y: 35 }, 0);
@@ -1228,6 +1264,15 @@
             createCrystalLine('STAGE1', 10, { x: -20, y: 82.5 }, 2, 5, "x");
             createCrystalLine('STAGE1', 4, { x: 0, y: 57.5 }, 1, 4, "y");
 
+            createCrystalLine('STAGE1', 10, { x: 0, y: 10 }, 0, 5, "y");
+            createCrystalLine('STAGE1', -10, { x: 0, y: -20 }, 0, 4, "y");
+            createCrystalLine('STAGE1', 10, { x: 20, y: 0 }, 0, 4, "x");
+            createCrystalLine('STAGE1', 10, { x: -50, y: 0 }, 0, 4, "x");
+
+            createCrystalCircle('STAGE1', 4.5, {x: 50, y:50 }, 1, 5)
+            createCrystalCircle('STAGE1', 4.5, {x: 50, y:-50 }, 1, 5)
+            createCrystalCircle('STAGE1', 4.5, {x: -50, y:-50 }, 1, 5)
+            createCrystalCircle('STAGE1', 4.5, {x: -50, y:50 }, 1, 5)
 
             // createCrystalLine('STAGE0', 5, { x: -54.5, y: -22 }, 0, 10, "y");
             // createCrystalLine('STAGE0', 5, { x: -40.5, y: -22.5 }, 0, 10, "y");
