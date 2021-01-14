@@ -150,6 +150,10 @@
     const lfo = (t = 1000) => {
       return (0.5 - lfoPositive(t)) * 2;
     };
+    const lfoPositiveStraight = (t = 1000) => {
+      let lfoValue = (0.5 + 0.5 * Math.cos(Date.now() / t)) * 1;
+      return lfoValue;
+    };
 
     var initScene,
       render,
@@ -1345,9 +1349,58 @@
         sphere.setCcdMotionThreshold(.5)
         sphere.setCcdSweptSphereRadius(1)
         scene.add(sphere);
+        window.appConfig.sphere = sphere
       };
       return () => {
         createSphere();
+        const setSpriteSpherical = (sprite) => {
+          const spritePhi = (lfoPositive((sprite.phiT + sprite.phiMod * sprite.phiT)) + lfoPositive(100 * Math.random()) / 500) * (2 * Math.PI)
+          const spriteTheta = (lfo((sprite.thetaT + sprite.thetaMod * sprite.thetaT)) + lfo(721 * Math.random()) / 1000) * (Math.PI)
+          sprite.spherical.set(sprite.radius + lfoPositive(1111) * 10, spritePhi, spriteTheta)
+        }
+        // make sprites
+        const sprites = []
+        window.appConfig.sprites = sprites
+        const createSprite = () => {
+          const spriteGeometry = new THREE.SphereGeometry(.2, 16, 16)
+          const spriteMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .5 })
+          const thetaMod = Math.random()
+          const phiMod = Math.random()
+          const sprite0Mesh = new THREE.Mesh(spriteGeometry, spriteMaterial)
+          scene.add(sprite0Mesh)
+          let sprite0 = {
+            mesh: sprite0Mesh,
+            spherical: new THREE.Spherical(),
+            radius: 1.5,
+            thetaT: 1500,
+            phiT: 2000,
+            thetaMod: thetaMod,
+            phiMod: phiMod
+          }
+
+
+
+          sprite0.activeCallback = () => {
+            setSpriteSpherical(sprite0)
+            const spriteVector3 = new THREE.Vector3()
+            spriteVector3.setFromSpherical(sprite0.spherical)
+            spriteVector3.x = spriteVector3.x + window.appConfig.sphere.position.x
+            spriteVector3.y = spriteVector3.y + window.appConfig.sphere.position.y
+            spriteVector3.z = spriteVector3.z + window.appConfig.sphere.position.z
+            sprite0.mesh.position.x = spriteVector3.x
+            sprite0.mesh.position.y = spriteVector3.y
+            sprite0.mesh.position.z = spriteVector3.z
+            sprite0.mesh.material.opacity = .5 + (lfoPositive(1000) + lfoPositive(77) / 2)
+            sprite0.mesh.name = "sprite"
+          }
+          sprites.push(sprite0)
+
+        }
+        createSprite()
+        createSprite()
+        createSprite()
+
+
 
         const sidesColor = getRandomColor();
 
@@ -1624,6 +1677,15 @@
         sphere
           .setAngularVelocity(new THREE.Vector3(0, 0, 0));
       }
+      //handle sprites
+      window.appConfig.sprites.forEach(sprite => {
+        sprite.activeCallback()
+      }
+      )
+
+
+
+
       const sphereLinearVelocityLength = sphere.getLinearVelocity().length()
       const xCoinMod = 2 + sphereLinearVelocityLength * .03
       const yCoinMod = 3 + sphereLinearVelocityLength * .03
