@@ -507,6 +507,192 @@
 
       // start stage 0
       window.appConfig.stages = {
+        components: {
+          createCrystalLine: createCrystalLine,
+          createCrystalCircle: createCrystalCircle,
+          createCrystalCross: createCrystalCross,
+          createStage0MainBeamStructure: (
+            scale,
+            scaleAdj = 0,
+            name,
+            p = { x: 0, y: 0 }
+          ) => {
+            const mainStructure = new Physijs.BoxMesh(
+              new THREE.BoxGeometry(0.01, 0.01, 0.01),
+              new Physijs.createMaterial(
+                new THREE.MeshPhongMaterial({ transparent: true, opacity: 0 }),
+                0.6,
+                0.3
+              ),
+              0
+            );
+            mainStructure.position.set(0 + p.x, 0 + p.y, 1.5);
+            mainStructure.add(
+              createBeam({
+                p: [0 * scale, -8 * scale, -1],
+                r: [0, 0, 0],
+                s: (1 + scaleAdj) * scale,
+              })
+            );
+            mainStructure.add(
+              createBeam({
+                p: [-8 * scale, 0 * scale, -1],
+                r: [0, 0, 0.5 * Math.PI],
+                s: (1 + scaleAdj) * scale,
+              })
+            );
+            mainStructure.add(
+              createBeam({
+                p: [8 * scale, 0 * scale, -1],
+                r: [0, 0, 0.5 * Math.PI],
+                s: (1 + scaleAdj) * scale,
+              })
+            );
+            mainStructure.add(
+              createBeam({
+                p: [0 * scale, 8 * scale, -1],
+                r: [0, 0, 0],
+                s: (1 + scaleAdj) * scale,
+              })
+            );
+            mainStructure.name = name;
+            mainStructure.__dirtyPosition = true;
+            mainStructure.featureType = "BEAM"
+            return mainStructure;
+          },
+          createStage1MinorBeamStructure: (
+            scale,
+            scaleAdj = 5,
+            name,
+            p = { x: 0, y: 0 }
+          ) => {
+            const minorBeamStructure = new Physijs.BoxMesh(
+              new THREE.BoxGeometry(0.01, 0.01, 0.01),
+              new Physijs.createMaterial(
+                new THREE.MeshPhongMaterial({ transparent: true, opacity: 0 }),
+                0.6,
+                0.3
+              ),
+              0
+            );
+            minorBeamStructure.position.set(0 + p.x, 0 + p.y, 1.5);
+
+            minorBeamStructure.add(
+              createBeam({
+                p: [20 * scale, 0 * scale, -1],
+                r: [0, 0, 0],
+                s: (1 + scaleAdj) * scale,
+              })
+            );
+
+            minorBeamStructure.add(
+              createBeam({
+                p: [-20 * scale, 0 * scale, -1],
+                r: [0, 0, 0],
+                s: (1 + scaleAdj) * scale,
+              })
+            );
+
+            minorBeamStructure.add(
+              createBeam({
+                p: [0 * scale, -20 * scale, -1],
+                r: [0, 0, 0.5 * Math.PI],
+                s: (1 + scaleAdj) * scale,
+              })
+            );
+
+            minorBeamStructure.add(
+              createBeam({
+                p: [0 * scale, 20 * scale, -1],
+                r: [0, 0, 0.5 * Math.PI],
+                s: (1 + scaleAdj) * scale,
+              })
+            );
+
+            minorBeamStructure.name = name;
+            minorBeamStructure.__dirtyPosition = true;
+            minorBeamStructure.featureType = "BEAM"
+            return minorBeamStructure;
+          },
+          createStage1MainBeamStructure: (
+            scale,
+            scaleAdj = 5,
+            name,
+            p = { x: 0, y: 0 }
+          ) => {
+            const mainStructure = new Physijs.BoxMesh(
+              new THREE.BoxGeometry(0.01, 0.01, 0.01),
+              new Physijs.createMaterial(
+                new THREE.MeshPhongMaterial({ transparent: true, opacity: 0 }),
+                0.6,
+                0.3
+              ),
+              0
+            );
+            mainStructure.position.set(0 + p.x, 0 + p.y, 1.5);
+            mainStructure.add(
+              createBeam({
+                p: [-2 * scale, 4.75 * scale, -1],
+                r: [0, 0, 0.5 * Math.PI],
+                s: (1 + scaleAdj) * scale,
+              })
+            );
+            mainStructure.add(
+              createBeam({
+                p: [2 * scale, 4.75 * scale, -1],
+                r: [0, 0, 0.5 * Math.PI],
+                s: (1 + scaleAdj) * scale,
+              })
+            );
+            mainStructure.add(
+              createBeam({
+                p: [-2 * scale, -9.75 * scale, -1],
+                r: [0, 0, 0.5 * Math.PI],
+                s: (1 + scaleAdj) * scale,
+              })
+            );
+            mainStructure.add(
+              createBeam({
+                p: [2 * scale, -9.75 * scale, -1],
+                r: [0, 0, 0.5 * Math.PI],
+                s: (1 + scaleAdj) * scale,
+              })
+            );
+
+            mainStructure.add(
+              createBeam({
+                p: [7.5 * scale, -1 * scale, -1],
+                r: [0, 0, 0],
+                s: (1 + scaleAdj) * scale,
+              })
+            );
+            mainStructure.add(
+              createBeam({
+                p: [7.5 * scale, -4 * scale, -1],
+                r: [0, 0, 0],
+                s: (1 + scaleAdj) * scale,
+              })
+            );
+            mainStructure.add(
+              createBeam({
+                p: [-7.5 * scale, -1 * scale, -1],
+                r: [0, 0, 0],
+                s: (1 + scaleAdj) * scale,
+              })
+            );
+            mainStructure.add(
+              createBeam({
+                p: [-7.5 * scale, -4 * scale, -1],
+                r: [0, 0, 0],
+                s: (1 + scaleAdj) * scale,
+              })
+            );
+            mainStructure.name = name;
+            mainStructure.__dirtyPosition = true;
+            mainStructure.featureType = "BEAM"
+            return mainStructure;
+          }
+        },
         STAGE0: {
           data: {
             started: false,
@@ -541,107 +727,9 @@
             teardownStage('STAGE0')
             window.appConfig.stages.STAGE0.data.started = false
           },
-          components: {
-            createStage0MainBeamStructure: (
-              scale,
-              scaleAdj = 0,
-              name,
-              p = { x: 0, y: 0 }
-            ) => {
-              const mainStructure = new Physijs.BoxMesh(
-                new THREE.BoxGeometry(0.01, 0.01, 0.01),
-                new Physijs.createMaterial(
-                  new THREE.MeshPhongMaterial({ transparent: true, opacity: 0 }),
-                  0.6,
-                  0.3
-                ),
-                0
-              );
-              mainStructure.position.set(0 + p.x, 0 + p.y, 1.5);
-              mainStructure.add(
-                createBeam({
-                  p: [0 * scale, -8 * scale, -1],
-                  r: [0, 0, 0],
-                  s: (1 + scaleAdj) * scale,
-                })
-              );
-              mainStructure.add(
-                createBeam({
-                  p: [-8 * scale, 0 * scale, -1],
-                  r: [0, 0, 0.5 * Math.PI],
-                  s: (1 + scaleAdj) * scale,
-                })
-              );
-              mainStructure.add(
-                createBeam({
-                  p: [8 * scale, 0 * scale, -1],
-                  r: [0, 0, 0.5 * Math.PI],
-                  s: (1 + scaleAdj) * scale,
-                })
-              );
-              mainStructure.add(
-                createBeam({
-                  p: [0 * scale, 8 * scale, -1],
-                  r: [0, 0, 0],
-                  s: (1 + scaleAdj) * scale,
-                })
-              );
-              mainStructure.name = name;
-              mainStructure.__dirtyPosition = true;
-              mainStructure.featureType = "BEAM"
-              return mainStructure;
-            }
-          },
           init: () => {
-            const createStage0MainBeamStructure = (
-              scale,
-              scaleAdj = 0,
-              name,
-              p = { x: 0, y: 0 }
-            ) => {
-              const mainStructure = new Physijs.BoxMesh(
-                new THREE.BoxGeometry(0.01, 0.01, 0.01),
-                new Physijs.createMaterial(
-                  new THREE.MeshPhongMaterial({ transparent: true, opacity: 0 }),
-                  0.6,
-                  0.3
-                ),
-                0
-              );
-              mainStructure.position.set(0 + p.x, 0 + p.y, 1.5);
-              mainStructure.add(
-                createBeam({
-                  p: [0 * scale, -8 * scale, -1],
-                  r: [0, 0, 0],
-                  s: (1 + scaleAdj) * scale,
-                })
-              );
-              mainStructure.add(
-                createBeam({
-                  p: [-8 * scale, 0 * scale, -1],
-                  r: [0, 0, 0.5 * Math.PI],
-                  s: (1 + scaleAdj) * scale,
-                })
-              );
-              mainStructure.add(
-                createBeam({
-                  p: [8 * scale, 0 * scale, -1],
-                  r: [0, 0, 0.5 * Math.PI],
-                  s: (1 + scaleAdj) * scale,
-                })
-              );
-              mainStructure.add(
-                createBeam({
-                  p: [0 * scale, 8 * scale, -1],
-                  r: [0, 0, 0],
-                  s: (1 + scaleAdj) * scale,
-                })
-              );
-              mainStructure.name = name;
-              mainStructure.__dirtyPosition = true;
-              mainStructure.featureType = "BEAM"
-              return mainStructure;
-            };
+
+            const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
 
             const stage0MainBeamStructure = createStage0MainBeamStructure(
               2,
@@ -844,139 +932,9 @@
             window.appConfig.stages.STAGE1.data.started = false
           },
           init: () => {
-            const createStage1MainBeamStructure = (
-              scale,
-              scaleAdj = 5,
-              name,
-              p = { x: 0, y: 0 }
-            ) => {
-              const mainStructure = new Physijs.BoxMesh(
-                new THREE.BoxGeometry(0.01, 0.01, 0.01),
-                new Physijs.createMaterial(
-                  new THREE.MeshPhongMaterial({ transparent: true, opacity: 0 }),
-                  0.6,
-                  0.3
-                ),
-                0
-              );
-              mainStructure.position.set(0 + p.x, 0 + p.y, 1.5);
-              mainStructure.add(
-                createBeam({
-                  p: [-2 * scale, 4.75 * scale, -1],
-                  r: [0, 0, 0.5 * Math.PI],
-                  s: (1 + scaleAdj) * scale,
-                })
-              );
-              mainStructure.add(
-                createBeam({
-                  p: [2 * scale, 4.75 * scale, -1],
-                  r: [0, 0, 0.5 * Math.PI],
-                  s: (1 + scaleAdj) * scale,
-                })
-              );
-              mainStructure.add(
-                createBeam({
-                  p: [-2 * scale, -9.75 * scale, -1],
-                  r: [0, 0, 0.5 * Math.PI],
-                  s: (1 + scaleAdj) * scale,
-                })
-              );
-              mainStructure.add(
-                createBeam({
-                  p: [2 * scale, -9.75 * scale, -1],
-                  r: [0, 0, 0.5 * Math.PI],
-                  s: (1 + scaleAdj) * scale,
-                })
-              );
 
-              mainStructure.add(
-                createBeam({
-                  p: [7.5 * scale, -1 * scale, -1],
-                  r: [0, 0, 0],
-                  s: (1 + scaleAdj) * scale,
-                })
-              );
-              mainStructure.add(
-                createBeam({
-                  p: [7.5 * scale, -4 * scale, -1],
-                  r: [0, 0, 0],
-                  s: (1 + scaleAdj) * scale,
-                })
-              );
-              mainStructure.add(
-                createBeam({
-                  p: [-7.5 * scale, -1 * scale, -1],
-                  r: [0, 0, 0],
-                  s: (1 + scaleAdj) * scale,
-                })
-              );
-              mainStructure.add(
-                createBeam({
-                  p: [-7.5 * scale, -4 * scale, -1],
-                  r: [0, 0, 0],
-                  s: (1 + scaleAdj) * scale,
-                })
-              );
-              mainStructure.name = name;
-              mainStructure.__dirtyPosition = true;
-              mainStructure.featureType = "BEAM"
-              return mainStructure;
-            };
-
-            const createStage1MinorBeamStructure = (
-              scale,
-              scaleAdj = 5,
-              name,
-              p = { x: 0, y: 0 }
-            ) => {
-              const minorBeamStructure = new Physijs.BoxMesh(
-                new THREE.BoxGeometry(0.01, 0.01, 0.01),
-                new Physijs.createMaterial(
-                  new THREE.MeshPhongMaterial({ transparent: true, opacity: 0 }),
-                  0.6,
-                  0.3
-                ),
-                0
-              );
-              minorBeamStructure.position.set(0 + p.x, 0 + p.y, 1.5);
-
-              minorBeamStructure.add(
-                createBeam({
-                  p: [20 * scale, 0 * scale, -1],
-                  r: [0, 0, 0],
-                  s: (1 + scaleAdj) * scale,
-                })
-              );
-
-              minorBeamStructure.add(
-                createBeam({
-                  p: [-20 * scale, 0 * scale, -1],
-                  r: [0, 0, 0],
-                  s: (1 + scaleAdj) * scale,
-                })
-              );
-
-              minorBeamStructure.add(
-                createBeam({
-                  p: [0 * scale, -20 * scale, -1],
-                  r: [0, 0, 0.5 * Math.PI],
-                  s: (1 + scaleAdj) * scale,
-                })
-              );
-
-              minorBeamStructure.add(
-                createBeam({
-                  p: [0 * scale, 20 * scale, -1],
-                  r: [0, 0, 0.5 * Math.PI],
-                  s: (1 + scaleAdj) * scale,
-                })
-              );
-
-              minorBeamStructure.name = name;
-              minorBeamStructure.__dirtyPosition = true;
-              minorBeamStructure.featureType = "BEAM"
-              return minorBeamStructure;
-            };
+            const createStage1MainBeamStructure = window.appConfig.stages.components.createStage1MainBeamStructure
+            const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
 
             const stage1MainBeamStructure = createStage1MainBeamStructure(
               4,
@@ -986,7 +944,7 @@
             );
             scene.add(stage1MainBeamStructure);
 
-            const stage1MainBeamStructure1 = window.appConfig.stages.STAGE0.components.createStage0MainBeamStructure(
+            const stage1MainBeamStructure1 = window.appConfig.stages.components.createStage0MainBeamStructure(
               12,
               0.56,
               "STAGE1MAINSTRUCTURE1"
