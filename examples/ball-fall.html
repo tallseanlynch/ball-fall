@@ -452,11 +452,12 @@
         let i = 0;
         for (i; i < n; i++) {
           if (dir === "x") {
-            scene.add(crystal(size, { x: i * s + t.x, y: t.y, z: 0 }));
+            crystalLine.add(crystal(size, { x: i * s + t.x, y: t.y, z: 0 }));
           } else {
-            scene.add(crystal(size, { x: t.x, y: i * s + t.y, z: 0 }));
+            crystalLine.add(crystal(size, { x: t.x, y: i * s + t.y, z: 0 }));
           }
         }
+        scene.add(crystalLine)
         window.appConfig.itemAmounts.crystalLine++
       };
 
@@ -795,16 +796,16 @@
             'STAGE1MINORSTRUCTURE3',
             'STAGE1MINORSTRUCTURE3A',
             'STAGE1MINORSTRUCTURE3B',
-            'STAGE0PRIZE0',
-            'STAGE0PRIZE1',
-            'STAGE0PRIZE2',
-            'STAGE0PRIZE3'
+            'STAGE1PRIZE0',
+            'STAGE1PRIZE1',
+            'STAGE1PRIZE2',
+            'STAGE1PRIZE3'
           ],
           transforms: {
-            'STAGE0PRIZE0': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE0PRIZE1': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE0PRIZE2': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE0PRIZE3': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE1PRIZE0': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE1PRIZE1': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE1PRIZE2': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE1PRIZE3': { r: { x: .005, y: .005, z: .005 } },
             // 'STAGE1MAINSTRUCTURE': { r: { x: 0, y: 0, z: .001 } },
             'STAGE1MINORSTRUCTURE': { r: { x: 0, y: 0, z: -.01 } },
             'STAGE1MINORSTRUCTUREA': { r: { x: 0, y: 0, z: .0025 } },
@@ -977,27 +978,11 @@
                 })
               );
 
-
-              // minorBeamStructure.add(
-              //   createBeam({
-              //     p: [0 * scale, -30 * scale, -1],
-              //     r: [0, 0, 0.5 * Math.PI],
-              //     s: (1 + scaleAdj) * scale,
-              //   })
-              // );
-
-
               minorBeamStructure.name = name;
               minorBeamStructure.__dirtyPosition = true;
               minorBeamStructure.featureType = "BEAM"
               return minorBeamStructure;
             };
-
-
-            // window.appConfig.stages.STAGE0.components = {
-            //   createStage0MainBeamStructure
-            // }
-
 
             const stage1MainBeamStructure = createStage1MainBeamStructure(
               4,
@@ -1013,27 +998,6 @@
               "STAGE1MAINSTRUCTURE1"
             );
             scene.add(stage1MainBeamStructure1);
-
-
-            // const stage0MainBeamStructure1 = createStage0MainBeamStructure(
-            //   4,
-            //   0,
-            //   "STAGE0MAINSTRUCTURE1"
-            // );
-            // scene.add(stage0MainBeamStructure1);
-            // const stage0MainBeamStructure2 = createStage0MainBeamStructure(
-            //   8,
-            //   0.525,
-            //   "STAGE0MAINSTRUCTURE2"
-            // );
-            // scene.add(stage0MainBeamStructure2);
-
-            // const stage0MainBeamStructure2 = createStage0MainBeamStructure(
-            //   8,
-            //   0.525,
-            //   "STAGE1MAINSTRUCTURE2"
-            // );
-            // scene.add(stage1MainBeamStructure2);
 
             const stage1MinorBeamStructure = createStage1MinorBeamStructure(
               .5,
@@ -1177,7 +1141,7 @@
               new THREE.ConeGeometry(1, -1, 8),
               new THREE.MeshPhongMaterial()
             )
-            prize0Group.name = 'STAGE0PRIZE0'
+            prize0Group.name = 'STAGE1PRIZE0'
             prize0Group.debugTypeIndex = window.appConfig.itemAmounts.prize
             prize0Group.debugType = 'PRIZE'
             prize0Group.debugName = 'PRIZE' + window.appConfig.itemAmounts.prize
@@ -1204,9 +1168,9 @@
             prize2Group.position.set(-50, -50, 0)
             const prize3Group = prize0Group.clone()
             prize3Group.position.set(-50, 50, 0)
-            prize1Group.name = 'STAGE0PRIZE1'
-            prize2Group.name = 'STAGE0PRIZE2'
-            prize3Group.name = 'STAGE0PRIZE3'
+            prize1Group.name = 'STAGE1PRIZE1'
+            prize2Group.name = 'STAGE1PRIZE2'
+            prize3Group.name = 'STAGE1PRIZE3'
             scene.add(prize1Group)
             scene.add(prize2Group)
             scene.add(prize3Group)
@@ -1225,8 +1189,8 @@
             // createCrystalCross('STAGE0', 10);
             createCrystalCross('STAGE1', 5, { x: 20, y: 19 }, 1);
             createCrystalCross('STAGE1', 5, { x: -20, y: 19 }, 1);
-            createCrystalCross('STAGE0', 5, { x: -20, y: -19 }, 1);
-            createCrystalCross('STAGE0', 5, { x: 20, y: -19 }, 1);
+            createCrystalCross('STAGE1', 5, { x: -20, y: -19 }, 1);
+            createCrystalCross('STAGE1', 5, { x: 20, y: -19 }, 1);
             // createCrystalCross('STAGE0', 3, { x: 55, y: 55 }, 0);
             // createCrystalCross('STAGE0', 3, { x: 35, y: 55 }, 0);
             // createCrystalCross('STAGE0', 3, { x: 35, y: 35 }, 0);
@@ -1244,9 +1208,27 @@
             // createCrystalCross('STAGE0', 3, { x: -35, y: 35 }, 0);
             // createCrystalCross('STAGE0', 3, { x: -55, y: 35 }, 0);
             // createCrystalLine('STAGE0', 10, { x: -47.5, y: -20 }, 2, 5, "y");
-            createCrystalLine('STAGE0', 5, { x: 89.5, y: -35 }, 0, 15, "y");
-            createCrystalLine('STAGE0', 5, { x: 75.5, y: -10 }, 0, 5, "y");
-            createCrystalLine('STAGE0', 10, { x: 82.5, y: -20 }, 2, 5, "y");
+            createCrystalLine('STAGE1', 5, { x: 89.5, y: -35 }, 0, 15, "y");
+            createCrystalLine('STAGE1', 5, { x: 75.5, y: -10 }, 0, 5, "y");
+            createCrystalLine('STAGE1', 10, { x: 82.5, y: -20 }, 2, 5, "y");
+            createCrystalLine('STAGE1', 4, { x: 58, y: 0 }, 1, 4, "x");
+
+            createCrystalLine('STAGE1', 5, { x: -89.5, y: -35 }, 0, 15, "y");
+            createCrystalLine('STAGE1', 5, { x: -75.5, y: -10 }, 0, 5, "y");
+            createCrystalLine('STAGE1', 10, { x: -82.5, y: -20 }, 2, 5, "y");
+            createCrystalLine('STAGE1', 4, { x: -70, y: 0 }, 1, 4, "x");
+
+            createCrystalLine('STAGE1', 5, { x: -35, y: -89.5 }, 0, 15, "x");
+            createCrystalLine('STAGE1', 5, { x: -10, y: -75.5 }, 0, 5, "x");
+            createCrystalLine('STAGE1', 10, { x: -20, y: -82.5 }, 2, 5, "x");
+            createCrystalLine('STAGE1', 4, { x: 0, y: -70 }, 1, 4, "y");
+
+            createCrystalLine('STAGE1', 5, { x: -35, y: 89.5 }, 0, 15, "x");
+            createCrystalLine('STAGE1', 5, { x: -10, y: 75.5 }, 0, 5, "x");
+            createCrystalLine('STAGE1', 10, { x: -20, y: 82.5 }, 2, 5, "x");
+            createCrystalLine('STAGE1', 4, { x: 0, y: 57.5 }, 1, 4, "y");
+
+
             // createCrystalLine('STAGE0', 5, { x: -54.5, y: -22 }, 0, 10, "y");
             // createCrystalLine('STAGE0', 5, { x: -40.5, y: -22.5 }, 0, 10, "y");
             // createCrystalLine('STAGE0', 10, { x: -20, y: -47.5 }, 2, 5, "x");
@@ -1257,10 +1239,10 @@
             // createCrystalLine('STAGE0', 5, { x: -22.5, y: 54.5 }, 0, 10, "x");
             // end stage 0
 
-            window.appConfig.stages.STAGE1.STAGE0PRIZE0 = scene.children.find((obj) => obj.name === "STAGE0PRIZE0")
-            // window.appConfig.stages.STAGE0.STAGE0PRIZE1 = scene.children.find((obj) => obj.name === "STAGE0PRIZE1")
-            // window.appConfig.stages.STAGE0.STAGE0PRIZE2 = scene.children.find((obj) => obj.name === "STAGE0PRIZE2")
-            // window.appConfig.stages.STAGE0.STAGE0PRIZE3 = scene.children.find((obj) => obj.name === "STAGE0PRIZE3")
+            window.appConfig.stages.STAGE1.STAGE1PRIZE0 = scene.children.find((obj) => obj.name === "STAGE1PRIZE0")
+            window.appConfig.stages.STAGE1.STAGE1PRIZE1 = scene.children.find((obj) => obj.name === "STAGE1PRIZE1")
+            window.appConfig.stages.STAGE1.STAGE1PRIZE2 = scene.children.find((obj) => obj.name === "STAGE1PRIZE2")
+            window.appConfig.stages.STAGE1.STAGE1PRIZE3 = scene.children.find((obj) => obj.name === "STAGE1PRIZE3")
             window.appConfig.stages.STAGE1.STAGE1MAINSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE1MAINSTRUCTURE")
             window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE")
             window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTUREA = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTUREA")
