@@ -164,19 +164,6 @@
       camera,
       orbitControls;
 
-    // const raycaster = new THREE.Raycaster();
-    //   const mouse = new THREE.Vector2();
-
-    //   function onMouseMove( event ) {
-
-    //     // calculate mouse position in normalized device coordinates
-    //     // (-1 to +1) for both components
-
-    //     mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-    //     mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-    //   }
-
     initScene = function () {
       window.appConfig.soundsBackDestination = "";
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -811,7 +798,6 @@
             startingPosition: new THREE.Vector3(0, 0, 0)
           },
           defaultTransforms: [
-            // 'STAGE1MAINSTRUCTURE'
             'STAGE1MINORSTRUCTURE',
             'STAGE1MINORSTRUCTUREA',
             'STAGE1MINORSTRUCTUREB',
@@ -834,7 +820,6 @@
             'STAGE1PRIZE1': { r: { x: .005, y: .005, z: .005 } },
             'STAGE1PRIZE2': { r: { x: .005, y: .005, z: .005 } },
             'STAGE1PRIZE3': { r: { x: .005, y: .005, z: .005 } },
-            // 'STAGE1MAINSTRUCTURE': { r: { x: 0, y: 0, z: .001 } },
             'STAGE1MINORSTRUCTURE': { r: { x: 0, y: 0, z: -.01 } },
             'STAGE1MINORSTRUCTUREA': { r: { x: 0, y: 0, z: .0025 } },
             'STAGE1MINORSTRUCTUREB': { r: { x: 0, y: 0, z: .0025 } },
@@ -847,9 +832,6 @@
             'STAGE1MINORSTRUCTURE3': { r: { x: 0, y: 0, z: -.01 } },
             'STAGE1MINORSTRUCTURE3A': { r: { x: 0, y: 0, z: .0025 } },
             'STAGE1MINORSTRUCTURE3B': { r: { x: 0, y: 0, z: .0025 } },
-            // 'STAGE0MINORSTRUCTURE1': { r: { x: 0, y: 0, z: -.001 } },
-            // 'STAGE0MINORSTRUCTURE2': { r: { x: 0, y: 0, z: -.001 } },
-            // 'STAGE0MINORSTRUCTURE3': { r: { x: 0, y: 0, z: -.001 } }
           },
           teardown: () => {
             teardownStage('STAGE1')
@@ -872,13 +854,6 @@
                 0
               );
               mainStructure.position.set(0 + p.x, 0 + p.y, 1.5);
-              // mainStructure.add(
-              //   createBeam({
-              //     p: [0 * scale, -8 * scale, -1],
-              //     r: [0, 0, 0],
-              //     s: (1 + scaleAdj) * scale,
-              //   })
-              // );
               mainStructure.add(
                 createBeam({
                   p: [-2 * scale, 4.75 * scale, -1],
@@ -936,15 +911,6 @@
                   s: (1 + scaleAdj) * scale,
                 })
               );
-
-
-              // mainStructure.add(
-              //   createBeam({
-              //     p: [0 * scale, 8 * scale, -1],
-              //     r: [0, 0, 0],
-              //     s: (1 + scaleAdj) * scale,
-              //   })
-              // );
               mainStructure.name = name;
               mainStructure.__dirtyPosition = true;
               mainStructure.featureType = "BEAM"
@@ -967,13 +933,7 @@
                 0
               );
               minorBeamStructure.position.set(0 + p.x, 0 + p.y, 1.5);
-              // mainStructure.add(
-              //   createBeam({
-              //     p: [0 * scale, -8 * scale, -1],
-              //     r: [0, 0, 0],
-              //     s: (1 + scaleAdj) * scale,
-              //   })
-              // );
+
               minorBeamStructure.add(
                 createBeam({
                   p: [20 * scale, 0 * scale, -1],
@@ -1131,31 +1091,6 @@
             stage1MinorBeamStructure3B.rotation.z = .25 * Math.PI
             scene.add(stage1MinorBeamStructure3B);
 
-
-
-
-            // const stage0MinorBeamStructure1 = createStage0MainBeamStructure(
-            //   1,
-            //   -0.5,
-            //   "STAGE0MINORSTRUCTURE1",
-            //   { x: 45, y: -45 }
-            // );
-            // scene.add(stage0MinorBeamStructure1);
-            // const stage0MinorBeamStructure2 = createStage0MainBeamStructure(
-            //   1,
-            //   -0.5,
-            //   "STAGE0MINORSTRUCTURE2",
-            //   { x: -45, y: -45 }
-            // );
-            // scene.add(stage0MinorBeamStructure2);
-            // const stage0MinorBeamStructure3 = createStage0MainBeamStructure(
-            //   1,
-            //   -0.5,
-            //   "STAGE0MINORSTRUCTURE3",
-            //   { x: -45, y: 45 }
-            // );
-            // scene.add(stage0MinorBeamStructure3);
-
             const prize0Group = new THREE.Group();
             const prize0 = new THREE.Mesh(
               new THREE.BoxGeometry(0.75, 0.75, 0.75),
@@ -1213,8 +1148,6 @@
             coins.push(prize2Group);
             coins.push(prize3Group);
 
-            // createCrystalCross('STAGE0', 5);
-            // createCrystalCross('STAGE0', 10);
             createCrystalCross('STAGE1', 5, { x: 20, y: 19 }, 1);
             createCrystalCross('STAGE1', 5, { x: -20, y: 19 }, 1);
             createCrystalCross('STAGE1', 5, { x: -20, y: -19 }, 1);
@@ -1225,25 +1158,6 @@
             createCrystalCross('STAGE1', 5, { x: -85, y: -84 }, 2);
             createCrystalCross('STAGE1', 5, { x: -85, y: 84 }, 2);
 
-            // createCrystalCross('STAGE1', 20, { x: -50, y: 50 }, 2);
-
-            // createCrystalCross('STAGE0', 3, { x: 55, y: 55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 35, y: 55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 35, y: 35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 55, y: 35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 55, y: -55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 35, y: -55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 35, y: -35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 55, y: -35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -55, y: -55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -35, y: -55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -35, y: -35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -55, y: -35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -55, y: 55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -35, y: 55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -35, y: 35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -55, y: 35 }, 0);
-            // createCrystalLine('STAGE0', 10, { x: -47.5, y: -20 }, 2, 5, "y");
             createCrystalLine('STAGE1', 5, { x: 89.5, y: -35 }, 0, 15, "y");
             createCrystalLine('STAGE1', 5, { x: 75.5, y: -10 }, 0, 5, "y");
             createCrystalLine('STAGE1', 10, { x: 82.5, y: -20 }, 2, 5, "y");
@@ -1273,16 +1187,6 @@
             createCrystalCircle('STAGE1', 4.5, {x: 50, y:-50 }, 1, 5)
             createCrystalCircle('STAGE1', 4.5, {x: -50, y:-50 }, 1, 5)
             createCrystalCircle('STAGE1', 4.5, {x: -50, y:50 }, 1, 5)
-
-            // createCrystalLine('STAGE0', 5, { x: -54.5, y: -22 }, 0, 10, "y");
-            // createCrystalLine('STAGE0', 5, { x: -40.5, y: -22.5 }, 0, 10, "y");
-            // createCrystalLine('STAGE0', 10, { x: -20, y: -47.5 }, 2, 5, "x");
-            // createCrystalLine('STAGE0', 5, { x: -22.5, y: -40 }, 0, 10, "x");
-            // createCrystalLine('STAGE0', 5, { x: -22.5, y: -54.5 }, 0, 10, "x");
-            // createCrystalLine('STAGE0', 10, { x: -20, y: 47.5 }, 2, 5, "x");
-            // createCrystalLine('STAGE0', 5, { x: -22.5, y: 40 }, 0, 10, "x");
-            // createCrystalLine('STAGE0', 5, { x: -22.5, y: 54.5 }, 0, 10, "x");
-            // end stage 0
 
             window.appConfig.stages.STAGE1.STAGE1PRIZE0 = scene.children.find((obj) => obj.name === "STAGE1PRIZE0")
             window.appConfig.stages.STAGE1.STAGE1PRIZE1 = scene.children.find((obj) => obj.name === "STAGE1PRIZE1")
