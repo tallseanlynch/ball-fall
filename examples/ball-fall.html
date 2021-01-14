@@ -163,19 +163,6 @@
       camera,
       orbitControls;
 
-    // const raycaster = new THREE.Raycaster();
-    //   const mouse = new THREE.Vector2();
-
-    //   function onMouseMove( event ) {
-
-    //     // calculate mouse position in normalized device coordinates
-    //     // (-1 to +1) for both components
-
-    //     mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-    //     mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-    //   }
-
     initScene = function () {
       window.appConfig.soundsBackDestination = "";
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -510,6 +497,57 @@
             })
             window.appConfig.stages.STAGE0.data.started = false
           },
+          components: {
+            createStage0MainBeamStructure: (
+              scale,
+              scaleAdj = 0,
+              name,
+              p = { x: 0, y: 0 }
+            ) => {
+              const mainStructure = new Physijs.BoxMesh(
+                new THREE.BoxGeometry(0.01, 0.01, 0.01),
+                new Physijs.createMaterial(
+                  new THREE.MeshPhongMaterial({ transparent: true, opacity: 0 }),
+                  0.6,
+                  0.3
+                ),
+                0
+              );
+              mainStructure.position.set(0 + p.x, 0 + p.y, 1.5);
+              mainStructure.add(
+                createBeam({
+                  p: [0 * scale, -8 * scale, -1],
+                  r: [0, 0, 0],
+                  s: (1 + scaleAdj) * scale,
+                })
+              );
+              mainStructure.add(
+                createBeam({
+                  p: [-8 * scale, 0 * scale, -1],
+                  r: [0, 0, 0.5 * Math.PI],
+                  s: (1 + scaleAdj) * scale,
+                })
+              );
+              mainStructure.add(
+                createBeam({
+                  p: [8 * scale, 0 * scale, -1],
+                  r: [0, 0, 0.5 * Math.PI],
+                  s: (1 + scaleAdj) * scale,
+                })
+              );
+              mainStructure.add(
+                createBeam({
+                  p: [0 * scale, 8 * scale, -1],
+                  r: [0, 0, 0],
+                  s: (1 + scaleAdj) * scale,
+                })
+              );
+              mainStructure.name = name;
+              mainStructure.__dirtyPosition = true;
+              mainStructure.featureType = "BEAM"
+              return mainStructure;
+            }
+          },
           init: () => {
             const createStage0MainBeamStructure = (
               scale,
@@ -723,18 +761,18 @@
           },
           defaultTransforms: [
             // 'STAGE1MAINSTRUCTURE'
-            'STAGE1MINORSTRUCTURE',
-            'STAGE1MINORSTRUCTUREA',
-            'STAGE1MINORSTRUCTUREB',
-            'STAGE1MINORSTRUCTURE1',
-            'STAGE1MINORSTRUCTURE1A',
-            'STAGE1MINORSTRUCTURE1B',
-            'STAGE1MINORSTRUCTURE2',
-            'STAGE1MINORSTRUCTURE2A',
-            'STAGE1MINORSTRUCTURE2B',
-            'STAGE1MINORSTRUCTURE3',
-            'STAGE1MINORSTRUCTURE3A',
-            'STAGE1MINORSTRUCTURE3B',
+            // 'STAGE1MINORSTRUCTURE',
+            // 'STAGE1MINORSTRUCTUREA',
+            // 'STAGE1MINORSTRUCTUREB',
+            // 'STAGE1MINORSTRUCTURE1',
+            // 'STAGE1MINORSTRUCTURE1A',
+            // 'STAGE1MINORSTRUCTURE1B',
+            // 'STAGE1MINORSTRUCTURE2',
+            // 'STAGE1MINORSTRUCTURE2A',
+            // 'STAGE1MINORSTRUCTURE2B',
+            // 'STAGE1MINORSTRUCTURE3',
+            // 'STAGE1MINORSTRUCTURE3A',
+            // 'STAGE1MINORSTRUCTURE3B',
             'STAGE0PRIZE0',
             'STAGE0PRIZE1',
             'STAGE0PRIZE2',
@@ -959,6 +997,12 @@
               return minorBeamStructure;
             };
 
+
+            // window.appConfig.stages.STAGE0.components = {
+            //   createStage0MainBeamStructure
+            // }
+
+
             const stage1MainBeamStructure = createStage1MainBeamStructure(
               4,
               0,
@@ -966,6 +1010,15 @@
               { x: 0, y: 10}
             );
             scene.add(stage1MainBeamStructure);
+
+            const stage1MainBeamStructure1 = window.appConfig.stages.STAGE0.components.createStage0MainBeamStructure(
+              12,
+              0.56,
+              "STAGE1MAINSTRUCTURE1"
+            );
+            scene.add(stage1MainBeamStructure1);
+
+
             // const stage0MainBeamStructure1 = createStage0MainBeamStructure(
             //   4,
             //   0,
@@ -978,6 +1031,14 @@
             //   "STAGE0MAINSTRUCTURE2"
             // );
             // scene.add(stage0MainBeamStructure2);
+
+            // const stage0MainBeamStructure2 = createStage0MainBeamStructure(
+            //   8,
+            //   0.525,
+            //   "STAGE1MAINSTRUCTURE2"
+            // );
+            // scene.add(stage1MainBeamStructure2);
+
             const stage1MinorBeamStructure = createStage1MinorBeamStructure(
               .5,
               .5,
@@ -1166,10 +1227,10 @@
 
             // createCrystalCross('STAGE0', 5);
             // createCrystalCross('STAGE0', 10);
-            // createCrystalCross('STAGE0', 5, { x: 20, y: 20 }, 1);
-            // createCrystalCross('STAGE0', 5, { x: -20, y: 20 }, 1);
-            // createCrystalCross('STAGE0', 5, { x: -20, y: -20 }, 1);
-            // createCrystalCross('STAGE0', 5, { x: 20, y: -20 }, 1);
+            createCrystalCross('STAGE1', 5, { x: 20, y: 19 }, 1);
+            createCrystalCross('STAGE1', 5, { x: -20, y: 19 }, 1);
+            createCrystalCross('STAGE0', 5, { x: -20, y: -19 }, 1);
+            createCrystalCross('STAGE0', 5, { x: 20, y: -19 }, 1);
             // createCrystalCross('STAGE0', 3, { x: 55, y: 55 }, 0);
             // createCrystalCross('STAGE0', 3, { x: 35, y: 55 }, 0);
             // createCrystalCross('STAGE0', 3, { x: 35, y: 35 }, 0);
@@ -1187,9 +1248,9 @@
             // createCrystalCross('STAGE0', 3, { x: -35, y: 35 }, 0);
             // createCrystalCross('STAGE0', 3, { x: -55, y: 35 }, 0);
             // createCrystalLine('STAGE0', 10, { x: -47.5, y: -20 }, 2, 5, "y");
-            // createCrystalLine('STAGE0', 5, { x: 54.5, y: -22 }, 0, 10, "y");
-            // createCrystalLine('STAGE0', 5, { x: 40.5, y: -22.5 }, 0, 10, "y");
-            // createCrystalLine('STAGE0', 10, { x: 47.5, y: -20 }, 2, 5, "y");
+            createCrystalLine('STAGE0', 5, { x: 89.5, y: -35 }, 0, 15, "y");
+            createCrystalLine('STAGE0', 5, { x: 75.5, y: -10 }, 0, 5, "y");
+            createCrystalLine('STAGE0', 10, { x: 82.5, y: -20 }, 2, 5, "y");
             // createCrystalLine('STAGE0', 5, { x: -54.5, y: -22 }, 0, 10, "y");
             // createCrystalLine('STAGE0', 5, { x: -40.5, y: -22.5 }, 0, 10, "y");
             // createCrystalLine('STAGE0', 10, { x: -20, y: -47.5 }, 2, 5, "x");
@@ -1892,6 +1953,16 @@
 </head>
 
 <body>
+  <div class="debug hide">
+    <div class="debug-add">
+        <p>ADD</p>
+        <div class="debug-add-list">
+        
+        </div>        
+    </div>
+    <div class="debug-list">
+    </div>
+  </div>
   <div id="viewport"></div>
   <div id="game-scoreboard" class="hide">
     <div id="timer"></div>

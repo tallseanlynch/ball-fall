@@ -61,19 +61,30 @@ setTimeout(() => {
         }
       });
 
-      const clickRay = new THREE.Raycaster();
       document.addEventListener("click", (e) => {
         e.preventDefault();
         console.log("CLICK", e);
-        const normalized = new THREE.Vector2(e.clientX, e.clientY);
-        clickRay.setFromCamera(normalized.normalize(), camera);
+        // debugger
+        const mouseX = ( e.clientX / window.innerWidth ) * 2 - 1;
+      	const mouseY = - ( e.clientY / window.innerHeight ) * 2 + 1;
+        const normalized = new THREE.Vector3(mouseX, mouseY, 1);
+        normalized.unproject( camera )
+        const clickRay = new THREE.Raycaster( camera.postion, normalized.sub(camera.position).normalize());
+        // clickRay.setFromCamera(normalized, camera);
     
-        console.log(
-          clickRay.intersectObject(
-            scene.children.find((obj) => obj.gameName === "FRONTGLASS")
-          )
-        );
-        console.log("APPCONFIG", window.appConfig);
+        // console.log(
+        //   clickRay.intersectObject(
+        //     scene.children.find((obj) => obj.gameName === "FRONTGLASS")
+        //   )
+        // );
+        // console.log('-- RAY INTERSECTED WITH --')
+        // console.log(clickRay)
+        // console.log(
+        //   clickRay.intersectObjects(
+        //     scene.children, true
+        //   )
+        // );
+        // console.log("APPCONFIG", window.appConfig);
       });
     }, 1500)
 

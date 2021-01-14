@@ -252,3 +252,52 @@ button:focus {
 /* input[type="range"] {
   background-color: #000000;
 } */
+
+.debug {
+  width: 40%;
+  height: 40%;
+  top: 5%;
+  left: 5%;
+  background-color: white;
+  z-index: 10;
+  position: absolute;
+  display: inline-block;
+  padding: 1%;
+  overflow-y: scroll;
+  max-width: 300px;
+}
+
+.debug .debug-item {
+  padding: 1%;
+  border: 1px solid lightgray;
+  display: block;
+  position: relative;
+  margin-bottom: 4px;
+}
+
+.debug .debug-item .name {
+  border: none;
+  font-weight: bold;
+}
+
+.debug .debug-item .remove {
+  position: absolute;
+  right: 1%;
+  top: 1%;
+}
+
+.coor {
+  max-width: 30px;
+}
+
+.p-coors, .r-coors {
+  display: block;
+}
+
+.c-data {
+  padding-top: 1%;
+}
+
+.bg-gray {
+  background-color: #ececec;
+}
