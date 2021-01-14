@@ -25,19 +25,21 @@ button:focus {
 #start-button {
   font-family: "Luz Sans Book";
   font-size: var(--font-size-3);
+  font-weight: 900;
   position: fixed;
   left: var(--start-button-offset-left);
   top: var(--start-button-offset-top);
   padding: 10px 30px;
   border: 0;
   border-radius: 5px;
-  opacity: 0.75;
+  opacity: 1;
   background-color: rgba(0, 0, 0, 0);
   color: #ffffff;
 }
 #level-select-title {
   font-family: "Luz Sans Book";
   font-size: var(--font-size-2);
+  font-weight: 900;
   color: #ffffff;
   margin: 0 auto;
   text-align: center;
@@ -47,7 +49,8 @@ button:focus {
   position: fixed;
   top: var(--title-offset-top);
   left: var(--title-offset-left);
-  font-size: var(--font-size-4);
+  font-size: calc(var(--font-size-4) * 1.6);
+  font-weight: 900;
   border: 0;
   border-radius: 5px;
   opacity: 0.75;
@@ -60,7 +63,7 @@ button:focus {
   top: var(--sounds-offset-top);
   border: 0;
   border-radius: 5px;
-  opacity: 0.75;
+  opacity: 1;
   background-color: rgba(0, 0, 0, 0);
 }
 #report {
@@ -69,7 +72,7 @@ button:focus {
   top: var(--report-offset-top);
   border: 0;
   border-radius: 5px;
-  opacity: 0.75;
+  opacity: 1;
   background-color: rgba(0, 0, 0, 0);
 }
 #report-options {
@@ -79,7 +82,7 @@ button:focus {
   /* display: block; */
   font-family: "Coves Light";
   font-size: var(--font-size-1);
-  font-weight: 500;
+  font-weight: 900;
   border: 0;
   border-radius: 5px;
   opacity: 1;
@@ -101,7 +104,7 @@ button:focus {
   top: var(--credits-menu-offset-top);
   border: 0;
   border-radius: 5px;
-  opacity: 0.75;
+  opacity: 1;
   background-color: rgba(0, 0, 0, 0);
 }
 #level-select {
@@ -110,7 +113,7 @@ button:focus {
   top: var(--level-select-offset-top);
   border: 0;
   border-radius: 5px;
-  opacity: 0.75;
+  opacity: 1;
   background-color: rgba(0, 0, 0, 0);
 }
 #level-select table,
@@ -127,7 +130,7 @@ button:focus {
   border: 0;
   border-radius: 5px;
   background-color: rgba(0, 0, 0, 0);
-  opacity: 0.75;
+  opacity: 1;
 }
 .start-menu-button {
   width: max-content;
@@ -135,8 +138,8 @@ button:focus {
   margin-top: 10px;
   display: block;
   font-family: "Coves Light";
-  font-size: var(--font-size-1);
-  font-weight: 500;
+  font-size: var(--font-size-2);
+  font-weight: 900;
   border: 0;
   border-radius: 5px;
   opacity: 1;
@@ -146,27 +149,55 @@ button:focus {
 
 .menu-title-text {
   font-family: "Luz Sans Book";
-  font-size: 2rem;
+  font-size: var(--font-size-2);
+  font-weight: 900;
   color: #ffffff;
   margin: 0 auto;
   text-align: center;
 }
 .menu-big-text {
-  display: block;
+  width: 100%;
+  display: flex;
+  justify-content:space-between;
   font-family: "Coves Light";
-  font-size: var(--font-size-1);
-  font-weight: 500;
+  font-size: var(--font-size-2);
+  line-height: var(--font-size-2);
+  font-weight: 900;
   border: 0;
   border-radius: 5px;
   opacity: 1;
   background-color: rgba(0, 0, 0, 0);
   color: #ffffff;
+  margin-top:  var(--font-size-1);
+  margin-bottom:  var(--font-size-1);
+}
+.justify-left {
+  /* align-self:flex-start; */
+}
+.justify-right {
+  /* align-self: flex-end; */
+}
+
+.menu-big-text input {
+  vertical-align: middle;
+  width: calc(var(--font-size-1) * 5);
+
+}
+
+.range-container {
+  line-height: var(--font-size-2);
+
+}
+.menu-container {
+  width: calc(var(--font-size-4) * 4);
+  margin-top:  var(--font-size-1);
+  margin-bottom:  var(--font-size-1);
 }
 .menu-small-text {
-  display: block;
+  display: inline-block;
   font-family: "Coves Light";
-  font-size: var(--font-size-0);
-  font-weight: 500;
+  font-size: var(--font-size-1);
+  font-weight: 900;
   border: 0;
   border-radius: 5px;
   opacity: 1;
@@ -177,12 +208,13 @@ button:focus {
   height: 50px;
   width: 50px;
   position: fixed;
-  left: 3%;
-  bottom: 3%;
-  padding: 10px 30px;
+  bottom: 0;
+  left: 0;
+  padding-bottom: var(--font-size-0);
+  padding-left: var(--font-size-0);
   border: 0;
   border-radius: 5px;
-  opacity: 0.75;
+  opacity: 1;
 }
 
 #pause-menu-play-button {
@@ -191,7 +223,7 @@ button:focus {
   padding: 10px 30px;
   border: 0;
   border-radius: 5px;
-  opacity: 0.75;
+  opacity: 1;
 }
 .hide {
   display: none;
@@ -199,8 +231,10 @@ button:focus {
 }
 #game-scoreboard {
   position: fixed;
-  top: 3%;
-  right: 3%;
+  top: 0;
+  right: 0;
+  padding-top: var(--font-size-0);
+  padding-right: var(--font-size-0);
 }
 #timer,
 #score {
@@ -213,12 +247,13 @@ button:focus {
 #report td {
   font-family: "Coves Light";
   font-size: var(--font-size-3);
+  font-weight: 900;
   color: #ffffff;
 }
 .level-select-button {
   font-family: "Coves Light";
   font-size: var(--font-size-2);
-  font-weight: 500;
+  font-weight: 900;
   border: 0;
   border-radius: 5px;
   opacity: 1;
@@ -239,6 +274,28 @@ button:focus {
   opacity: 1;
 }
 
+#tinted-overlay {
+  position:absolute;
+  background-color: #000000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  animation-duration: 7s;
+  animation-name: flux-tint;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+}
+
+@keyframes flux-tint {
+  0%, 100% { 
+    opacity: .3;
+  }
+  50% {
+    opacity: .4;
+  }
+
+}
 .opacity-0 {
   opacity: 0 !important;
 }
@@ -249,9 +306,6 @@ button:focus {
 .margin-bottom-2 {
   margin-bottom: 10px;
 }
-/* input[type="range"] {
-  background-color: #000000;
-} */
 
 .debug {
   width: 40%;
