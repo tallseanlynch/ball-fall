@@ -450,7 +450,10 @@
         // debugger
         let i = 0;
         for (i; i < ellipseGeometry.vertices.length; i++) {
+          // if (i % 4 == 0) {
           crystalCircle.add(crystal(size, { x: ellipseGeometry.vertices[i].x * s + t.x, y: ellipseGeometry.vertices[i].y * s + t.y, z: 0 }));
+
+          // }
         }
         scene.add(crystalCircle)
         window.appConfig.itemAmounts.crystalCircle++
@@ -723,8 +726,8 @@
               })
             );
             mainStructure.name = name;
-            mainStructure.children[1].position.x -=.25
-            mainStructure.children[1].position.y -=.25
+            mainStructure.children[1].position.x -= .25
+            mainStructure.children[1].position.y -= .25
             mainStructure.children[1].__dirtyPosition = true
             mainStructure.__dirtyPosition = true;
             mainStructure.featureType = "BEAM"
@@ -1183,14 +1186,14 @@
             createCrystalLine('STAGE1', 5, { x: 0, y: 15 }, 0, 8, "y");
 
             createCrystalLine('STAGE1', 5, { x: 0, y: -50 }, 0, 8, "y");
-            
+
             createCrystalLine('STAGE1', 5, { x: 15, y: 0 }, 0, 8, "x");
             createCrystalLine('STAGE1', 5, { x: -50, y: 0 }, 0, 8, "x");
 
-            createCrystalCircle('STAGE1', 4.5, {x: 50, y:50 }, 1, 4)
-            createCrystalCircle('STAGE1', 4.5, {x: 50, y:-50 }, 1, 4)
-            createCrystalCircle('STAGE1', 4.5, {x: -50, y:-50 }, 1, 4)
-            createCrystalCircle('STAGE1', 4.5, {x: -50, y:50 }, 1, 4)
+            createCrystalCircle('STAGE1', 4.5, { x: 50, y: 50 }, 1, 4)
+            createCrystalCircle('STAGE1', 4.5, { x: 50, y: -50 }, 1, 4)
+            createCrystalCircle('STAGE1', 4.5, { x: -50, y: -50 }, 1, 4)
+            createCrystalCircle('STAGE1', 4.5, { x: -50, y: 50 }, 1, 4)
 
             window.appConfig.stages.STAGE1.STAGE1PRIZE0 = scene.children.find((obj) => obj.name === "STAGE1PRIZE0")
             window.appConfig.stages.STAGE1.STAGE1PRIZE1 = scene.children.find((obj) => obj.name === "STAGE1PRIZE1")
@@ -1432,7 +1435,7 @@
             createCrystalLine('STAGE2', 5, { x: 57.5, y: -35 }, 0, 15, "y");
             createCrystalLine('STAGE2', 10, { x: 50.5, y: -20 }, 1, 5, "y");
 
-            createCrystalCircle('STAGE2', 4.5, {x: 0, y:0 }, 1, 4)
+            createCrystalCircle('STAGE2', 4.5, { x: 0, y: 0 }, 1, 4)
 
             window.appConfig.stages.STAGE2.STAGE2PRIZE0 = scene.children.find((obj) => obj.name === "STAGE2PRIZE0")
             window.appConfig.stages.STAGE2.STAGE2PRIZE1 = scene.children.find((obj) => obj.name === "STAGE2PRIZE1")
@@ -1556,7 +1559,7 @@
               "STAGE3MAINSTRUCTUREC",
               { x: 0, y: 0 }
             );
-           stage3MainBeamStructureC.rotation.z = .25 * Math.PI
+            stage3MainBeamStructureC.rotation.z = .25 * Math.PI
             scene.add(stage3MainBeamStructureC);
 
             const stage3MainBeamStructureD = createStage0MainBeamStructure(
@@ -1573,7 +1576,7 @@
               "STAGE3MAINSTRUCTUREE",
               { x: 0, y: 0 }
             );
-           stage3MainBeamStructureE.rotation.z = .25 * Math.PI
+            stage3MainBeamStructureE.rotation.z = .25 * Math.PI
             scene.add(stage3MainBeamStructureE);
 
             const stage3MainBeamStructureF = createStage0MainBeamStructure(
@@ -1796,14 +1799,14 @@
             createCrystalCross('STAGE3', 5, { x: -85, y: -30 }, 2);
             createCrystalCross('STAGE3', 5, { x: -85, y: 30 }, 2);
 
-            createCrystalCircle('STAGE3', 4, {x: 0, y:0 }, 0, 8)
-            createCrystalCircle('STAGE3', 4.5, {x: 0, y:0 }, 1, 8)
-            createCrystalCircle('STAGE3', 5, {x: 0, y:0 }, 2, 8)
-            createCrystalCircle('STAGE3', 5.5, {x: 0, y:0 }, 1, 8)
-            createCrystalCircle('STAGE3', 6, {x: 0, y:0 }, 0, 8)
-            createCrystalCircle('STAGE3', 7.375, {x: 0, y:0 }, 0, 32)
-            createCrystalCircle('STAGE3', 8.125, {x: 0, y:0 }, 1, 32)
-            createCrystalCircle('STAGE3', 8.75, {x: 0, y:0 }, 0, 32)
+            createCrystalCircle('STAGE3', 4, { x: 0, y: 0 }, 0, 8)
+            createCrystalCircle('STAGE3', 4.5, { x: 0, y: 0 }, 1, 8)
+            createCrystalCircle('STAGE3', 5, { x: 0, y: 0 }, 2, 8)
+            createCrystalCircle('STAGE3', 5.5, { x: 0, y: 0 }, 1, 8)
+            createCrystalCircle('STAGE3', 6, { x: 0, y: 0 }, 0, 8)
+            createCrystalCircle('STAGE3', 7.375, { x: 0, y: 0 }, 0, 32)
+            createCrystalCircle('STAGE3', 8.125, { x: 0, y: 0 }, 1, 32)
+            createCrystalCircle('STAGE3', 8.75, { x: 0, y: 0 }, 0, 32)
 
             window.appConfig.stages.STAGE3.STAGE3PRIZE0 = scene.children.find((obj) => obj.name === "STAGE3PRIZE0")
             window.appConfig.stages.STAGE3.STAGE3PRIZE1 = scene.children.find((obj) => obj.name === "STAGE3PRIZE1")
@@ -1889,207 +1892,207 @@
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
             const createStage3CrossBeamStructure = window.appConfig.stages.components.createStage3CrossBeamStructure
 
-          //   const stage3MainBeamStructure = createStage0MainBeamStructure(
-          //     6,
-          //     -0.85,
-          //     "STAGE3MAINSTRUCTURE",
-          //     { x: 0, y: 0 }
-          //   );
-          //   scene.add(stage3MainBeamStructure);
+            //   const stage3MainBeamStructure = createStage0MainBeamStructure(
+            //     6,
+            //     -0.85,
+            //     "STAGE3MAINSTRUCTURE",
+            //     { x: 0, y: 0 }
+            //   );
+            //   scene.add(stage3MainBeamStructure);
 
-          //   const stage3MainBeamStructureA = createStage0MainBeamStructure(
-          //     6,
-          //     -0.85,
-          //     "STAGE3MAINSTRUCTUREA",
-          //     { x: 0, y: 0 }
-          //   );
-          //   stage3MainBeamStructureA.rotation.z = .25 * Math.PI
-          //   scene.add(stage3MainBeamStructureA);
+            //   const stage3MainBeamStructureA = createStage0MainBeamStructure(
+            //     6,
+            //     -0.85,
+            //     "STAGE3MAINSTRUCTUREA",
+            //     { x: 0, y: 0 }
+            //   );
+            //   stage3MainBeamStructureA.rotation.z = .25 * Math.PI
+            //   scene.add(stage3MainBeamStructureA);
 
-          //   const stage3MainBeamStructureB = createStage0MainBeamStructure(
-          //     9,
-          //     -0.85,
-          //     "STAGE3MAINSTRUCTUREB",
-          //     { x: 0, y: 0 }
-          //   );
-          //   scene.add(stage3MainBeamStructureB);
+            //   const stage3MainBeamStructureB = createStage0MainBeamStructure(
+            //     9,
+            //     -0.85,
+            //     "STAGE3MAINSTRUCTUREB",
+            //     { x: 0, y: 0 }
+            //   );
+            //   scene.add(stage3MainBeamStructureB);
 
-          //   const stage3MainBeamStructureC = createStage0MainBeamStructure(
-          //     9,
-          //     -0.85,
-          //     "STAGE3MAINSTRUCTUREC",
-          //     { x: 0, y: 0 }
-          //   );
-          //  stage3MainBeamStructureC.rotation.z = .25 * Math.PI
-          //   scene.add(stage3MainBeamStructureC);
+            //   const stage3MainBeamStructureC = createStage0MainBeamStructure(
+            //     9,
+            //     -0.85,
+            //     "STAGE3MAINSTRUCTUREC",
+            //     { x: 0, y: 0 }
+            //   );
+            //  stage3MainBeamStructureC.rotation.z = .25 * Math.PI
+            //   scene.add(stage3MainBeamStructureC);
 
-          //   const stage3MainBeamStructureD = createStage0MainBeamStructure(
-          //     7.5,
-          //     -0.85,
-          //     "STAGE3MAINSTRUCTURED",
-          //     { x: 0, y: 0 }
-          //   );
-          //   scene.add(stage3MainBeamStructureD);
+            //   const stage3MainBeamStructureD = createStage0MainBeamStructure(
+            //     7.5,
+            //     -0.85,
+            //     "STAGE3MAINSTRUCTURED",
+            //     { x: 0, y: 0 }
+            //   );
+            //   scene.add(stage3MainBeamStructureD);
 
-          //   const stage3MainBeamStructureE = createStage0MainBeamStructure(
-          //     7.5,
-          //     -0.85,
-          //     "STAGE3MAINSTRUCTUREE",
-          //     { x: 0, y: 0 }
-          //   );
-          //  stage3MainBeamStructureE.rotation.z = .25 * Math.PI
-          //   scene.add(stage3MainBeamStructureE);
+            //   const stage3MainBeamStructureE = createStage0MainBeamStructure(
+            //     7.5,
+            //     -0.85,
+            //     "STAGE3MAINSTRUCTUREE",
+            //     { x: 0, y: 0 }
+            //   );
+            //  stage3MainBeamStructureE.rotation.z = .25 * Math.PI
+            //   scene.add(stage3MainBeamStructureE);
 
-          //   const stage3MainBeamStructureF = createStage0MainBeamStructure(
-          //     1,
-          //     -.5,
-          //     "STAGE3MAINSTRUCTUREF",
-          //     { x: 0, y: 0 }
-          //   );
-          //   scene.add(stage3MainBeamStructureF);
+            //   const stage3MainBeamStructureF = createStage0MainBeamStructure(
+            //     1,
+            //     -.5,
+            //     "STAGE3MAINSTRUCTUREF",
+            //     { x: 0, y: 0 }
+            //   );
+            //   scene.add(stage3MainBeamStructureF);
 
-          const stage4MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure(
-            12,
-            0.56,
-            "STAGE4MAINSTRUCTURE"
-          );
-          stage4MainBeamStructure.rotation.z = .25 * Math.PI
-          scene.add(stage4MainBeamStructure);
+            const stage4MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure(
+              12,
+              0.56,
+              "STAGE4MAINSTRUCTURE"
+            );
+            stage4MainBeamStructure.rotation.z = .25 * Math.PI
+            scene.add(stage4MainBeamStructure);
 
-          //   const stage3CrossBeamStructure = createStage3CrossBeamStructure(
-          //     .5,
-          //     .75,
-          //     "STAGE3CROSSBEAMSTRUCTURE",
-          //     { x: 0, y: 115 }
-          //   );
-          //   scene.add(stage3CrossBeamStructure);
+            //   const stage3CrossBeamStructure = createStage3CrossBeamStructure(
+            //     .5,
+            //     .75,
+            //     "STAGE3CROSSBEAMSTRUCTURE",
+            //     { x: 0, y: 115 }
+            //   );
+            //   scene.add(stage3CrossBeamStructure);
 
-          //   const stage3CrossBeamStructureA = createStage3CrossBeamStructure(
-          //     .5,
-          //     .75,
-          //     "STAGE3CROSSBEAMSTRUCTUREA",
-          //     { x: 15, y: 100 }
-          //   );
-          //   scene.add(stage3CrossBeamStructureA);
+            //   const stage3CrossBeamStructureA = createStage3CrossBeamStructure(
+            //     .5,
+            //     .75,
+            //     "STAGE3CROSSBEAMSTRUCTUREA",
+            //     { x: 15, y: 100 }
+            //   );
+            //   scene.add(stage3CrossBeamStructureA);
 
-          //   const stage3CrossBeamStructureB = createStage3CrossBeamStructure(
-          //     .5,
-          //     .75,
-          //     "STAGE3CROSSBEAMSTRUCTUREB",
-          //     { x: -15, y: 100 }
-          //   );
-          //   scene.add(stage3CrossBeamStructureB);
+            //   const stage3CrossBeamStructureB = createStage3CrossBeamStructure(
+            //     .5,
+            //     .75,
+            //     "STAGE3CROSSBEAMSTRUCTUREB",
+            //     { x: -15, y: 100 }
+            //   );
+            //   scene.add(stage3CrossBeamStructureB);
 
-          //   const stage3CrossBeamStructureC = createStage3CrossBeamStructure(
-          //     .5,
-          //     .75,
-          //     "STAGE3CROSSBEAMSTRUCTUREC",
-          //     { x: 0, y: 85 }
-          //   );
-          //   scene.add(stage3CrossBeamStructureC);
+            //   const stage3CrossBeamStructureC = createStage3CrossBeamStructure(
+            //     .5,
+            //     .75,
+            //     "STAGE3CROSSBEAMSTRUCTUREC",
+            //     { x: 0, y: 85 }
+            //   );
+            //   scene.add(stage3CrossBeamStructureC);
 
-          //   const stage3CrossBeamStructure1 = createStage3CrossBeamStructure(
-          //     .5,
-          //     .75,
-          //     "STAGE3CROSSBEAMSTRUCTURE1",
-          //     { x: 0, y: -115 }
-          //   );
-          //   scene.add(stage3CrossBeamStructure1);
+            //   const stage3CrossBeamStructure1 = createStage3CrossBeamStructure(
+            //     .5,
+            //     .75,
+            //     "STAGE3CROSSBEAMSTRUCTURE1",
+            //     { x: 0, y: -115 }
+            //   );
+            //   scene.add(stage3CrossBeamStructure1);
 
-          //   const stage3CrossBeamStructure1A = createStage3CrossBeamStructure(
-          //     .5,
-          //     .75,
-          //     "STAGE3CROSSBEAMSTRUCTURE1A",
-          //     { x: 15, y: -100 }
-          //   );
-          //   scene.add(stage3CrossBeamStructure1A);
+            //   const stage3CrossBeamStructure1A = createStage3CrossBeamStructure(
+            //     .5,
+            //     .75,
+            //     "STAGE3CROSSBEAMSTRUCTURE1A",
+            //     { x: 15, y: -100 }
+            //   );
+            //   scene.add(stage3CrossBeamStructure1A);
 
-          //   const stage3CrossBeamStructure1B = createStage3CrossBeamStructure(
-          //     .5,
-          //     .75,
-          //     "STAGE3CROSSBEAMSTRUCTURE1B",
-          //     { x: -15, y: -100 }
-          //   );
-          //   scene.add(stage3CrossBeamStructure1B);
+            //   const stage3CrossBeamStructure1B = createStage3CrossBeamStructure(
+            //     .5,
+            //     .75,
+            //     "STAGE3CROSSBEAMSTRUCTURE1B",
+            //     { x: -15, y: -100 }
+            //   );
+            //   scene.add(stage3CrossBeamStructure1B);
 
-          //   const stage3CrossBeamStructure1C = createStage3CrossBeamStructure(
-          //     .5,
-          //     .75,
-          //     "STAGE3CROSSBEAMSTRUCTURE1C",
-          //     { x: 0, y: -85 }
-          //   );
-          //   scene.add(stage3CrossBeamStructure1C);
-
-
+            //   const stage3CrossBeamStructure1C = createStage3CrossBeamStructure(
+            //     .5,
+            //     .75,
+            //     "STAGE3CROSSBEAMSTRUCTURE1C",
+            //     { x: 0, y: -85 }
+            //   );
+            //   scene.add(stage3CrossBeamStructure1C);
 
 
 
 
-          //   const stage3CrossBeamStructure2 = createStage3CrossBeamStructure(
-          //     .5,
-          //     .75,
-          //     "STAGE3CROSSBEAMSTRUCTURE2",
-          //     { x: -115, y: 0 }
-          //   );
-          //   scene.add(stage3CrossBeamStructure2);
-
-          //   const stage3CrossBeamStructure2A = createStage3CrossBeamStructure(
-          //     .5,
-          //     .75,
-          //     "STAGE3CROSSBEAMSTRUCTURE2A",
-          //     { x: -100, y: 15 }
-          //   );
-          //   scene.add(stage3CrossBeamStructure2A);
-
-          //   const stage3CrossBeamStructure2B = createStage3CrossBeamStructure(
-          //     .5,
-          //     .75,
-          //     "STAGE3CROSSBEAMSTRUCTURE2B",
-          //     { x: -100, y: -15 }
-          //   );
-          //   scene.add(stage3CrossBeamStructure2B);
-
-          //   const stage3CrossBeamStructure2C = createStage3CrossBeamStructure(
-          //     .5,
-          //     .75,
-          //     "STAGE3CROSSBEAMSTRUCTURE2C",
-          //     { x: -85, y: 0 }
-          //   );
-          //   scene.add(stage3CrossBeamStructure2C);
 
 
+            //   const stage3CrossBeamStructure2 = createStage3CrossBeamStructure(
+            //     .5,
+            //     .75,
+            //     "STAGE3CROSSBEAMSTRUCTURE2",
+            //     { x: -115, y: 0 }
+            //   );
+            //   scene.add(stage3CrossBeamStructure2);
 
-          //   const stage3CrossBeamStructure3 = createStage3CrossBeamStructure(
-          //     .5,
-          //     .75,
-          //     "STAGE3CROSSBEAMSTRUCTURE3",
-          //     { x: 115, y: 0 }
-          //   );
-          //   scene.add(stage3CrossBeamStructure3);
+            //   const stage3CrossBeamStructure2A = createStage3CrossBeamStructure(
+            //     .5,
+            //     .75,
+            //     "STAGE3CROSSBEAMSTRUCTURE2A",
+            //     { x: -100, y: 15 }
+            //   );
+            //   scene.add(stage3CrossBeamStructure2A);
 
-          //   const stage3CrossBeamStructure3A = createStage3CrossBeamStructure(
-          //     .5,
-          //     .75,
-          //     "STAGE3CROSSBEAMSTRUCTURE3A",
-          //     { x: 100, y: 15 }
-          //   );
-          //   scene.add(stage3CrossBeamStructure3A);
+            //   const stage3CrossBeamStructure2B = createStage3CrossBeamStructure(
+            //     .5,
+            //     .75,
+            //     "STAGE3CROSSBEAMSTRUCTURE2B",
+            //     { x: -100, y: -15 }
+            //   );
+            //   scene.add(stage3CrossBeamStructure2B);
 
-          //   const stage3CrossBeamStructure3B = createStage3CrossBeamStructure(
-          //     .5,
-          //     .75,
-          //     "STAGE3CROSSBEAMSTRUCTURE3B",
-          //     { x: 100, y: -15 }
-          //   );
-          //   scene.add(stage3CrossBeamStructure3B);
+            //   const stage3CrossBeamStructure2C = createStage3CrossBeamStructure(
+            //     .5,
+            //     .75,
+            //     "STAGE3CROSSBEAMSTRUCTURE2C",
+            //     { x: -85, y: 0 }
+            //   );
+            //   scene.add(stage3CrossBeamStructure2C);
 
-          //   const stage3CrossBeamStructure3C = createStage3CrossBeamStructure(
-          //     .5,
-          //     .75,
-          //     "STAGE3CROSSBEAMSTRUCTURE3C",
-          //     { x: 85, y: 0 }
-          //   );
-          //   scene.add(stage3CrossBeamStructure3C);
+
+
+            //   const stage3CrossBeamStructure3 = createStage3CrossBeamStructure(
+            //     .5,
+            //     .75,
+            //     "STAGE3CROSSBEAMSTRUCTURE3",
+            //     { x: 115, y: 0 }
+            //   );
+            //   scene.add(stage3CrossBeamStructure3);
+
+            //   const stage3CrossBeamStructure3A = createStage3CrossBeamStructure(
+            //     .5,
+            //     .75,
+            //     "STAGE3CROSSBEAMSTRUCTURE3A",
+            //     { x: 100, y: 15 }
+            //   );
+            //   scene.add(stage3CrossBeamStructure3A);
+
+            //   const stage3CrossBeamStructure3B = createStage3CrossBeamStructure(
+            //     .5,
+            //     .75,
+            //     "STAGE3CROSSBEAMSTRUCTURE3B",
+            //     { x: 100, y: -15 }
+            //   );
+            //   scene.add(stage3CrossBeamStructure3B);
+
+            //   const stage3CrossBeamStructure3C = createStage3CrossBeamStructure(
+            //     .5,
+            //     .75,
+            //     "STAGE3CROSSBEAMSTRUCTURE3C",
+            //     { x: 85, y: 0 }
+            //   );
+            //   scene.add(stage3CrossBeamStructure3C);
 
 
 
@@ -2336,6 +2339,17 @@
       };
       return () => {
         createSphere();
+        const findCoin = (x, y, xMod = 10, yMod = 10) => {
+          return window.appConfig.coins.find(
+            (coin, coinIndex) => {
+              if (
+                Math.abs(coin.position.x - x) < coin.scale.x * xMod &&
+                Math.abs(coin.position.y - y) < coin.scale.x * yMod && !coin.spriteFetching) {
+                return true
+              } else return false;
+            }
+          )
+        }
         const setSpriteSpherical = (sprite) => {
           const spritePhi = (lfoPositive((sprite.phiT + sprite.phiMod * sprite.phiT)) + lfoPositive(100 * Math.random()) / 500) * (2 * Math.PI)
           const spriteTheta = (lfo((sprite.thetaT + sprite.thetaMod * sprite.thetaT)) + lfo(721 * Math.random()) / 1000) * (Math.PI)
@@ -2344,7 +2358,7 @@
         // make sprites
         const sprites = []
         window.appConfig.sprites = sprites
-        const createSprite = () => {
+        const createSprite = (num) => {
           const spriteGeometry = new THREE.SphereGeometry(.2, 16, 16)
           const spriteMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .5 })
           const thetaMod = Math.random()
@@ -2358,8 +2372,12 @@
             thetaT: 1500,
             phiT: 2000,
             thetaMod: thetaMod,
-            phiMod: phiMod
+            phiMod: phiMod,
+            isFetchingCoin: false,
+            fetchData: {},
+            num: num
           }
+          sprite0.mesh.name = "sprite"
 
 
 
@@ -2374,14 +2392,58 @@
             sprite0.mesh.position.y = spriteVector3.y
             sprite0.mesh.position.z = spriteVector3.z
             sprite0.mesh.material.opacity = .5 + (lfoPositive(1000) + lfoPositive(77) / 2)
-            sprite0.mesh.name = "sprite"
+
+            if (!sprite0.isFetchingCoin && window.appConfig.start && !window.appConfig.pause) {
+              const theCoin = findCoin(sprite0.mesh.position.x, sprite0.mesh.position.y)
+              if (theCoin) {
+                sprite0.isFetchingCoin = true
+                //sprite position moves from 0%coin 100&starting to 100%coin 0&starting
+                sprite0.fetchData.startingPosition = sprite0.mesh.position.clone()
+                sprite0.fetchData.target = theCoin
+                sprite0.fetchData.coinUuid = theCoin.uuid
+                sprite0
+                window.appConfig.timers.activeTimers.push(window.appConfig.timers[`spriteFetch${sprite0.num}`](sprite0))
+                theCoin.spriteFetching = sprite0
+
+
+
+                theCoin.children.forEach(child => {
+                  child.material.color.setHex(0x000000)
+                })
+              }
+            } else if (sprite0.isFetchingCoin && window.appConfig.start && !window.appConfig.pause) {
+              let percentComplete = window.appConfig.timers.data[`spriteFetch${sprite0.num}`].percentComplete
+              if (percentComplete < .5) {
+                const percentThere = percentComplete / .5
+                sprite0.mesh.position.x = sprite0.fetchData.startingPosition.x * (1 - percentThere) + (sprite0.fetchData.target.position.x * percentThere)
+                sprite0.mesh.position.y = sprite0.fetchData.startingPosition.y * (1 - percentThere) + (sprite0.fetchData.target.position.y * percentThere)
+              } else if (percentComplete > .5) {
+                if (!sprite0.fetchData.coinStartingPosition) {
+                  sprite0.fetchData.coinStartingPosition = sprite0.fetchData.target.position.clone()
+                }
+                const percentThere = (percentComplete - .5) / .5
+                // console.error(percentThere)
+                // if (percentThere > 1) {
+                //   debugger
+                // }
+                const newX = sprite0.fetchData.coinStartingPosition.x * (1 - percentThere) + (window.appConfig.sphere.position.x * percentThere)
+                const newY = sprite0.fetchData.coinStartingPosition.y * (1 - percentThere) + (window.appConfig.sphere.position.y * percentThere)
+                sprite0.mesh.position.x = newX
+                sprite0.mesh.position.y = newY
+
+                sprite0.fetchData.target.position.x = newX
+                sprite0.fetchData.target.position.y = newY
+                // console.log(sprite0.fetchData.coinUuid)
+                // console.log(sprite0.fetchData.target.uuid)
+                // debugger
+              }
+            }
           }
           sprites.push(sprite0)
 
         }
-        createSprite()
-        createSprite()
-        createSprite()
+        createSprite(0)
+        // createSprite(1)
 
 
 
@@ -2471,9 +2533,9 @@
           completedCallback: (percentComplete) => {
             window.appConfig.stages[window.appConfig.currentStage].teardown()
 
-            if(action && action.action === 'next') {
+            if (action && action.action === 'next') {
               window.appConfig.currentStageIndex++
-              if(window.appConfig.currentStageIndex >= window.appConfig.stagesArray.length) {
+              if (window.appConfig.currentStageIndex >= window.appConfig.stagesArray.length) {
                 window.appConfig.currentStageIndex = 0
               }
               window.appConfig.currentStage = window.appConfig.stagesArray[window.appConfig.currentStageIndex]
@@ -2504,6 +2566,103 @@
           }
         }
       },
+      spriteFetch0: (sprite) => {
+        return {
+          started: 0,
+          ended: 0,
+          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
+            .position.z,
+          percentComplete: 0,
+          time: 2000,
+          timeLeft: 1000,
+          currentTime: 0,
+          name: 'SPRITEFETCH0',
+          id: Math.round(Math.random() * 10000),
+          activeCallback: (percentComplete) => {
+            window.appConfig.timers.data.spriteFetch0.percentComplete = percentComplete
+          },
+          completedCallback: (percentComplete) => {
+            console.log(sprite)
+            sprite.fetchData.completed = true
+          }
+        }
+      },
+      spriteFetch1: (sprite) => {
+        console.log(sprite)
+        debugger
+        return {
+          started: 0,
+          ended: 0,
+          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
+            .position.z,
+          percentComplete: 0,
+          time: 2000,
+          timeLeft: 1000,
+          currentTime: 0,
+          name: 'SPRITEFETCH1',
+          id: Math.round(Math.random() * 10000),
+          activeCallback: (percentComplete) => {
+            window.appConfig.timers.data.spriteFetch1 = percentComplete
+          }
+        }
+      },
+      spriteFetch2: (sprite) => {
+        console.log(sprite)
+        debugger
+        return {
+          started: 0,
+          ended: 0,
+          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
+            .position.z,
+          percentComplete: 0,
+          time: 2000,
+          timeLeft: 1000,
+          currentTime: 0,
+          name: 'SPRITEFETCH2',
+          id: Math.round(Math.random() * 10000),
+          activeCallback: (percentComplete) => {
+            window.appConfig.timers.data.spriteFetch2 = percentComplete
+          }
+        }
+      },
+      spriteFetch3: (sprite) => {
+        console.log(sprite)
+        debugger
+        return {
+          started: 0,
+          ended: 0,
+          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
+            .position.z,
+          percentComplete: 0,
+          time: 2000,
+          timeLeft: 1000,
+          currentTime: 0,
+          name: 'SPRITEFETCH3',
+          id: Math.round(Math.random() * 10000),
+          activeCallback: (percentComplete) => {
+            window.appConfig.timers.data.spriteFetch3 = percentComplete
+          }
+        }
+      },
+      spriteFetch4: (sprite) => {
+        console.log(sprite)
+        debugger
+        return {
+          started: 0,
+          ended: 0,
+          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
+            .position.z,
+          percentComplete: 0,
+          time: 2000,
+          timeLeft: 1000,
+          currentTime: 0,
+          name: 'SPRITEFETCH4',
+          id: Math.round(Math.random() * 10000),
+          activeCallback: (percentComplete) => {
+            window.appConfig.timers.data.spriteFetch4 = percentComplete
+          }
+        }
+      },
       data: {
         initialBallZoom: {
           percentComplete: 0
@@ -2512,6 +2671,9 @@
           percentComplete: 0
         },
         stageResultsBallZoom: {
+          percentComplete: 0
+        },
+        spriteFetch0: {
           percentComplete: 0
         }
       },
@@ -2690,6 +2852,10 @@
         console.log(potentiallyGrabbedCoin)
         const coinValue = potentiallyGrabbedCoin.coinValue
         const prizeValue = potentiallyGrabbedCoin.prizeValue
+        if (potentiallyGrabbedCoin.spriteFetching) {
+          potentiallyGrabbedCoin.spriteFetching.fetchData = {}
+          potentiallyGrabbedCoin.spriteFetching.isFetchingCoin = false
+        }
         if (coinValue > 0) {
           window.appConfig.score.coins += potentiallyGrabbedCoin.coinValue;
           potentiallyGrabbedCoin.visible = false
