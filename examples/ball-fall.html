@@ -51,9 +51,9 @@
         bumperGroup: 0,
         prize: 0
       },
-      currentStage: 'STAGE4',
+      currentStage: 'STAGE3',
       stagesArray: ['STAGE0', 'STAGE1', 'STAGE2', 'STAGE3', 'STAGE4'],
-      currentStageIndex: 4
+      currentStageIndex: 3
     };
 
     const backgroundMusics = [];
@@ -381,6 +381,7 @@
           );
           coin.coinType = "single";
           coin.coinValue = 1;
+          coin.baseColor = singleHex
           coin.coinHeight =
             coin.children.forEach((child) => {
               child.material.color.setHex(singleHex);
@@ -394,6 +395,7 @@
           );
           coin.coinType = "double";
           coin.coinValue = 2;
+          coin.baseColor = doubleHex
           coin.children.forEach((child) => {
             child.material.color.setHex(doubleHex);
           });
@@ -407,6 +409,7 @@
           );
           coin.coinType = "triple";
           coin.coinValue = 3;
+          coin.baseColor = tripleHex
           coin.children.forEach((child) => {
             child.material.color.setHex(tripleHex);
           });
@@ -2339,12 +2342,22 @@
       };
       return () => {
         createSphere();
+        const colorLightnessLfo = (baseColor, lfoMod) => {
+          const color = new THREE.Color(baseColor)
+          let hsl = {}
+          color.getHSL(hsl)
+          const theLfo = lfo(141 + lfoMod) * .6
+          hsl.l = hsl.l + theLfo
+          return hsl
+        }
         const findCoin = (x, y, xMod = 10, yMod = 10) => {
           return window.appConfig.coins.find(
             (coin, coinIndex) => {
               if (
                 Math.abs(coin.position.x - x) < coin.scale.x * xMod &&
-                Math.abs(coin.position.y - y) < coin.scale.x * yMod && !coin.spriteFetching) {
+                Math.abs(coin.position.y - y) < coin.scale.x * yMod &&
+                !coin.spriteFetching &&
+                !coin.prizeValue) {
                 return true
               } else return false;
             }
@@ -2400,18 +2413,26 @@
                 //sprite position moves from 0%coin 100&starting to 100%coin 0&starting
                 sprite0.fetchData.startingPosition = sprite0.mesh.position.clone()
                 sprite0.fetchData.target = theCoin
-                sprite0.fetchData.coinUuid = theCoin.uuid
+                sprite0.fetchData.coinBrightnessLfoMod = Math.ceil(Math.random() * 33)
                 sprite0
                 window.appConfig.timers.activeTimers.push(window.appConfig.timers[`spriteFetch${sprite0.num}`](sprite0))
                 theCoin.spriteFetching = sprite0
 
 
 
-                theCoin.children.forEach(child => {
-                  child.material.color.setHex(0x000000)
-                })
+                // theCoin.children.forEach(child => {
+                //   console.log(child.material.color)
+                //   debugger
+                //   child.material.color.setHex(0x000000)
+                // })
               }
             } else if (sprite0.isFetchingCoin && window.appConfig.start && !window.appConfig.pause) {
+              const newHsl = colorLightnessLfo(sprite0.fetchData.target.baseColor, sprite0.fetchData.coinBrightnessLfoMod)
+              console.error(newHsl)
+              sprite0.fetchData.target.children.forEach(child => {
+                child.material.color.setHSL(newHsl.h, newHsl.s, newHsl.l)
+              })
+              // sprite0.fetchData.target.color = colorLightnessLfo(sprite0.fetchData.target.color, sprite0.fetchData.coinBrightnessLfoMod)
               let percentComplete = window.appConfig.timers.data[`spriteFetch${sprite0.num}`].percentComplete
               if (percentComplete < .5) {
                 const percentThere = percentComplete / .5
@@ -2443,7 +2464,6 @@
 
         }
         createSprite(0)
-        // createSprite(1)
 
 
 
@@ -2588,8 +2608,6 @@
         }
       },
       spriteFetch1: (sprite) => {
-        console.log(sprite)
-        debugger
         return {
           started: 0,
           ended: 0,
@@ -2602,7 +2620,11 @@
           name: 'SPRITEFETCH1',
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
-            window.appConfig.timers.data.spriteFetch1 = percentComplete
+            window.appConfig.timers.data.spriteFetch1.percentComplete = percentComplete
+          },
+          completedCallback: (percentComplete) => {
+            console.log(sprite)
+            sprite.fetchData.completed = true
           }
         }
       },
@@ -2621,7 +2643,7 @@
           name: 'SPRITEFETCH2',
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
-            window.appConfig.timers.data.spriteFetch2 = percentComplete
+            window.appConfig.timers.data.spriteFetch2.percentComplete = percentComplete
           }
         }
       },
@@ -2640,7 +2662,7 @@
           name: 'SPRITEFETCH3',
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
-            window.appConfig.timers.data.spriteFetch3 = percentComplete
+            window.appConfig.timers.data.spriteFetch3.percentComplete = percentComplete
           }
         }
       },
@@ -2659,7 +2681,7 @@
           name: 'SPRITEFETCH4',
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
-            window.appConfig.timers.data.spriteFetch4 = percentComplete
+            window.appConfig.timers.data.spriteFetch4.percentComplete = percentComplete
           }
         }
       },
@@ -2674,6 +2696,18 @@
           percentComplete: 0
         },
         spriteFetch0: {
+          percentComplete: 0
+        },
+        spriteFetch1: {
+          percentComplete: 0
+        },
+        spriteFetch2: {
+          percentComplete: 0
+        },
+        spriteFetch3: {
+          percentComplete: 0
+        },
+        spriteFetch4: {
           percentComplete: 0
         }
       },
@@ -3250,9 +3284,9 @@
   <div id="curtain"></div>
 </body>
 <script>
-    // window.console.log = () => {}
-    // window.console.warn = () => {}
-    // window.console.dir = () => {}
+  window.console.log = () => { }
+  window.console.warn = () => { }
+  window.console.dir = () => { }
 </script>
 
 </html>
