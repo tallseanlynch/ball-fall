@@ -735,6 +735,42 @@
             mainStructure.__dirtyPosition = true;
             mainStructure.featureType = "BEAM"
             return mainStructure;
+          },
+          createStage4PlinkoStructure: (
+            scaleX,
+            scaleY,
+            scaleAdj = 5,
+            name,
+            p = { x: 0, y: 0 },
+            nx = 4,
+            ny = 4
+          ) => {
+            const mainStructure = new Physijs.BoxMesh(
+              new THREE.BoxGeometry(0.01, 0.01, 0.01),
+              new Physijs.createMaterial(
+                new THREE.MeshPhongMaterial({ transparent: true, opacity: 0 }),
+                0.6,
+                0.3
+              ),
+              0
+            );
+            mainStructure.position.set(0 + p.x, 0 + p.y, 1.5);
+            let ix
+            let iy
+            for(iy = 0;iy<ny;iy++) {
+              for(ix = 0;ix<nx;ix++) {
+                mainStructure.add(
+                  createBeam({
+                    p: [scaleX * ix * 3, scaleY * iy, -1],
+                    r: [0, 0, 0],
+                    s: (1 + scaleAdj) * ((scaleX+scaleY)/2),
+                  })
+                );              
+              }
+            }
+            mainStructure.name = name;
+            mainStructure.featureType = "BEAM"
+            return mainStructure;
           }
         },
         STAGE0: {
@@ -1856,34 +1892,70 @@
             'STAGE4PRIZE1',
             'STAGE4PRIZE2',
             'STAGE4PRIZE3',
+            'STAGE4MAINSTRUCTURE1',
+            'STAGE4MAINSTRUCTURE2',
+            'STAGE4CROSSBEAMSTRUCTURE',
+            'STAGE4CROSSBEAMSTRUCTUREA',
+            'STAGE4CROSSBEAMSTRUCTUREB',
+            'STAGE4CROSSBEAMSTRUCTUREC',
+            'STAGE4CROSSBEAMSTRUCTURED',
+            'STAGE4MAINSTRUCTURE3',
+            'STAGE4MAINSTRUCTURE4',
+            'STAGE4CROSSBEAMSTRUCTURE1',
+            'STAGE4CROSSBEAMSTRUCTURE1A',
+            'STAGE4CROSSBEAMSTRUCTURE1B',
+            'STAGE4CROSSBEAMSTRUCTURE1C',
+            'STAGE4CROSSBEAMSTRUCTURE1D',
+            'STAGE4MAINSTRUCTURE5',
+            'STAGE4MAINSTRUCTURE6',
+            'STAGE4CROSSBEAMSTRUCTURE2',
+            'STAGE4CROSSBEAMSTRUCTURE2A',
+            'STAGE4CROSSBEAMSTRUCTURE2B',
+            'STAGE4CROSSBEAMSTRUCTURE2C',
+            'STAGE4CROSSBEAMSTRUCTURE2D',
+            'STAGE4MAINSTRUCTURE7',
+            'STAGE4MAINSTRUCTURE8',
+            'STAGE4CROSSBEAMSTRUCTURE3',
+            'STAGE4CROSSBEAMSTRUCTURE3A',
+            'STAGE4CROSSBEAMSTRUCTURE3B',
+            'STAGE4CROSSBEAMSTRUCTURE3C',
+            'STAGE4CROSSBEAMSTRUCTURE3D'
           ],
           transforms: {
             'STAGE4PRIZE0': { r: { x: .005, y: .005, z: .005 } },
             'STAGE4PRIZE1': { r: { x: .005, y: .005, z: .005 } },
             'STAGE4PRIZE2': { r: { x: .005, y: .005, z: .005 } },
             'STAGE4PRIZE3': { r: { x: .005, y: .005, z: .005 } },
-            // 'STAGE3MAINSTRUCTURE': { r: { x: 0, y: 0, z: -.005 } },
-            // 'STAGE3MAINSTRUCTUREA': { r: { x: 0, y: 0, z: -.005 } },
-            // 'STAGE3MAINSTRUCTUREB': { r: { x: 0, y: 0, z: -.005 } },
-            // 'STAGE3MAINSTRUCTUREC': { r: { x: 0, y: 0, z: -.005 } },
-            // 'STAGE3MAINSTRUCTURED': { r: { x: 0, y: 0, z: .005 } },
-            // 'STAGE3MAINSTRUCTUREE': { r: { x: 0, y: 0, z: .005 } },
-            // 'STAGE3CROSSBEAMSTRUCTURE': { r: { x: 0, y: 0, z: .01 } },
-            // 'STAGE3CROSSBEAMSTRUCTUREA': { r: { x: 0, y: 0, z: -.01 } },
-            // 'STAGE3CROSSBEAMSTRUCTUREB': { r: { x: 0, y: 0, z: .01 } },
-            // 'STAGE3CROSSBEAMSTRUCTUREC': { r: { x: 0, y: 0, z: -.01 } },
-            // 'STAGE3CROSSBEAMSTRUCTURE1': { r: { x: 0, y: 0, z: .01 } },
-            // 'STAGE3CROSSBEAMSTRUCTURE1A': { r: { x: 0, y: 0, z: -.01 } },
-            // 'STAGE3CROSSBEAMSTRUCTURE1B': { r: { x: 0, y: 0, z: .01 } },
-            // 'STAGE3CROSSBEAMSTRUCTURE1C': { r: { x: 0, y: 0, z: -.01 } },
-            // 'STAGE3CROSSBEAMSTRUCTURE2': { r: { x: 0, y: 0, z: .01 } },
-            // 'STAGE3CROSSBEAMSTRUCTURE2A': { r: { x: 0, y: 0, z: -.01 } },
-            // 'STAGE3CROSSBEAMSTRUCTURE2B': { r: { x: 0, y: 0, z: .01 } },
-            // 'STAGE3CROSSBEAMSTRUCTURE2C': { r: { x: 0, y: 0, z: -.01 } },
-            // 'STAGE3CROSSBEAMSTRUCTURE3': { r: { x: 0, y: 0, z: .01 } },
-            // 'STAGE3CROSSBEAMSTRUCTURE3A': { r: { x: 0, y: 0, z: -.01 } },
-            // 'STAGE3CROSSBEAMSTRUCTURE3B': { r: { x: 0, y: 0, z: .01 } },
-            // 'STAGE3CROSSBEAMSTRUCTURE3C': { r: { x: 0, y: 0, z: -.01 } }
+            'STAGE4MAINSTRUCTURE1': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE4MAINSTRUCTURE2': { r: { x: 0, y: 0, z: .005 } },
+            'STAGE4CROSSBEAMSTRUCTURE': { r: { x: 0, y: 0, z: .01 } },
+            'STAGE4CROSSBEAMSTRUCTUREA': { r: { x: 0, y: 0, z: -.01 } },
+            'STAGE4CROSSBEAMSTRUCTUREB': { r: { x: 0, y: 0, z: .01 } },
+            'STAGE4CROSSBEAMSTRUCTUREC': { r: { x: 0, y: 0, z: -.01 } },
+            'STAGE4CROSSBEAMSTRUCTURED': { r: { x: 0, y: 0, z: .01 } },
+            'STAGE4MAINSTRUCTURE3': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE4MAINSTRUCTURE4': { r: { x: 0, y: 0, z: .005 } },
+            'STAGE4CROSSBEAMSTRUCTURE1': { r: { x: 0, y: 0, z: .01 } },
+            'STAGE4CROSSBEAMSTRUCTURE1A': { r: { x: 0, y: 0, z: -.01 } },
+            'STAGE4CROSSBEAMSTRUCTURE1B': { r: { x: 0, y: 0, z: .01 } },
+            'STAGE4CROSSBEAMSTRUCTURE1C': { r: { x: 0, y: 0, z: -.01 } },
+            'STAGE4CROSSBEAMSTRUCTURE1D': { r: { x: 0, y: 0, z: .01 } },
+
+            'STAGE4MAINSTRUCTURE5': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE4MAINSTRUCTURE6': { r: { x: 0, y: 0, z: .005 } },
+            'STAGE4CROSSBEAMSTRUCTURE2': { r: { x: 0, y: 0, z: .01 } },
+            'STAGE4CROSSBEAMSTRUCTURE2A': { r: { x: 0, y: 0, z: -.01 } },
+            'STAGE4CROSSBEAMSTRUCTURE2B': { r: { x: 0, y: 0, z: .01 } },
+            'STAGE4CROSSBEAMSTRUCTURE2C': { r: { x: 0, y: 0, z: -.01 } },
+            'STAGE4CROSSBEAMSTRUCTURE2D': { r: { x: 0, y: 0, z: .01 } },
+            'STAGE4MAINSTRUCTURE7': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE4MAINSTRUCTURE8': { r: { x: 0, y: 0, z: .005 } },
+            'STAGE4CROSSBEAMSTRUCTURE3': { r: { x: 0, y: 0, z: .01 } },
+            'STAGE4CROSSBEAMSTRUCTURE3A': { r: { x: 0, y: 0, z: -.01 } },
+            'STAGE4CROSSBEAMSTRUCTURE3B': { r: { x: 0, y: 0, z: .01 } },
+            'STAGE4CROSSBEAMSTRUCTURE3C': { r: { x: 0, y: 0, z: -.01 } },
+            'STAGE4CROSSBEAMSTRUCTURE3D': { r: { x: 0, y: 0, z: .01 } }
+
           },
           teardown: () => {
             teardownStage('STAGE4')
@@ -1894,208 +1966,300 @@
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
             const createStage3CrossBeamStructure = window.appConfig.stages.components.createStage3CrossBeamStructure
+            const createStage4PlinkoStructure = window.appConfig.stages.components.createStage4PlinkoStructure
 
-            //   const stage3MainBeamStructure = createStage0MainBeamStructure(
-            //     6,
-            //     -0.85,
-            //     "STAGE3MAINSTRUCTURE",
-            //     { x: 0, y: 0 }
-            //   );
-            //   scene.add(stage3MainBeamStructure);
-
-            //   const stage3MainBeamStructureA = createStage0MainBeamStructure(
-            //     6,
-            //     -0.85,
-            //     "STAGE3MAINSTRUCTUREA",
-            //     { x: 0, y: 0 }
-            //   );
-            //   stage3MainBeamStructureA.rotation.z = .25 * Math.PI
-            //   scene.add(stage3MainBeamStructureA);
-
-            //   const stage3MainBeamStructureB = createStage0MainBeamStructure(
-            //     9,
-            //     -0.85,
-            //     "STAGE3MAINSTRUCTUREB",
-            //     { x: 0, y: 0 }
-            //   );
-            //   scene.add(stage3MainBeamStructureB);
-
-            //   const stage3MainBeamStructureC = createStage0MainBeamStructure(
-            //     9,
-            //     -0.85,
-            //     "STAGE3MAINSTRUCTUREC",
-            //     { x: 0, y: 0 }
-            //   );
-            //  stage3MainBeamStructureC.rotation.z = .25 * Math.PI
-            //   scene.add(stage3MainBeamStructureC);
-
-            //   const stage3MainBeamStructureD = createStage0MainBeamStructure(
-            //     7.5,
-            //     -0.85,
-            //     "STAGE3MAINSTRUCTURED",
-            //     { x: 0, y: 0 }
-            //   );
-            //   scene.add(stage3MainBeamStructureD);
-
-            //   const stage3MainBeamStructureE = createStage0MainBeamStructure(
-            //     7.5,
-            //     -0.85,
-            //     "STAGE3MAINSTRUCTUREE",
-            //     { x: 0, y: 0 }
-            //   );
-            //  stage3MainBeamStructureE.rotation.z = .25 * Math.PI
-            //   scene.add(stage3MainBeamStructureE);
-
-            //   const stage3MainBeamStructureF = createStage0MainBeamStructure(
-            //     1,
-            //     -.5,
-            //     "STAGE3MAINSTRUCTUREF",
-            //     { x: 0, y: 0 }
-            //   );
-            //   scene.add(stage3MainBeamStructureF);
-
-            const stage4MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure(
-              12,
-              0.56,
-              "STAGE4MAINSTRUCTURE"
+            const stage4MainBeamStructure1 = createStage0MainBeamStructure(
+              1.25,
+              -0.5,
+              "STAGE4MAINSTRUCTURE1",
+              { x: 0, y: 75 }
             );
-            stage4MainBeamStructure.rotation.z = .25 * Math.PI
-            scene.add(stage4MainBeamStructure);
+            scene.add(stage4MainBeamStructure1);
 
-            //   const stage3CrossBeamStructure = createStage3CrossBeamStructure(
-            //     .5,
-            //     .75,
-            //     "STAGE3CROSSBEAMSTRUCTURE",
-            //     { x: 0, y: 115 }
-            //   );
-            //   scene.add(stage3CrossBeamStructure);
+            const stage4MainBeamStructure2 = createStage0MainBeamStructure(
+              .75,
+              -0.5,
+              "STAGE4MAINSTRUCTURE2",
+              { x: 0, y: 75 }
+            );
+            scene.add(stage4MainBeamStructure2);
 
-            //   const stage3CrossBeamStructureA = createStage3CrossBeamStructure(
-            //     .5,
-            //     .75,
-            //     "STAGE3CROSSBEAMSTRUCTUREA",
-            //     { x: 15, y: 100 }
-            //   );
-            //   scene.add(stage3CrossBeamStructureA);
+            const stage4CrossBeamStructure = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE4CROSSBEAMSTRUCTURE",
+              { x: 0, y: 25 }
+            );
+            scene.add(stage4CrossBeamStructure);
 
-            //   const stage3CrossBeamStructureB = createStage3CrossBeamStructure(
-            //     .5,
-            //     .75,
-            //     "STAGE3CROSSBEAMSTRUCTUREB",
-            //     { x: -15, y: 100 }
-            //   );
-            //   scene.add(stage3CrossBeamStructureB);
+            const stage4CrossBeamStructureA = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE4CROSSBEAMSTRUCTUREA",
+              { x: -15, y: 30 }
+            );
+            scene.add(stage4CrossBeamStructureA);
 
-            //   const stage3CrossBeamStructureC = createStage3CrossBeamStructure(
-            //     .5,
-            //     .75,
-            //     "STAGE3CROSSBEAMSTRUCTUREC",
-            //     { x: 0, y: 85 }
-            //   );
-            //   scene.add(stage3CrossBeamStructureC);
+            const stage4CrossBeamStructureB = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE4CROSSBEAMSTRUCTUREB",
+              { x: 15, y: 30 }
+            );
+            scene.add(stage4CrossBeamStructureB);
 
-            //   const stage3CrossBeamStructure1 = createStage3CrossBeamStructure(
-            //     .5,
-            //     .75,
-            //     "STAGE3CROSSBEAMSTRUCTURE1",
-            //     { x: 0, y: -115 }
-            //   );
-            //   scene.add(stage3CrossBeamStructure1);
+            const stage4CrossBeamStructureC = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE4CROSSBEAMSTRUCTUREC",
+              { x: -30, y: 40 }
+            );
+            scene.add(stage4CrossBeamStructureC);
 
-            //   const stage3CrossBeamStructure1A = createStage3CrossBeamStructure(
-            //     .5,
-            //     .75,
-            //     "STAGE3CROSSBEAMSTRUCTURE1A",
-            //     { x: 15, y: -100 }
-            //   );
-            //   scene.add(stage3CrossBeamStructure1A);
+            const stage4CrossBeamStructureD = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE4CROSSBEAMSTRUCTURED",
+              { x: 30, y: 40 }
+            );
+            scene.add(stage4CrossBeamStructureD);
 
-            //   const stage3CrossBeamStructure1B = createStage3CrossBeamStructure(
-            //     .5,
-            //     .75,
-            //     "STAGE3CROSSBEAMSTRUCTURE1B",
-            //     { x: -15, y: -100 }
-            //   );
-            //   scene.add(stage3CrossBeamStructure1B);
+//--
 
-            //   const stage3CrossBeamStructure1C = createStage3CrossBeamStructure(
-            //     .5,
-            //     .75,
-            //     "STAGE3CROSSBEAMSTRUCTURE1C",
-            //     { x: 0, y: -85 }
-            //   );
-            //   scene.add(stage3CrossBeamStructure1C);
+            const stage4MainBeamStructure3 = createStage0MainBeamStructure(
+              1.25,
+              -0.5,
+              "STAGE4MAINSTRUCTURE3",
+              { x: 0, y: -75 }
+            );
+            scene.add(stage4MainBeamStructure3);
+
+            const stage4MainBeamStructure4 = createStage0MainBeamStructure(
+              .75,
+              -0.5,
+              "STAGE4MAINSTRUCTURE4",
+              { x: 0, y: -75 }
+            );
+            scene.add(stage4MainBeamStructure4);
+
+            const stage4CrossBeamStructure1 = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE4CROSSBEAMSTRUCTURE1",
+              { x: 0, y: -25 }
+            );
+            scene.add(stage4CrossBeamStructure1);
+
+            const stage4CrossBeamStructure1A = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE4CROSSBEAMSTRUCTURE1A",
+              { x: -15, y: -30 }
+            );
+            scene.add(stage4CrossBeamStructure1A);
+
+            const stage4CrossBeamStructure1B = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE4CROSSBEAMSTRUCTURE1B",
+              { x: 15, y: -30 }
+            );
+            scene.add(stage4CrossBeamStructure1B);
+
+            const stage4CrossBeamStructure1C = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE4CROSSBEAMSTRUCTURE1C",
+              { x: -30, y: -40 }
+            );
+            scene.add(stage4CrossBeamStructure1C);
+
+            const stage4CrossBeamStructure1D = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE4CROSSBEAMSTRUCTURE1D",
+              { x: 30, y: -40 }
+            );
+            scene.add(stage4CrossBeamStructure1D);            
+
+//--
+
+            const stage4MainBeamStructure5 = createStage0MainBeamStructure(
+              1.25,
+              -0.5,
+              "STAGE4MAINSTRUCTURE5",
+              { x: -75, y: 0 }
+            );
+            scene.add(stage4MainBeamStructure5);
+
+            const stage4MainBeamStructure6 = createStage0MainBeamStructure(
+              .75,
+              -0.5,
+              "STAGE4MAINSTRUCTURE6",
+              { x: -75, y: 0 }
+            );
+            scene.add(stage4MainBeamStructure6);
+
+            const stage4CrossBeamStructure2 = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE4CROSSBEAMSTRUCTURE2",
+              { x: -25, y: 0 }
+            );
+            scene.add(stage4CrossBeamStructure2);
+
+            const stage4CrossBeamStructure2A = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE4CROSSBEAMSTRUCTURE2A",
+              { x: -30, y: -15 }
+            );
+            scene.add(stage4CrossBeamStructure2A);
+
+            const stage4CrossBeamStructure2B = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE4CROSSBEAMSTRUCTURE2B",
+              { x: -30, y: 15 }
+            );
+            scene.add(stage4CrossBeamStructure2B);
+
+            const stage4CrossBeamStructure2C = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE4CROSSBEAMSTRUCTURE2C",
+              { x: -40, y: -30 }
+            );
+            scene.add(stage4CrossBeamStructure2C);
+
+            const stage4CrossBeamStructure2D = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE4CROSSBEAMSTRUCTURE2D",
+              { x: -40, y: 30 }
+            );
+            scene.add(stage4CrossBeamStructure2D);     
+
+
+//--
+
+            const stage4MainBeamStructure7 = createStage0MainBeamStructure(
+              1.25,
+              -0.5,
+              "STAGE4MAINSTRUCTURE7",
+              { x: 75, y: 0 }
+            );
+            scene.add(stage4MainBeamStructure7);
+
+            const stage4MainBeamStructure8 = createStage0MainBeamStructure(
+              .75,
+              -0.5,
+              "STAGE4MAINSTRUCTURE8",
+              { x: 75, y: 0 }
+            );
+            scene.add(stage4MainBeamStructure8);
+
+            const stage4CrossBeamStructure3 = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE4CROSSBEAMSTRUCTURE3",
+              { x: 25, y: 0 }
+            );
+            scene.add(stage4CrossBeamStructure3);
+
+            const stage4CrossBeamStructure3A = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE4CROSSBEAMSTRUCTURE3A",
+              { x: 30, y: -15 }
+            );
+            scene.add(stage4CrossBeamStructure3A);
+
+            const stage4CrossBeamStructure3B = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE4CROSSBEAMSTRUCTURE3B",
+              { x: 30, y: 15 }
+            );
+            scene.add(stage4CrossBeamStructure3B);
+
+            const stage4CrossBeamStructure3C = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE4CROSSBEAMSTRUCTURE3C",
+              { x: 40, y: -30 }
+            );
+            scene.add(stage4CrossBeamStructure3C);
+
+            const stage4CrossBeamStructure3D = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE4CROSSBEAMSTRUCTURE3D",
+              { x: 40, y: 30 }
+            );
+            scene.add(stage4CrossBeamStructure3D);     
 
 
 
+            const stage4PlinkoStructure = createStage4PlinkoStructure(
+              3,
+              4,
+              -.95,
+              "STAGE4PLINKOSTRUCTURE",
+              { x: 55, y: 35 },
+              4,
+              5
+            );
+            stage4PlinkoStructure.rotation.z = .25 * Math.PI
+            scene.add(stage4PlinkoStructure);     
 
 
+            const stage4PlinkoStructureA = createStage4PlinkoStructure(
+              3,
+              4,
+              -.95,
+              "STAGE4PLINKOSTRUCTUREA",
+              { x: -67.5, y: 57.5 },
+              4,
+              5
+            );
+            stage4PlinkoStructureA.rotation.z = -.25 * Math.PI
+            scene.add(stage4PlinkoStructureA);     
 
-            //   const stage3CrossBeamStructure2 = createStage3CrossBeamStructure(
-            //     .5,
-            //     .75,
-            //     "STAGE3CROSSBEAMSTRUCTURE2",
-            //     { x: -115, y: 0 }
-            //   );
-            //   scene.add(stage3CrossBeamStructure2);
+            const stage4PlinkoStructureB = createStage4PlinkoStructure(
+              3,
+              4,
+              -.95,
+              "STAGE4PLINKOSTRUCTUREB",
+              { x: 37.5, y: -52.5 },
+              4,
+              5
+            );
+            stage4PlinkoStructureB.rotation.z = -.25 * Math.PI
+            scene.add(stage4PlinkoStructureB);     
 
-            //   const stage3CrossBeamStructure2A = createStage3CrossBeamStructure(
-            //     .5,
-            //     .75,
-            //     "STAGE3CROSSBEAMSTRUCTURE2A",
-            //     { x: -100, y: 15 }
-            //   );
-            //   scene.add(stage3CrossBeamStructure2A);
-
-            //   const stage3CrossBeamStructure2B = createStage3CrossBeamStructure(
-            //     .5,
-            //     .75,
-            //     "STAGE3CROSSBEAMSTRUCTURE2B",
-            //     { x: -100, y: -15 }
-            //   );
-            //   scene.add(stage3CrossBeamStructure2B);
-
-            //   const stage3CrossBeamStructure2C = createStage3CrossBeamStructure(
-            //     .5,
-            //     .75,
-            //     "STAGE3CROSSBEAMSTRUCTURE2C",
-            //     { x: -85, y: 0 }
-            //   );
-            //   scene.add(stage3CrossBeamStructure2C);
+            const stage4PlinkoStructureC = createStage4PlinkoStructure(
+              3,
+              4,
+              -.95,
+              "STAGE4PLINKOSTRUCTUREC",
+              { x: -57.5, y: -67.5 },
+              4,
+              5
+            );
+            stage4PlinkoStructureC.rotation.z = .25 * Math.PI
+            scene.add(stage4PlinkoStructureC);     
 
 
+          const stage4MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure(
+            12,
+            0.56,
+            "STAGE4MAINSTRUCTURE"
+          );
+          stage4MainBeamStructure.rotation.z = .25 * Math.PI
+          scene.add(stage4MainBeamStructure);
 
-            //   const stage3CrossBeamStructure3 = createStage3CrossBeamStructure(
-            //     .5,
-            //     .75,
-            //     "STAGE3CROSSBEAMSTRUCTURE3",
-            //     { x: 115, y: 0 }
-            //   );
-            //   scene.add(stage3CrossBeamStructure3);
 
-            //   const stage3CrossBeamStructure3A = createStage3CrossBeamStructure(
-            //     .5,
-            //     .75,
-            //     "STAGE3CROSSBEAMSTRUCTURE3A",
-            //     { x: 100, y: 15 }
-            //   );
-            //   scene.add(stage3CrossBeamStructure3A);
-
-            //   const stage3CrossBeamStructure3B = createStage3CrossBeamStructure(
-            //     .5,
-            //     .75,
-            //     "STAGE3CROSSBEAMSTRUCTURE3B",
-            //     { x: 100, y: -15 }
-            //   );
-            //   scene.add(stage3CrossBeamStructure3B);
-
-            //   const stage3CrossBeamStructure3C = createStage3CrossBeamStructure(
-            //     .5,
-            //     .75,
-            //     "STAGE3CROSSBEAMSTRUCTURE3C",
-            //     { x: 85, y: 0 }
-            //   );
-            //   scene.add(stage3CrossBeamStructure3C);
 
 
 
@@ -2130,15 +2294,15 @@
 
             prize0Top.position.y += 1.5
             prize0Bottom.position.y += -1.5
-            prize0Group.position.set(100, 0, 0)
+            prize0Group.position.set(75, 0, 0)
 
             scene.add(prize0Group)
             const prize1Group = prize0Group.clone()
-            prize1Group.position.set(0, 100, 0)
+            prize1Group.position.set(0, 75, 0)
             const prize2Group = prize0Group.clone()
-            prize2Group.position.set(-100, 0, 0)
+            prize2Group.position.set(-75, 0, 0)
             const prize3Group = prize0Group.clone()
-            prize3Group.position.set(0, -100, 0)
+            prize3Group.position.set(0, -75, 0)
             prize1Group.name = 'STAGE4PRIZE1'
             prize2Group.name = 'STAGE4PRIZE2'
             prize3Group.name = 'STAGE4PRIZE3'
@@ -2156,53 +2320,81 @@
             coins.push(prize2Group);
             coins.push(prize3Group);
 
-            // createCrystalCross('STAGE3', 5, { x: -30, y: 85 }, 2);
-            // createCrystalCross('STAGE3', 5, { x: 30, y: 85 }, 2);
-            // createCrystalCross('STAGE3', 5, { x: -30, y: -85 }, 2);
-            // createCrystalCross('STAGE3', 5, { x: 30, y: -85 }, 2);
+            createCrystalCircle('STAGE4', 4, {x: 0, y:75 }, 0, 8)
+            createCrystalCircle('STAGE4', 4.5, {x: 0, y:75 }, 1, 8)
+            createCrystalCircle('STAGE4', 5, {x: 0, y:75 }, 2, 8)
+            createCrystalCircle('STAGE4', 5.5, {x: 0, y:75 }, 1, 8)
+            createCrystalCircle('STAGE4', 6, {x: 0, y:75 }, 0, 8)
 
-            // createCrystalCross('STAGE3', 5, { x: 85, y: -30 }, 2);
-            // createCrystalCross('STAGE3', 5, { x: 85, y: 30 }, 2);
-            // createCrystalCross('STAGE3', 5, { x: -85, y: -30 }, 2);
-            // createCrystalCross('STAGE3', 5, { x: -85, y: 30 }, 2);
+            createCrystalCircle('STAGE4', 4, {x: 0, y:-75 }, 0, 8)
+            createCrystalCircle('STAGE4', 4.5, {x: 0, y:-75 }, 1, 8)
+            createCrystalCircle('STAGE4', 5, {x: 0, y:-75 }, 2, 8)
+            createCrystalCircle('STAGE4', 5.5, {x: 0, y:-75 }, 1, 8)
+            createCrystalCircle('STAGE4', 6, {x: 0, y:-75 }, 0, 8)
 
-            // createCrystalCircle('STAGE3', 4, {x: 0, y:0 }, 0, 8)
-            // createCrystalCircle('STAGE3', 4.5, {x: 0, y:0 }, 1, 8)
-            // createCrystalCircle('STAGE3', 5, {x: 0, y:0 }, 2, 8)
-            // createCrystalCircle('STAGE3', 5.5, {x: 0, y:0 }, 1, 8)
-            // createCrystalCircle('STAGE3', 6, {x: 0, y:0 }, 0, 8)
-            // createCrystalCircle('STAGE3', 7.375, {x: 0, y:0 }, 0, 32)
-            // createCrystalCircle('STAGE3', 8.125, {x: 0, y:0 }, 1, 32)
-            // createCrystalCircle('STAGE3', 8.75, {x: 0, y:0 }, 0, 32)
+            createCrystalCircle('STAGE4', 4, {x: -75, y:0 }, 0, 8)
+            createCrystalCircle('STAGE4', 4.5, {x: -75, y:0 }, 1, 8)
+            createCrystalCircle('STAGE4', 5, {x: -75, y:0 }, 2, 8)
+            createCrystalCircle('STAGE4', 5.5, {x: -75, y:0 }, 1, 8)
+            createCrystalCircle('STAGE4', 6, {x: -75, y:0 }, 0, 8)
+
+            createCrystalCircle('STAGE4', 4, {x: 75, y:0 }, 0, 8)
+            createCrystalCircle('STAGE4', 4.5, {x: 75, y:0 }, 1, 8)
+            createCrystalCircle('STAGE4', 5, {x: 75, y:0 }, 2, 8)
+            createCrystalCircle('STAGE4', 5.5, {x: 75, y:0 }, 1, 8)
+            createCrystalCircle('STAGE4', 6, {x: 75, y:0 }, 0, 8)
+
+            createCrystalCircle('STAGE4', 3, {x: 0, y:0 }, 0, 8)
+            createCrystalCircle('STAGE4', 3.5, {x: 0, y:0 }, 1, 8)
+            createCrystalCircle('STAGE4', 4, {x: 0, y:0 }, 0, 8)
+
+            createCrystalCross('STAGE4', 3, { x: -17.5, y: 17.5 }, 2);
+            createCrystalCross('STAGE4', 3, { x: 17.5, y: 17.5 }, 2);
+            createCrystalCross('STAGE4', 3, { x: -17.5, y: -17.5 }, 2);
+            createCrystalCross('STAGE4', 3, { x: 17.5, y: -17.5 }, 2);
+
+
+            // createCrystalCircle('STAGE4', 4.5, {x: 0, y:0 }, 1, 8)
+            // createCrystalCircle('STAGE4', 5, {x: 0, y:0 }, 0, 8)
+
 
             window.appConfig.stages.STAGE4.STAGE4PRIZE0 = scene.children.find((obj) => obj.name === "STAGE4PRIZE0")
             window.appConfig.stages.STAGE4.STAGE4PRIZE1 = scene.children.find((obj) => obj.name === "STAGE4PRIZE1")
             window.appConfig.stages.STAGE4.STAGE4PRIZE2 = scene.children.find((obj) => obj.name === "STAGE4PRIZE2")
             window.appConfig.stages.STAGE4.STAGE4PRIZE3 = scene.children.find((obj) => obj.name === "STAGE4PRIZE3")
-            // window.appConfig.stages.STAGE3.STAGE3MAINSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE3MAINSTRUCTURE")
-            // window.appConfig.stages.STAGE3.STAGE3MAINSTRUCTUREA = scene.children.find((obj) => obj.name === "STAGE3MAINSTRUCTUREA")
-            // window.appConfig.stages.STAGE3.STAGE3MAINSTRUCTUREB = scene.children.find((obj) => obj.name === "STAGE3MAINSTRUCTUREB")
-            // window.appConfig.stages.STAGE3.STAGE3MAINSTRUCTUREC = scene.children.find((obj) => obj.name === "STAGE3MAINSTRUCTUREC")
-            // window.appConfig.stages.STAGE3.STAGE3MAINSTRUCTURED = scene.children.find((obj) => obj.name === "STAGE3MAINSTRUCTURED")
-            // window.appConfig.stages.STAGE3.STAGE3MAINSTRUCTUREE = scene.children.find((obj) => obj.name === "STAGE3MAINSTRUCTUREE")
-            // window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTURE")
-            // window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTUREA = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTUREA")
-            // window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTUREB = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTUREB")
-            // window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTUREC = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTUREC")
-            // window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTURE1")
-            // window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTURE1A = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTURE1A")
-            // window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTURE1B = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTURE1B")
-            // window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTURE1C = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTURE1C")
 
+            window.appConfig.stages.STAGE4.STAGE4MAINSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE4MAINSTRUCTURE1")
+            window.appConfig.stages.STAGE4.STAGE4MAINSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE4MAINSTRUCTURE2")
+            window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE")
+            window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTUREA = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTUREA")
+            window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTUREB = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTUREB")
+            window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTUREC = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTUREC")
+            window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURED = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURED")
 
-            // window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTURE2")
-            // window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTURE2A = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTURE2A")
-            // window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTURE2B = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTURE2B")
-            // window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTURE2C = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTURE2C")
-            // window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTURE3")
-            // window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTURE3A = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTURE3A")
-            // window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTURE3B = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTURE3B")
-            // window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTURE3C = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTURE3C")
+            window.appConfig.stages.STAGE4.STAGE4MAINSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE4MAINSTRUCTURE3")
+            window.appConfig.stages.STAGE4.STAGE4MAINSTRUCTURE4 = scene.children.find((obj) => obj.name === "STAGE4MAINSTRUCTURE4")
+            window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE1")
+            window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE1A = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE1A")
+            window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE1B = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE1B")
+            window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE1C = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE1C")
+            window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE1D = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE1D")
+
+            window.appConfig.stages.STAGE4.STAGE4MAINSTRUCTURE5 = scene.children.find((obj) => obj.name === "STAGE4MAINSTRUCTURE5")
+            window.appConfig.stages.STAGE4.STAGE4MAINSTRUCTURE6 = scene.children.find((obj) => obj.name === "STAGE4MAINSTRUCTURE6")
+            window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE2")
+            window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE2A = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE2A")
+            window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE2B = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE2B")
+            window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE2C = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE2C")
+            window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE2D = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE2D")
+
+            window.appConfig.stages.STAGE4.STAGE4MAINSTRUCTURE7 = scene.children.find((obj) => obj.name === "STAGE4MAINSTRUCTURE7")
+            window.appConfig.stages.STAGE4.STAGE4MAINSTRUCTURE8 = scene.children.find((obj) => obj.name === "STAGE4MAINSTRUCTURE8")
+            window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE3")
+            window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE3A = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE3A")
+            window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE3B = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE3B")
+            window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE3C = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE3C")
+            window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE3D = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE3D")
+
 
             window.appConfig.stages.STAGE4.data.started = true
           }
