@@ -51,9 +51,9 @@
         bumperGroup: 0,
         prize: 0
       },
-      currentStage: 'STAGE3',
-      stagesArray: ['STAGE0', 'STAGE1', 'STAGE2', 'STAGE3', 'STAGE4'],
-      currentStageIndex: 3
+      currentStage: 'STAGE5',
+      stagesArray: ['STAGE0', 'STAGE1', 'STAGE2', 'STAGE3', 'STAGE4', 'STAGE5'],
+      currentStageIndex: 5
     };
 
     const backgroundMusics = [];
@@ -2354,10 +2354,6 @@
             createCrystalCross('STAGE4', 3, { x: 17.5, y: -17.5 }, 2);
 
 
-            // createCrystalCircle('STAGE4', 4.5, {x: 0, y:0 }, 1, 8)
-            // createCrystalCircle('STAGE4', 5, {x: 0, y:0 }, 0, 8)
-
-
             window.appConfig.stages.STAGE4.STAGE4PRIZE0 = scene.children.find((obj) => obj.name === "STAGE4PRIZE0")
             window.appConfig.stages.STAGE4.STAGE4PRIZE1 = scene.children.find((obj) => obj.name === "STAGE4PRIZE1")
             window.appConfig.stages.STAGE4.STAGE4PRIZE2 = scene.children.find((obj) => obj.name === "STAGE4PRIZE2")
@@ -2398,7 +2394,488 @@
 
             window.appConfig.stages.STAGE4.data.started = true
           }
+        },
+        STAGE5: {
+          data: {
+            started: false,
+            xAdj: -60,
+            vAdj: -70,
+            sAdj: 2,
+            startingPosition: new THREE.Vector3(0, 0, 0)
+          },
+          defaultTransforms: [
+            'STAGE5PRIZE0',
+            'STAGE5PRIZE1',
+            'STAGE5PRIZE2',
+            'STAGE5PRIZE3',
+            'STAGE5CROSSBEAMSTRUCTURE',
+            'STAGE5CROSSBEAMSTRUCTUREA',
+            'STAGE5CROSSBEAMSTRUCTUREB',
+            'STAGE5CROSSBEAMSTRUCTUREC',
+            'STAGE5MINORSTRUCTURE',
+            'STAGE5MINORSTRUCTUREA',
+            'STAGE5MINORSTRUCTUREB',
+            'STAGE5MINORSTRUCTUREC'
+          ],
+          transforms: {
+            'STAGE5PRIZE0': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE5PRIZE1': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE5PRIZE2': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE5PRIZE3': { r: { x: .005, y: .005, z: .005 } },
+            'STAGE5MAINSTRUCTURE1': { r: { x: 0, y: 0, z: -.005 } },
+
+            'STAGE5CROSSBEAMSTRUCTURE': { r: { x: 0, y: 0, z: .01 } },
+            'STAGE5CROSSBEAMSTRUCTUREA': { r: { x: 0, y: 0, z: -.01 } },
+            'STAGE5MINORSTRUCTURE': { r: { x: 0, y: 0, z: .01 } },
+            'STAGE5MINORSTRUCTUREA': { r: { x: 0, y: 0, z: .01 } },
+
+            'STAGE5CROSSBEAMSTRUCTUREB': { r: { x: 0, y: 0, z: -.01 } },
+            'STAGE5CROSSBEAMSTRUCTUREC': { r: { x: 0, y: 0, z: .01 } },
+            'STAGE5MINORSTRUCTUREB': { r: { x: 0, y: 0, z: -.01 } },
+            'STAGE5MINORSTRUCTUREC': { r: { x: 0, y: 0, z: -.01 } }
+
+          },
+          teardown: () => {
+            teardownStage('STAGE5')
+            window.appConfig.stages.STAGE5.data.started = false
+          },
+          init: () => {
+
+            const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
+            const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
+            const createStage3CrossBeamStructure = window.appConfig.stages.components.createStage3CrossBeamStructure
+            const createStage4PlinkoStructure = window.appConfig.stages.components.createStage4PlinkoStructure
+
+            const stage5MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure(
+              12,
+              0.56,
+              "STAGE5MAINSTRUCTURE"
+            );
+            stage5MainBeamStructure.rotation.z = .25 * Math.PI
+            scene.add(stage5MainBeamStructure);
+
+
+            const stage5MainBeamStructure1 = createStage0MainBeamStructure(
+              1.25,
+              -0.5,
+              "STAGE5MAINSTRUCTURE1",
+              { x: 0, y: -25 }
+            );
+            stage5MainBeamStructure1.rotation.z = .25 * Math.PI
+            scene.add(stage5MainBeamStructure1);
+
+            const stage5MainBeamStructure2 = createStage0MainBeamStructure(
+              1.25,
+              -0.5,
+              "STAGE5MAINSTRUCTURE2",
+              { x: 0, y: 25 }
+            );
+            stage5MainBeamStructure2.rotation.z = .25 * Math.PI
+            scene.add(stage5MainBeamStructure2);
+
+            const stage5CrossBeamStructure = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE5CROSSBEAMSTRUCTURE",
+              { x: -12.5, y: -50 }
+            );
+            scene.add(stage5CrossBeamStructure);
+
+            const stage5CrossBeamStructureA = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE5CROSSBEAMSTRUCTUREA",
+              { x: 12.5, y: -50 }
+            );
+            scene.add(stage5CrossBeamStructureA);
+
+
+            const stage5MinorBeamStructure = createStage1MinorBeamStructure(
+              .5,
+              .5,
+              "STAGE5MINORSTRUCTURE",
+              { x: 0, y: -75 }
+            );
+            scene.add(stage5MinorBeamStructure);
+
+            const stage5MinorBeamStructureA = createStage1MinorBeamStructure(
+              .5,
+              .5,
+              "STAGE5MINORSTRUCTUREA",
+              { x: 0, y: -75 }
+            );
+            stage5MinorBeamStructureA.rotation.z = .25 * Math.PI
+            scene.add(stage5MinorBeamStructureA);
+
+
+
+
+
+            const stage5CrossBeamStructureB = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE5CROSSBEAMSTRUCTUREB",
+              { x: -12.5, y: 50 }
+            );
+            scene.add(stage5CrossBeamStructureB);
+
+            const stage5CrossBeamStructureC = createStage3CrossBeamStructure(
+              .5,
+              .75,
+              "STAGE5CROSSBEAMSTRUCTUREC",
+              { x: 12.5, y: 50 }
+            );
+            scene.add(stage5CrossBeamStructureC);
+
+
+            const stage5MinorBeamStructureB = createStage1MinorBeamStructure(
+              .5,
+              .5,
+              "STAGE5MINORSTRUCTUREB",
+              { x: 0, y: 75 }
+            );
+            scene.add(stage5MinorBeamStructureB);
+
+            const stage5MinorBeamStructureC = createStage1MinorBeamStructure(
+              .5,
+              .5,
+              "STAGE5MINORSTRUCTUREC",
+              { x: 0, y: 75 }
+            );
+            stage5MinorBeamStructureC.rotation.z = .25 * Math.PI
+            scene.add(stage5MinorBeamStructureC);
+
+
+
+
+
+
+            const stage5PlinkoStructure = createStage4PlinkoStructure(
+              6,
+              8,
+              -.95,
+              "STAGE5PLINKOSTRUCTURE",
+              { x: 25, y: -36.25 },
+              3,
+              10
+            );
+            scene.add(stage5PlinkoStructure);     
+
+            const stage5PlinkoStructureA = createStage4PlinkoStructure(
+              6,
+              8,
+              -.95,
+              "STAGE5PLINKOSTRUCTUREA",
+              { x: -60, y: -36.25 },
+              3,
+              10
+            );
+            scene.add(stage5PlinkoStructureA);     
+
+
+
+            const prize0Group = new THREE.Group();
+            const prize0 = new THREE.Mesh(
+              new THREE.BoxGeometry(0.75, 0.75, 0.75),
+              new THREE.MeshPhongMaterial()
+            );
+            const prize0Top = new THREE.Mesh(
+              new THREE.ConeGeometry(1, 1, 8),
+              new THREE.MeshPhongMaterial()
+            );
+            const prize0Bottom = new THREE.Mesh(
+              new THREE.ConeGeometry(1, -1, 8),
+              new THREE.MeshPhongMaterial()
+            )
+            prize0Group.name = 'STAGE5PRIZE0'
+            prize0Group.debugTypeIndex = window.appConfig.itemAmounts.prize
+            prize0Group.debugType = 'PRIZE'
+            prize0Group.debugName = 'PRIZE' + window.appConfig.itemAmounts.prize
+            window.appConfig.itemAmounts.prize++
+
+            prize0.name = 'PRIZE0'
+            prize0Top.name = 'PRIZE0TOP'
+            prize0Bottom.name = 'PRIZE0BOTTOM'
+
+
+            prize0.rotation.set(.25 * Math.PI, .25 * Math.PI, 0)
+            prize0Group.add(prize0)
+            prize0Group.add(prize0Top)
+            prize0Group.add(prize0Bottom)
+
+            prize0Top.position.y += 1.5
+            prize0Bottom.position.y += -1.5
+            prize0Group.position.set(75, 0, 0)
+
+            scene.add(prize0Group)
+            const prize1Group = prize0Group.clone()
+            prize1Group.position.set(0, 75, 0)
+            const prize2Group = prize0Group.clone()
+            prize2Group.position.set(-75, 0, 0)
+            const prize3Group = prize0Group.clone()
+            prize3Group.position.set(0, -75, 0)
+            prize1Group.name = 'STAGE5PRIZE1'
+            prize2Group.name = 'STAGE5PRIZE2'
+            prize3Group.name = 'STAGE5PRIZE3'
+            scene.add(prize1Group)
+            scene.add(prize2Group)
+            scene.add(prize3Group)
+            prize0Group.prizeValue = 10
+            prize1Group.prizeValue = 10
+            prize2Group.prizeValue = 20
+            prize3Group.prizeValue = 10
+
+            //add prizes to the coins array so that they can be collected in the same manner
+            coins.push(prize0Group);
+            coins.push(prize1Group);
+            coins.push(prize2Group);
+            coins.push(prize3Group);
+
+
+
+
+            // createCrystalCross('STAGE5', 5, { x: 90, y: 0 }, 0);
+            // createCrystalCross('STAGE5', 5, { x: 110, y: 0 }, 2);
+            // createCrystalCross('STAGE5', 5, { x: 100, y: 10 }, 1);
+            // createCrystalCross('STAGE5', 5, { x: 100, y: -10 }, 1);
+
+            // createCrystalCross('STAGE5', 5, { x: -90, y: 0 }, 0);
+            // createCrystalCross('STAGE5', 5, { x: -110, y: 0 }, 2);
+            // createCrystalCross('STAGE5', 5, { x: -100, y: 10 }, 1);
+            // createCrystalCross('STAGE5', 5, { x: -100, y: -10 }, 1);
+
+            // createCrystalCross('STAGE5', 5, { x: 0, y: -90 }, 0);
+            // createCrystalCross('STAGE5', 5, { x: 0, y: -110 }, 2);
+            // createCrystalCross('STAGE5', 5, { x: 10, y: -100 }, 1);
+            // createCrystalCross('STAGE5', 5, { x: -10, y: -100 }, 1);
+
+
+            createCrystalCross('STAGE5', 2.5, { x: -12.5, y: 10 }, 0);
+            createCrystalCross('STAGE5', 2.5, { x: 12.5, y: 10 }, 0);
+            createCrystalCross('STAGE5', 2.5, { x: -12.5, y: -10 }, 0);
+            createCrystalCross('STAGE5', 2.5, { x: 12.5, y: -10 }, 0);
+
+            createCrystalCross('STAGE5', 2.5, { x: -15, y: 37.5 }, 1);
+            createCrystalCross('STAGE5', 2.5, { x: 15, y: 37.5 }, 1);
+            createCrystalCross('STAGE5', 2.5, { x: -15, y: -37.5 }, 1);
+            createCrystalCross('STAGE5', 2.5, { x: 15, y: -37.5 }, 1);
+
+
+            createCrystalCross('STAGE5', 5, { x: -100, y: 0 }, 0);
+            createCrystalCross('STAGE5', 5, { x: -120, y: 0 }, 2);
+            createCrystalCross('STAGE5', 5, { x: -110, y: 10 }, 1);
+            createCrystalCross('STAGE5', 5, { x: -110, y: -10 }, 1);
+
+            createCrystalCross('STAGE5', 5, { x: -80, y: 20 }, 0);
+            createCrystalCross('STAGE5', 5, { x: -100, y: 20 }, 2);
+            createCrystalCross('STAGE5', 5, { x: -90, y: 30 }, 1);
+            createCrystalCross('STAGE5', 5, { x: -90, y: 10 }, 1);
+
+            createCrystalCross('STAGE5', 5, { x: -80, y: -20 }, 0);
+            createCrystalCross('STAGE5', 5, { x: -100, y: -20 }, 2);
+            createCrystalCross('STAGE5', 5, { x: -90, y: -30 }, 1);
+            createCrystalCross('STAGE5', 5, { x: -90, y: -10 }, 1);
+
+
+
+            createCrystalCross('STAGE5', 5, { x: 100, y: 0 }, 0);
+            createCrystalCross('STAGE5', 5, { x: 120, y: 0 }, 2);
+            createCrystalCross('STAGE5', 5, { x: 110, y: 10 }, 1);
+            createCrystalCross('STAGE5', 5, { x: 110, y: -10 }, 1);
+
+            createCrystalCross('STAGE5', 5, { x: 80, y: 20 }, 0);
+            createCrystalCross('STAGE5', 5, { x: 100, y: 20 }, 2);
+            createCrystalCross('STAGE5', 5, { x: 90, y: 30 }, 1);
+            createCrystalCross('STAGE5', 5, { x: 90, y: 10 }, 1);
+
+            createCrystalCross('STAGE5', 5, { x: 80, y: -20 }, 0);
+            createCrystalCross('STAGE5', 5, { x: 100, y: -20 }, 2);
+            createCrystalCross('STAGE5', 5, { x: 90, y: -30 }, 1);
+            createCrystalCross('STAGE5', 5, { x: 90, y: -10 }, 1);
+
+
+
+
+            createCrystalCross('STAGE5', 5, { x: 0, y: 100 }, 0);
+            createCrystalCross('STAGE5', 5, { x: 0, y: 120 }, 2);
+            createCrystalCross('STAGE5', 5, { x: 10, y: 110 }, 1);
+            createCrystalCross('STAGE5', 5, { x: -10, y: 110 }, 1);
+
+
+            createCrystalCross('STAGE5', 5, { x: 0, y: -100 }, 0);
+            createCrystalCross('STAGE5', 5, { x: 0, y: -120 }, 2);
+            createCrystalCross('STAGE5', 5, { x: 10, y: -110 }, 1);
+            createCrystalCross('STAGE5', 5, { x: -10, y: -110 }, 1);
+
+            createCrystalCross('STAGE5', 3.3, { x: 0, y: -25 }, 0);
+            createCrystalCross('STAGE5', 6.6, { x: 0, y: -25 }, 2);
+            createCrystalCross('STAGE5', 10, { x: 0, y: -25 }, 1);
+
+            createCrystalCross('STAGE5', 3.3, { x: 0, y: 25 }, 0);
+            createCrystalCross('STAGE5', 6.6, { x: 0, y: 25 }, 2);
+            createCrystalCross('STAGE5', 10, { x: 0, y: 25 }, 1);
+
+            // createCrystalCross('STAGE5', 20, { x: 0, y: -25 }, 1);
+
+            // createCrystalLine('STAGE5', 5, { x: -35, y: 70.5 }, 0, 15, "x");
+            // createCrystalLine('STAGE5', 10, { x: -20, y: 77.5 }, 2, 5, "x");
+            // createCrystalLine('STAGE5', 5, { x: -35, y: 57.5 }, 0, 15, "x");
+            // createCrystalLine('STAGE5', 10, { x: -20, y: 50.5 }, 1, 5, "x");
+
+            // createCrystalLine('STAGE5', 5, { x: -35, y: -70.5 }, 0, 15, "x");
+            // createCrystalLine('STAGE5', 10, { x: -20, y: -77.5 }, 2, 5, "x");
+            // createCrystalLine('STAGE5', 5, { x: -35, y: -57.5 }, 0, 15, "x");
+            // createCrystalLine('STAGE5', 10, { x: -20, y: -50.5 }, 1, 5, "x");
+
+            createCrystalLine('STAGE5', 5, { x: -51.25, y: -35 }, 1, 15, "y");
+            createCrystalLine('STAGE5', 5, { x: -32.5, y: -35 }, 2, 15, "y");
+            createCrystalLine('STAGE5', 5, { x: 51.25, y: -35 }, 1, 15, "y");
+            createCrystalLine('STAGE5', 5, { x: 32.5, y: -35 }, 2, 15, "y");
+
+
+            // createCrystalLine('STAGE5', 10, { x: -32.5, y: -20 }, 2, 5, "y");
+            // createCrystalLine('STAGE5', 5, { x: -70, y: -35 }, 0, 15, "y");
+            // createCrystalLine('STAGE5', 10, { x: -50.5, y: -20 }, 1, 5, "y");
+
+            // createCrystalLine('STAGE5', 5, { x: 70.5, y: -35 }, 0, 15, "y");
+            // createCrystalLine('STAGE5', 10, { x: 77.5, y: -20 }, 2, 5, "y");
+            // createCrystalLine('STAGE5', 5, { x: 57.5, y: -35 }, 0, 15, "y");
+            // createCrystalLine('STAGE5', 10, { x: 50.5, y: -20 }, 1, 5, "y");
+
+            // createCrystalCircle('STAGE5', 4.5, { x: 0, y: 0 }, 1, 4)
+
+
+
+            createCrystalCircle('STAGE5', 1.5, {x: 40, y:60 }, 2, 2)
+            createCrystalCircle('STAGE5', 2.5, {x: 40, y:60 }, 1, 8)
+            createCrystalCircle('STAGE5', 3, {x: 40, y:60 }, 2, 8)
+            createCrystalCircle('STAGE5', 3.5, {x: 40, y:60 }, 1, 8)
+            createCrystalCircle('STAGE5', 4, {x: 40, y:60 }, 0, 8)
+
+            createCrystalCircle('STAGE5', 1.5, {x: 25, y:90 }, 2, 2)
+            createCrystalCircle('STAGE5', 2.5, {x: 25, y:90 }, 1, 2)
+
+            createCrystalCircle('STAGE5', 1.5, {x: -25, y:90 }, 2, 2)
+            createCrystalCircle('STAGE5', 2.5, {x: -25, y:90 }, 1, 2)
+
+            createCrystalCircle('STAGE5', 1.5, {x: 25, y:-90 }, 2, 2)
+            createCrystalCircle('STAGE5', 2.5, {x: 25, y:-90 }, 1, 2)
+
+            createCrystalCircle('STAGE5', 1.5, {x: -25, y:-90 }, 2, 2)
+            createCrystalCircle('STAGE5', 2.5, {x: -25, y:-90 }, 1, 2)
+
+
+            // createCrystalCircle('STAGE5', 3, {x: 30, y:70 }, 2, 2)
+            // createCrystalCircle('STAGE5', 3.5, {x: 30, y:70 }, 1, 4)
+            // createCrystalCircle('STAGE5', 4, {x: 30, y:70 }, 0, 4)
+
+
+
+
+
+
+            createCrystalCircle('STAGE5', 1.5, {x: -40, y:60 }, 2, 2)
+            createCrystalCircle('STAGE5', 2.5, {x: -40, y:60 }, 1, 8)
+            createCrystalCircle('STAGE5', 3, {x: -40, y:60 }, 2, 8)
+            createCrystalCircle('STAGE5', 3.5, {x: -40, y:60 }, 1, 8)
+            createCrystalCircle('STAGE5', 4, {x: -40, y:60 }, 0, 8)
+
+            createCrystalCircle('STAGE5', 1.5, {x: 40, y:-60 }, 2, 2)
+            createCrystalCircle('STAGE5', 2.5, {x: 40, y:-60 }, 1, 8)
+            createCrystalCircle('STAGE5', 3, {x: 40, y:-60 }, 2, 8)
+            createCrystalCircle('STAGE5', 3.5, {x: 40, y:-60 }, 1, 8)
+            createCrystalCircle('STAGE5', 4, {x: 40, y:-60 }, 0, 8)
+
+
+            createCrystalCircle('STAGE5', 1.5, {x: -40, y:-60 }, 2, 2)
+            createCrystalCircle('STAGE5', 2.5, {x: -40, y:-60 }, 1, 8)
+            createCrystalCircle('STAGE5', 3, {x: -40, y:-60 }, 2, 8)
+            createCrystalCircle('STAGE5', 3.5, {x: -40, y:-60 }, 1, 8)
+            createCrystalCircle('STAGE5', 4, {x: -40, y:-60 }, 0, 8)
+
+
+            // createCrystalCircle('STAGE5', 4, {x: 0, y:-75 }, 0, 8)
+            // createCrystalCircle('STAGE5', 4.5, {x: 0, y:-75 }, 1, 8)
+            // createCrystalCircle('STAGE5', 5, {x: 0, y:-75 }, 2, 8)
+            // createCrystalCircle('STAGE5', 5.5, {x: 0, y:-75 }, 1, 8)
+            // createCrystalCircle('STAGE5', 6, {x: 0, y:-75 }, 0, 8)
+
+            // createCrystalCircle('STAGE5', 4, {x: -75, y:0 }, 0, 8)
+            // createCrystalCircle('STAGE5', 4.5, {x: -75, y:0 }, 1, 8)
+            // createCrystalCircle('STAGE5', 5, {x: -75, y:0 }, 2, 8)
+            // createCrystalCircle('STAGE5', 5.5, {x: -75, y:0 }, 1, 8)
+            // createCrystalCircle('STAGE5', 6, {x: -75, y:0 }, 0, 8)
+
+            // createCrystalCircle('STAGE5', 4, {x: 75, y:0 }, 0, 8)
+            // createCrystalCircle('STAGE5', 4.5, {x: 75, y:0 }, 1, 8)
+            // createCrystalCircle('STAGE5', 5, {x: 75, y:0 }, 2, 8)
+            // createCrystalCircle('STAGE5', 5.5, {x: 75, y:0 }, 1, 8)
+            // createCrystalCircle('STAGE5', 6, {x: 75, y:0 }, 0, 8)
+
+            // createCrystalCircle('STAGE5', 3, {x: 0, y:0 }, 0, 8)
+            // createCrystalCircle('STAGE5', 3.5, {x: 0, y:0 }, 1, 8)
+            // createCrystalCircle('STAGE5', 4, {x: 0, y:0 }, 0, 8)
+
+            // createCrystalCross('STAGE5', 3, { x: -17.5, y: 17.5 }, 2);
+            // createCrystalCross('STAGE5', 3, { x: 17.5, y: 17.5 }, 2);
+            // createCrystalCross('STAGE5', 3, { x: -17.5, y: -17.5 }, 2);
+            // createCrystalCross('STAGE5', 3, { x: 17.5, y: -17.5 }, 2);
+
+
+            // createCrystalCircle('STAGE5', 4.5, {x: 0, y:0 }, 1, 8)
+            // createCrystalCircle('STAGE5', 5, {x: 0, y:0 }, 0, 8)
+
+
+            window.appConfig.stages.STAGE5.STAGE5PRIZE0 = scene.children.find((obj) => obj.name === "STAGE5PRIZE0")
+            window.appConfig.stages.STAGE5.STAGE5PRIZE1 = scene.children.find((obj) => obj.name === "STAGE5PRIZE1")
+            window.appConfig.stages.STAGE5.STAGE5PRIZE2 = scene.children.find((obj) => obj.name === "STAGE5PRIZE2")
+            window.appConfig.stages.STAGE5.STAGE5PRIZE3 = scene.children.find((obj) => obj.name === "STAGE5PRIZE3")
+
+            window.appConfig.stages.STAGE5.STAGE5MAINSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE5MAINSTRUCTURE1")
+
+            window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTURE")
+            window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTUREA = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTUREA")
+            window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTUREB = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTUREB")
+            window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTUREC = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTUREC")
+
+            window.appConfig.stages.STAGE5.STAGE5MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE5MINORSTRUCTURE")
+            window.appConfig.stages.STAGE5.STAGE5MINORSTRUCTUREA = scene.children.find((obj) => obj.name === "STAGE5MINORSTRUCTUREA")
+            window.appConfig.stages.STAGE5.STAGE5MINORSTRUCTUREB = scene.children.find((obj) => obj.name === "STAGE5MINORSTRUCTUREB")
+            window.appConfig.stages.STAGE5.STAGE5MINORSTRUCTUREC = scene.children.find((obj) => obj.name === "STAGE5MINORSTRUCTUREC")
+
+            // window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTUREB = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTUREB")
+            // window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTUREC = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTUREC")
+            // window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTURED = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTURED")
+            
+            // window.appConfig.stages.STAGE5.STAGE5MAINSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE5MAINSTRUCTURE3")
+            // window.appConfig.stages.STAGE5.STAGE5MAINSTRUCTURE4 = scene.children.find((obj) => obj.name === "STAGE5MAINSTRUCTURE4")
+            // window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTURE1")
+            // window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTURE1A = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTURE1A")
+            // window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTURE1B = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTURE1B")
+            // window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTURE1C = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTURE1C")
+            // window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTURE1D = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTURE1D")
+
+            // window.appConfig.stages.STAGE5.STAGE5MAINSTRUCTURE5 = scene.children.find((obj) => obj.name === "STAGE5MAINSTRUCTURE5")
+            // window.appConfig.stages.STAGE5.STAGE5MAINSTRUCTURE6 = scene.children.find((obj) => obj.name === "STAGE5MAINSTRUCTURE6")
+            // window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTURE2")
+            // window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTURE2A = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTURE2A")
+            // window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTURE2B = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTURE2B")
+            // window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTURE2C = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTURE2C")
+            // window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTURE2D = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTURE2D")
+
+            // window.appConfig.stages.STAGE5.STAGE5MAINSTRUCTURE7 = scene.children.find((obj) => obj.name === "STAGE5MAINSTRUCTURE7")
+            // window.appConfig.stages.STAGE5.STAGE5MAINSTRUCTURE8 = scene.children.find((obj) => obj.name === "STAGE5MAINSTRUCTURE8")
+            // window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTURE3")
+            // window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTURE3A = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTURE3A")
+            // window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTURE3B = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTURE3B")
+            // window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTURE3C = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTURE3C")
+            // window.appConfig.stages.STAGE5.STAGE5CROSSBEAMSTRUCTURE3D = scene.children.find((obj) => obj.name === "STAGE5CROSSBEAMSTRUCTURE3D")
+
+
+            window.appConfig.stages.STAGE5.data.started = true
+          }
         }
+
 
       }
 
@@ -2822,7 +3299,7 @@
       },
       spriteFetch2: (sprite) => {
         console.log(sprite)
-        debugger
+        // debugger
         return {
           started: 0,
           ended: 0,
@@ -2841,7 +3318,7 @@
       },
       spriteFetch3: (sprite) => {
         console.log(sprite)
-        debugger
+        // debugger
         return {
           started: 0,
           ended: 0,
@@ -2860,7 +3337,7 @@
       },
       spriteFetch4: (sprite) => {
         console.log(sprite)
-        debugger
+        // debugger
         return {
           started: 0,
           ended: 0,
@@ -3479,6 +3956,7 @@
   window.console.log = () => { }
   window.console.warn = () => { }
   window.console.dir = () => { }
+  window.console.error = () => { }
 </script>
 
 </html>
