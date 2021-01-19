@@ -283,8 +283,8 @@
         centerElement({ id: "level-select", offsetTop: 0, offsetLeft: 0 });
         centerElement({ id: "report", offsetTop: 0, offsetLeft: 0 });
         centerElement({ id: "pause-menu", offsetTop: 0, offsetLeft: 0 });
-        centerElement({ id: "title", offsetTop: "-25%", offsetLeft: 0 });
-        centerElement({ id: "start-menu", offsetTop: "25%", offsetLeft: 0 });
+        centerElement({ id: "title", offsetTop: "-31%", offsetLeft: 0 });
+        centerElement({ id: "start-menu", offsetTop: "31%", offsetLeft: 0 });
         var tanFOV = Math.tan(((Math.PI / 180) * camera.fov) / 2);
         var windowHeight = window.innerHeight;
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -474,7 +474,7 @@
         console.log(ellipseGeometry)
         // debugger
         let i = 0;
-        for (i; i < ellipseGeometry.vertices.length-1; i++) {
+        for (i; i < ellipseGeometry.vertices.length - 1; i++) {
           // if (i % 4 == 0) {
           crystalCircle.add(crystal(size, { x: ellipseGeometry.vertices[i].x * s + t.x, y: ellipseGeometry.vertices[i].y * s + t.y, z: 0 }));
 
@@ -524,7 +524,7 @@
           scene.remove(foundIt)
         })
       }
-      
+
       const registerStageObject = (stage, object) => {
         if (typeof object === 'object') {
           window.appConfig.stages[stage][object.name] = object
@@ -934,10 +934,10 @@
             prize3Group.prizeValue = 10
 
             //add prizes to the coins array so that they can be collected in the same manner
-            coins.push(prize0Group);
-            coins.push(prize1Group);
-            coins.push(prize2Group);
-            coins.push(prize3Group);
+            window.appConfig.coins.push(prize0Group);
+            window.appConfig.coins.push(prize1Group);
+            window.appConfig.coins.push(prize2Group);
+            window.appConfig.coins.push(prize3Group);
 
             createCrystalCross('STAGE0', 5);
             createCrystalCross('STAGE0', 10);
@@ -1211,10 +1211,10 @@
             prize3Group.prizeValue = 10
 
             //add prizes to the coins array so that they can be collected in the same manner
-            coins.push(prize0Group);
-            coins.push(prize1Group);
-            coins.push(prize2Group);
-            coins.push(prize3Group);
+            window.appConfig.coins.push(prize0Group);
+            window.appConfig.coins.push(prize1Group);
+            window.appConfig.coins.push(prize2Group);
+            window.appConfig.coins.push(prize3Group);
 
             createCrystalCross('STAGE1', 5, { x: 20, y: 19 }, 1);
             createCrystalCross('STAGE1', 5, { x: -20, y: 19 }, 1);
@@ -1453,10 +1453,10 @@
             prize3Group.prizeValue = 10
 
             //add prizes to the coins array so that they can be collected in the same manner
-            coins.push(prize0Group);
-            coins.push(prize1Group);
-            coins.push(prize2Group);
-            coins.push(prize3Group);
+            window.appConfig.coins.push(prize0Group);
+            window.appConfig.coins.push(prize1Group);
+            window.appConfig.coins.push(prize2Group);
+            window.appConfig.coins.push(prize3Group);
 
             createCrystalCross('STAGE2', 5, { x: 90, y: 0 }, 0);
             createCrystalCross('STAGE2', 5, { x: 110, y: 0 }, 2);
@@ -1847,10 +1847,10 @@
             prize3Group.prizeValue = 10
 
             //add prizes to the coins array so that they can be collected in the same manner
-            coins.push(prize0Group);
-            coins.push(prize1Group);
-            coins.push(prize2Group);
-            coins.push(prize3Group);
+            window.appConfig.coins.push(prize0Group);
+            window.appConfig.coins.push(prize1Group);
+            window.appConfig.coins.push(prize2Group);
+            window.appConfig.coins.push(prize3Group);
 
             createCrystalCross('STAGE3', 5, { x: -30, y: 85 }, 2);
             createCrystalCross('STAGE3', 5, { x: 30, y: 85 }, 2);
@@ -2339,10 +2339,10 @@
             prize3Group.prizeValue = 10
 
             //add prizes to the coins array so that they can be collected in the same manner
-            coins.push(prize0Group);
-            coins.push(prize1Group);
-            coins.push(prize2Group);
-            coins.push(prize3Group);
+            window.appConfig.coins.push(prize0Group);
+            window.appConfig.coins.push(prize1Group);
+            window.appConfig.coins.push(prize2Group);
+            window.appConfig.coins.push(prize3Group);
 
             createCrystalCircle('STAGE4', 4, { x: 0, y: 75 }, 0, 8)
             createCrystalCircle('STAGE4', 4.5, { x: 0, y: 75 }, 1, 8)
@@ -2583,7 +2583,7 @@
               3,
               10
             );
-            scene.add(stage5PlinkoStructure);     
+            scene.add(stage5PlinkoStructure);
 
             const stage5PlinkoStructureA = createStage4PlinkoStructure(
               6,
@@ -2594,7 +2594,7 @@
               3,
               10
             );
-            scene.add(stage5PlinkoStructureA);     
+            scene.add(stage5PlinkoStructureA);
 
 
 
@@ -2650,10 +2650,10 @@
             prize3Group.prizeValue = 10
 
             //add prizes to the coins array so that they can be collected in the same manner
-            coins.push(prize0Group);
-            coins.push(prize1Group);
-            coins.push(prize2Group);
-            coins.push(prize3Group);
+            window.appConfig.coins.push(prize0Group);
+            window.appConfig.coins.push(prize1Group);
+            window.appConfig.coins.push(prize2Group);
+            window.appConfig.coins.push(prize3Group);
 
 
             createCrystalCross('STAGE5', 2.5, { x: -12.5, y: 10 }, 0);
@@ -2726,43 +2726,43 @@
             createCrystalLine('STAGE5', 5, { x: 51.25, y: -35 }, 1, 15, "y");
             createCrystalLine('STAGE5', 5, { x: 32.5, y: -35 }, 2, 15, "y");
 
-            createCrystalCircle('STAGE5', 1.5, {x: 25, y:90 }, 2, 2)
-            createCrystalCircle('STAGE5', 2.5, {x: 25, y:90 }, 1, 2)
+            createCrystalCircle('STAGE5', 1.5, { x: 25, y: 90 }, 2, 2)
+            createCrystalCircle('STAGE5', 2.5, { x: 25, y: 90 }, 1, 2)
 
-            createCrystalCircle('STAGE5', 1.5, {x: -25, y:90 }, 2, 2)
-            createCrystalCircle('STAGE5', 2.5, {x: -25, y:90 }, 1, 2)
+            createCrystalCircle('STAGE5', 1.5, { x: -25, y: 90 }, 2, 2)
+            createCrystalCircle('STAGE5', 2.5, { x: -25, y: 90 }, 1, 2)
 
-            createCrystalCircle('STAGE5', 1.5, {x: 25, y:-90 }, 2, 2)
-            createCrystalCircle('STAGE5', 2.5, {x: 25, y:-90 }, 1, 2)
+            createCrystalCircle('STAGE5', 1.5, { x: 25, y: -90 }, 2, 2)
+            createCrystalCircle('STAGE5', 2.5, { x: 25, y: -90 }, 1, 2)
 
-            createCrystalCircle('STAGE5', 1.5, {x: -25, y:-90 }, 2, 2)
-            createCrystalCircle('STAGE5', 2.5, {x: -25, y:-90 }, 1, 2)
-
-
-            createCrystalCircle('STAGE5', 1.5, {x: 40, y:60 }, 2, 2)
-            createCrystalCircle('STAGE5', 2.5, {x: 40, y:60 }, 1, 8)
-            createCrystalCircle('STAGE5', 3, {x: 40, y:60 }, 2, 8)
-            createCrystalCircle('STAGE5', 3.5, {x: 40, y:60 }, 1, 8)
-            createCrystalCircle('STAGE5', 4, {x: 40, y:60 }, 0, 8)
-
-            createCrystalCircle('STAGE5', 1.5, {x: -40, y:60 }, 2, 2)
-            createCrystalCircle('STAGE5', 2.5, {x: -40, y:60 }, 1, 8)
-            createCrystalCircle('STAGE5', 3, {x: -40, y:60 }, 2, 8)
-            createCrystalCircle('STAGE5', 3.5, {x: -40, y:60 }, 1, 8)
-            createCrystalCircle('STAGE5', 4, {x: -40, y:60 }, 0, 8)
-
-            createCrystalCircle('STAGE5', 1.5, {x: 40, y:-60 }, 2, 2)
-            createCrystalCircle('STAGE5', 2.5, {x: 40, y:-60 }, 1, 8)
-            createCrystalCircle('STAGE5', 3, {x: 40, y:-60 }, 2, 8)
-            createCrystalCircle('STAGE5', 3.5, {x: 40, y:-60 }, 1, 8)
-            createCrystalCircle('STAGE5', 4, {x: 40, y:-60 }, 0, 8)
+            createCrystalCircle('STAGE5', 1.5, { x: -25, y: -90 }, 2, 2)
+            createCrystalCircle('STAGE5', 2.5, { x: -25, y: -90 }, 1, 2)
 
 
-            createCrystalCircle('STAGE5', 1.5, {x: -40, y:-60 }, 2, 2)
-            createCrystalCircle('STAGE5', 2.5, {x: -40, y:-60 }, 1, 8)
-            createCrystalCircle('STAGE5', 3, {x: -40, y:-60 }, 2, 8)
-            createCrystalCircle('STAGE5', 3.5, {x: -40, y:-60 }, 1, 8)
-            createCrystalCircle('STAGE5XXXXXXXX', 4, {x: -40, y:-60 }, 0, 8)
+            createCrystalCircle('STAGE5', 1.5, { x: 40, y: 60 }, 2, 2)
+            createCrystalCircle('STAGE5', 2.5, { x: 40, y: 60 }, 1, 8)
+            createCrystalCircle('STAGE5', 3, { x: 40, y: 60 }, 2, 8)
+            createCrystalCircle('STAGE5', 3.5, { x: 40, y: 60 }, 1, 8)
+            createCrystalCircle('STAGE5', 4, { x: 40, y: 60 }, 0, 8)
+
+            createCrystalCircle('STAGE5', 1.5, { x: -40, y: 60 }, 2, 2)
+            createCrystalCircle('STAGE5', 2.5, { x: -40, y: 60 }, 1, 8)
+            createCrystalCircle('STAGE5', 3, { x: -40, y: 60 }, 2, 8)
+            createCrystalCircle('STAGE5', 3.5, { x: -40, y: 60 }, 1, 8)
+            createCrystalCircle('STAGE5', 4, { x: -40, y: 60 }, 0, 8)
+
+            createCrystalCircle('STAGE5', 1.5, { x: 40, y: -60 }, 2, 2)
+            createCrystalCircle('STAGE5', 2.5, { x: 40, y: -60 }, 1, 8)
+            createCrystalCircle('STAGE5', 3, { x: 40, y: -60 }, 2, 8)
+            createCrystalCircle('STAGE5', 3.5, { x: 40, y: -60 }, 1, 8)
+            createCrystalCircle('STAGE5', 4, { x: 40, y: -60 }, 0, 8)
+
+
+            createCrystalCircle('STAGE5', 1.5, { x: -40, y: -60 }, 2, 2)
+            createCrystalCircle('STAGE5', 2.5, { x: -40, y: -60 }, 1, 8)
+            createCrystalCircle('STAGE5', 3, { x: -40, y: -60 }, 2, 8)
+            createCrystalCircle('STAGE5', 3.5, { x: -40, y: -60 }, 1, 8)
+            createCrystalCircle('STAGE5XXXXXXXX', 4, { x: -40, y: -60 }, 0, 8)
 
             window.appConfig.stages.STAGE5.STAGE5PRIZE0 = scene.children.find((obj) => obj.name === "STAGE5PRIZE0")
             window.appConfig.stages.STAGE5.STAGE5PRIZE1 = scene.children.find((obj) => obj.name === "STAGE5PRIZE1")
@@ -3367,11 +3367,11 @@
       const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0");
       const pointLight0 = scene.children
         .find((obj) => obj.gameName === "POINTLIGHT0")
-        const pointLight1 = scene.children
+      const pointLight1 = scene.children
         .find((obj) => obj.gameName === "POINTLIGHT1")
-        const pointLight2 = scene.children
+      const pointLight2 = scene.children
         .find((obj) => obj.gameName === "POINTLIGHT2")
-        const pointLight3 = scene.children
+      const pointLight3 = scene.children
         .find((obj) => obj.gameName === "POINTLIGHT3")
       if (
         window.appConfig.start === false ||
@@ -3703,8 +3703,8 @@
     const showStart = () => {
       showHTMLElements(["start-menu", "title", "start-button", "tinted-overlay"]);
       centerElement({ id: "start-button", offsetTop: 0, offsetLeft: 0 });
-      centerElement({ id: "title", offsetTop: "-25%", offsetLeft: 0 });
-      centerElement({ id: "start-menu", offsetTop: "25%", offsetLeft: 0 });
+      centerElement({ id: "title", offsetTop: "-31%", offsetLeft: 0 });
+      centerElement({ id: "start-menu", offsetTop: "31%", offsetLeft: 0 });
     };
     const showPauseMenu = () => {
       showHTMLElements(["pause-button", "pause-menu", "game-scoreboard", "tinted-overlay"]);
