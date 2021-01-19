@@ -31,6 +31,205 @@
   <script type="text/javascript">
     "use strict";
 
+
+    const coinProperties = {
+      sCoin: [
+          "sounds/Sound FX/Reverb Coin 1a.mp3",
+          "sounds/Sound FX/Reverb Coin 1b.mp3",
+          "sounds/Sound FX/Reverb Coin 1c.mp3"
+      ],
+      mCoin: [
+          "sounds/Sound FX/Reverb Coin 2a.mp3",
+          "sounds/Sound FX/Reverb Coin 2b.mp3",
+          "sounds/Sound FX/Reverb Coin 2c.mp3"
+      ],
+      lCoin: [
+          "sounds/Sound FX/Reverb Coin 3a.mp3",
+          "sounds/Sound FX/Reverb Coin 3b.mp3",
+          "sounds/Sound FX/Reverb Coin 3c.mp3"
+      ]
+    }
+
+    const stageProperties = {
+        STAGE0: {
+            backgroundColors: [
+                "rgba(2,0,36,0)", 
+                "rgba(121,9,117,1)", 
+                "rgba(252,231,183,1)", 
+                "rgba(0,212,255,1)"
+            ],
+            basicColors: [
+                new THREE.Color(0xfff1e3),
+                new THREE.Color(0xffd5c9),
+                new THREE.Color(0xffa6bb),
+                new THREE.Color(0xff757f),
+                new THREE.Color(0x159294)
+            ],
+            sounds: {
+                coins: coinProperties,
+                beams: [
+                    "sounds/Sound FX/BALL FALL fx a1.mp3",
+                    "sounds/Sound FX/BALL FALL fx a2.mp3",
+                    "sounds/Sound FX/BALL FALL fx a3.mp3",
+                    "sounds/Sound FX/BALL FALL fx a4.mp3",
+                    "sounds/Sound FX/BALL FALL fx a5.mp3",
+                    "sounds/Sound FX/BALL FALL fx a6.mp3",
+                    "sounds/Sound FX/BALL FALL fx a7.mp3",
+                    "sounds/Sound FX/BALL FALL fx a8.mp3"
+                ],
+                prize: "sounds/Sound FX/Test Coin.mp3",
+                backgroundMusic: "sounds/BALL FALL jingle flat 1.mp3"
+            }
+        },
+        STAGE1: {
+            backgroundColors: [
+                "rgba(2,0,36,0)", 
+                "rgba(121,9,117,1)", 
+                "rgba(252,231,183,1)", 
+                "rgba(0,212,255,1)"
+            ],
+            basicColors: [
+                new THREE.Color(0xfff1e3),
+                new THREE.Color(0xffd5c9),
+                new THREE.Color(0xffa6bb),
+                new THREE.Color(0xff757f),
+                new THREE.Color(0x159294)
+            ],
+            sounds: {
+                coins: coinProperties,
+                beams: [
+                    "sounds/Sound FX/BALL FALL fx b1.mp3",
+                    "sounds/Sound FX/BALL FALL fx b2.mp3",
+                    "sounds/Sound FX/BALL FALL fx b3.mp3",
+                    "sounds/Sound FX/BALL FALL fx b4.mp3",
+                    "sounds/Sound FX/BALL FALL fx b5.mp3",
+                    "sounds/Sound FX/BALL FALL fx b6.mp3",
+                    "sounds/Sound FX/BALL FALL fx b7.mp3",
+                    "sounds/Sound FX/BALL FALL fx b8.mp3"
+                ],
+                prize: "sounds/Sound FX/Test Coin.mp3",
+                backgroundMusic: "sounds/BALL FALL jingle flat 2.mp3"
+            }
+        },
+        STAGE2: {
+            backgroundColors: [
+                "rgba(2,0,36,0)", 
+                "rgba(121,9,117,1)", 
+                "rgba(252,231,183,1)", 
+                "rgba(0,212,255,1)"
+            ],
+            basicColors: [
+                new THREE.Color(0xfff1e3),
+                new THREE.Color(0xffd5c9),
+                new THREE.Color(0xffa6bb),
+                new THREE.Color(0xff757f),
+                new THREE.Color(0x159294)
+            ],
+            sounds: {
+                coins: coinProperties,
+                beams: [
+                    "sounds/Sound FX/BALL FALL fx c1.mp3",
+                    "sounds/Sound FX/BALL FALL fx c2.mp3",
+                    "sounds/Sound FX/BALL FALL fx c3.mp3",
+                    "sounds/Sound FX/BALL FALL fx c4.mp3",
+                    "sounds/Sound FX/BALL FALL fx c5.mp3",
+                    "sounds/Sound FX/BALL FALL fx c6.mp3",
+                    "sounds/Sound FX/BALL FALL fx c7.mp3",
+                    "sounds/Sound FX/BALL FALL fx c8.mp3"
+                ],
+                prize: "sounds/Sound FX/Test Coin.mp3",
+                backgroundMusic: "sounds/BALL FALL jingle flat 3.mp3"
+            }
+        },
+        STAGE3: {
+            backgroundColors: [
+                "rgba(2,0,36,0)", 
+                "rgba(121,9,117,1)", 
+                "rgba(252,231,183,1)", 
+                "rgba(0,212,255,1)"
+            ],
+            basicColors: [
+                new THREE.Color(0xfff1e3),
+                new THREE.Color(0xffd5c9),
+                new THREE.Color(0xffa6bb),
+                new THREE.Color(0xff757f),
+                new THREE.Color(0x159294)
+            ],
+            sounds: {
+                coins: coinProperties,
+                beams: [
+                    "sounds/Sound FX/BALL FALL fx d1.mp3",
+                    "sounds/Sound FX/BALL FALL fx d2.mp3",
+                    "sounds/Sound FX/BALL FALL fx d3.mp3",
+                    "sounds/Sound FX/BALL FALL fx d4.mp3",
+                    "sounds/Sound FX/BALL FALL fx d5.mp3",
+                    "sounds/Sound FX/BALL FALL fx d6.mp3",
+                    "sounds/Sound FX/BALL FALL fx d7.mp3",
+                    "sounds/Sound FX/BALL FALL fx d8.mp3"
+                ],
+                prize: "sounds/Sound FX/Test Coin.mp3",
+                backgroundMusic: "sounds/BALL FALL jingle flat 4.mp3"
+            }
+        },
+        STAGE4: {
+            backgroundColors: [
+                "rgba(2,0,36,0)", 
+                "rgba(121,9,117,1)", 
+                "rgba(252,231,183,1)", 
+                "rgba(0,212,255,1)"
+            ],
+            basicColors: [
+                new THREE.Color(0xfff1e3),
+                new THREE.Color(0xffd5c9),
+                new THREE.Color(0xffa6bb),
+                new THREE.Color(0xff757f),
+                new THREE.Color(0x159294)
+            ],
+            sounds: {
+                coins: coinProperties,
+                beams: [
+                    "sounds/Sound FX/BALL FALL fx e1.mp3",
+                    "sounds/Sound FX/BALL FALL fx e2.mp3",
+                    "sounds/Sound FX/BALL FALL fx e3.mp3",
+                    "sounds/Sound FX/BALL FALL fx e4.mp3",
+                    "sounds/Sound FX/BALL FALL fx e5.mp3",
+                    "sounds/Sound FX/BALL FALL fx e6.mp3",
+                    "sounds/Sound FX/BALL FALL fx e7.mp3",
+                    "sounds/Sound FX/BALL FALL fx e8.mp3"
+                ],
+                prize: "sounds/Sound FX/Test Coin.mp3",
+                backgroundMusic: "sounds/BALL FALL jingle flat 5.mp3"
+            }
+        },
+        STAGE5: {
+            backgroundColors: [
+                "rgba(2,0,36,0)",
+                "rgba(121,9,117,1)",
+                "#2e3192",
+                "rgba(0,0,0,1)"
+            ],
+            basicColors: [
+                new THREE.Color(0xec008c),
+                new THREE.Color(0x00aeef)
+            ],
+            sounds: {
+                coins: coinProperties,
+                beams: [
+                    "sounds/Sound FX/BALL FALL fx a1.mp3",
+                    "sounds/Sound FX/BALL FALL fx a2.mp3",
+                    "sounds/Sound FX/BALL FALL fx a3.mp3",
+                    "sounds/Sound FX/BALL FALL fx a4.mp3",
+                    "sounds/Sound FX/BALL FALL fx a5.mp3",
+                    "sounds/Sound FX/BALL FALL fx a6.mp3",
+                    "sounds/Sound FX/BALL FALL fx a7.mp3",
+                    "sounds/Sound FX/BALL FALL fx a8.mp3"
+                ],
+                prize: "sounds/Sound FX/Test Coin.mp3",
+                backgroundMusic: "sounds/BALL FALL jingle flat 1.mp3"
+            }
+        },
+    }
+
     window.appConfig = {
       touchStart: false,
       touchEnd: false,
@@ -56,10 +255,18 @@
       currentStageIndex: 5
     };
 
-    const backgroundMusics = [];
-    const howlSounds = [];
-    window.appConfig.howlSounds = howlSounds;
-    window.appConfig.backgroundMusics = backgroundMusics;
+    window.appConfig.howlSounds = {
+        init: false,
+        coins: {
+          sCoin: [],
+          mCoin: [],
+          lCoin: []
+        },
+        beams: [],
+        prize: undefined,
+        backgroundMusic: undefined
+    }
+
     const loadSound = (options) => {
       const { src, type } = options;
       const sound = new Howl({
@@ -69,75 +276,20 @@
         volume: type === "backgroundMusic" ? 0.1 : 1,
       }).once("load", () => {
         if (type === "backgroundMusic") {
-          backgroundMusics.push(sound);
+          window.appConfig.howlSounds.backgroundMusic = sound;
           sound.play();
-        } else {
-          howlSounds.push(sound);
-        }
+        } 
       });
       return sound;
     };
-    const backgroundMusic0 = loadSound({
-      src: "sounds/BALL FALL jingle flat 1.mp3",
-      type: "backgroundMusic",
-    })
-      .on("playerror", (id, e) => {
-        console.log("playerror callback");
-        console.dir(id);
-        console.dir(e);
-      })
-      .on("fade", (e) => {
-        console.log("fade callback");
-        console.dir(e);
-        console.dir(this);
-      });
-    const howlSound0 = loadSound({
-      src: "sounds/Sound FX/BALL FALL fx a1.mp3",
-      type: "howlSound",
-    });
-    const howlSound1 = loadSound({
-      src: "sounds/Sound FX/BALL FALL fx a2.mp3",
-      type: "howlSound",
-    });
-    const howlSound2 = loadSound({
-      src: "sounds/Sound FX/BALL FALL fx a3.mp3",
-      type: "howlSound",
-    });
-    const howlSound3 = loadSound({
-      src: "sounds/Sound FX/BALL FALL fx a4.mp3",
-      type: "howlSound",
-    });
-    const howlSound4 = loadSound({
-      src: "sounds/Sound FX/BALL FALL fx a5.mp3",
-      type: "howlSound",
-    });
-    const howlSound5 = loadSound({
-      src: "sounds/Sound FX/BALL FALL fx a6.mp3",
-      type: "howlSound",
-    });
-    const howlSound6 = loadSound({
-      src: "sounds/Sound FX/BALL FALL fx a7.mp3",
-      type: "howlSound",
-    });
-    const howlSound7 = loadSound({
-      src: "sounds/Sound FX/BALL FALL fx a8.mp3",
-      type: "howlSound",
-    });
 
     Physijs.scripts.worker = "js/physijs_worker.js";
     Physijs.scripts.ammo = "ammo.js";
 
-    const basicColors = [
-      new THREE.Color(0xfff1e3),
-      new THREE.Color(0xffd5c9),
-      new THREE.Color(0xffa6bb),
-      new THREE.Color(0xff757f),
-      new THREE.Color(0x159294),
-    ];
-
     let adjustCamera = 20;
 
     const getRandomColor = () => {
+      const basicColors = window.appConfig.stages ? window.appConfig.stages[window.appConfig.currentStage].basicColors : stageProperties.STAGE0.basicColors
       return basicColors[Math.floor(Math.random() * basicColors.length)];
     };
 
@@ -204,14 +356,15 @@
         physics_stats.update();
       });
 
-      const skyColor = getRandomColor();
-      const groundColor = getRandomColor();
-      const hemisphereLight = new THREE.HemisphereLight(
-        skyColor,
-        groundColor,
-        0.75
-      );
-      scene.add(hemisphereLight);
+      window.appConfig.lighting = {
+        hemisphereLight: new THREE.HemisphereLight(
+          getRandomColor(),
+          getRandomColor(),
+          0.75
+        )
+      }
+
+      scene.add(window.appConfig.lighting.hemisphereLight);
 
       camera = new THREE.PerspectiveCamera(
         35,
@@ -535,6 +688,178 @@
 
       }
 
+      window.appConfig.initStageSounds = () => {
+        let stageSounds = window.appConfig.stages[window.appConfig.currentStage].sounds
+        let howlSounds = window.appConfig.howlSounds
+        if(howlSounds.init === false) {
+          Howl.prototype.changeSrc = function (newSrc, loop = false) {
+            let self = this;
+            self.unload();
+            self._src = newSrc;
+            if(loop === true) {
+              self._loop = true;
+              self.play()
+            }
+            self.load();
+          }
+  
+          howlSounds.init = true
+          howlSounds.backgroundMusic = loadSound({
+            src: stageSounds.backgroundMusic,
+            type: "backgroundMusic",
+          })
+
+          window.appConfig.howlSounds.coins.sCoin.push(
+            loadSound({
+              src: stageSounds.coins.sCoin[0],
+              type: "howlSound",
+            })
+          )
+
+          window.appConfig.howlSounds.coins.sCoin.push(
+            loadSound({
+              src: stageSounds.coins.sCoin[1],
+              type: "howlSound",
+            })
+          )
+
+          window.appConfig.howlSounds.coins.sCoin.push(
+            loadSound({
+              src: stageSounds.coins.sCoin[2],
+              type: "howlSound",
+            })
+          )
+
+          window.appConfig.howlSounds.coins.mCoin.push(
+            loadSound({
+              src: stageSounds.coins.mCoin[0],
+              type: "howlSound",
+            })
+          )
+
+          window.appConfig.howlSounds.coins.mCoin.push(
+            loadSound({
+              src: stageSounds.coins.mCoin[1],
+              type: "howlSound",
+            })
+          )
+
+          window.appConfig.howlSounds.coins.mCoin.push(
+            loadSound({
+              src: stageSounds.coins.mCoin[2],
+              type: "howlSound",
+            })
+          )
+
+          window.appConfig.howlSounds.coins.lCoin.push(
+            loadSound({
+              src: stageSounds.coins.lCoin[0],
+              type: "howlSound",
+            })
+          )
+
+          window.appConfig.howlSounds.coins.lCoin.push(
+            loadSound({
+              src: stageSounds.coins.lCoin[1],
+              type: "howlSound",
+            })
+          )
+
+          window.appConfig.howlSounds.coins.lCoin.push(
+            loadSound({
+              src: stageSounds.coins.lCoin[2],
+              type: "howlSound",
+            })
+          )
+
+          window.appConfig.howlSounds.prize = loadSound({
+            src: stageSounds.prize,
+            type: "howlSound",
+          })
+
+          window.appConfig.howlSounds.beams.push(
+            loadSound({
+              src: stageSounds.beams[0],
+              type: "howlSound",
+            })
+          )
+
+          window.appConfig.howlSounds.beams.push(
+            loadSound({
+              src: stageSounds.beams[1],
+              type: "howlSound",
+            })
+          )
+
+          window.appConfig.howlSounds.beams.push(
+            loadSound({
+              src: stageSounds.beams[2],
+              type: "howlSound",
+            })
+          )
+
+          window.appConfig.howlSounds.beams.push(
+            loadSound({
+              src: stageSounds.beams[3],
+              type: "howlSound",
+            })
+          )
+
+          window.appConfig.howlSounds.beams.push(
+            loadSound({
+              src: stageSounds.beams[4],
+              type: "howlSound",
+            })
+          )
+
+          window.appConfig.howlSounds.beams.push(
+            loadSound({
+              src: stageSounds.beams[5],
+              type: "howlSound",
+            })
+          )
+
+          window.appConfig.howlSounds.beams.push(
+            loadSound({
+              src: stageSounds.beams[6],
+              type: "howlSound",
+            })
+          )
+
+          window.appConfig.howlSounds.beams.push(
+            loadSound({
+              src: stageSounds.beams[7],
+              type: "howlSound",
+            })
+          )
+
+        } else if (howlSounds.init === true) {
+          window.appConfig.howlSounds.backgroundMusic.changeSrc(stageSounds.backgroundMusic, true)
+          window.appConfig.howlSounds.prize.changeSrc(stageSounds.prize)          
+
+          window.appConfig.howlSounds.coins.sCoin[0].changeSrc(stageSounds.coins.sCoin[0])
+          window.appConfig.howlSounds.coins.sCoin[1].changeSrc(stageSounds.coins.sCoin[1])
+          window.appConfig.howlSounds.coins.sCoin[2].changeSrc(stageSounds.coins.sCoin[2])
+
+          window.appConfig.howlSounds.coins.mCoin[0].changeSrc(stageSounds.coins.mCoin[0])
+          window.appConfig.howlSounds.coins.mCoin[1].changeSrc(stageSounds.coins.mCoin[1])
+          window.appConfig.howlSounds.coins.mCoin[2].changeSrc(stageSounds.coins.mCoin[2])
+
+          window.appConfig.howlSounds.coins.lCoin[0].changeSrc(stageSounds.coins.lCoin[0])
+          window.appConfig.howlSounds.coins.lCoin[1].changeSrc(stageSounds.coins.lCoin[1])
+          window.appConfig.howlSounds.coins.lCoin[2].changeSrc(stageSounds.coins.lCoin[2])
+
+          window.appConfig.howlSounds.beams[0].changeSrc(stageSounds.beams[0])
+          window.appConfig.howlSounds.beams[1].changeSrc(stageSounds.beams[1])
+          window.appConfig.howlSounds.beams[2].changeSrc(stageSounds.beams[2])
+          window.appConfig.howlSounds.beams[3].changeSrc(stageSounds.beams[3])
+          window.appConfig.howlSounds.beams[4].changeSrc(stageSounds.beams[4])
+          window.appConfig.howlSounds.beams[5].changeSrc(stageSounds.beams[5])
+          window.appConfig.howlSounds.beams[6].changeSrc(stageSounds.beams[6])
+          window.appConfig.howlSounds.beams[7].changeSrc(stageSounds.beams[7])
+        } 
+      }
+
       // start stage 0
       window.appConfig.stages = {
         components: {
@@ -812,7 +1137,9 @@
             sAdj: 2,
             startingPosition: new THREE.Vector3(0, 0, 0)
           },
-          colors: ["rgba(2,0,36,0)", "rgba(121,9,117,1)", "rgba(252,231,183,1)", "rgba(0,212,255,1)"],
+          backgroundColors: stageProperties.STAGE0.backgroundColors,
+          basicColors: stageProperties.STAGE0.basicColors,
+          sounds: stageProperties.STAGE0.sounds,
           defaultTransforms: [
             'STAGE0PRIZE0',
             'STAGE0PRIZE1',
@@ -840,6 +1167,9 @@
             window.appConfig.stages.STAGE0.data.started = false
           },
           init: () => {
+            window.appConfig.initStageSounds()
+            window.appConfig.lighting.hemisphereLight.color = getRandomColor()
+            window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
 
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
 
@@ -1003,6 +1333,9 @@
             sAdj: 2,
             startingPosition: new THREE.Vector3(0, 0, 0)
           },
+          backgroundColors: stageProperties.STAGE1.backgroundColors,
+          basicColors: stageProperties.STAGE1.basicColors,
+          sounds: stageProperties.STAGE1.sounds,
           defaultTransforms: [
             'STAGE1MINORSTRUCTURE',
             'STAGE1MINORSTRUCTUREA',
@@ -1039,12 +1372,14 @@
             'STAGE1MINORSTRUCTURE3A': { r: { x: 0, y: 0, z: .0025 } },
             'STAGE1MINORSTRUCTURE3B': { r: { x: 0, y: 0, z: .0025 } },
           },
-          colors: ["rgba(2,0,36,0)", "rgba(121,9,117,1)", "rgba(252,231,183,1)", "rgba(0,212,255,1)"],
           teardown: () => {
             teardownStage('STAGE1')
             window.appConfig.stages.STAGE1.data.started = false
           },
           init: () => {
+            window.appConfig.initStageSounds()
+            window.appConfig.lighting.hemisphereLight.color = getRandomColor()
+            window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
 
             const createStage1MainBeamStructure = window.appConfig.stages.components.createStage1MainBeamStructure
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
@@ -1295,6 +1630,9 @@
             sAdj: 2,
             startingPosition: new THREE.Vector3(0, 0, 0)
           },
+          backgroundColors: stageProperties.STAGE2.backgroundColors,
+          basicColors: stageProperties.STAGE2.basicColors,
+          sounds: stageProperties.STAGE2.sounds,
           defaultTransforms: [
             'STAGE2PRIZE0',
             'STAGE2PRIZE1',
@@ -1321,12 +1659,14 @@
             'STAGE2MINORSTRUCTUREROTATIONB': { r: { x: 0, y: 0, z: -.0025 } },
             'STAGE2MINORSTRUCTUREROTATIONC': { r: { x: 0, y: 0, z: -.0025 } }
           },
-          colors: ["rgba(2,0,36,0)", "rgba(121,9,117,1)", "rgba(252,231,183,1)", "rgba(0,212,255,1)"],
           teardown: () => {
             teardownStage('STAGE2')
             window.appConfig.stages.STAGE2.data.started = false
           },
           init: () => {
+            window.appConfig.initStageSounds()
+            window.appConfig.lighting.hemisphereLight.color = getRandomColor()
+            window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
 
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
@@ -1535,6 +1875,9 @@
             sAdj: 2,
             startingPosition: new THREE.Vector3(0, 0, 0)
           },
+          backgroundColors: stageProperties.STAGE3.backgroundColors,
+          basicColors: stageProperties.STAGE3.basicColors,
+          sounds: stageProperties.STAGE3.sounds,
           defaultTransforms: [
             'STAGE3PRIZE0',
             'STAGE3PRIZE1',
@@ -1591,12 +1934,14 @@
             'STAGE3CROSSBEAMSTRUCTURE3B': { r: { x: 0, y: 0, z: .01 } },
             'STAGE3CROSSBEAMSTRUCTURE3C': { r: { x: 0, y: 0, z: -.01 } }
           },
-          colors: ["rgba(2,0,36,0)", "rgba(121,9,117,1)", "rgba(252,231,183,1)", "rgba(0,212,255,1)"],
           teardown: () => {
             teardownStage('STAGE3')
             window.appConfig.stages.STAGE3.data.started = false
           },
           init: () => {
+            window.appConfig.initStageSounds()
+            window.appConfig.lighting.hemisphereLight.color = getRandomColor()
+            window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
 
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
@@ -1922,6 +2267,9 @@
             sAdj: 2,
             startingPosition: new THREE.Vector3(0, 0, 0)
           },
+          backgroundColors: stageProperties.STAGE4.backgroundColors,
+          basicColors: stageProperties.STAGE4.basicColors,
+          sounds: stageProperties.STAGE4.sounds,
           defaultTransforms: [
             'STAGE4PRIZE0',
             'STAGE4PRIZE1',
@@ -1992,12 +2340,14 @@
             'STAGE4CROSSBEAMSTRUCTURE3D': { r: { x: 0, y: 0, z: .01 } }
 
           },
-          colors: ["rgba(2,0,36,0)", "rgba(121,9,117,1)", "rgba(252,231,183,1)", "rgba(0,212,255,1)"],
           teardown: () => {
             teardownStage('STAGE4')
             window.appConfig.stages.STAGE4.data.started = false
           },
           init: () => {
+            window.appConfig.initStageSounds()
+            window.appConfig.lighting.hemisphereLight.color = getRandomColor()
+            window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
 
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
@@ -2439,6 +2789,9 @@
             sAdj: 2,
             startingPosition: new THREE.Vector3(0, 0, 0)
           },
+          backgroundColors: stageProperties.STAGE5.backgroundColors,
+          basicColors: stageProperties.STAGE5.basicColors,
+          sounds: stageProperties.STAGE5.sounds,
           defaultTransforms: [
             'STAGE5PRIZE0',
             'STAGE5PRIZE1',
@@ -2471,12 +2824,14 @@
             'STAGE5MINORSTRUCTUREC': { r: { x: 0, y: 0, z: -.01 } }
 
           },
-          colors: ["rgba(2,0,36,0)", "rgba(121,9,117,1)", "#2e3192", "rgba(0,0,0,1)"],
           teardown: () => {
             teardownStage('STAGE5')
             window.appConfig.stages.STAGE5.data.started = false
           },
           init: () => {
+            window.appConfig.initStageSounds()
+            window.appConfig.lighting.hemisphereLight.color = getRandomColor()
+            window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
 
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
@@ -2808,7 +3163,7 @@
 
       requestAnimationFrame(render);
       scene.simulate();
-      window.appConfig.easyTimerLength = 60
+      window.appConfig.easyTimerLength = 15
       const timer = new easytimer.Timer({ countdown: true, startValues: { seconds: window.appConfig.easyTimerLength }, precision: "secondTenths" });
       window.appConfig.timer = timer
       timer.addEventListener("secondTenthsUpdated", function (e) {
@@ -2850,28 +3205,28 @@
 
             const playHowlOnCollision = [
               function () {
-                howlSound0.play();
+                window.appConfig.howlSounds.beams[0].play();
               },
               function () {
-                howlSound1.play();
+                window.appConfig.howlSounds.beams[1].play();
               },
               function () {
-                howlSound2.play();
+                window.appConfig.howlSounds.beams[2].play();
               },
               function () {
-                howlSound3.play();
+                window.appConfig.howlSounds.beams[3].play();
               },
               function () {
-                howlSound4.play();
+                window.appConfig.howlSounds.beams[4].play();
               },
               function () {
-                howlSound5.play();
+                window.appConfig.howlSounds.beams[5].play();
               },
               function () {
-                howlSound6.play();
+                window.appConfig.howlSounds.beams[6].play();
               },
               function () {
-                howlSound7.play();
+                window.appConfig.howlSounds.beams[7].play();
               }
             ]
             if (suonousFeatureTypes.indexOf(collided_with.featureType) > -1) {
@@ -3452,7 +3807,7 @@
         document.body.style.background =
         window.appConfig.stages.components.background(
           percentFinished, 
-          window.appConfig.stages[window.appConfig.currentStage].colors
+          window.appConfig.stages[window.appConfig.currentStage].backgroundColors
         )
       }
 
@@ -3620,8 +3975,8 @@
       window.appConfig.userHasEnded = false
       window.appConfig.start = true;
       window.appConfig.pause = false;
-      if (!backgroundMusic0.playing()) (
-        backgroundMusic0.play()
+      if (!window.appConfig.howlSounds.backgroundMusic.playing()) (
+        window.appConfig.howlSounds.backgroundMusic.play()
       )
       scene.setGravity(new THREE.Vector3(0, -10, 0));
       showHTMLElements(["pause-button", "game-scoreboard"]);
@@ -3645,8 +4000,8 @@
 
     const pause = () => {
       window.appConfig.pause
-        ? backgroundMusic0.play()
-        : backgroundMusic0.pause();
+        ? window.appConfig.howlSounds.backgroundMusic.play()
+        : window.appConfig.howlSounds.backgroundMusic.pause();
       window.appConfig.pause = !window.appConfig.pause;
       if (window.appConfig.pause) {
         window.appConfig.timer.pause();
