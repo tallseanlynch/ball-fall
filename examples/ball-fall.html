@@ -248,6 +248,28 @@
       pointLight0.distance = 25;
       scene.add(pointLight0);
 
+      const pointLight1 = new THREE.PointLight(getRandomColor(), 1);
+      pointLight1.gameName = "POINTLIGHT1";
+      pointLight1.power = 25;
+      pointLight1.decay = 1;
+      pointLight1.distance = 25;
+      scene.add(pointLight1);
+
+      const pointLight2 = new THREE.PointLight(getRandomColor(), 1);
+      pointLight2.gameName = "POINTLIGHT2";
+      pointLight2.power = 25;
+      pointLight2.decay = 1;
+      pointLight2.distance = 25;
+      scene.add(pointLight2);
+
+      const pointLight3 = new THREE.PointLight(getRandomColor(), 1);
+      pointLight3.gameName = "POINTLIGHT3";
+      pointLight3.power = 25;
+      pointLight3.decay = 1;
+      pointLight3.distance = 25;
+      scene.add(pointLight3);
+
+
       // Orbit Controls
       // orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
       // orbitControls.enabled = false;
@@ -2773,7 +2795,7 @@
 
       requestAnimationFrame(render);
       scene.simulate();
-      window.appConfig.easyTimerLength = 6.66
+      window.appConfig.easyTimerLength = 60
       const timer = new easytimer.Timer({ countdown: true, startValues: { seconds: window.appConfig.easyTimerLength }, precision: "secondTenths" });
       window.appConfig.timer = timer
       timer.addEventListener("secondTenthsUpdated", function (e) {
@@ -3345,6 +3367,12 @@
       const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0");
       const pointLight0 = scene.children
         .find((obj) => obj.gameName === "POINTLIGHT0")
+        const pointLight1 = scene.children
+        .find((obj) => obj.gameName === "POINTLIGHT1")
+        const pointLight2 = scene.children
+        .find((obj) => obj.gameName === "POINTLIGHT2")
+        const pointLight3 = scene.children
+        .find((obj) => obj.gameName === "POINTLIGHT3")
       if (
         window.appConfig.start === false ||
         window.appConfig.pause === true
@@ -3385,6 +3413,25 @@
         sphere.position.y + 1,
         sphere.position.z
       );
+
+      pointLight1.position.set(
+        sphere.position.x * lfo(1000),
+        sphere.position.y * lfo(750),
+        sphere.position.z * lfo(1500)
+      );
+
+      pointLight2.position.set(
+        sphere.position.x * lfo(777),
+        sphere.position.y * lfo(1212),
+        sphere.position.z * lfo(993)
+      );
+
+      pointLight3.position.set(
+        sphere.position.x * lfo(750),
+        sphere.position.y * lfo(500),
+        sphere.position.z * lfo(1412)
+      );
+
 
       const percentFinished = Math.abs(sphere.position.y) / 375;
       window.appConfig.percentFinished = percentFinished;
