@@ -3425,10 +3425,6 @@
                   sprite0.fetchData.coinStartingPosition = sprite0.fetchData.target.position.clone()
                 }
                 const percentThere = (percentComplete - .5) / .5
-                // console.error(percentThere)
-                // if (percentThere > 1) {
-                //   debugger
-                // }
                 const newX = sprite0.fetchData.coinStartingPosition.x * (1 - percentThere) + (window.appConfig.sphere.position.x * percentThere)
                 const newY = sprite0.fetchData.coinStartingPosition.y * (1 - percentThere) + (window.appConfig.sphere.position.y * percentThere)
                 sprite0.mesh.position.x = newX
@@ -3436,9 +3432,6 @@
 
                 sprite0.fetchData.target.position.x = newX
                 sprite0.fetchData.target.position.y = newY
-                // console.log(sprite0.fetchData.coinUuid)
-                // console.log(sprite0.fetchData.target.uuid)
-                // debugger
               }
             }
           }
@@ -3799,8 +3792,6 @@
           let newVelocity = new THREE.Vector3(
             window.appConfig.diffX * scaleV,
             window.appConfig.diffY * -scaleV,
-            // Math.abs(window.appConfig.diffX * scaleV) < 25 ? window.appConfig.diffX * scaleV : 25,
-            // Math.abs(window.appConfig.diffY * -scaleV) < 25 ? window.appConfig.diffY * -scaleV : -25,
             0
           )
           const speedClamp = 50
@@ -4248,10 +4239,6 @@
     <div class="menu-container">
       <div class="menu-big-text">
         <div class="justify-left">SFX</div>
-        <!-- <div class="justify-right range-container">
-          <input value="100" type="range" min="0" max="100" onmouseup="changeSFXVolume(this.value)"
-            ontouchend="changeSFXVolume(this.value)" />
-        </div> -->
         <div class="justify-right"><button class="sound-menu-button" id="sfx-toggle-button"
             onClick="toggleSFXButton()"></button></div>
       </div>
@@ -4260,11 +4247,6 @@
 
         <div class="justify-right"><button class="sound-menu-button" id="music-toggle-button"
             onClick="toggleMusicButton()"></button></div>
-
-        <!-- <div class="justify-right range-container">
-          <input value="100" type="range" min="0" max="100" onmouseup="changeMusicVolume(this.value)"
-            ontouchend="changeMusicVolume(this.value)" />
-        </div> -->
       </div>
     </div>
     <button class="start-menu-button" onClick="goBack()">Back</button>
@@ -4322,43 +4304,6 @@
       <button class="level-select-button" onClick="reset({action:'levelSelect', level: 4})">Stage 4</button>
       <button class="level-select-button" onClick="reset({action:'levelSelect', level: 5})">Stage 5</button>
     </div>
-    <!-- <table>
-      <tr>
-        <td class="level-select-button" onClick="setLevel(1)">1</td>
-        <td class="level-select-button" onClick="setLevel(2)">2</td>
-        <td class="level-select-button" onClick="setLevel(3)">3</td>
-        <td class="level-select-button" onClick="setLevel(4)">4</td>
-        <td class="level-select-button" onClick="setLevel(5)">5</td>
-      </tr>
-      <tr>
-        <td class="level-select-button" onClick="setLevel(6)">6</td>
-        <td class="level-select-button" onClick="setLevel(7)">7</td>
-        <td class="level-select-button" onClick="setLevel(8)">8</td>
-        <td class="level-select-button" onClick="setLevel(9)">9</td>
-        <td class="level-select-button" onClick="setLevel(10)">10</td>
-      </tr>
-      <tr>
-        <td class="level-select-button" onClick="setLevel(11)">11</td>
-        <td class="level-select-button" onClick="setLevel(12)">12</td>
-        <td class="level-select-button" onClick="setLevel(13)">13</td>
-        <td class="level-select-button" onClick="setLevel(14)">14</td>
-        <td class="level-select-button" onClick="setLevel(15)">15</td>
-      </tr>
-      <tr>
-        <td class="level-select-button" onClick="setLevel(16)">16</td>
-        <td class="level-select-button" onClick="setLevel(17)">17</td>
-        <td class="level-select-button" onClick="setLevel(18)">18</td>
-        <td class="level-select-button" onClick="setLevel(19)">19</td>
-        <td class="level-select-button" onClick="setLevel(20)">20</td>
-      </tr>
-      <tr>
-        <td class="level-select-button" onClick="setLevel(21)">21</td>
-        <td class="level-select-button" onClick="setLevel(22)">22</td>
-        <td class="level-select-button" onClick="setLevel(23)">23</td>
-        <td class="level-select-button" onClick="setLevel(24)">24</td>
-        <td class="level-select-button" onClick="setLevel(25)">25</td>
-      </tr>
-    </table> -->
     <button class="start-menu-button" onClick="goBack()">Back</button>
   </div>
 
