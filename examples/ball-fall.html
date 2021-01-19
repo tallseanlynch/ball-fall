@@ -51,9 +51,12 @@
         bumperGroup: 0,
         prize: 0
       },
-      currentStage: 'STAGE5',
+      currentStage: 'STAGE0',
       stagesArray: ['STAGE0', 'STAGE1', 'STAGE2', 'STAGE3', 'STAGE4', 'STAGE5'],
-      currentStageIndex: 5
+      currentStageIndex: 0,
+      musicTurnedOn: true,
+      sfxTurnedOn: true
+
     };
 
     const backgroundMusics = [];
@@ -204,6 +207,34 @@
         physics_stats.update();
       });
 
+      //set html stuff from game options
+      const sfxButton =
+        document.querySelector('#sfx-toggle-button')
+      if (window.appConfig.sfxTurnedOn) {
+        sfxButton.textContent = "ON"
+        changeSFXVolume(100)
+      } else {
+        sfxButton.textContent = "OFF"
+        changeSFXVolume(0)
+      }
+      // setTimeout(100, () => {
+      //   sfxButton.addEventListener('ready', () => {
+      //     toggleSFXButton()
+      //   })
+      // })
+      const musicButton =
+        document.querySelector('#music-toggle-button')
+      if (window.appConfig.musicTurnedOn) {
+        musicButton.textContent = "ON"
+        changeMusicVolume(100)
+      } else {
+        musicButton.textContent = "OFF"
+        changeMusicVolume(0)
+      }
+      // musicButton.addEventListener('click', () => {
+      //   toggleMusicButton()
+      // })
+
       const skyColor = getRandomColor();
       const groundColor = getRandomColor();
       const hemisphereLight = new THREE.HemisphereLight(
@@ -279,7 +310,7 @@
 
         console.log('ran window resize', event)
         setFontSizes()
-        centerElement({ id: "start-button", offsetTop: 0, offsetLeft: 0 });
+        centerElement({ id: "start-button-container", offsetTop: 0, offsetLeft: 0 });
         centerElement({ id: "level-select", offsetTop: 0, offsetLeft: 0 });
         centerElement({ id: "report", offsetTop: 0, offsetLeft: 0 });
         centerElement({ id: "pause-menu", offsetTop: 0, offsetLeft: 0 });
@@ -798,10 +829,10 @@
           },
           background: (percentFinished, colors) => {
             return "linear-gradient(180deg, " + colors[0] + " 0%, " + colors[1] + " 0%, " + colors[2] + " " +
-            Math.round((1 - percentFinished) * 100) / 3 +
-            "%, " + colors[3] + "" +
-            Math.round((1 - percentFinished) * 100) +
-            "%)";
+              Math.round((1 - percentFinished) * 100) / 3 +
+              "%, " + colors[3] + "" +
+              Math.round((1 - percentFinished) * 100) +
+              "%)";
           }
         },
         STAGE0: {
@@ -2808,7 +2839,7 @@
 
       requestAnimationFrame(render);
       scene.simulate();
-      window.appConfig.easyTimerLength = 60
+      window.appConfig.easyTimerLength = 6
       const timer = new easytimer.Timer({ countdown: true, startValues: { seconds: window.appConfig.easyTimerLength }, precision: "secondTenths" });
       window.appConfig.timer = timer
       timer.addEventListener("secondTenthsUpdated", function (e) {
@@ -2969,6 +3000,11 @@
           const thetaMod = Math.random()
           const phiMod = Math.random()
           const sprite0Mesh = new THREE.Mesh(spriteGeometry, spriteMaterial)
+          const spriteLight = new THREE.PointLight(getRandomColor(), 1)
+          spriteLight.power = 25;
+          spriteLight.decay = 1;
+          spriteLight.distance = 25;
+          sprite0Mesh.add(spriteLight)
           scene.add(sprite0Mesh)
           let sprite0 = {
             mesh: sprite0Mesh,
@@ -3144,6 +3180,10 @@
           },
           completedCallback: (percentComplete) => {
             window.appConfig.stages[window.appConfig.currentStage].teardown()
+            if (action && action.action === 'levelSelect') {
+              window.appConfig.currentStageIndex = action.level
+              window.appConfig.currentStage = window.appConfig.stagesArray[window.appConfig.currentStageIndex]
+            }
 
             if (action && action.action === 'next') {
               window.appConfig.currentStageIndex++
@@ -3450,10 +3490,10 @@
       window.appConfig.percentFinished = percentFinished;
       if (currentTime % 10 < 3) {
         document.body.style.background =
-        window.appConfig.stages.components.background(
-          percentFinished, 
-          window.appConfig.stages[window.appConfig.currentStage].colors
-        )
+          window.appConfig.stages.components.background(
+            percentFinished,
+            window.appConfig.stages[window.appConfig.currentStage].colors
+          )
       }
 
 
@@ -3713,8 +3753,8 @@
       centerElement({ id: "credits-menu", offsetTop: 0, offsetLeft: 0 });
     };
     const showStart = () => {
-      showHTMLElements(["start-menu", "title", "start-button", "tinted-overlay"]);
-      centerElement({ id: "start-button", offsetTop: 0, offsetLeft: 0 });
+      showHTMLElements(["start-menu", "title", "start-button-container", "tinted-overlay"]);
+      centerElement({ id: "start-button-container", offsetTop: 0, offsetLeft: 0 });
       centerElement({ id: "title", offsetTop: "-31%", offsetLeft: 0 });
       centerElement({ id: "start-menu", offsetTop: "31%", offsetLeft: 0 });
     };
@@ -3770,6 +3810,8 @@
       root.style.setProperty(`--font-size-2`, diagonalLength * .03 + "px");
       root.style.setProperty(`--font-size-3`, diagonalLength * .04 + "px");
       root.style.setProperty(`--font-size-4`, diagonalLength * .05 + "px");
+      root.style.setProperty(`--full-screen-width`, window.innerWidth + "px");
+      root.style.setProperty(`--quarter-screen-height`, window.innerHeight * .25 + "px");
     }
     const changeMusicVolume = (val) => {
       window.appConfig.backgroundMusics.forEach((m, mIndex) => {
@@ -3792,7 +3834,7 @@
       "game-scoreboard",
       "title",
       "credits-menu",
-      "start-button",
+      "start-button-container",
       "pause-button",
       "tinted-overlay"
     ];
@@ -3808,6 +3850,32 @@
     const setLevel = (level) => {
       window.appConfig.level = level;
     };
+    const toggleSFXButton = () => {
+      console.log('sfx firing')
+      window.appConfig.sfxTurnedOn = !window.appConfig.sfxTurnedOn
+      const sfxButton =
+        document.querySelector('#sfx-toggle-button')
+      if (window.appConfig.sfxTurnedOn) {
+        sfxButton.textContent = "ON"
+        changeSFXVolume(100)
+      } else {
+        sfxButton.textContent = "OFF"
+        changeSFXVolume(0)
+      }
+    }
+    const toggleMusicButton = () => {
+      console.log('music firing')
+      window.appConfig.musicTurnedOn = !window.appConfig.musicTurnedOn
+      const musicButton =
+        document.querySelector('#music-toggle-button')
+      if (window.appConfig.musicTurnedOn) {
+        musicButton.textContent = "ON"
+        changeMusicVolume(100)
+      } else {
+        musicButton.textContent = "OFF"
+        changeMusicVolume(0)
+      }
+    }
     window.onload = initScene;
   </script>
 </head>
@@ -3826,13 +3894,23 @@
     <div class="menu-container">
       <div class="menu-big-text">
         <div class="justify-left">SFX</div>
-        <div class="justify-right range-container"><input value="100" type="range" min="0" max="100"
-            onmouseup="changeSFXVolume(this.value)" ontouchend="changeSFXVolume(this.value)" /></div>
+        <!-- <div class="justify-right range-container">
+          <input value="100" type="range" min="0" max="100" onmouseup="changeSFXVolume(this.value)"
+            ontouchend="changeSFXVolume(this.value)" />
+        </div> -->
+        <div class="justify-right"><button class="sound-menu-button" id="sfx-toggle-button"
+            onClick="toggleSFXButton()"></button></div>
       </div>
       <div class="menu-big-text">
         <div class="justify-left">Music</div>
-        <input class="justify-right" value="100" type="range" min="0" max="100"
-          onmouseup="changeMusicVolume(this.value)" ontouchend="changeMusicVolume(this.value)" />
+
+        <div class="justify-right"><button class="sound-menu-button" id="music-toggle-button"
+            onClick="toggleMusicButton()"></button></div>
+
+        <!-- <div class="justify-right range-container">
+          <input value="100" type="range" min="0" max="100" onmouseup="changeMusicVolume(this.value)"
+            ontouchend="changeMusicVolume(this.value)" />
+        </div> -->
       </div>
     </div>
     <button class="start-menu-button" onClick="goBack()">Back</button>
@@ -3882,7 +3960,15 @@
   </div>
   <div id="level-select" class="hide">
     <div id="level-select-title">Level Select</div>
-    <table>
+    <div class="level-select-menu-container">
+      <button class="level-select-button" onClick="reset({action:'levelSelect', level: 0})">Stage 0</button>
+      <button class="level-select-button" onClick="reset({action:'levelSelect', level: 1})">Stage 1</button>
+      <button class="level-select-button" onClick="reset({action:'levelSelect', level: 2})">Stage 2</button>
+      <button class="level-select-button" onClick="reset({action:'levelSelect', level: 3})">Stage 3</button>
+      <button class="level-select-button" onClick="reset({action:'levelSelect', level: 4})">Stage 4</button>
+      <button class="level-select-button" onClick="reset({action:'levelSelect', level: 5})">Stage 5</button>
+    </div>
+    <!-- <table>
       <tr>
         <td class="level-select-button" onClick="setLevel(1)">1</td>
         <td class="level-select-button" onClick="setLevel(2)">2</td>
@@ -3918,7 +4004,7 @@
         <td class="level-select-button" onClick="setLevel(24)">24</td>
         <td class="level-select-button" onClick="setLevel(25)">25</td>
       </tr>
-    </table>
+    </table> -->
     <button class="start-menu-button" onClick="goBack()">Back</button>
   </div>
 
@@ -3937,7 +4023,9 @@
     </button>
   </div>
   <div id="title">BALLSINKI</div>
-  <button id="start-button" onClick="start()">Start</button>
+  <div id="start-button-container">
+    <button id="start-button" onClick="start()">Start</button>
+  </div>
   <div id="start-menu">
     <button id="start-level-select-button" class="start-menu-button" onClick="showLevelSelect()">
       Level Select
