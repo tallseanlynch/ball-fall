@@ -1,25 +1,25 @@
 // app debug menu for items
 
 setTimeout(() => {
-    const size = 200;
-    const divisions = 40;
+    // const size = 200;
+    // const divisions = 40;
 
-    const gridHelper = new THREE.GridHelper( size, divisions );
-    scene.add( gridHelper );
-    gridHelper.rotation.x = .5 * Math.PI
+    // const gridHelper = new THREE.GridHelper( size, divisions );
+    // scene.add( gridHelper );
+    // gridHelper.rotation.x = .5 * Math.PI
 
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
+    // const raycaster = new THREE.Raycaster();
+    // const mouse = new THREE.Vector2();
 
-    function onMouseMove( event ) {
+    // function onMouseMove( event ) {
 
-    // calculate mouse position in normalized device coordinates
-    // (-1 to +1) for both components
+    // // calculate mouse position in normalized device coordinates
+    // // (-1 to +1) for both components
 
-    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    // mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    // mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
-    }
+    // }
 
 
     window.appConfig.debug = {

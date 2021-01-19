@@ -795,6 +795,13 @@
             mainStructure.name = name;
             mainStructure.featureType = "BEAM"
             return mainStructure;
+          },
+          background: (percentFinished, colors) => {
+            return "linear-gradient(180deg, " + colors[0] + " 0%, " + colors[1] + " 0%, " + colors[2] + " " +
+            Math.round((1 - percentFinished) * 100) / 3 +
+            "%, " + colors[3] + "" +
+            Math.round((1 - percentFinished) * 100) +
+            "%)";
           }
         },
         STAGE0: {
@@ -805,6 +812,7 @@
             sAdj: 2,
             startingPosition: new THREE.Vector3(0, 0, 0)
           },
+          colors: ["rgba(2,0,36,0)", "rgba(121,9,117,1)", "rgba(252,231,183,1)", "rgba(0,212,255,1)"],
           defaultTransforms: [
             'STAGE0PRIZE0',
             'STAGE0PRIZE1',
@@ -1031,6 +1039,7 @@
             'STAGE1MINORSTRUCTURE3A': { r: { x: 0, y: 0, z: .0025 } },
             'STAGE1MINORSTRUCTURE3B': { r: { x: 0, y: 0, z: .0025 } },
           },
+          colors: ["rgba(2,0,36,0)", "rgba(121,9,117,1)", "rgba(252,231,183,1)", "rgba(0,212,255,1)"],
           teardown: () => {
             teardownStage('STAGE1')
             window.appConfig.stages.STAGE1.data.started = false
@@ -1312,6 +1321,7 @@
             'STAGE2MINORSTRUCTUREROTATIONB': { r: { x: 0, y: 0, z: -.0025 } },
             'STAGE2MINORSTRUCTUREROTATIONC': { r: { x: 0, y: 0, z: -.0025 } }
           },
+          colors: ["rgba(2,0,36,0)", "rgba(121,9,117,1)", "rgba(252,231,183,1)", "rgba(0,212,255,1)"],
           teardown: () => {
             teardownStage('STAGE2')
             window.appConfig.stages.STAGE2.data.started = false
@@ -1581,6 +1591,7 @@
             'STAGE3CROSSBEAMSTRUCTURE3B': { r: { x: 0, y: 0, z: .01 } },
             'STAGE3CROSSBEAMSTRUCTURE3C': { r: { x: 0, y: 0, z: -.01 } }
           },
+          colors: ["rgba(2,0,36,0)", "rgba(121,9,117,1)", "rgba(252,231,183,1)", "rgba(0,212,255,1)"],
           teardown: () => {
             teardownStage('STAGE3')
             window.appConfig.stages.STAGE3.data.started = false
@@ -1981,6 +1992,7 @@
             'STAGE4CROSSBEAMSTRUCTURE3D': { r: { x: 0, y: 0, z: .01 } }
 
           },
+          colors: ["rgba(2,0,36,0)", "rgba(121,9,117,1)", "rgba(252,231,183,1)", "rgba(0,212,255,1)"],
           teardown: () => {
             teardownStage('STAGE4')
             window.appConfig.stages.STAGE4.data.started = false
@@ -2459,6 +2471,7 @@
             'STAGE5MINORSTRUCTUREC': { r: { x: 0, y: 0, z: -.01 } }
 
           },
+          colors: ["rgba(2,0,36,0)", "rgba(121,9,117,1)", "#2e3192", "rgba(0,0,0,1)"],
           teardown: () => {
             teardownStage('STAGE5')
             window.appConfig.stages.STAGE5.data.started = false
@@ -3437,11 +3450,10 @@
       window.appConfig.percentFinished = percentFinished;
       if (currentTime % 10 < 3) {
         document.body.style.background =
-          "linear-gradient(180deg, rgba(2,0,36,0) 0%, rgba(121,9,117,1) 0%, rgba(252,231,183,1) " +
-          Math.round((1 - percentFinished) * 100) / 3 +
-          "%, rgba(0,212,255,1)" +
-          Math.round((1 - percentFinished) * 100) +
-          "%)";
+        window.appConfig.stages.components.background(
+          percentFinished, 
+          window.appConfig.stages[window.appConfig.currentStage].colors
+        )
       }
 
 
