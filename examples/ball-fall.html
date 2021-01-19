@@ -27,7 +27,7 @@
   <!-- <script src="https://unpkg.com/three@0.112.0/examples/js/loaders/GLTFLoader.js"></script> -->
   <script type="text/javascript" src="./features.js"></script>
   <script type="text/javascript" src="./event-handlers.js"></script>
-  <script type="text/javascript" src="./debug.js"></script>
+  <!-- <script type="text/javascript" src="./debug.js"></script> -->
   <script type="text/javascript">
     "use strict";
 
@@ -380,7 +380,7 @@
             singleScale * zScaleMod
           );
           coin.coinType = "single";
-          coin.coinValue = 1;
+          coin.coinValue = 100;
           coin.baseColor = singleHex
           coin.coinHeight =
             coin.children.forEach((child) => {
@@ -394,7 +394,7 @@
             doubleScale * zScaleMod
           );
           coin.coinType = "double";
-          coin.coinValue = 2;
+          coin.coinValue = 200;
           coin.baseColor = doubleHex
           coin.children.forEach((child) => {
             child.material.color.setHex(doubleHex);
@@ -408,7 +408,7 @@
             tripleScale * zScaleMod
           );
           coin.coinType = "triple";
-          coin.coinValue = 3;
+          coin.coinValue = 300;
           coin.baseColor = tripleHex
           coin.children.forEach((child) => {
             child.material.color.setHex(tripleHex);
@@ -757,15 +757,15 @@
             mainStructure.position.set(0 + p.x, 0 + p.y, 1.5);
             let ix
             let iy
-            for(iy = 0;iy<ny;iy++) {
-              for(ix = 0;ix<nx;ix++) {
+            for (iy = 0; iy < ny; iy++) {
+              for (ix = 0; ix < nx; ix++) {
                 mainStructure.add(
                   createBeam({
                     p: [scaleX * ix * 3, scaleY * iy, -1],
                     r: [0, 0, 0],
-                    s: (1 + scaleAdj) * ((scaleX+scaleY)/2),
+                    s: (1 + scaleAdj) * ((scaleX + scaleY) / 2),
                   })
-                );              
+                );
               }
             }
             mainStructure.name = name;
@@ -2024,7 +2024,7 @@
             );
             scene.add(stage4CrossBeamStructureD);
 
-//--
+            //--
 
             const stage4MainBeamStructure3 = createStage0MainBeamStructure(
               1.25,
@@ -2080,9 +2080,9 @@
               "STAGE4CROSSBEAMSTRUCTURE1D",
               { x: 30, y: -40 }
             );
-            scene.add(stage4CrossBeamStructure1D);            
+            scene.add(stage4CrossBeamStructure1D);
 
-//--
+            //--
 
             const stage4MainBeamStructure5 = createStage0MainBeamStructure(
               1.25,
@@ -2138,10 +2138,10 @@
               "STAGE4CROSSBEAMSTRUCTURE2D",
               { x: -40, y: 30 }
             );
-            scene.add(stage4CrossBeamStructure2D);     
+            scene.add(stage4CrossBeamStructure2D);
 
 
-//--
+            //--
 
             const stage4MainBeamStructure7 = createStage0MainBeamStructure(
               1.25,
@@ -2197,7 +2197,7 @@
               "STAGE4CROSSBEAMSTRUCTURE3D",
               { x: 40, y: 30 }
             );
-            scene.add(stage4CrossBeamStructure3D);     
+            scene.add(stage4CrossBeamStructure3D);
 
 
 
@@ -2211,7 +2211,7 @@
               5
             );
             stage4PlinkoStructure.rotation.z = .25 * Math.PI
-            scene.add(stage4PlinkoStructure);     
+            scene.add(stage4PlinkoStructure);
 
 
             const stage4PlinkoStructureA = createStage4PlinkoStructure(
@@ -2224,7 +2224,7 @@
               5
             );
             stage4PlinkoStructureA.rotation.z = -.25 * Math.PI
-            scene.add(stage4PlinkoStructureA);     
+            scene.add(stage4PlinkoStructureA);
 
             const stage4PlinkoStructureB = createStage4PlinkoStructure(
               3,
@@ -2236,7 +2236,7 @@
               5
             );
             stage4PlinkoStructureB.rotation.z = -.25 * Math.PI
-            scene.add(stage4PlinkoStructureB);     
+            scene.add(stage4PlinkoStructureB);
 
             const stage4PlinkoStructureC = createStage4PlinkoStructure(
               3,
@@ -2248,16 +2248,16 @@
               5
             );
             stage4PlinkoStructureC.rotation.z = .25 * Math.PI
-            scene.add(stage4PlinkoStructureC);     
+            scene.add(stage4PlinkoStructureC);
 
 
-          const stage4MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure(
-            12,
-            0.56,
-            "STAGE4MAINSTRUCTURE"
-          );
-          stage4MainBeamStructure.rotation.z = .25 * Math.PI
-          scene.add(stage4MainBeamStructure);
+            const stage4MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure(
+              12,
+              0.56,
+              "STAGE4MAINSTRUCTURE"
+            );
+            stage4MainBeamStructure.rotation.z = .25 * Math.PI
+            scene.add(stage4MainBeamStructure);
 
 
 
@@ -2320,33 +2320,33 @@
             coins.push(prize2Group);
             coins.push(prize3Group);
 
-            createCrystalCircle('STAGE4', 4, {x: 0, y:75 }, 0, 8)
-            createCrystalCircle('STAGE4', 4.5, {x: 0, y:75 }, 1, 8)
-            createCrystalCircle('STAGE4', 5, {x: 0, y:75 }, 2, 8)
-            createCrystalCircle('STAGE4', 5.5, {x: 0, y:75 }, 1, 8)
-            createCrystalCircle('STAGE4', 6, {x: 0, y:75 }, 0, 8)
+            createCrystalCircle('STAGE4', 4, { x: 0, y: 75 }, 0, 8)
+            createCrystalCircle('STAGE4', 4.5, { x: 0, y: 75 }, 1, 8)
+            createCrystalCircle('STAGE4', 5, { x: 0, y: 75 }, 2, 8)
+            createCrystalCircle('STAGE4', 5.5, { x: 0, y: 75 }, 1, 8)
+            createCrystalCircle('STAGE4', 6, { x: 0, y: 75 }, 0, 8)
 
-            createCrystalCircle('STAGE4', 4, {x: 0, y:-75 }, 0, 8)
-            createCrystalCircle('STAGE4', 4.5, {x: 0, y:-75 }, 1, 8)
-            createCrystalCircle('STAGE4', 5, {x: 0, y:-75 }, 2, 8)
-            createCrystalCircle('STAGE4', 5.5, {x: 0, y:-75 }, 1, 8)
-            createCrystalCircle('STAGE4', 6, {x: 0, y:-75 }, 0, 8)
+            createCrystalCircle('STAGE4', 4, { x: 0, y: -75 }, 0, 8)
+            createCrystalCircle('STAGE4', 4.5, { x: 0, y: -75 }, 1, 8)
+            createCrystalCircle('STAGE4', 5, { x: 0, y: -75 }, 2, 8)
+            createCrystalCircle('STAGE4', 5.5, { x: 0, y: -75 }, 1, 8)
+            createCrystalCircle('STAGE4', 6, { x: 0, y: -75 }, 0, 8)
 
-            createCrystalCircle('STAGE4', 4, {x: -75, y:0 }, 0, 8)
-            createCrystalCircle('STAGE4', 4.5, {x: -75, y:0 }, 1, 8)
-            createCrystalCircle('STAGE4', 5, {x: -75, y:0 }, 2, 8)
-            createCrystalCircle('STAGE4', 5.5, {x: -75, y:0 }, 1, 8)
-            createCrystalCircle('STAGE4', 6, {x: -75, y:0 }, 0, 8)
+            createCrystalCircle('STAGE4', 4, { x: -75, y: 0 }, 0, 8)
+            createCrystalCircle('STAGE4', 4.5, { x: -75, y: 0 }, 1, 8)
+            createCrystalCircle('STAGE4', 5, { x: -75, y: 0 }, 2, 8)
+            createCrystalCircle('STAGE4', 5.5, { x: -75, y: 0 }, 1, 8)
+            createCrystalCircle('STAGE4', 6, { x: -75, y: 0 }, 0, 8)
 
-            createCrystalCircle('STAGE4', 4, {x: 75, y:0 }, 0, 8)
-            createCrystalCircle('STAGE4', 4.5, {x: 75, y:0 }, 1, 8)
-            createCrystalCircle('STAGE4', 5, {x: 75, y:0 }, 2, 8)
-            createCrystalCircle('STAGE4', 5.5, {x: 75, y:0 }, 1, 8)
-            createCrystalCircle('STAGE4', 6, {x: 75, y:0 }, 0, 8)
+            createCrystalCircle('STAGE4', 4, { x: 75, y: 0 }, 0, 8)
+            createCrystalCircle('STAGE4', 4.5, { x: 75, y: 0 }, 1, 8)
+            createCrystalCircle('STAGE4', 5, { x: 75, y: 0 }, 2, 8)
+            createCrystalCircle('STAGE4', 5.5, { x: 75, y: 0 }, 1, 8)
+            createCrystalCircle('STAGE4', 6, { x: 75, y: 0 }, 0, 8)
 
-            createCrystalCircle('STAGE4', 3, {x: 0, y:0 }, 0, 8)
-            createCrystalCircle('STAGE4', 3.5, {x: 0, y:0 }, 1, 8)
-            createCrystalCircle('STAGE4', 4, {x: 0, y:0 }, 0, 8)
+            createCrystalCircle('STAGE4', 3, { x: 0, y: 0 }, 0, 8)
+            createCrystalCircle('STAGE4', 3.5, { x: 0, y: 0 }, 1, 8)
+            createCrystalCircle('STAGE4', 4, { x: 0, y: 0 }, 0, 8)
 
             createCrystalCross('STAGE4', 3, { x: -17.5, y: 17.5 }, 2);
             createCrystalCross('STAGE4', 3, { x: 17.5, y: 17.5 }, 2);
@@ -3015,7 +3015,7 @@
           const color = new THREE.Color(baseColor)
           let hsl = {}
           color.getHSL(hsl)
-          const theLfo = lfo(141 + lfoMod) * .6
+          const theLfo = lfoPositive(141 + lfoMod) * .6
           hsl.l = hsl.l + theLfo
           return hsl
         }
@@ -3567,10 +3567,39 @@
             window.appConfig.score.coins;
         } else if (prizeValue > 0) {
           window.appConfig.score.coins += potentiallyGrabbedCoin.prizeValue;
+          potentiallyGrabbedCoin.visible = false
           window.appConfig.coins.splice(coinIndexToRemove, 1);
           document.querySelector("#score").innerText =
             window.appConfig.score.coins;
-          startStageEnd()
+          // startStageEnd()
+          //add ten secs
+          console.log(window.appConfig.timer.getTimeValues())
+          const currentTime = window.appConfig.timer.getTimeValues()
+          const newTimer = new easytimer.Timer({ countdown: true, startValues: { seconds: currentTime.seconds + 10, secondTenths: currentTime.secondTenths }, precision: "secondTenths" });
+
+          window.appConfig.timer.stop()
+          window.appConfig.timer.removeEventListener("secondTenthsUpdated", function (e) {
+            document.querySelector(
+              "#timer"
+            ).innerText = `${window.appConfig.timer
+              .getTimeValues()
+              .toString(["minutes", "seconds", "secondTenths"])}`;
+          });
+          window.appConfig.timer.removeEventListener("targetAchieved", function (e) {
+            startStageEnd()
+          })
+          window.appConfig.timer = newTimer
+          newTimer.start()
+          newTimer.addEventListener("secondTenthsUpdated", function (e) {
+            document.querySelector(
+              "#timer"
+            ).innerText = `${window.appConfig.timer
+              .getTimeValues()
+              .toString(["minutes", "seconds", "secondTenths"])}`;
+          });
+          newTimer.addEventListener("targetAchieved", function (e) {
+            startStageEnd()
+          })
         }
       }
 
@@ -3690,6 +3719,30 @@
       document.querySelector("#score").innerText = 0
       showHTMLElements([]);
       document.querySelector("#curtain").classList.remove("opacity-0");
+      const newTimer = new easytimer.Timer({ countdown: true, startValues: { seconds: 60 }, precision: "secondTenths" });
+      window.appConfig.timer.stop()
+      window.appConfig.timer.removeEventListener("secondTenthsUpdated", function (e) {
+        document.querySelector(
+          "#timer"
+        ).innerText = `${window.appConfig.timer
+          .getTimeValues()
+          .toString(["minutes", "seconds", "secondTenths"])}`;
+      });
+      window.appConfig.timer.removeEventListener("targetAchieved", function (e) {
+        startStageEnd()
+      })
+      window.appConfig.timer = newTimer
+      newTimer.start()
+      newTimer.addEventListener("secondTenthsUpdated", function (e) {
+        document.querySelector(
+          "#timer"
+        ).innerText = `${window.appConfig.timer
+          .getTimeValues()
+          .toString(["minutes", "seconds", "secondTenths"])}`;
+      });
+      newTimer.addEventListener("targetAchieved", function (e) {
+        startStageEnd()
+      })
       window.appConfig.timer.reset();
       window.appConfig.timer.pause();
       window.appConfig.activeTransforms = []

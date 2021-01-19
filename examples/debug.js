@@ -1,12 +1,12 @@
 // app debug menu for items
 
 setTimeout(() => {
-    const size = 200;
-    const divisions = 40;
+    // const size = 200;
+    // const divisions = 40;
 
-    const gridHelper = new THREE.GridHelper( size, divisions );
-    scene.add( gridHelper );
-    gridHelper.rotation.x = .5 * Math.PI
+    // const gridHelper = new THREE.GridHelper( size, divisions );
+    // scene.add( gridHelper );
+    // gridHelper.rotation.x = .5 * Math.PI
 
     // const raycaster = new THREE.Raycaster();
     // const mouse = new THREE.Vector2();
