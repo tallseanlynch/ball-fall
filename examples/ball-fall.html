@@ -3518,7 +3518,7 @@
             .position.z,
           percentComplete: 0,
           time: 2000,
-          timeLeft: 1000,
+          timeLeft: 0,
           currentTime: 0,
           name: 'INITIALBALLZOOM',
           id: Math.round(Math.random() * 10000),
@@ -3532,8 +3532,8 @@
           started: 0,
           ended: 0,
           percentComplete: 0,
-          time: 2000,
-          timeLeft: 1000,
+          time: 1000,
+          timeLeft: 0,
           currentTime: 0,
           name: 'COUNTDOWNNAME',
           id: Math.round(Math.random() * 10000),
@@ -3553,8 +3553,8 @@
           started: 0,
           ended: 0,
           percentComplete: 0,
-          time: 1000,
-          timeLeft: 1000,
+          time: 750,
+          timeLeft: 0,
           currentTime: 0,
           name: 'COUNTDOWN2',
           id: Math.round(Math.random() * 10000),
@@ -3568,13 +3568,11 @@
           started: 0,
           ended: 0,
           percentComplete: 0,
-          time: 2000,
-          timeLeft: 1000,
+          time: 1500,
+          timeLeft: 0,
           currentTime: 0,
           name: 'COUNTDOWN1',
           id: Math.round(Math.random() * 10000),
-          // startedCallback: (percentComplete) => {
-          // },
           completedCallback: (percentComplete) => {
             showStageCountDown1()
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownStart())
@@ -3587,12 +3585,10 @@
           ended: 0,
           percentComplete: 0,
           time: 1000,
-          timeLeft: 1000,
+          timeLeft: 0,
           currentTime: 0,
           name: 'COUNTDOWNSTART',
           id: Math.round(Math.random() * 10000),
-          // startedCallback: (percentComplete) => {
-          // },
           completedCallback: (percentComplete) => {
             showStageCountDownStart()
             window.appConfig.gameModeFunctions.start()
@@ -3607,7 +3603,7 @@
             .position.z,
           percentComplete: 0,
           time: 2000,
-          timeLeft: 1000,
+          timeLeft: 0,
           currentTime: 0,
           name: 'STAGERESET',
           id: Math.round(Math.random() * 10000),
@@ -3648,7 +3644,7 @@
             .position.z,
           percentComplete: 0,
           time: 2000,
-          timeLeft: 1000,
+          timeLeft: 0,
           currentTime: 0,
           name: 'STAGERESULTSBALLZOOM',
           id: Math.round(Math.random() * 10000),
@@ -3665,7 +3661,7 @@
             .position.z,
           percentComplete: 0,
           time: 2000,
-          timeLeft: 1000,
+          timeLeft: 0,
           currentTime: 0,
           name: 'SPRITEFETCH0',
           id: Math.round(Math.random() * 10000),
@@ -3686,7 +3682,7 @@
             .position.z,
           percentComplete: 0,
           time: 2000,
-          timeLeft: 1000,
+          timeLeft: 0,
           currentTime: 0,
           name: 'SPRITEFETCH1',
           id: Math.round(Math.random() * 10000),
@@ -3709,7 +3705,7 @@
             .position.z,
           percentComplete: 0,
           time: 2000,
-          timeLeft: 1000,
+          timeLeft: 0,
           currentTime: 0,
           name: 'SPRITEFETCH2',
           id: Math.round(Math.random() * 10000),
@@ -3728,7 +3724,7 @@
             .position.z,
           percentComplete: 0,
           time: 2000,
-          timeLeft: 1000,
+          timeLeft: 0,
           currentTime: 0,
           name: 'SPRITEFETCH3',
           id: Math.round(Math.random() * 10000),
@@ -3747,7 +3743,7 @@
             .position.z,
           percentComplete: 0,
           time: 2000,
-          timeLeft: 1000,
+          timeLeft: 0,
           currentTime: 0,
           name: 'SPRITEFETCH4',
           id: Math.round(Math.random() * 10000),
@@ -3931,10 +3927,6 @@
           percentFinished, 
           window.appConfig.stages[window.appConfig.currentStage].backgroundColors
         )
-        console.log(window.appConfig.stages.components.background(
-          percentFinished, 
-          window.appConfig.stages[window.appConfig.currentStage].backgroundColors
-        ))
       }
 
 
