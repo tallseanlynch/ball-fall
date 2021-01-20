@@ -549,6 +549,9 @@
         beam0.rotation.set(config.r[0], config.r[1], config.r[2]);
         return beam0;
       };
+      const crystalTopGeometry = new THREE.CylinderGeometry(0, 1, 0.5, 6)
+      const crystalMiddleGeometry = new THREE.CylinderGeometry(1, 1, 1, 6)
+      const crystalBottomGeometry = new THREE.CylinderGeometry(1, 0, 0.5, 6)
 
       const crystal = (size = 0, p = { x: 0, y: 0, z: 0 }) => {
         const tripleHex = 0x159294;
@@ -569,17 +572,17 @@
 
         const coin = new THREE.Mesh();
         const crystalTop = new THREE.Mesh(
-          new THREE.CylinderGeometry(0, 1, 0.5, 6),
+          crystalTopGeometry,
           new THREE.MeshPhongMaterial(crystalMaterialOptions)
         );
         crystalTop.translateY(0.75);
         const crystalMiddle = new THREE.Mesh(
-          new THREE.CylinderGeometry(1, 1, 1, 6),
+          crystalMiddleGeometry,
           new THREE.MeshPhongMaterial(crystalMaterialOptions)
         );
 
         const crystalBottom = new THREE.Mesh(
-          new THREE.CylinderGeometry(1, 0, 0.5, 6),
+          crystalBottomGeometry,
           new THREE.MeshPhongMaterial(crystalMaterialOptions)
         );
         crystalBottom.translateY(-0.75);
@@ -3347,7 +3350,7 @@
         const findCoin = (x, y, xMod = 10, yMod = 10) => {
           return window.appConfig.coins.find(
             (coin, coinIndex) => {
-              if(coinIndex % (window.appConfig.coinFrameCheckNumber % 10)) {
+              if (coinIndex % (window.appConfig.coinFrameCheckNumber % 10)) {
                 if (
                   Math.abs(coin.position.x - x) < coin.scale.x * xMod &&
                   Math.abs(coin.position.y - y) < coin.scale.x * yMod &&
@@ -3965,7 +3968,7 @@
       let coinIndexToRemove = undefined;
       const potentiallyGrabbedCoin = window.appConfig.coins.find(
         (coin, coinIndex) => {
-          if(coinIndex % (window.appConfig.coinFrameCheckNumber%5) < 1) {
+          if (coinIndex % (window.appConfig.coinFrameCheckNumber % 5) < 1) {
             coinIndexToRemove = coinIndex;
             if (
               Math.abs(coin.position.x - sphere.position.x) <
