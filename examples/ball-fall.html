@@ -3176,7 +3176,7 @@
             createCrystalCircle('STAGE5', 2.5, { x: -40, y: -60 }, 1, 8)
             createCrystalCircle('STAGE5', 3, { x: -40, y: -60 }, 2, 8)
             createCrystalCircle('STAGE5', 3.5, { x: -40, y: -60 }, 1, 8)
-            createCrystalCircle('STAGE5XXXXXXXX', 4, { x: -40, y: -60 }, 0, 8)
+            createCrystalCircle('STAGE5', 4, { x: -40, y: -60 }, 0, 8)
 
             window.appConfig.stages.STAGE5.STAGE5PRIZE0 = scene.children.find((obj) => obj.name === "STAGE5PRIZE0")
             window.appConfig.stages.STAGE5.STAGE5PRIZE1 = scene.children.find((obj) => obj.name === "STAGE5PRIZE1")
@@ -3347,13 +3347,15 @@
         const findCoin = (x, y, xMod = 10, yMod = 10) => {
           return window.appConfig.coins.find(
             (coin, coinIndex) => {
-              if (
-                Math.abs(coin.position.x - x) < coin.scale.x * xMod &&
-                Math.abs(coin.position.y - y) < coin.scale.x * yMod &&
-                !coin.spriteFetching &&
-                !coin.prizeValue) {
-                return true
-              } else return false;
+              if(coinIndex % (window.appConfig.coinFrameCheckNumber % 10)) {
+                if (
+                  Math.abs(coin.position.x - x) < coin.scale.x * xMod &&
+                  Math.abs(coin.position.y - y) < coin.scale.x * yMod &&
+                  !coin.spriteFetching &&
+                  !coin.prizeValue) {
+                  return true
+                } else return false;
+              }
             }
           )
         }
@@ -3783,8 +3785,10 @@
 
     window.appConfig.timers = timers
     const appTimers = window.appConfig.timers
-    render = function () {
+    window.appConfig.coinFrameCheckNumber = 0
 
+
+    render = function () {
       currentTime = new Date().getTime();
 
       if (!window.appConfig.stages[window.appConfig.currentStage].data.started) {
@@ -3961,13 +3965,15 @@
       let coinIndexToRemove = undefined;
       const potentiallyGrabbedCoin = window.appConfig.coins.find(
         (coin, coinIndex) => {
-          coinIndexToRemove = coinIndex;
-          if (
-            Math.abs(coin.position.x - sphere.position.x) <
-            coin.scale.x * xCoinMod &&
-            Math.abs(coin.position.y - sphere.position.y) < coin.scale.x * yCoinMod) {
-            return true
-          } else return false;
+          if(coinIndex % (window.appConfig.coinFrameCheckNumber%5) < 1) {
+            coinIndexToRemove = coinIndex;
+            if (
+              Math.abs(coin.position.x - sphere.position.x) <
+              coin.scale.x * xCoinMod &&
+              Math.abs(coin.position.y - sphere.position.y) < coin.scale.x * yCoinMod) {
+              return true
+            } else return false;
+          }
         }
       );
 
@@ -4034,6 +4040,7 @@
         }
       }
 
+      window.appConfig.coinFrameCheckNumber++
       requestAnimationFrame(render);
       renderer.render(scene, camera);
       render_stats.update();
