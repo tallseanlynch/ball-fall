@@ -3266,6 +3266,7 @@
                   return obj
                 }
               })
+
               const i = Math.floor(collisionInc % playHowlOnCollision.length)
               if (!(lastCollisions[0] === collided_with.uuid && lastCollisions[1] === collided_with.uuid && lastCollisions[2] === collided_with.uuid)) {
                 playHowlOnCollision[i]()
@@ -3897,7 +3898,18 @@
           window.appConfig.coins.splice(coinIndexToRemove, 1);
           document.querySelector("#score").innerText =
             window.appConfig.score.coins;
+          if(potentiallyGrabbedCoin.coinType === 'single') {
+            window.appConfig.howlSounds.coins.sCoin[Math.floor(Math.random() * 2.99)].play()          
+          }
+          if(potentiallyGrabbedCoin.coinType === 'double') {
+            window.appConfig.howlSounds.coins.mCoin[Math.floor(Math.random() * 2.99)].play()            
+          }
+          if(potentiallyGrabbedCoin.coinType === 'triple') {
+            window.appConfig.howlSounds.coins.lCoin[Math.floor(Math.random() * 2.99)].play()            
+          }
+
         } else if (prizeValue > 0) {
+          window.appConfig.howlSounds.prize.play()            
           window.appConfig.score.coins += potentiallyGrabbedCoin.prizeValue;
           potentiallyGrabbedCoin.visible = false
           window.appConfig.coins.splice(coinIndexToRemove, 1);
