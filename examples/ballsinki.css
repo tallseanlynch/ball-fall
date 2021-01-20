@@ -402,3 +402,33 @@ vertical-align: middle;
 .bg-gray {
   background-color: #ececec;
 }
+
+#stage-name, #stage-countdown-3, #stage-countdown-2, #stage-countdown-1, #stage-countdown-start {
+  font-size: var(--font-size-3);
+  position: absolute;
+}
+
+#stage-name {
+  left: var(--stage-name-offset-left);
+  top: var(--stage-name-offset-top);
+}
+
+#stage-countdown-3 {
+  left: var(--stage-countdown-3-offset-left);
+  top: var(--stage-countdown-3-offset-top);
+}
+
+#stage-countdown-2 {
+  left: var(--stage-countdown-2-offset-left);
+  top: var(--stage-countdown-2-offset-top);
+}
+
+#stage-countdown-1 {
+  left: var(--stage-countdown-1-offset-left);
+  top: var(--stage-countdown-1-offset-top);
+}
+
+#stage-countdown-start {
+  left: var(--stage-countdown-start-offset-left);
+  top: var(--stage-countdown-start-offset-top);
+}
