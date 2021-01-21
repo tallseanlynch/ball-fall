@@ -547,38 +547,54 @@
 
         return beam0;
       };
+      const crystalTopGeometry = new THREE.CylinderGeometry(0, 1, 0.5, 6)
+      const crystalMiddleGeometry = new THREE.CylinderGeometry(1, 1, 1, 6)
+      const crystalBottomGeometry = new THREE.CylinderGeometry(1, 0, 0.5, 6)
 
+      const tripleHex = 0x159294;
+      const doubleHex = 0xffa6bb;
+      const singleHex = 0xffd5c9;
+      const tripleScale = 2;
+      const doubleScale = 1.5;
+      const singleScale = 1;
+      const xScaleMod = 0.5;
+      const yScaleMod = 1;
+      const zScaleMod = 0.5;
+      const crystalMaterialOptions = {
+        color: 0x000000,
+        specular: 0x050505,
+        shininess: 100
+      };
+      window.appConfig.crystalMaterials = [
+        {
+          standard: new THREE.MeshPhongMaterial({ ...crystalMaterialOptions, color: singleHex }),
+          pulsing: new THREE.MeshPhongMaterial({ ...crystalMaterialOptions, color: singleHex })
+        },
+        {
+          standard: new THREE.MeshPhongMaterial({ ...crystalMaterialOptions, color: doubleHex }),
+          pulsing: new THREE.MeshPhongMaterial({ ...crystalMaterialOptions, color: doubleHex })
+        },
+        {
+          standard: new THREE.MeshPhongMaterial({ ...crystalMaterialOptions, color: tripleHex }),
+          pulsing: new THREE.MeshPhongMaterial({ ...crystalMaterialOptions, color: tripleHex })
+        }
+      ]
       const crystal = (size = 0, p = { x: 0, y: 0, z: 0 }) => {
-        const tripleHex = 0x159294;
-        const doubleHex = 0xffa6bb;
-        const singleHex = 0xffd5c9;
-        const tripleScale = 2;
-        const doubleScale = 1.5;
-        const singleScale = 1;
-        const xScaleMod = 0.5;
-        const yScaleMod = 1;
-        const zScaleMod = 0.5;
-
-        const crystalMaterialOptions = {
-          color: 0x000000,
-          specular: 0x050505,
-          shininess: 100
-        };
 
         const coin = new THREE.Mesh();
         const crystalTop = new THREE.Mesh(
-          new THREE.CylinderGeometry(0, 1, 0.5, 6),
-          new THREE.MeshPhongMaterial(crystalMaterialOptions)
+          crystalTopGeometry,
+          window.appConfig.crystalMaterials[size].standard
         );
         crystalTop.translateY(0.75);
         const crystalMiddle = new THREE.Mesh(
-          new THREE.CylinderGeometry(1, 1, 1, 6),
-          new THREE.MeshPhongMaterial(crystalMaterialOptions)
+          crystalMiddleGeometry,
+          window.appConfig.crystalMaterials[size].standard
         );
 
         const crystalBottom = new THREE.Mesh(
-          new THREE.CylinderGeometry(1, 0, 0.5, 6),
-          new THREE.MeshPhongMaterial(crystalMaterialOptions)
+          crystalBottomGeometry,
+          window.appConfig.crystalMaterials[size].standard
         );
         crystalBottom.translateY(-0.75);
         coin.add(crystalTop);
@@ -628,6 +644,7 @@
           });
         }
         window.appConfig.coins.push(coin);
+        coin.size = size
         return coin;
       };
 
@@ -2319,33 +2336,33 @@
             'STAGE4PRIZE2',
             'STAGE4PRIZE3',
             'STAGE4MAINSTRUCTURE1',
-            'STAGE4MAINSTRUCTURE2',
-            'STAGE4CROSSBEAMSTRUCTURE',
-            'STAGE4CROSSBEAMSTRUCTUREA',
-            'STAGE4CROSSBEAMSTRUCTUREB',
-            'STAGE4CROSSBEAMSTRUCTUREC',
-            'STAGE4CROSSBEAMSTRUCTURED',
+            // 'STAGE4MAINSTRUCTURE2',
+            // 'STAGE4CROSSBEAMSTRUCTURE',
+            // 'STAGE4CROSSBEAMSTRUCTUREA',
+            // 'STAGE4CROSSBEAMSTRUCTUREB',
+            // 'STAGE4CROSSBEAMSTRUCTUREC',
+            // 'STAGE4CROSSBEAMSTRUCTURED',
             'STAGE4MAINSTRUCTURE3',
-            'STAGE4MAINSTRUCTURE4',
-            'STAGE4CROSSBEAMSTRUCTURE1',
-            'STAGE4CROSSBEAMSTRUCTURE1A',
-            'STAGE4CROSSBEAMSTRUCTURE1B',
-            'STAGE4CROSSBEAMSTRUCTURE1C',
-            'STAGE4CROSSBEAMSTRUCTURE1D',
+            // 'STAGE4MAINSTRUCTURE4',
+            // 'STAGE4CROSSBEAMSTRUCTURE1',
+            // 'STAGE4CROSSBEAMSTRUCTURE1A',
+            // 'STAGE4CROSSBEAMSTRUCTURE1B',
+            // 'STAGE4CROSSBEAMSTRUCTURE1C',
+            // 'STAGE4CROSSBEAMSTRUCTURE1D',
             'STAGE4MAINSTRUCTURE5',
-            'STAGE4MAINSTRUCTURE6',
-            'STAGE4CROSSBEAMSTRUCTURE2',
-            'STAGE4CROSSBEAMSTRUCTURE2A',
-            'STAGE4CROSSBEAMSTRUCTURE2B',
-            'STAGE4CROSSBEAMSTRUCTURE2C',
-            'STAGE4CROSSBEAMSTRUCTURE2D',
+            // 'STAGE4MAINSTRUCTURE6',
+            // 'STAGE4CROSSBEAMSTRUCTURE2',
+            // 'STAGE4CROSSBEAMSTRUCTURE2A',
+            // 'STAGE4CROSSBEAMSTRUCTURE2B',
+            // 'STAGE4CROSSBEAMSTRUCTURE2C',
+            // 'STAGE4CROSSBEAMSTRUCTURE2D',
             'STAGE4MAINSTRUCTURE7',
-            'STAGE4MAINSTRUCTURE8',
-            'STAGE4CROSSBEAMSTRUCTURE3',
-            'STAGE4CROSSBEAMSTRUCTURE3A',
-            'STAGE4CROSSBEAMSTRUCTURE3B',
-            'STAGE4CROSSBEAMSTRUCTURE3C',
-            'STAGE4CROSSBEAMSTRUCTURE3D'
+            // 'STAGE4MAINSTRUCTURE8',
+            // 'STAGE4CROSSBEAMSTRUCTURE3',
+            // 'STAGE4CROSSBEAMSTRUCTURE3A',
+            // 'STAGE4CROSSBEAMSTRUCTURE3B',
+            // 'STAGE4CROSSBEAMSTRUCTURE3C',
+            // 'STAGE4CROSSBEAMSTRUCTURE3D'
           ],
           transforms: {
             'STAGE4PRIZE0': { r: { x: .005, y: .005, z: .005 } },
@@ -2630,54 +2647,54 @@
 
 
 
-            const stage4PlinkoStructure = createStage4PlinkoStructure(
-              3,
-              4,
-              -.95,
-              "STAGE4PLINKOSTRUCTURE",
-              { x: 55, y: 35 },
-              4,
-              5
-            );
-            stage4PlinkoStructure.rotation.z = .25 * Math.PI
-            scene.add(stage4PlinkoStructure);
+            // const stage4PlinkoStructure = createStage4PlinkoStructure(
+            //   3,
+            //   4,
+            //   -.95,
+            //   "STAGE4PLINKOSTRUCTURE",
+            //   { x: 55, y: 35 },
+            //   4,
+            //   5
+            // );
+            // stage4PlinkoStructure.rotation.z = .25 * Math.PI
+            // scene.add(stage4PlinkoStructure);
 
 
-            const stage4PlinkoStructureA = createStage4PlinkoStructure(
-              3,
-              4,
-              -.95,
-              "STAGE4PLINKOSTRUCTUREA",
-              { x: -67.5, y: 57.5 },
-              4,
-              5
-            );
-            stage4PlinkoStructureA.rotation.z = -.25 * Math.PI
-            scene.add(stage4PlinkoStructureA);
+            // const stage4PlinkoStructureA = createStage4PlinkoStructure(
+            //   3,
+            //   4,
+            //   -.95,
+            //   "STAGE4PLINKOSTRUCTUREA",
+            //   { x: -67.5, y: 57.5 },
+            //   4,
+            //   5
+            // );
+            // stage4PlinkoStructureA.rotation.z = -.25 * Math.PI
+            // scene.add(stage4PlinkoStructureA);
 
-            const stage4PlinkoStructureB = createStage4PlinkoStructure(
-              3,
-              4,
-              -.95,
-              "STAGE4PLINKOSTRUCTUREB",
-              { x: 37.5, y: -52.5 },
-              4,
-              5
-            );
-            stage4PlinkoStructureB.rotation.z = -.25 * Math.PI
-            scene.add(stage4PlinkoStructureB);
+            // const stage4PlinkoStructureB = createStage4PlinkoStructure(
+            //   3,
+            //   4,
+            //   -.95,
+            //   "STAGE4PLINKOSTRUCTUREB",
+            //   { x: 37.5, y: -52.5 },
+            //   4,
+            //   5
+            // );
+            // stage4PlinkoStructureB.rotation.z = -.25 * Math.PI
+            // scene.add(stage4PlinkoStructureB);
 
-            const stage4PlinkoStructureC = createStage4PlinkoStructure(
-              3,
-              4,
-              -.95,
-              "STAGE4PLINKOSTRUCTUREC",
-              { x: -57.5, y: -67.5 },
-              4,
-              5
-            );
-            stage4PlinkoStructureC.rotation.z = .25 * Math.PI
-            scene.add(stage4PlinkoStructureC);
+            // const stage4PlinkoStructureC = createStage4PlinkoStructure(
+            //   3,
+            //   4,
+            //   -.95,
+            //   "STAGE4PLINKOSTRUCTUREC",
+            //   { x: -57.5, y: -67.5 },
+            //   4,
+            //   5
+            // );
+            // stage4PlinkoStructureC.rotation.z = .25 * Math.PI
+            // scene.add(stage4PlinkoStructureC);
 
 
             const stage4MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure(
@@ -3334,18 +3351,10 @@
       };
       return () => {
         createSphere();
-        const colorLightnessLfo = (baseColor, lfoMod) => {
-          const color = new THREE.Color(baseColor)
-          let hsl = {}
-          color.getHSL(hsl)
-          const theLfo = lfoPositive(141 + lfoMod) * .6
-          hsl.l = hsl.l + theLfo
-          return hsl
-        }
         const findCoin = (x, y, xMod = 10, yMod = 10) => {
           return window.appConfig.coins.find(
             (coin, coinIndex) => {
-              if(coinIndex % (window.appConfig.coinFrameCheckNumber % 10)) {
+              if (coinIndex % (window.appConfig.coinFrameCheckNumber % 10)) {
                 if (
                   Math.abs(coin.position.x - x) < coin.scale.x * xMod &&
                   Math.abs(coin.position.y - y) < coin.scale.x * yMod &&
@@ -3426,10 +3435,9 @@
                 // })
               }
             } else if (sprite0.isFetchingCoin && window.appConfig.start && !window.appConfig.pause) {
-              const newHsl = colorLightnessLfo(sprite0.fetchData.target.baseColor, sprite0.fetchData.coinBrightnessLfoMod)
-              console.error(newHsl)
+
               sprite0.fetchData.target.children.forEach(child => {
-                child.material.color.setHSL(newHsl.h, newHsl.s, newHsl.l)
+                child.material = window.appConfig.crystalMaterials[sprite0.fetchData.target.size].pulsing
               })
               // sprite0.fetchData.target.color = colorLightnessLfo(sprite0.fetchData.target.color, sprite0.fetchData.coinBrightnessLfoMod)
               let percentComplete = window.appConfig.timers.data[`spriteFetch${sprite0.num}`].percentComplete
@@ -3947,7 +3955,11 @@
         sphere
           .setAngularVelocity(new THREE.Vector3(0, 0, 0));
       }
-      //handle sprites
+      window.appConfig.crystalMaterials.forEach(cm => {
+
+        const newHsl = colorLightnessLfo(cm.pulsing.color, 268)
+        cm.pulsing.color.setHSL(newHsl.h, newHsl.s, newHsl.l)
+      })
       window.appConfig.sprites.forEach(sprite => {
         sprite.activeCallback()
       }
@@ -3963,7 +3975,7 @@
       let coinIndexToRemove = undefined;
       const potentiallyGrabbedCoin = window.appConfig.coins.find(
         (coin, coinIndex) => {
-          if(coinIndex % (window.appConfig.coinFrameCheckNumber%5) < 1) {
+          if (coinIndex % (window.appConfig.coinFrameCheckNumber % 5) < 1) {
             coinIndexToRemove = coinIndex;
             if (
               Math.abs(coin.position.x - sphere.position.x) <
@@ -4193,6 +4205,14 @@
       start: start,
       reset: reset,
       pause: pause
+    }
+    const colorLightnessLfo = (baseColor, lfoMod) => {
+      const color = new THREE.Color(baseColor)
+      let hsl = {}
+      color.getHSL(hsl)
+      const theLfo = lfoPositive(141 + lfoMod) * .6
+      hsl.l = hsl.l + theLfo
+      return hsl
     }
     const showLevelSelect = () => {
       showHTMLElements(["level-select", "tinted-overlay"]);
