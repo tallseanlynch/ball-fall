@@ -3640,7 +3640,11 @@
             document.querySelector("#curtain").classList.add("opacity-0");
             const restartBallPosition = window.appConfig.stages[window.appConfig.currentStage].data.startingPosition
             window.appConfig.positionBall(restartBallPosition)
-            window.appConfig.positionCamera(restartBallPosition)
+            window.appConfig.timers.data.initialBallZoom.percentComplete = 0
+            window.appConfig.timers.data.stageReset.percentComplete = 0
+            window.appConfig.timers.data.stageResultsBallZoom.percentComplete = 0
+
+//            window.appConfig.positionCamera(restartBallPosition)
           }
         }
       },
@@ -4118,7 +4122,6 @@
     }
 
     const countdown = () => {
-
       window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName())
     }
 
@@ -4131,9 +4134,6 @@
       )
       setTimeout(() => showHTMLElements(["pause-button", "game-scoreboard"]), 1000)
       // window.appConfig.initialBallZoom.userHasClickedStart = true;
-      window.appConfig.timers.data.initialBallZoom.percentComplete = 0
-      window.appConfig.timers.data.stageReset.percentComplete = 0
-      window.appConfig.timers.data.stageResultsBallZoom.percentComplete = 0
       window.appConfig.timers.activeTimers.push(timers.initialBallZoom())
       window.appConfig.timer.start();
       scene.setGravity(new THREE.Vector3(0, -10, 0));
@@ -4507,7 +4507,7 @@
   <div id="curtain"></div>
 </body>
 <script>
-  window.console.log = () => { }
+  // window.console.log = () => { }
   window.console.warn = () => { }
   window.console.dir = () => { }
   window.console.error = () => { }
