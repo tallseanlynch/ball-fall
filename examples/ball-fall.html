@@ -3371,7 +3371,7 @@
             window.appConfig.timers.data.stageReset.percentComplete = 0
             window.appConfig.timers.data.stageResultsBallZoom.percentComplete = 0
 
-//            window.appConfig.positionCamera(restartBallPosition)
+            //            window.appConfig.positionCamera(restartBallPosition)
           }
         }
       },
@@ -3676,9 +3676,14 @@
       camera.position.y = sphere.position.y;
       camera.position.z =
         10 +
-        90 * window.appConfig.timers.data.initialBallZoom.percentComplete -
-        window.appConfig.timers.data.stageResultsBallZoom.percentComplete * 90 -
+        80 * window.appConfig.timers.data.initialBallZoom.percentComplete -
+        window.appConfig.timers.data.stageResultsBallZoom.percentComplete * 80 -
         window.appConfig.timers.data.stageReset.percentComplete * 5;
+      // camera.position.z =
+      //   10 +
+      //   90 * window.appConfig.timers.data.initialBallZoom.percentComplete -
+      //   window.appConfig.timers.data.stageResultsBallZoom.percentComplete * 90 -
+      //   window.appConfig.timers.data.stageReset.percentComplete * 5;
 
       if (window.appConfig.userHasEnded) {
         sphere
