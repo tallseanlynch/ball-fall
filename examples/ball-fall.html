@@ -495,48 +495,56 @@
       const coins = [];
       window.appConfig.coins = coins;
 
+      const beamMaterial = new THREE.MeshPhongMaterial({
+        color: 0xffffff,
+      })
+
+      const beamCapGeometry = new THREE.BoxGeometry(1.45, 2, 1.45)
+
       const createBeam = (config) => {
-        const beam0 = new Physijs.BoxMesh(
-          new THREE.BoxGeometry(10 * config.s, 2, 2),
-          Physijs.createMaterial(
-            new THREE.MeshPhongMaterial({
-              color: config.color ? config.color : 0xffffff,
-            }),
-            0.6, // medium friction
-            0.1 // low restitution
-          ),
-          0 // mass
-        );
+        const beamBox = new THREE.BoxGeometry((10 * config.s), 2, 2)
+
         const beam0cap0 = new Physijs.BoxMesh(
-          new THREE.BoxGeometry(1.45, 2, 1.45),
+          beamCapGeometry,
           Physijs.createMaterial(
-            new THREE.MeshPhongMaterial({
-              color: config.color ? config.color : 0xffffff,
-            }),
+            beamMaterial,
             0.6, // medium friction
             0.1 // low restitution
           ),
           0 // mass
         );
+
         const beam0cap1 = new Physijs.BoxMesh(
-          new THREE.BoxGeometry(1.45, 2, 1.45),
+          beamCapGeometry,
           Physijs.createMaterial(
-            new THREE.MeshPhongMaterial({
-              color: config.color ? config.color : 0xffffff,
-            }),
+            beamMaterial,
             0.6, // medium friction
             0.1 // low restitution
           ),
           0 // mass
         );
+
+        const beam0 = new Physijs.BoxMesh(
+          beamBox,
+          Physijs.createMaterial(
+            beamMaterial,
+            0.6, // medium friction
+            0.1 // low restitution
+          ),
+          0 // mass
+        );
+
+        beam0.add(beam0cap0)
+        beam0.add(beam0cap1)
         beam0cap0.rotation.y = 0.25 * Math.PI;
         beam0cap0.position.x = -5 * config.s;
-        beam0.add(beam0cap0);
         beam0cap1.rotation.y = 0.25 * Math.PI;
         beam0cap1.position.x = 5 * config.s;
-        beam0.add(beam0cap1);
+
+
         beam0.position.set(config.p[0], config.p[1], config.p[2]);
         beam0.rotation.set(config.r[0], config.r[1], config.r[2]);
+
         return beam0;
       };
 
