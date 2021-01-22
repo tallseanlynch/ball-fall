@@ -3091,9 +3091,7 @@
           const spriteTheta = (lfo((sprite.thetaT + sprite.thetaMod * sprite.thetaT)) + lfo(721 * Math.random()) / 1000) * (Math.PI)
           sprite.spherical.set(sprite.radius + lfoPositive(1111) * 10, spritePhi, spriteTheta)
         }
-        // make sprites
-        const sprites = []
-        window.appConfig.sprites = sprites
+        window.appConfig.sprites = []
         const createSprite = (num) => {
           const spriteGeometry = new THREE.SphereGeometry(.2, 16, 16)
           const spriteMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .5 })
@@ -3119,6 +3117,10 @@
             num: num
           }
           sprite0.mesh.name = "sprite"
+          sprite0.reset = () => {
+            sprite0.isFetchingCoin = false
+            sprite0.fetchData = {}
+          }
 
 
 
@@ -3138,28 +3140,18 @@
               const theCoin = findCoin(sprite0.mesh.position.x, sprite0.mesh.position.y)
               if (theCoin) {
                 sprite0.isFetchingCoin = true
-                //sprite position moves from 0%coin 100&starting to 100%coin 0&starting
                 sprite0.fetchData.startingPosition = sprite0.mesh.position.clone()
                 sprite0.fetchData.target = theCoin
                 sprite0.fetchData.coinBrightnessLfoMod = Math.ceil(Math.random() * 33)
                 sprite0
                 window.appConfig.timers.activeTimers.push(window.appConfig.timers[`spriteFetch${sprite0.num}`](sprite0))
                 theCoin.spriteFetching = sprite0
-
-
-
-                // theCoin.children.forEach(child => {
-                //   console.log(child.material.color)
-                //   debugger
-                //   child.material.color.setHex(0x000000)
-                // })
               }
             } else if (sprite0.isFetchingCoin && window.appConfig.start && !window.appConfig.pause) {
 
               sprite0.fetchData.target.children.forEach(child => {
                 child.material = window.appConfig.crystalMaterials[sprite0.fetchData.target.size].pulsing
               })
-              // sprite0.fetchData.target.color = colorLightnessLfo(sprite0.fetchData.target.color, sprite0.fetchData.coinBrightnessLfoMod)
               let percentComplete = window.appConfig.timers.data[`spriteFetch${sprite0.num}`].percentComplete
               if (percentComplete < .5) {
                 const percentThere = percentComplete / .5
@@ -3180,10 +3172,12 @@
               }
             }
           }
-          sprites.push(sprite0)
+          window.appConfig.sprites.push(sprite0)
 
         }
         createSprite(0)
+        createSprite(1)
+        createSprite(2)
 
 
 
@@ -3413,10 +3407,6 @@
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
             window.appConfig.timers.data.spriteFetch0.percentComplete = percentComplete
-          },
-          completedCallback: (percentComplete) => {
-            console.log(sprite)
-            sprite.fetchData.completed = true
           }
         }
       },
@@ -3434,16 +3424,10 @@
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
             window.appConfig.timers.data.spriteFetch1.percentComplete = percentComplete
-          },
-          completedCallback: (percentComplete) => {
-            console.log(sprite)
-            sprite.fetchData.completed = true
           }
         }
       },
       spriteFetch2: (sprite) => {
-        console.log(sprite)
-        // debugger
         return {
           started: 0,
           ended: 0,
@@ -3461,8 +3445,6 @@
         }
       },
       spriteFetch3: (sprite) => {
-        console.log(sprite)
-        // debugger
         return {
           started: 0,
           ended: 0,
@@ -3480,8 +3462,6 @@
         }
       },
       spriteFetch4: (sprite) => {
-        console.log(sprite)
-        // debugger
         return {
           started: 0,
           ended: 0,
@@ -3708,13 +3688,8 @@
 
         const newHsl = colorLightnessLfo(cm.pulsing.color, 268)
         cm.pulsing.color.setHSL(newHsl.h, newHsl.s, newHsl.l)
+        // cm.pulsing.color.setHSL(newHsl.h, newHsl.s, 0)
       })
-      window.appConfig.sprites.forEach(sprite => {
-        sprite.activeCallback()
-      }
-      )
-
-
 
 
       const sphereLinearVelocityLength = sphere.getLinearVelocity().length()
@@ -3743,6 +3718,12 @@
         if (potentiallyGrabbedCoin.spriteFetching) {
           potentiallyGrabbedCoin.spriteFetching.fetchData = {}
           potentiallyGrabbedCoin.spriteFetching.isFetchingCoin = false
+          const foundTimerIndex = window.appConfig.timers.activeTimers.findIndex((timer, timerIndex) => {
+            return timer.name === `SPRITEFETCH${potentiallyGrabbedCoin.spriteFetching.num}`
+          })
+          if (foundTimerIndex > -1) {
+            window.appConfig.timers.activeTimers.splice(foundTimerIndex, 1)
+          }
         }
         if (coinValue > 0) {
           window.appConfig.score.coins += potentiallyGrabbedCoin.coinValue;
@@ -3798,6 +3779,12 @@
           })
         }
       }
+
+      window.appConfig.sprites.forEach(sprite => {
+        sprite.activeCallback()
+      }
+      )
+
 
       window.appConfig.coinFrameCheckNumber++
       requestAnimationFrame(render);
@@ -3914,6 +3901,9 @@
       window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageReset(action))
       window.appConfig.results = {}
       window.appConfig.score.coins = 0
+      window.appConfig.sprites.forEach(sprite => {
+        sprite.reset()
+      })
       document.querySelector("#score").innerText = 0
       showHTMLElements([]);
       document.querySelector("#curtain").classList.remove("opacity-0");
@@ -4255,7 +4245,7 @@
   <div id="curtain"></div>
 </body>
 <script>
-  // window.console.log = () => { }
+  window.console.log = () => { }
   window.console.warn = () => { }
   window.console.dir = () => { }
   window.console.error = () => { }
