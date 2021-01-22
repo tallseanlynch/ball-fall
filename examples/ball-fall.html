@@ -2029,11 +2029,6 @@
             );
             scene.add(stage3CrossBeamStructure1C);
 
-
-
-
-
-
             const stage3CrossBeamStructure2 = createStage3CrossBeamStructure(
               .5,
               .75,
@@ -2143,7 +2138,6 @@
             window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTURE1B = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTURE1B")
             window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTURE1C = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTURE1C")
 
-
             window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTURE2")
             window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTURE2A = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTURE2A")
             window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTURE2B = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTURE2B")
@@ -2221,7 +2215,6 @@
             'STAGE4CROSSBEAMSTRUCTURE1B': { r: { x: 0, y: 0, z: .01 } },
             'STAGE4CROSSBEAMSTRUCTURE1C': { r: { x: 0, y: 0, z: -.01 } },
             'STAGE4CROSSBEAMSTRUCTURE1D': { r: { x: 0, y: 0, z: .01 } },
-
             'STAGE4MAINSTRUCTURE5': { r: { x: 0, y: 0, z: -.005 } },
             'STAGE4MAINSTRUCTURE6': { r: { x: 0, y: 0, z: .005 } },
             'STAGE4CROSSBEAMSTRUCTURE2': { r: { x: 0, y: 0, z: .01 } },
@@ -3249,8 +3242,6 @@
         return {
           started: 0,
           ended: 0,
-          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
-            .position.z,
           percentComplete: 0,
           time: 2000,
           timeLeft: 0,
@@ -3267,13 +3258,29 @@
           started: 0,
           ended: 0,
           percentComplete: 0,
-          time: 1000,
+          time: 3000,
           timeLeft: 0,
           currentTime: 0,
           name: 'COUNTDOWNNAME',
           id: Math.round(Math.random() * 10000),
           startedCallback: (percentComplete) => {
             showStageCountDownName()
+          },
+          activeCallback: (percentComplete) => {
+            const percentComputed = (percentComplete * 16) > 8 ? 8 : (percentComplete * 16)
+            document.querySelector('#stage-name-title').style.fontSize = percentComputed + "rem"
+            document.querySelector('#stage-number').style.fontSize = percentComputed/2 + "rem"
+            centerElement({ id: "stage-name", offsetTop: 0, offsetLeft: 0 })
+            // document.body.style.background = window.appConfig.stages.components.background(
+            //   percentComplete,
+            //   window.appConfig.stages[window.appConfig.currentStage].backgroundColors
+            // )
+            // let backgroundPercent = percentComplete < .5 ? percentComplete * 2 : 1 - ((percentComplete-.5) * 2)
+            // console.log('BACKGROUND-PERCENT', backgroundPercent)
+            // window.appConfig.stages.components.background(
+            //   backgroundPercent,
+            //   window.appConfig.stages[window.appConfig.currentStage].backgroundColors
+            // )
           },
           completedCallback: (percentComplete) => {
             // window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdown3())
@@ -3659,17 +3666,23 @@
         sphere.position.z * lfo(1412)
       );
 
-
-      const percentFinished = Math.abs(sphere.position.y) / 375;
-      window.appConfig.percentFinished = percentFinished;
-      if (currentTime % 10 < 3) {
-        document.body.style.background =
+      if(currentTime % 10 < 3) {
+        // let countdownNameFlag = false
+        // window.appConfig.timers.activeTimers.forEach(at => {
+        //   if(at.name === 'COUNTDOWNNAME') {
+        //     countdownNameFlag = true
+        //   }
+        // })
+        // if(countdownNameFlag === false) {
+          const percentFinished = Math.abs(sphere.position.y) / 375;
+          window.appConfig.percentFinished = percentFinished;
+          document.body.style.background =
           window.appConfig.stages.components.background(
             percentFinished,
             window.appConfig.stages[window.appConfig.currentStage].backgroundColors
           )
+        // }
       }
-
 
       // camera positioning
       camera.position.x = sphere.position.x;
@@ -4229,7 +4242,10 @@
     </button>
   </div>
 
-  <div id="stage-name" class="hide">GILGAMESH</div>
+  <div id="stage-name" class="hide">
+    <div id="stage-number">Stage 1</div>
+    <div id="stage-name-title">GILGAMESH</div>
+  </div>
   <div id="stage-countdown-3" class="hide">3</div>
   <div id="stage-countdown-2" class="hide">2</div>
   <div id="stage-countdown-1" class="hide">1</div>

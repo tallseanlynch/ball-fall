@@ -435,3 +435,9 @@ vertical-align: middle;
   left: var(--stage-countdown-start-offset-left);
   top: var(--stage-countdown-start-offset-top);
 }
+
+#stage-number {
+  text-align: center;
+  display: block;
+  margin-bottom: 3%;
+}
