@@ -3906,8 +3906,7 @@
         window.appConfig.score.coins;
       document.querySelector("#report-score").innerText =
         stageScore;
-      showHTMLElements(["report", "tinted-overlay"]);
-      centerElement({ id: "report", offsetTop: 0, offsetLeft: 0 });
+      showReport()
       document.querySelector("#pause-button").disabled = true;
 
     }
@@ -4008,6 +4007,10 @@
       hsl.l = hsl.l + theLfo
       return hsl
     }
+    const showReport = () => {
+      showHTMLElements(["report", "tinted-overlay"]);
+      centerElement({ id: "report", offsetTop: 0, offsetLeft: 0 });
+    }
     const showLevelSelect = () => {
       showHTMLElements(["level-select", "tinted-overlay"]);
       centerElement({ id: "level-select", offsetTop: 0, offsetLeft: 0 });
@@ -4017,8 +4020,8 @@
       centerElement({ id: "sounds", offsetTop: 0, offsetLeft: 0 });
     };
     const showCredits = () => {
-      showHTMLElements(["credits-menu", "tinted-overlay"]);
-      centerElement({ id: "credits-menu", offsetTop: 0, offsetLeft: 0 });
+      showHTMLElements(["credits", "tinted-overlay"]);
+      centerElement({ id: "credits", offsetTop: 0, offsetLeft: 0 });
     };
     const showStart = () => {
       showHTMLElements(["start-menu", "title", "start-button-container", "tinted-overlay"]);
@@ -4063,6 +4066,8 @@
     const goBack = () => {
       if (window.appConfig.pause) {
         showPauseMenu();
+      } else if (window.appConfig.userHasEnded) {
+        showReport()
       } else {
         showStart();
       }
@@ -4100,13 +4105,16 @@
       let wSq = window.innerWidth * window.innerWidth
       let diagonalLength = Math.sqrt(hSq + wSq)
       const root = document.documentElement;
-      root.style.setProperty(`--font-size-0`, diagonalLength * .01 + "px");
-      root.style.setProperty(`--font-size-1`, diagonalLength * .02 + "px");
-      root.style.setProperty(`--font-size-2`, diagonalLength * .03 + "px");
-      root.style.setProperty(`--font-size-3`, diagonalLength * .04 + "px");
-      root.style.setProperty(`--font-size-4`, diagonalLength * .05 + "px");
-      root.style.setProperty(`--full-screen-width`, window.innerWidth + "px");
-      root.style.setProperty(`--quarter-screen-height`, window.innerHeight * .25 + "px");
+      root.style.setProperty(`--font-size-0`, Math.ceil(diagonalLength * .01) + "px");
+      root.style.setProperty(`--font-size-1`, Math.ceil(diagonalLength * .02) + "px");
+      root.style.setProperty(`--font-size-2`, Math.ceil(diagonalLength * .03) + "px");
+      root.style.setProperty(`--font-size-3`, Math.ceil(diagonalLength * .04) + "px");
+      root.style.setProperty(`--font-size-4`, Math.ceil(diagonalLength * .05) + "px");
+      root.style.setProperty(`--font-size-5`, Math.ceil(diagonalLength * .06) + "px");
+      root.style.setProperty(`--font-size-6`, Math.ceil(diagonalLength * .07) + "px");
+      root.style.setProperty(`--font-size-7`, Math.ceil(diagonalLength * .08) + "px");
+      root.style.setProperty(`--full-screen-width`, Math.ceil(window.innerWidth) + "px");
+      root.style.setProperty(`--quarter-screen-height`, Math.ceil(window.innerHeight * .25) + "px");
     }
     const changeMusicVolume = (val) => {
       // window.appConfig.backgroundMusics.forEach((m, mIndex) => {
@@ -4128,7 +4136,7 @@
       "level-select",
       "game-scoreboard",
       "title",
-      "credits-menu",
+      "credits",
       "start-button-container",
       "pause-button",
       "tinted-overlay",
@@ -4192,34 +4200,35 @@
   </div>
   <div id="sounds" class="hide">
     <div id="sounds-title" class="menu-title-text">Sounds</div>
-    <div class="menu-container">
-      <div class="menu-big-text">
-        <div class="justify-left">SFX</div>
-        <div class="justify-right"><button class="sound-menu-button" id="sfx-toggle-button"
-            onClick="toggleSFXButton()"></button></div>
-      </div>
-      <div class="menu-big-text">
-        <div class="justify-left">Music</div>
-
-        <div class="justify-right"><button class="sound-menu-button" id="music-toggle-button"
-            onClick="toggleMusicButton()"></button></div>
-      </div>
-    </div>
+    <table id="sound-menu">
+      <tr>
+        <td class="sound-menu-button sound-menu-left-td">SFX</td>
+        <td class="sound-menu-right-td"><button class="sound-menu-button" id="sfx-toggle-button"
+            onClick="toggleSFXButton()"></button></td>
+      </tr>
+      <tr>
+        <td class="sound-menu-button sound-menu-left-td">Music</td>
+        <td class="sound-menu-right-td"><button class="sound-menu-button" id="music-toggle-button"
+            onClick="toggleMusicButton()"></button></td>
+      </tr>
+    </table>
     <button class="start-menu-button" onClick="goBack()">Back</button>
   </div>
-  <div id="credits-menu" class="hide">
-    <div id="credits-title" class="menu-title-text margin-bottom-2">Credits</div>
-    <div class="margin-bottom-2">
-      <div class="menu-big-text">Ian Lynch, Sean Lynch</div>
-      <div class="menu-small-text">Programming Design</div>
-    </div>
-    <div class="margin-bottom-2">
-      <div class="menu-big-text">Haley Rheinhart, Sean Lynch</div>
-      <div class="menu-small-text">UX Design</div>
-    </div class="margin-bottom-2">
-    <div>
-      <div class="menu-big-text">Haley Rheinhart</div>
-      <div class="menu-small-text">Music & Sound Design</div>
+  <div id="credits" class="hide">
+    <div id="credits-title" class="menu-title-text">Credits</div>
+    <div id="credits-menu">
+      <div class="margin-bottom-2">
+        <div class="credits-role">Programming Design</div>
+        <div class="credits-name">Sean Lynch, Ian Lynch</div>
+      </div>
+      <div class="margin-bottom-2">
+        <div class="credits-role">UX Design</div>
+        <div class="credits-name">Haley Rheinhart, Sean Lynch</div>
+      </div class="margin-bottom-2">
+      <div>
+        <div class="credits-role">Music & Sound Design</div>
+        <div class="credits-name">Haley Rheinhart</div>
+      </div>
     </div>
     <button class="start-menu-button" onClick="goBack()">Back</button>
   </div>
