@@ -169,12 +169,6 @@ vertical-align: middle;
   opacity: 1;
   background-color: rgba(0, 0, 0, 0);
 }
-#level-select table,
-#level-select table td {
-  padding: 5px;
-  margin: 0 auto;
-  text-align: center;
-}
 #start-menu {
   font-family: "Coves Light";
   position: fixed;
@@ -223,8 +217,6 @@ vertical-align: middle;
 }
 .menu-big-text {
   width: 100%;
-  display: flex;
-  justify-content:space-between;
   font-family: "Coves Light";
   font-size: var(--font-size-2);
   line-height: var(--font-size-2);
@@ -237,43 +229,9 @@ vertical-align: middle;
   margin-top:  var(--font-size-1);
   margin-bottom:  var(--font-size-1);
 }
-.justify-left {
-  /* align-self:flex-start; */
-}
-.justify-right {
-  /* align-self: flex-end; */
-}
-
-.menu-big-text input {
-  vertical-align: middle;
-  width: var(--font-size-2);
-
-}
-
-.range-container {
-  line-height: var(--font-size-2);
-
-}
-.menu-container {
-  width: var(--font-size-7);
-  margin-top:  var(--font-size-1);
-  margin-bottom:  var(--font-size-1);
-}
-
 .level-select-menu-container {
   margin-top:  var(--font-size-1);
   margin-bottom:  var(--font-size-1);
-}
-.menu-small-text {
-  display: inline-block;
-  font-family: "Coves Light";
-  font-size: var(--font-size-1);
-  font-weight: 900;
-  border: 0;
-  border-radius: 5px;
-  opacity: 1;
-  background-color: rgba(0, 0, 0, 0);
-  color: #ffffff;
 }
 #pause-button {
   height: var(--font-size-5);
@@ -284,15 +242,6 @@ vertical-align: middle;
   padding-bottom: var(--font-size-0);
   padding-left: var(--font-size-0);
   border: 0;
-  opacity: 1;
-}
-
-#pause-menu-play-button {
-  height: 50px;
-  width: 50px;
-  padding: 10px 30px;
-  border: 0;
-  border-radius: 5px;
   opacity: 1;
 }
 .hide {
@@ -429,7 +378,7 @@ vertical-align: middle;
 }
 
 #stage-name, #stage-countdown-3, #stage-countdown-2, #stage-countdown-1, #stage-countdown-start {
-  font-family: "Coves Light";
+  font-family: "Aadhunik";
   font-size: var(--font-size-3);
   font-weight: 900;
   color: #ffffff;
@@ -437,7 +386,6 @@ vertical-align: middle;
 }
 
 #stage-name {
-  font-family: "Aadhunik";
   left: var(--stage-name-offset-left);
   top: var(--stage-name-offset-top);
 }
