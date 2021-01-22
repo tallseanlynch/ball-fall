@@ -403,7 +403,7 @@ vertical-align: middle;
   background-color: #ececec;
 }
 
-#stage-name, #stage-countdown-3, #stage-countdown-2, #stage-countdown-1, #stage-countdown-start {
+#stage-countdown-3, #stage-countdown-2, #stage-countdown-1, #stage-countdown-start, #stage-number {
   font-family: "Coves Light";
   font-size: var(--font-size-3);
   font-weight: 900;
@@ -412,8 +412,17 @@ vertical-align: middle;
 }
 
 #stage-name {
+  font-size: var(--font-size-3);
+  font-weight: 900;
+  color: #ffffff;
+  position: absolute;
+}
+
+#stage-name {
+  font-family: "Aadhunik";
   left: var(--stage-name-offset-left);
   top: var(--stage-name-offset-top);
+  z-index: 5;
 }
 
 #stage-countdown-3 {
@@ -437,7 +446,22 @@ vertical-align: middle;
 }
 
 #stage-number {
+  left: var(--stage-number-offset-left);
+  top: var(--stage-number-offset-top);
   text-align: center;
   display: block;
-  margin-bottom: 3%;
+  /* margin-bottom: 3%; */
+  position: fixed;
+  /* top: 5%; */
+  font-size: var(--font-size-3) !important;
+  z-index: 5;
+  width: var(--full-screen-width);
+  /* background-color: rgba(255, 255, 255, 1); */
+  /* color: black; */
+  color: white;
+  /* text-decoration: underline 10px; */
+  /* padding-bottom: 20px; */
+  border-bottom: 10px solid white;
+  padding: var(--font-size-4);
+  letter-spacing: 30px;
 }
