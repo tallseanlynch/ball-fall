@@ -1,11 +1,3 @@
-:root {
-  --font-size-0: 1.5rem;
-  --font-size-1: 1.75rem;
-  --font-size-2: 2rem;
-  --font-size-3: 2.5rem;
-  --font-size-4: 4rem;
-}
-
 @font-face {
   font-family: "Aadhunik";
   src: url("./fonts/Aadhunik.ttf") format("truetype");
@@ -57,7 +49,7 @@ vertical-align: middle;
   }
   50% {
     opacity: 1;
-    font-size: calc(var(--font-size-3)*1.5);
+    font-size: var(--font-size-6);
     font-weight: 900;
   }
 
@@ -76,7 +68,7 @@ vertical-align: middle;
   position: fixed;
   top: var(--title-offset-top);
   left: var(--title-offset-left);
-  font-size: calc(var(--font-size-4) * 1.6);
+  font-size: var(--font-size-7);
   font-weight: 900;
   border: 0;
   border-radius: 5px;
@@ -92,6 +84,16 @@ vertical-align: middle;
   border-radius: 5px;
   opacity: 1;
   background-color: rgba(0, 0, 0, 0);
+}
+#sound-menu {
+  margin-top:  var(--font-size-1);
+  margin-bottom:  var(--font-size-1);
+}
+.sound-menu-button.sound-menu-left-td {
+  margin-right: var(--font-size-3);
+}
+.sound-menu-right-td {
+  width: var(--font-size-4);
 }
 #report {
   position: fixed;
@@ -125,14 +127,38 @@ vertical-align: middle;
   opacity: 1;
   background-color: rgba(0, 0, 0, 0);
 }
-#credits-menu {
+#credits {
   position: fixed;
-  left: var(--credits-menu-offset-left);
-  top: var(--credits-menu-offset-top);
+  left: var(--credits-offset-left);
+  top: var(--credits-offset-top);
   border: 0;
   border-radius: 5px;
   opacity: 1;
   background-color: rgba(0, 0, 0, 0);
+}
+.credits-role {
+  width: fit-content;
+  font-family: "Coves Light";
+  font-size: var(--font-size-2);
+  line-height: var(--font-size-2);
+  color: #ffffff;
+  font-weight: 900;
+  margin: 0 auto;
+
+}
+.credits-name {
+  width: fit-content;
+  font-family: "Coves Light";
+  font-size: var(--font-size-2);
+  line-height: var(--font-size-2);
+  color: #ffffff;
+  font-weight: 900;
+  margin: 0 auto;
+
+}
+#credits-menu {
+  margin-top:  var(--font-size-1);
+  margin-bottom:  var(--font-size-1);
 }
 #level-select {
   position: fixed;
@@ -202,12 +228,12 @@ vertical-align: middle;
   font-family: "Coves Light";
   font-size: var(--font-size-2);
   line-height: var(--font-size-2);
+  color: #ffffff;
   font-weight: 900;
   border: 0;
   border-radius: 5px;
   opacity: 1;
   background-color: rgba(0, 0, 0, 0);
-  color: #ffffff;
   margin-top:  var(--font-size-1);
   margin-bottom:  var(--font-size-1);
 }
@@ -220,7 +246,7 @@ vertical-align: middle;
 
 .menu-big-text input {
   vertical-align: middle;
-  width: calc(var(--font-size-1) * 5);
+  width: var(--font-size-2);
 
 }
 
@@ -229,13 +255,12 @@ vertical-align: middle;
 
 }
 .menu-container {
-  width: calc(var(--font-size-4) * 4);
+  width: var(--font-size-7);
   margin-top:  var(--font-size-1);
   margin-bottom:  var(--font-size-1);
 }
 
 .level-select-menu-container {
-  width: calc(var(--font-size-4) * 6);
   margin-top:  var(--font-size-1);
   margin-bottom:  var(--font-size-1);
 }
@@ -251,15 +276,14 @@ vertical-align: middle;
   color: #ffffff;
 }
 #pause-button {
-  height: 50px;
-  width: 50px;
+  height: var(--font-size-5);
+  width: var(--font-size-5);
   position: fixed;
   bottom: 0;
   left: 0;
   padding-bottom: var(--font-size-0);
   padding-left: var(--font-size-0);
   border: 0;
-  border-radius: 5px;
   opacity: 1;
 }
 
@@ -297,6 +321,7 @@ vertical-align: middle;
   color: #ffffff;
 }
 .level-select-button {
+  width: 100%;
   display: block;
   font-family: "Coves Light";
   font-size: var(--font-size-2);
@@ -351,7 +376,7 @@ vertical-align: middle;
   opacity: 1 !important;
 }
 .margin-bottom-2 {
-  margin-bottom: 10px;
+  margin-bottom: var(--font-size-1);
 }
 
 .debug {
@@ -412,6 +437,7 @@ vertical-align: middle;
 }
 
 #stage-name {
+  font-family: "Aadhunik";
   left: var(--stage-name-offset-left);
   top: var(--stage-name-offset-top);
 }
