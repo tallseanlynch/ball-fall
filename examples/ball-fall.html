@@ -1283,6 +1283,49 @@
             window.appConfig.lighting.hemisphereLight.color = getRandomColor()
             window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
 
+            const createBackgroundAnimation = () => {
+              const bgGroup = new THREE.Group()
+              bgGroup.name = 'STAGE0BGGROUP'
+              const elementGeometry = new THREE.IcosahedronGeometry(1, 0)
+              const elementMaterials = [
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE0.backgroundColors[0], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE0.backgroundColors[1], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE0.backgroundColors[2], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE0.backgroundColors[3], transparent: true, opacity: .25}),
+              ]
+
+              const numberOfElements = 50
+              let elementI = 0
+              for(elementI;elementI<numberOfElements;elementI++) {
+                bgGroup.add(new THREE.Mesh( elementGeometry, elementMaterials[elementI % elementMaterials.length]))
+              }
+              scene.add(bgGroup)
+              bgGroup.position.set(0,0,-10)
+              bgGroup.children.forEach(c => {
+                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -2 + Math.random() * -10)
+                const bgElementScale = 1 + Math.random() * 10
+                c.scale.set(bgElementScale, bgElementScale, bgElementScale)
+                c.rotation.z = (Math.random() * 2) * Math.PI
+              })
+              bgGroup.activeCallback = () => {
+                  if(scene.children.find((obj) => obj.name === "STAGE0BGGROUP")) {
+                    scene.children.find((obj) => obj.name === "STAGE0BGGROUP").children.forEach((c, ci) => {
+                    c.position.y += .005 * ci/2
+                    c.rotation.y += .005
+                    if(c.position.y > 125) {
+                      c.position.y = -125
+                    }
+                    c.scale.set(lfo(500 + ci* 1500) * 10 + 5, lfo(500 + ci* 1750) * 10 + 5, lfo(500 + ci* 2000) * 10 + 5)
+                  })
+                }
+              }
+              bgGroup.activeCallback()
+              window.appConfig.stages['STAGE0'].bgGroupActiveCallback = bgGroup.activeCallback
+            }
+
+            createBackgroundAnimation()
+
+
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
 
             const stage0MainBeamStructure = createStage0MainBeamStructure(
@@ -1726,6 +1769,54 @@
             window.appConfig.lighting.hemisphereLight.color = getRandomColor()
             window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
 
+            const createBackgroundAnimation = () => {
+              const bgGroup = new THREE.Group()
+              bgGroup.name = 'STAGE2BGGROUP'
+              const elementGeometry = new THREE.CylinderGeometry(
+                1,
+                1,
+                1,
+                Math.ceil(Math.random() * 16 + 2)
+              )
+              const elementMaterials = [
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE2.backgroundColors[0], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE2.backgroundColors[1], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE2.backgroundColors[2], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE2.backgroundColors[3], transparent: true, opacity: .25}),
+              ]
+
+              const numberOfElements = 50
+              let elementI = 0
+              for(elementI;elementI<numberOfElements;elementI++) {
+                bgGroup.add(new THREE.Mesh( elementGeometry, elementMaterials[elementI % elementMaterials.length]))
+              }
+              scene.add(bgGroup)
+              bgGroup.position.set(0,0,-10)
+              bgGroup.children.forEach(c => {
+                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -2 + Math.random() * -10)
+                const bgElementScale = 1 + Math.random() * 10
+                c.scale.set(bgElementScale, bgElementScale, bgElementScale)
+                c.rotation.z = (Math.random() * 2) * Math.PI
+              })
+              bgGroup.activeCallback = () => {
+                  if(scene.children.find((obj) => obj.name === "STAGE2BGGROUP")) {
+                    scene.children.find((obj) => obj.name === "STAGE2BGGROUP").children.forEach((c, ci) => {
+                    c.position.y += .005 * ci/2
+                    c.rotation.y += .005
+                    if(c.position.y > 125) {
+                      c.position.y = -125
+                    }
+                    c.scale.set(lfo(500 + ci* 1500) * 10 + 5, lfo(500 + ci* 1750) * 10 + 5, lfo(500 + ci* 2000) * 10 + 5)
+                  })
+                }
+              }
+              bgGroup.activeCallback()
+              window.appConfig.stages['STAGE2'].bgGroupActiveCallback = bgGroup.activeCallback
+            }
+
+            createBackgroundAnimation()
+
+
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
 
@@ -1948,6 +2039,49 @@
             window.appConfig.initStageSounds()
             window.appConfig.lighting.hemisphereLight.color = getRandomColor()
             window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
+
+
+            const createBackgroundAnimation = () => {
+              const bgGroup = new THREE.Group()
+              bgGroup.name = 'STAGE3BGGROUP'
+              const elementGeometry = new THREE.TetrahedronGeometry(1)
+              const elementMaterials = [
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE3.backgroundColors[0], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE3.backgroundColors[1], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE3.backgroundColors[2], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE3.backgroundColors[3], transparent: true, opacity: .25}),
+              ]
+
+              const numberOfElements = 50
+              let elementI = 0
+              for(elementI;elementI<numberOfElements;elementI++) {
+                bgGroup.add(new THREE.Mesh( elementGeometry, elementMaterials[elementI % elementMaterials.length]))
+              }
+              scene.add(bgGroup)
+              bgGroup.position.set(0,0,-10)
+              bgGroup.children.forEach(c => {
+                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -2 + Math.random() * -10)
+                const bgElementScale = 1 + Math.random() * 10
+                c.scale.set(bgElementScale, bgElementScale, bgElementScale)
+                c.rotation.z = (Math.random() * 2) * Math.PI
+              })
+              bgGroup.activeCallback = () => {
+                  if(scene.children.find((obj) => obj.name === "STAGE3BGGROUP")) {
+                    scene.children.find((obj) => obj.name === "STAGE3BGGROUP").children.forEach((c, ci) => {
+                    c.position.y += .005 * ci/2
+                    c.rotation.y += .005
+                    if(c.position.y > 125) {
+                      c.position.y = -125
+                    }
+                    c.scale.set(lfo(500 + ci* 1500) * 10 + 5, lfo(500 + ci* 1750) * 10 + 5, lfo(500 + ci* 2000) * 10 + 5)
+                  })
+                }
+              }
+              bgGroup.activeCallback()
+              window.appConfig.stages['STAGE3'].bgGroupActiveCallback = bgGroup.activeCallback
+            }
+
+            createBackgroundAnimation()
 
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
@@ -2294,6 +2428,50 @@
             window.appConfig.initStageSounds()
             window.appConfig.lighting.hemisphereLight.color = getRandomColor()
             window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
+
+            const createBackgroundAnimation = () => {
+              const bgGroup = new THREE.Group()
+              bgGroup.name = 'STAGE4BGGROUP'
+              const elementGeometry = new THREE.TetrahedronGeometry(3)
+              const elementMaterials = [
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE4.backgroundColors[0], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE4.backgroundColors[1], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE4.backgroundColors[2], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE4.backgroundColors[3], transparent: true, opacity: .25}),
+              ]
+
+              const numberOfElements = 50
+              let elementI = 0
+              for(elementI;elementI<numberOfElements;elementI++) {
+                bgGroup.add(new THREE.Mesh( elementGeometry, elementMaterials[elementI % elementMaterials.length]))
+              }
+              scene.add(bgGroup)
+              bgGroup.position.set(0,0,-10)
+              bgGroup.children.forEach(c => {
+                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -2 + Math.random() * -20)
+                const bgElementScale = 1 + Math.random() * 10
+                c.scale.set(bgElementScale, bgElementScale, bgElementScale)
+                c.rotation.z = (Math.random() * 2) * Math.PI
+              })
+              bgGroup.activeCallback = () => {
+                  if(scene.children.find((obj) => obj.name === "STAGE4BGGROUP")) {
+                    scene.children.find((obj) => obj.name === "STAGE4BGGROUP").children.forEach((c, ci) => {
+                    c.position.y += .005 * ci/2
+                    c.rotation.y += .005
+                    if(c.position.y > 125) {
+                      c.position.y = -125
+                    }
+                    c.scale.set(lfo(500 + ci* 1500) * 10 + 5, lfo(500 + ci* 1750) * 10 + 5, lfo(500 + ci* 2000) * 10 + 5)
+                  })
+                }
+              }
+              bgGroup.activeCallback()
+              window.appConfig.stages['STAGE4'].bgGroupActiveCallback = bgGroup.activeCallback
+            }
+
+            createBackgroundAnimation()
+
+
 
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
@@ -2723,6 +2901,48 @@
             window.appConfig.initStageSounds()
             window.appConfig.lighting.hemisphereLight.color = getRandomColor()
             window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
+
+            const createBackgroundAnimation = () => {
+              const bgGroup = new THREE.Group()
+              bgGroup.name = 'STAGE5BGGROUP'
+              const elementGeometry = new THREE.IcosahedronGeometry(1, 0)
+              const elementMaterials = [
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE5.backgroundColors[0], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE5.backgroundColors[1], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE5.backgroundColors[2], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE5.backgroundColors[3], transparent: true, opacity: .25}),
+              ]
+
+              const numberOfElements = 50
+              let elementI = 0
+              for(elementI;elementI<numberOfElements;elementI++) {
+                bgGroup.add(new THREE.Mesh( elementGeometry, elementMaterials[elementI % elementMaterials.length]))
+              }
+              scene.add(bgGroup)
+              bgGroup.position.set(0,0,-10)
+              bgGroup.children.forEach(c => {
+                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -2 + Math.random() * -20)
+                const bgElementScale = 1 + Math.random() * 10
+                c.scale.set(bgElementScale, bgElementScale, bgElementScale)
+                c.rotation.z = (Math.random() * 2) * Math.PI
+              })
+              bgGroup.activeCallback = () => {
+                  if(scene.children.find((obj) => obj.name === "STAGE5BGGROUP")) {
+                    scene.children.find((obj) => obj.name === "STAGE5BGGROUP").children.forEach((c, ci) => {
+                    c.position.y += .005 * ci/2
+                    c.rotation.y += .005
+                    if(c.position.y > 125) {
+                      c.position.y = -125
+                    }
+                    c.scale.set(lfo(500 + ci* 1500) * 10 + 5, lfo(500 + ci* 1750) * 10 + 5, lfo(500 + ci* 2000) * 10 + 5)
+                  })
+                }
+              }
+              bgGroup.activeCallback()
+              window.appConfig.stages['STAGE5'].bgGroupActiveCallback = bgGroup.activeCallback
+            }
+
+            createBackgroundAnimation()
 
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
