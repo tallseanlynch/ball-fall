@@ -3307,19 +3307,34 @@
           started: 0,
           ended: 0,
           percentComplete: 0,
-          time: 3000,
+          time: 4000,
           timeLeft: 0,
           currentTime: 0,
           name: 'COUNTDOWNNAME',
           id: Math.round(Math.random() * 10000),
           startedCallback: (percentComplete) => {
             showStageCountDownName()
+            document.querySelector('#stage-name-title').style.opacity = 1
+            document.querySelector('#stage-number').style.opacity = 1
           },
           activeCallback: (percentComplete) => {
             const percentComputed = (percentComplete * 16) > 8 ? 8 : (percentComplete * 16)
-            document.querySelector('#stage-name-title').style.fontSize = percentComputed + "rem"
+            document.querySelector('#stage-name-title').style.fontSize = percentComputed*.75 + "rem"
             document.querySelector('#stage-number').style.fontSize = percentComputed/2 + "rem"
+            document.querySelector('#gradient-curtain').style.background = window.appConfig.stages.components.background(
+              lfoPositive(2750), window.appConfig.stages[window.appConfig.currentStage].backgroundColors
+            )
+            if(percentComplete < .5) {
+              document.querySelector('#gradient-curtain').style.opacity = percentComplete * 2
+            }
+            if(percentComplete > .5) {
+              document.querySelector('#gradient-curtain').style.opacity = (1 - ((percentComplete- .5) * 2 )) < 0 ? 0 : (1 - ((percentComplete-.5) * 2))
+            }
             centerElement({ id: "stage-name", offsetTop: 0, offsetLeft: 0 })
+            if(percentComplete > .9) {
+              document.querySelector('#stage-name-title').style.opacity = 1 - (percentComplete - .9) * 10
+              document.querySelector('#stage-number').style.opacity = 1 - (percentComplete - .9) * 10
+            }
             // document.body.style.background = window.appConfig.stages.components.background(
             //   percentComplete,
             //   window.appConfig.stages[window.appConfig.currentStage].backgroundColors
@@ -3383,6 +3398,28 @@
           completedCallback: (percentComplete) => {
             showStageCountDownStart()
             window.appConfig.gameModeFunctions.start()
+            window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownStartFlash())
+          },
+        }
+      },
+      countdownStartFlash: (action) => {
+        return {
+          started: 0,
+          ended: 0,
+          percentComplete: 0,
+          time: 1000,
+          timeLeft: 0,
+          currentTime: 0,
+          name: 'COUNTDOWNSTARTFLASH',
+          id: Math.round(Math.random() * 10000),
+          activeCallback: (percentComplete) => {
+            console.log('ACTIVE CALL BACK')
+            if(percentComplete < .5) {
+              document.querySelector('#gradient-curtain').style.opacity = percentComplete * 2
+            }
+            if(percentComplete > .5) {
+              document.querySelector('#gradient-curtain').style.opacity = (1 - ((percentComplete- .5) * 2 )) < 0 ? 0 : (1 - ((percentComplete-.5) * 2))
+            }
           }
         }
       },
@@ -4311,11 +4348,13 @@
   <div id="stage-countdown-1" class="hide">1</div>
   <div id="stage-countdown-start" class="hide">START!</div>
 
+  <div id="gradient-curtain"></div>
+
   <img src="images/pause.png" id="pause-button" disabled class="hide" onClick="pause()" />
   <div id="curtain"></div>
 </body>
 <script>
-  window.console.log = () => { }
+  // window.console.log = () => { }
   window.console.warn = () => { }
   window.console.dir = () => { }
   window.console.error = () => { }
