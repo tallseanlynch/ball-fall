@@ -93,7 +93,7 @@
           new THREE.Color(0xFFCF00),
           new THREE.Color(0xEE6123),
           new THREE.Color(0xFA003F),
-          new THREE.Color(0xFFFD77) 
+          new THREE.Color(0xFFFD77)
         ],
         basicColors: [
           new THREE.Color(0x0070bf),
@@ -1455,20 +1455,20 @@
                 // new THREE.MeshBasicMaterial({ color: stageProperties.STAGE1.backgroundElementColors[2]}),
                 // new THREE.MeshBasicMaterial({ color: stageProperties.STAGE1.backgroundElementColors[3]}),
                 // new THREE.MeshBasicMaterial({ color: stageProperties.STAGE1.backgroundElementColors[4]})
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[0], transparent: true, opacity: .25}),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[1], transparent: true, opacity: .25}),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[2], transparent: true, opacity: .25}),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[3], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[0], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[1], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[2], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[3], transparent: true, opacity: .25 }),
                 // new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[4], transparent: true, opacity: .5})
               ]
 
               const numberOfElements = 50
               let elementI = 0
-              for(elementI;elementI<numberOfElements;elementI++) {
-                bgGroup.add(new THREE.Mesh( elementGeometry, elementMaterials[elementI % elementMaterials.length]))
+              for (elementI; elementI < numberOfElements; elementI++) {
+                bgGroup.add(new THREE.Mesh(elementGeometry, elementMaterials[elementI % elementMaterials.length]))
               }
               scene.add(bgGroup)
-              bgGroup.position.set(0,0,-10)
+              bgGroup.position.set(0, 0, -10)
               bgGroup.children.forEach(c => {
                 c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -2 + Math.random() * -10)
                 const bgElementScale = 1 + Math.random() * 10
@@ -1476,14 +1476,14 @@
                 c.rotation.z = (Math.random() * 2) * Math.PI
               })
               bgGroup.activeCallback = () => {
-                  if(scene.children.find((obj) => obj.name === "STAGE1BGGROUP")) {
-                    scene.children.find((obj) => obj.name === "STAGE1BGGROUP").children.forEach((c, ci) => {
-                    c.position.y += .005 * ci/2
+                if (scene.children.find((obj) => obj.name === "STAGE1BGGROUP")) {
+                  scene.children.find((obj) => obj.name === "STAGE1BGGROUP").children.forEach((c, ci) => {
+                    c.position.y += .005 * ci / 2
                     c.rotation.y += .005
-                    if(c.position.y > 125) {
+                    if (c.position.y > 125) {
                       c.position.y = -125
                     }
-                    c.scale.set(lfo(500 + ci* 1500) * 10 + 5, lfo(500 + ci* 1750) * 10 + 5, lfo(500 + ci* 2000) * 10 + 5)
+                    c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
                   })
                 }
               }
@@ -3192,13 +3192,30 @@
             sprite0.mesh.material.opacity = .5 + (lfoPositive(1000) + lfoPositive(77) / 2)
 
             if (!sprite0.isFetchingCoin && window.appConfig.start && !window.appConfig.pause) {
+              if (sprite0.returnData && sprite0.returnData.startingPosition) {
+                console.error('returning')
+                let percentComplete = window.appConfig.timers.data[`spriteReturn${sprite0.num}`].percentComplete
+                const newX = sprite0.returnData.startingPosition.x * (1 - percentComplete) + (spriteVector3.x * percentComplete)
+                const newY = sprite0.returnData.startingPosition.y * (1 - percentComplete) + (spriteVector3.y * percentComplete)
+                sprite0.mesh.position.x = newX
+                sprite0.mesh.position.y = newY
+              }
+
               const theCoin = findCoin(sprite0.mesh.position.x, sprite0.mesh.position.y)
               if (theCoin) {
                 sprite0.isFetchingCoin = true
                 sprite0.fetchData.startingPosition = sprite0.mesh.position.clone()
                 sprite0.fetchData.target = theCoin
                 sprite0.fetchData.coinBrightnessLfoMod = Math.ceil(Math.random() * 33)
-                sprite0
+                sprite0.isReturning = false
+                sprite0.returnData = {}
+                const foundTimerIndex = window.appConfig.timers.activeTimers.findIndex((timer, timerIndex) => {
+                  return timer.name === `SPRITERETURN${sprite0.num}`
+                })
+                if (foundTimerIndex > -1) {
+                  window.appConfig.timers.activeTimers.splice(foundTimerIndex, 1)
+                }
+
                 window.appConfig.timers.activeTimers.push(window.appConfig.timers[`spriteFetch${sprite0.num}`](sprite0))
                 theCoin.spriteFetching = sprite0
               }
@@ -3318,7 +3335,7 @@
           activeCallback: (percentComplete) => {
             const percentComputed = (percentComplete * 16) > 8 ? 8 : (percentComplete * 16)
             document.querySelector('#stage-name-title').style.fontSize = percentComputed + "rem"
-            document.querySelector('#stage-number').style.fontSize = percentComputed/2 + "rem"
+            document.querySelector('#stage-number').style.fontSize = percentComputed / 2 + "rem"
             centerElement({ id: "stage-name", offsetTop: 0, offsetLeft: 0 })
             // document.body.style.background = window.appConfig.stages.components.background(
             //   percentComplete,
@@ -3533,6 +3550,116 @@
           }
         }
       },
+      spriteReturn0: (sprite0) => {
+        return {
+          started: 0,
+          ended: 0,
+          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
+            .position.z,
+          percentComplete: 0,
+          time: 800,
+          timeLeft: 0,
+          currentTime: 0,
+          name: 'SPRITERETURN0',
+          id: Math.round(Math.random() * 10000),
+          activeCallback: (percentComplete) => {
+            window.appConfig.timers.data.spriteReturn0.percentComplete = percentComplete
+          },
+          completedCallback: (percentComplete) => {
+            sprite0.isReturning = false
+            sprite0.returnData = {}
+            window.appConfig.timers.data.spriteReturn0.percentComplete = 0
+          }
+        }
+      },
+      spriteReturn1: (sprite0) => {
+        return {
+          started: 0,
+          ended: 0,
+          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
+            .position.z,
+          percentComplete: 0,
+          time: 800,
+          timeLeft: 0,
+          currentTime: 0,
+          name: 'SPRITERETURN1',
+          id: Math.round(Math.random() * 10000),
+          activeCallback: (percentComplete) => {
+            window.appConfig.timers.data.spriteReturn1.percentComplete = percentComplete
+          },
+          completedCallback: (percentComplete) => {
+            sprite0.isReturning = false
+            sprite0.returnData = {}
+            window.appConfig.timers.data.spriteReturn1.percentComplete = 0
+          }
+        }
+      },
+      spriteReturn2: (sprite0) => {
+        return {
+          started: 0,
+          ended: 0,
+          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
+            .position.z,
+          percentComplete: 0,
+          time: 800,
+          timeLeft: 0,
+          currentTime: 0,
+          name: 'SPRITERETURN2',
+          id: Math.round(Math.random() * 10000),
+          activeCallback: (percentComplete) => {
+            window.appConfig.timers.data.spriteReturn2.percentComplete = percentComplete
+          },
+          completedCallback: (percentComplete) => {
+            sprite0.isReturning = false
+            sprite0.returnData = {}
+            window.appConfig.timers.data.spriteReturn2.percentComplete = 0
+          }
+        }
+      },
+      spriteReturn3: (sprite0) => {
+        return {
+          started: 0,
+          ended: 0,
+          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
+            .position.z,
+          percentComplete: 0,
+          time: 800,
+          timeLeft: 0,
+          currentTime: 0,
+          name: 'SPRITERETURN3',
+          id: Math.round(Math.random() * 10000),
+          activeCallback: (percentComplete) => {
+            window.appConfig.timers.data.spriteReturn3.percentComplete = percentComplete
+          },
+          completedCallback: (percentComplete) => {
+            sprite0.isReturning = false
+            sprite0.returnData = {}
+            window.appConfig.timers.data.spriteReturn3.percentComplete = 0
+          }
+        }
+      },
+      spriteReturn4: (sprite0) => {
+        return {
+          started: 0,
+          ended: 0,
+          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
+            .position.z,
+          percentComplete: 0,
+          time: 800,
+          timeLeft: 0,
+          currentTime: 0,
+          name: 'SPRITERETURN4',
+          id: Math.round(Math.random() * 10000),
+          activeCallback: (percentComplete) => {
+            window.appConfig.timers.data.spriteReturn4.percentComplete = percentComplete
+          },
+          completedCallback: (percentComplete) => {
+            sprite0.isReturning = false
+            sprite0.returnData = {}
+            window.appConfig.timers.data.spriteReturn4.percentComplete = 0
+          }
+        }
+      },
       data: {
         initialBallZoom: {
           percentComplete: 0
@@ -3556,6 +3683,21 @@
           percentComplete: 0
         },
         spriteFetch4: {
+          percentComplete: 0
+        },
+        spriteReturn0: {
+          percentComplete: 0
+        },
+        spriteReturn1: {
+          percentComplete: 0
+        },
+        spriteReturn2: {
+          percentComplete: 0
+        },
+        spriteReturn3: {
+          percentComplete: 0
+        },
+        spriteReturn4: {
           percentComplete: 0
         }
       },
@@ -3701,7 +3843,7 @@
         sphere.position.z * lfo(1412)
       );
 
-      if(currentTime % 10 < 3) {
+      if (currentTime % 10 < 3) {
         // let countdownNameFlag = false
         // window.appConfig.timers.activeTimers.forEach(at => {
         //   if(at.name === 'COUNTDOWNNAME') {
@@ -3709,9 +3851,9 @@
         //   }
         // })
         // if(countdownNameFlag === false) {
-          const percentFinished = Math.abs(sphere.position.y) / 375;
-          window.appConfig.percentFinished = percentFinished;
-          document.body.style.background =
+        const percentFinished = Math.abs(sphere.position.y) / 375;
+        window.appConfig.percentFinished = percentFinished;
+        document.body.style.background =
           window.appConfig.stages.components.background(
             percentFinished,
             window.appConfig.stages[window.appConfig.currentStage].backgroundColors
@@ -3765,8 +3907,8 @@
           }
         }
       );
-//  && window.appConfig.coinFrameCheckNumber % 2 < 1
-      if(window.appConfig.stages[window.appConfig.currentStage].bgGroupActiveCallback) {
+      //  && window.appConfig.coinFrameCheckNumber % 2 < 1
+      if (window.appConfig.stages[window.appConfig.currentStage].bgGroupActiveCallback) {
         window.appConfig.stages[window.appConfig.currentStage].bgGroupActiveCallback()
       }
 
@@ -3782,6 +3924,13 @@
           })
           if (foundTimerIndex > -1) {
             window.appConfig.timers.activeTimers.splice(foundTimerIndex, 1)
+          }
+          potentiallyGrabbedCoin.spriteFetching.isReturning = true
+          console.log(`spriteReturn${potentiallyGrabbedCoin.spriteFetching.num}`)
+          window.appConfig.timers.activeTimers.push(window.appConfig.timers[`spriteReturn${potentiallyGrabbedCoin.spriteFetching.num}`](potentiallyGrabbedCoin.spriteFetching))
+          console.log(window.appConfig.timers.activeTimers)
+          potentiallyGrabbedCoin.spriteFetching.returnData = {
+            startingPosition: potentiallyGrabbedCoin.spriteFetching.mesh.position.clone()
           }
         }
         if (coinValue > 0) {
@@ -4315,10 +4464,10 @@
   <div id="curtain"></div>
 </body>
 <script>
-  window.console.log = () => { }
-  window.console.warn = () => { }
-  window.console.dir = () => { }
-  window.console.error = () => { }
+  // window.console.log = () => { }
+  // window.console.warn = () => { }
+  // window.console.dir = () => { }
+  // window.console.error = () => { }
 </script>
 
 </html>
