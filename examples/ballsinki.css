@@ -6,10 +6,7 @@
   font-family: "Coves Light";
   src: url("./fonts/Coves Light.otf") format("opentype");
 }
-@font-face {
-  font-family: "Luz Sans Book";
-  src: url("./fonts/LUZRO.TTF") format("truetype");
-}
+
 button:focus {
   outline: none;
   box-shadow: none;
