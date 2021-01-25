@@ -4,6 +4,7 @@
 
 <head>
   <title>Ballsinki</title>
+  
   <style>
     body,
     html {
@@ -15,20 +16,336 @@
       touch-action: none;
     }
   </style>
+
+  <script>
+    // console.warn = () => {}
+    window.appConfig = {
+      touchStart: false,
+      touchEnd: false,
+      currentX: 0,
+      currentY: 0,
+      prevX: 0,
+      prevY: 0,
+      diffX: 0,
+      diffY: 0,
+      start: false,
+      pause: false,
+      results: {},
+      pause: false,
+      defaultSphereMass: 4.188790683884756,
+      defaultSceneGravity: -10,
+      itemAmounts: {
+        crystalCross: 0,
+        crystalLine: 0,
+        crystalCircle: 0,
+        bumperGroup: 0,
+        prize: 0
+      },
+      currentStage: 'STAGE0',
+      stagesArray: ['STAGE0', 'STAGE1', 'STAGE2', 'STAGE3', 'STAGE4', 'STAGE5'],
+      currentStageIndex: 0,
+      musicTurnedOn: true,
+      sfxTurnedOn: true,
+      howlSounds: {
+        init: false,
+        coins: {
+          sCoin: [],
+          mCoin: [],
+          lCoin: []
+        },
+        beams: [],
+        prize: undefined,
+        backgroundMusic: undefined
+      },
+      scripts: [
+        'ammo.js',
+        'three.js', 
+        // 'stats.js', 
+        'physi.js', 
+        'physijs_worker.js', 
+        'easytimer.js', 
+        'howler.js', 
+        'features.js', 
+        'event-handlers.js', 
+        // 'debug.js'
+      ],
+      loadedScripts: [],
+    };
+
+    const toggleMainLoading = () => {
+      document.querySelector('#gradient-curtain').style.opacity = 0
+      document.querySelector('#main-loading').style.visibility = 'hidden'
+      document.querySelector('#main-loading').style.display = 'none'
+    }
+
+    const allElements = [
+      "sounds",
+      "start-menu",
+      "pause-menu",
+      "report",
+      "level-select",
+      "game-scoreboard",
+      "title",
+      "credits",
+      "start-button-container",
+      "pause-button",
+      "tinted-overlay",
+      "stage-name",
+      "stage-number",
+      "stage-countdown-3",
+      "stage-countdown-2",
+      "stage-countdown-1",
+      "stage-countdown-start",
+      "main-loading"
+    ];
+    const showHTMLElements = (elements) => {
+      allElements.forEach((el) => {
+        document.getElementById(el).classList.add("hide");
+      });
+      elements.forEach((el) => {
+        document.getElementById(el).classList.remove("hide");
+      });
+    };
+
+    const centerElement = (options) => {
+      const { id, offsetLeft, offsetTop } = options;
+      const element = document.getElementById(id);
+      const buttonHeight = element.offsetHeight;
+      const buttonWidth = element.offsetWidth;
+      let offsetHeight
+      if (typeof offsetTop === "number") {
+        offsetHeight = window.innerHeight / 2 - buttonHeight / 2 + offsetTop;
+      } else {
+        const parsedNum = Number.parseInt(offsetTop)
+        const percentFromTop = (50 + parsedNum) / 100
+        offsetHeight = window.innerHeight * percentFromTop - buttonHeight / 2;
+      }
+      let offsetWidth
+      if (typeof offsetLeft === "number") {
+        offsetWidth = window.innerWidth / 2 - buttonWidth / 2 + offsetLeft;
+      } else {
+        const parsedNum = Number.parseInt(offsetLeft)
+        const percentFromLeft = (50 + parsedNum) / 100
+        offsetWidth = window.innerWidth * percentFromLeft - buttonWidth / 2;
+      }
+
+
+      const root = document.documentElement;
+      root.style.setProperty(`--${id}-offset-top`, offsetHeight + "px");
+      root.style.setProperty(`--${id}-offset-left`, offsetWidth + "px");
+    };
+
+    const scriptLoaded = (scriptName) => {
+      window.appConfig.loadedScripts.push(scriptName)
+      console.log('Loaded ' + scriptName)
+      console.log('Loaded Scripts = ' + window.appConfig.loadedScripts)
+      let loadedNumber = 0
+      const expectedLoadedNumber = window.appConfig.scripts.length
+      window.appConfig.scripts.forEach(s => {
+        if(window.appConfig.loadedScripts.indexOf(s) > -1) {
+          loadedNumber++
+        }
+      })
+      if(loadedNumber === expectedLoadedNumber) {
+        toggleMainLoading()
+      }
+    }
+
+  </script>
+  <style>
+    #gradient-curtain {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 99;
+      background: linear-gradient(180deg, rgba(2,0,36,0) 0%, rgba(121,9,117,1) 0%, rgba(252,231,183,1) 33%, rgba(0,212,255,1) 66%);
+    }
+
+    @keyframes loading-main-screen {
+      0%, 100% { 
+        opacity: 1;
+      }
+      50% {
+        opacity: .25;
+      }
+
+    }
+
+    #main-loading {
+      width: 200px;
+      height: 200px;
+      position: fixed;
+      z-index: 100;
+      top: calc(50% - 100px);
+      left: calc(50% - 100px);
+      text-align: center;
+      font-size: 20px;
+      font-family: 'Arial';
+      color: white;
+    }
+
+    #loading-label {
+      animation-duration: 3s;
+      animation-name: loading-main-screen;
+      animation-direction: alternate;
+      animation-iteration-count: infinite;      
+    }
+
+    #loading-title {
+      font-size: 35px;
+      padding-bottom: 30px;
+    }
+  </style>
   <link rel="stylesheet" href="./ballsinki.css">
-  <script type="text/javascript" src="js/ammo.js"></script>
-  <script type="text/javascript" src="js/three-121.js"></script>
-  <script type="text/javascript" src="js/stats.js"></script>
-  <script type="text/javascript" src="js/physi.js"></script>
-  <script type="text/javascript" src="js/physijs_worker.js"></script>
-  <!-- <script type="text/javascript" src="js/THREEOrbitControls.js"></script> -->
-  <script type="text/javascript" src="js/easytimer.js"></script>
-  <script type="text/javascript" src="js/howler.min.js"></script>
-  <!-- <script src="https://unpkg.com/three@0.112.0/examples/js/loaders/GLTFLoader.js"></script> -->
-  <script type="text/javascript" src="./features.js"></script>
-  <script type="text/javascript" src="./event-handlers.js"></script>
-  <script type="text/javascript" src="./debug.js"></script>
-  <script type="text/javascript">
+</head>
+
+<body>
+  <div id="main-loading">
+    <div id="loading-title">BALLSINKI</div>
+    <div id="loading-label">LOADING</div>
+  </div>
+  <div class="debug hide">
+  </div>
+  <div id="viewport"></div>
+  <div id="tinted-overlay"></div>
+  <div id="game-scoreboard" class="hide">
+    <div id="timer"></div>
+    <div id="score"></div>
+  </div>
+  <div id="sounds" class="hide">
+    <div id="sounds-title" class="menu-title-text">Sounds</div>
+    <table id="sound-menu">
+      <tr>
+        <td class="sound-menu-button sound-menu-left-td">SFX</td>
+        <td class="sound-menu-right-td"><button class="sound-menu-button" id="sfx-toggle-button"
+            onClick="toggleSFXButton()"></button></td>
+      </tr>
+      <tr>
+        <td class="sound-menu-button sound-menu-left-td">Music</td>
+        <td class="sound-menu-right-td"><button class="sound-menu-button" id="music-toggle-button"
+            onClick="toggleMusicButton()"></button></td>
+      </tr>
+    </table>
+    <button class="start-menu-button" onClick="goBack()">Back</button>
+  </div>
+  <div id="credits" class="hide">
+    <div id="credits-title" class="menu-title-text">Credits</div>
+    <div id="credits-menu">
+      <div class="margin-bottom-2">
+        <div class="credits-role">Programming Design</div>
+        <div class="credits-name">Sean Lynch, Ian Lynch</div>
+      </div>
+      <div class="margin-bottom-2">
+        <div class="credits-role">UX Design</div>
+        <div class="credits-name">Haley Rheinhart, Sean Lynch</div>
+      </div class="margin-bottom-2">
+      <div>
+        <div class="credits-role">Music & Sound Design</div>
+        <div class="credits-name">Haley Rheinhart</div>
+      </div>
+    </div>
+    <button class="start-menu-button" onClick="goBack()">Back</button>
+  </div>
+  <div id="report" class="hide">
+    <table>
+      <tr>
+        <td>Time:</td>
+        <td id="report-time"></td>
+      </tr>
+      <tr>
+        <td>Crystals:</td>
+        <td id="report-coins"></td>
+      </tr>
+      <tr>
+        <td>Score:</td>
+        <td id="report-score"></td>
+      </tr>
+    </table>
+    <div id="report-options">
+      <button id="report-level-select-button" class="start-menu-button" onClick="showLevelSelect()">
+        Level Select
+      </button>
+      <button id="report-reset-button" class="start-menu-button" onClick="reset({action:'reset'})">
+        Try Again
+      </button>
+      <button id="report-reset-button" class="start-menu-button" onClick="reset({action:'next'})">
+        Next Level
+      </button>
+    </div>
+  </div>
+  <div id="level-select" class="hide">
+    <div id="level-select-title">Level Select</div>
+    <div class="level-select-menu-container">
+      <button class="level-select-button stage-0" onClick="reset({action:'levelSelect', level: 0})">Stage 0</button>
+      <button class="level-select-button stage-1" onClick="reset({action:'levelSelect', level: 1})">Stage 1</button>
+      <button class="level-select-button stage-2" onClick="reset({action:'levelSelect', level: 2})">Stage 2</button>
+      <button class="level-select-button stage-3" onClick="reset({action:'levelSelect', level: 3})">Stage 3</button>
+      <button class="level-select-button stage-4" onClick="reset({action:'levelSelect', level: 4})">Stage 4</button>
+      <button class="level-select-button stage-5" onClick="reset({action:'levelSelect', level: 5})">Stage 5</button>
+    </div>
+    <button class="start-menu-button" onClick="goBack()">Back</button>
+  </div>
+
+  <div id="pause-menu" class="hide">
+    <button id="pause-level-select-button" class="start-menu-button" onClick="pause()">
+      Resume
+    </button>
+    <button id="pause-level-select-button" class="start-menu-button" onClick="showLevelSelect()">
+      Level Select
+    </button>
+    <button id="pause-sounds-button" class="start-menu-button" onClick="showSounds()">
+      Sounds
+    </button>
+    <button id="pause-reset-button" class="start-menu-button" onClick="reset({action:'reset'})">
+      Restart Level
+    </button>
+  </div>
+  <div id="title">BALLSINKI</div>
+  <div id="start-button-container">
+    <button id="start-button" onClick="countdown()">Start</button>
+  </div>
+  <div id="start-menu">
+    <button id="start-level-select-button" class="start-menu-button" onClick="showLevelSelect()">
+      Level Select
+    </button>
+    <button id="start-sounds-button" class="start-menu-button" onClick="showSounds()">
+      Sounds
+    </button>
+    <button id="start-credits-button" class="start-menu-button" onClick="showCredits()">
+      Credits
+    </button>
+  </div>
+
+  <div id="stage-number">STAGE 1</div>
+  <div id="stage-name" class="hide">
+    <div id="stage-name-title">GILGAMESH</div>
+  </div>
+  <div id="stage-countdown-3" class="hide">3</div>
+  <div id="stage-countdown-2" class="hide">2</div>
+  <div id="stage-countdown-1" class="hide">1</div>
+  <div id="stage-countdown-start" class="hide">START!</div>
+
+  <div id="gradient-curtain"></div>
+
+  <img src="images/pause.png" id="pause-button" disabled class="hide" onClick="pause()" />
+  <div id="curtain"></div>
+</body>
+
+<footer>
+  <script onLoad="scriptLoaded('ammo.js')" type="text/javascript" src="js/ammo.js"></script>
+  <script onLoad="scriptLoaded('three.js')" type="text/javascript" src="js/three-121.js"></script>
+  <!-- <script onLoad="scriptLoaded('stats.js')" type="text/javascript" src="js/stats.js"></script> -->
+  <script onLoad="scriptLoaded('physi.js')" type="text/javascript" src="js/physi.js"></script>
+  <script onLoad="scriptLoaded('physijs_worker.js')" type="text/javascript" src="js/physijs_worker.js"></script>
+  <script onLoad="scriptLoaded('easytimer.js')" type="text/javascript" src="js/easytimer.js"></script>
+  <script onLoad="scriptLoaded('howler.js')" type="text/javascript" src="js/howler.min.js"></script>
+  <script onLoad="scriptLoaded('features.js')" type="text/javascript" src="./features.js"></script>
+  <script onLoad="scriptLoaded('event-handlers.js')" type="text/javascript" src="./event-handlers.js"></script>
+  <!-- <script onLoad="scriptLoaded('debug.js')" type="text/javascript" src="./debug.js"></script> -->
+  <script onLoad="scriptLoaded('main')" type="text/javascript">
     "use strict";
     const coinProperties = {
       sCoin: [
@@ -234,47 +551,6 @@
         }
       }
     }
-    window.appConfig = {
-      touchStart: false,
-      touchEnd: false,
-      currentX: 0,
-      currentY: 0,
-      prevX: 0,
-      prevY: 0,
-      diffX: 0,
-      diffY: 0,
-      start: false,
-      pause: false,
-      results: {},
-      pause: false,
-      defaultSphereMass: 4.188790683884756,
-      defaultSceneGravity: -10,
-      itemAmounts: {
-        crystalCross: 0,
-        crystalLine: 0,
-        crystalCircle: 0,
-        bumperGroup: 0,
-        prize: 0
-      },
-      currentStage: 'STAGE0',
-      stagesArray: ['STAGE0', 'STAGE1', 'STAGE2', 'STAGE3', 'STAGE4', 'STAGE5'],
-      currentStageIndex: 0,
-      musicTurnedOn: true,
-      sfxTurnedOn: true
-
-    };
-
-    window.appConfig.howlSounds = {
-      init: false,
-      coins: {
-        sCoin: [],
-        mCoin: [],
-        lCoin: []
-      },
-      beams: [],
-      prize: undefined,
-      backgroundMusic: undefined
-    }
 
     const loadSound = (options) => {
       const { src, type } = options;
@@ -302,7 +578,6 @@
       return basicColors[Math.floor(Math.random() * basicColors.length)];
     };
 
-    // LFO
     const lfoPositive = (t = 1000) => {
       let lfoValue = (0.5 + 0.5 * Math.cos(Date.now() / t)) * 1;
       return lfoValue;
@@ -322,8 +597,8 @@
       spawnBox,
       loader,
       renderer,
-      render_stats,
-      physics_stats,
+      // render_stats,
+      // physics_stats,
       scene,
       ground_material,
       ground,
@@ -340,21 +615,21 @@
       renderer.shadowMapSoft = true;
       document.getElementById("viewport").appendChild(renderer.domElement);
 
-      render_stats = new Stats();
-      render_stats.domElement.style.position = "absolute";
-      render_stats.domElement.style.top = "0px";
-      render_stats.domElement.style.zIndex = 100;
-      document
-        .getElementById("viewport")
-        .appendChild(render_stats.domElement);
+      // render_stats = new Stats();
+      // render_stats.domElement.style.position = "absolute";
+      // render_stats.domElement.style.top = "0px";
+      // render_stats.domElement.style.zIndex = 100;
+      // document
+      //   .getElementById("viewport")
+      //   .appendChild(render_stats.domElement);
 
-      physics_stats = new Stats();
-      physics_stats.domElement.style.position = "absolute";
-      physics_stats.domElement.style.top = "50px";
-      physics_stats.domElement.style.zIndex = 100;
-      document
-        .getElementById("viewport")
-        .appendChild(physics_stats.domElement);
+      // physics_stats = new Stats();
+      // physics_stats.domElement.style.position = "absolute";
+      // physics_stats.domElement.style.top = "50px";
+      // physics_stats.domElement.style.zIndex = 100;
+      // document
+      //   .getElementById("viewport")
+      //   .appendChild(physics_stats.domElement);
 
       scene = new Physijs.Scene();
 
@@ -362,7 +637,7 @@
 
       scene.addEventListener("update", function () {
         scene.simulate(undefined, 1);
-        physics_stats.update();
+        // physics_stats.update();
       });
 
       window.appConfig.lighting = {
@@ -374,33 +649,21 @@
       }
 
       scene.add(window.appConfig.lighting.hemisphereLight);
-      //set html stuff from game options
       const sfxButton =
         document.querySelector('#sfx-toggle-button')
       if (window.appConfig.sfxTurnedOn) {
         sfxButton.textContent = "ON"
-        changeSFXVolume(100)
       } else {
         sfxButton.textContent = "OFF"
-        changeSFXVolume(0)
       }
-      // setTimeout(100, () => {
-      //   sfxButton.addEventListener('ready', () => {
-      //     toggleSFXButton()
-      //   })
-      // })
+
       const musicButton =
         document.querySelector('#music-toggle-button')
       if (window.appConfig.musicTurnedOn) {
         musicButton.textContent = "ON"
-        changeMusicVolume(100)
       } else {
         musicButton.textContent = "OFF"
-        changeMusicVolume(0)
       }
-      // musicButton.addEventListener('click', () => {
-      //   toggleMusicButton()
-      // })
 
       camera = new THREE.PerspectiveCamera(
         35,
@@ -414,7 +677,6 @@
       camera.lookAt(new THREE.Vector3(0, 10, 0));
       scene.add(camera);
 
-      // Light
       light = new THREE.SpotLight(0xffffff);
       light.position.set(20, 80, 15);
       light.target.position.copy(scene.position);
@@ -458,15 +720,8 @@
       pointLight3.distance = 25;
       scene.add(pointLight3);
 
-
-      // Orbit Controls
-      // orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
-      // orbitControls.enabled = false;
-
-      //resize event handler
       function onWindowResize(event) {
 
-        console.log('ran window resize', event)
         setFontSizes()
         centerElement({ id: "start-button-container", offsetTop: 0, offsetLeft: 0 });
         centerElement({ id: "level-select", offsetTop: 0, offsetLeft: 0 });
@@ -514,30 +769,30 @@
           beamCapGeometry,
           Physijs.createMaterial(
             beamMaterial,
-            0.6, // medium friction
-            0.1 // low restitution
+            0.6,  
+            0.1 
           ),
-          0 // mass
+          0 
         );
 
         const beam0cap1 = new Physijs.BoxMesh(
           beamCapGeometry,
           Physijs.createMaterial(
             beamMaterial,
-            0.6, // medium friction
-            0.1 // low restitution
+            0.6, 
+            0.1 
           ),
-          0 // mass
+          0 
         );
 
         const beam0 = new Physijs.BoxMesh(
           beamBox,
           Physijs.createMaterial(
             beamMaterial,
-            0.6, // medium friction
-            0.1 // low restitution
+            0.6, 
+            0.1 
           ),
-          0 // mass
+          0 
         );
 
         beam0.add(beam0cap0)
@@ -734,14 +989,10 @@
         var ellipsePath = new THREE.CurvePath();
         ellipsePath.add(ellipse);
         var ellipseGeometry = ellipsePath.createPointsGeometry(n);
-        console.log(ellipseGeometry)
-        // debugger
+        
         let i = 0;
         for (i; i < ellipseGeometry.vertices.length - 1; i++) {
-          // if (i % 4 == 0) {
           crystalCircle.add(crystal(size, { x: ellipseGeometry.vertices[i].x * s + t.x, y: ellipseGeometry.vertices[i].y * s + t.y, z: 0 }));
-
-          // }
         }
         scene.add(crystalCircle)
         window.appConfig.itemAmounts.crystalCircle++
@@ -774,7 +1025,6 @@
       };
 
       const teardownStage = (stage) => {
-        // remove all coins
         window.appConfig.coins = []
         const uuidsToRemove = []
         scene.children.forEach(c => {
@@ -991,7 +1241,6 @@
         }
       }
 
-      // start stage 0
       window.appConfig.stages = {
         components: {
           createCrystalLine: createCrystalLine,
@@ -1434,7 +1683,6 @@
             createCrystalLine('STAGE0', 10, { x: -20, y: 47.5 }, 2, 5, "x");
             createCrystalLine('STAGE0', 5, { x: -22.5, y: 40 }, 0, 10, "x");
             createCrystalLine('STAGE0', 5, { x: -22.5, y: 54.5 }, 0, 10, "x");
-            // end stage 0
 
             window.appConfig.stages.STAGE0.STAGE0PRIZE0 = scene.children.find((obj) => obj.name === "STAGE0PRIZE0")
             window.appConfig.stages.STAGE0.STAGE0PRIZE1 = scene.children.find((obj) => obj.name === "STAGE0PRIZE1")
@@ -1513,16 +1761,10 @@
               bgGroup.name = 'STAGE1BGGROUP'
               const elementGeometry = new THREE.BoxGeometry(1, 1, 1)
               const elementMaterials = [
-                // new THREE.MeshBasicMaterial({ color: stageProperties.STAGE1.backgroundElementColors[0]}),
-                // new THREE.MeshBasicMaterial({ color: stageProperties.STAGE1.backgroundElementColors[1]}),
-                // new THREE.MeshBasicMaterial({ color: stageProperties.STAGE1.backgroundElementColors[2]}),
-                // new THREE.MeshBasicMaterial({ color: stageProperties.STAGE1.backgroundElementColors[3]}),
-                // new THREE.MeshBasicMaterial({ color: stageProperties.STAGE1.backgroundElementColors[4]})
                 new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[0], transparent: true, opacity: .25 }),
                 new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[1], transparent: true, opacity: .25 }),
                 new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[2], transparent: true, opacity: .25 }),
                 new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[3], transparent: true, opacity: .25 }),
-                // new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[4], transparent: true, opacity: .5})
               ]
 
               const numberOfElements = 50
@@ -2554,8 +2796,6 @@
             );
             scene.add(stage4CrossBeamStructureD);
 
-            //--
-
             const stage4MainBeamStructure3 = createStage0MainBeamStructure(
               1.25,
               -0.5,
@@ -2612,8 +2852,6 @@
             );
             scene.add(stage4CrossBeamStructure1D);
 
-            //--
-
             const stage4MainBeamStructure5 = createStage0MainBeamStructure(
               1.25,
               -0.5,
@@ -2669,9 +2907,6 @@
               { x: -40, y: 30 }
             );
             scene.add(stage4CrossBeamStructure2D);
-
-
-            //--
 
             const stage4MainBeamStructure7 = createStage0MainBeamStructure(
               1.25,
@@ -3232,7 +3467,6 @@
 
       }
 
-      // window.appConfig.stages.STAGE0.init()
       window.appConfig.stages[window.appConfig.currentStage].init()
 
       spawnBox();
@@ -3264,8 +3498,6 @@
           linearVelocity,
           angularVelocity
         ) {
-          console.log("collision");
-          console.log("collided_with", collided_with);
           if (appConfig.pause === false) {
             const suonousFeatureTypes = [
               "BEAM",
@@ -3322,7 +3554,6 @@
               if (lastCollisions.length > 3) {
                 lastCollisions.shift()
               }
-              console.log("AFTERPLAY");
             }
           }
         }
@@ -3333,20 +3564,17 @@
         material = Physijs.createMaterial(
           new THREE.MeshPhongMaterial({
             color: 0xffffff,
-            // envMap: scene.background,
-            // combine: THREE.MixOperation,
             reflectivity: 100,
             transparent: true,
             opacity: 0.95,
             specular: 0x050505,
             shininess: 200
           }),
-          0.5, // medium friction
-          1 // low restitution
+          0.5, 
+          1 
         );
         sphere = new Physijs.SphereMesh(sphere_geometry, material);
         sphere.collisions = 0;
-        // sphere.position.set(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition);
         sphere.position.set(0, 0, 0);
 
         sphere.rotation.set(
@@ -3495,27 +3723,27 @@
         const sidesColor = getRandomColor();
 
         const glassMesh0 = new Physijs.BoxMesh(
-            /*geometry*/ new THREE.BoxGeometry(1000, 1000, 1),
-            /*material*/ new THREE.MeshBasicMaterial({
+            new THREE.BoxGeometry(1000, 1000, 1),
+            new THREE.MeshBasicMaterial({
           color: getRandomColor(),
           opacity: 0,
           transparent: true,
           wifeframe: true,
         }),
-            /*mass*/ 0
+          0
         );
         glassMesh0.gameName = "FRONTGLASS";
         glassMesh0.name = "glassMesh0";
 
         const glassMesh1 = new Physijs.BoxMesh(
-            /*geometry*/ new THREE.BoxGeometry(1000, 1000, 1),
-            /*material*/ new THREE.MeshBasicMaterial({
+            new THREE.BoxGeometry(1000, 1000, 1),
+            new THREE.MeshBasicMaterial({
           color: getRandomColor(),
           opacity: 0.0,
           transparent: true,
           wifeframe: true,
         }),
-            /*mass*/ 0
+          0
         );
         glassMesh1.gameName = "BACKGLASS";
         glassMesh1.name = "glassMesh1";
@@ -3664,7 +3892,6 @@
           name: 'COUNTDOWNSTARTFLASH',
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
-            console.log('ACTIVE CALL BACK')
             if (percentComplete < .5) {
               document.querySelector('#gradient-curtain').style.opacity = percentComplete * 2
             }
@@ -3704,18 +3931,14 @@
               window.appConfig.currentStage = window.appConfig.stagesArray[window.appConfig.currentStageIndex]
             }
 
-            // window.appConfig.gameModeFunctions.start()
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName())
 
-            // turn into countdown which then calls start()
             document.querySelector("#curtain").classList.add("opacity-0");
             const restartBallPosition = window.appConfig.stages[window.appConfig.currentStage].data.startingPosition
             window.appConfig.positionBall(restartBallPosition)
             window.appConfig.timers.data.initialBallZoom.percentComplete = 0
             window.appConfig.timers.data.stageReset.percentComplete = 0
             window.appConfig.timers.data.stageResultsBallZoom.percentComplete = 0
-
-            //            window.appConfig.positionCamera(restartBallPosition)
           }
         }
       },
@@ -4021,15 +4244,11 @@
             appTimers.activeTimers[ti].currentTime = currentTime
             appTimers.activeTimers[ti].percentComplete = (currentTime - appTimers.activeTimers[ti].started) / appTimers.activeTimers[ti].time;
             appTimers.activeTimers[ti].timeLeft = (currentTime - appTimers.activeTimers[ti].started)
-            console.log("time left: " + appTimers.activeTimers[ti].timeLeft);
-            console.log("% complete: " + appTimers.activeTimers[ti].percentComplete);
             if (appTimers.activeTimers[ti].activeCallback) {
               appTimers.activeTimers[ti].activeCallback(appTimers.activeTimers[ti].percentComplete)
             }
             if (appTimers.activeTimers[ti].timeLeft > appTimers.activeTimers[ti].time) {
-              // end the timer --> this will make the first check not fire the function since ended has a value
               appTimers.activeTimers[ti].ended = currentTime
-              console.log('timer ended: ', appTimers.activeTimers[ti]);
               removeTimersArray.push(appTimers.activeTimers[ti].name)
               if (appTimers.activeTimers[ti].completedCallback) {
                 appTimers.activeTimers[ti].completedCallback(appTimers.activeTimers[ti].percentComplete)
@@ -4071,7 +4290,6 @@
           window.appConfig.touchStart === true &&
           window.appConfig.touchEnd === false
         ) {
-          console.log("ACTIVE!!!");
           const scaleV = 0.25;
           let newVelocity = new THREE.Vector3(
             window.appConfig.diffX * scaleV,
@@ -4081,10 +4299,8 @@
           const speedClamp = 50
           const newVelocityLength = newVelocity.length()
           if (newVelocityLength > speedClamp) {
-            //            debugger
             newVelocity = newVelocity.multiplyScalar(speedClamp / newVelocityLength)
           }
-          console.log(newVelocity)
           sphere
             .setLinearVelocity(newVelocity)
         }
@@ -4115,13 +4331,6 @@
       );
 
       if (currentTime % 10 < 3) {
-        // let countdownNameFlag = false
-        // window.appConfig.timers.activeTimers.forEach(at => {
-        //   if(at.name === 'COUNTDOWNNAME') {
-        //     countdownNameFlag = true
-        //   }
-        // })
-        // if(countdownNameFlag === false) {
         const percentFinished = Math.abs(sphere.position.y) / 375;
         window.appConfig.percentFinished = percentFinished;
         document.body.style.background =
@@ -4129,10 +4338,8 @@
             percentFinished,
             window.appConfig.stages[window.appConfig.currentStage].backgroundColors
           )
-        // }
       }
 
-      // camera positioning
       camera.position.x = sphere.position.x;
       camera.position.y = sphere.position.y;
       camera.position.z =
@@ -4140,11 +4347,6 @@
         80 * window.appConfig.timers.data.initialBallZoom.percentComplete -
         window.appConfig.timers.data.stageResultsBallZoom.percentComplete * 80 -
         window.appConfig.timers.data.stageReset.percentComplete * 5;
-      // camera.position.z =
-      //   10 +
-      //   90 * window.appConfig.timers.data.initialBallZoom.percentComplete -
-      //   window.appConfig.timers.data.stageResultsBallZoom.percentComplete * 90 -
-      //   window.appConfig.timers.data.stageReset.percentComplete * 5;
 
       if (window.appConfig.userHasEnded) {
         sphere
@@ -4156,7 +4358,6 @@
 
         const newHsl = colorLightnessLfo(cm.pulsing.color, 268)
         cm.pulsing.color.setHSL(newHsl.h, newHsl.s, newHsl.l)
-        // cm.pulsing.color.setHSL(newHsl.h, newHsl.s, 0)
       })
 
 
@@ -4178,13 +4379,11 @@
           }
         }
       );
-      //  && window.appConfig.coinFrameCheckNumber % 2 < 1
       if (window.appConfig.stages[window.appConfig.currentStage].bgGroupActiveCallback) {
         window.appConfig.stages[window.appConfig.currentStage].bgGroupActiveCallback()
       }
 
       if (potentiallyGrabbedCoin) {
-        console.log(potentiallyGrabbedCoin)
         const coinValue = potentiallyGrabbedCoin.coinValue
         const prizeValue = potentiallyGrabbedCoin.prizeValue
         if (potentiallyGrabbedCoin.spriteFetching) {
@@ -4197,9 +4396,7 @@
             window.appConfig.timers.activeTimers.splice(foundTimerIndex, 1)
           }
           potentiallyGrabbedCoin.spriteFetching.isReturning = true
-          console.log(`spriteReturn${potentiallyGrabbedCoin.spriteFetching.num}`)
           window.appConfig.timers.activeTimers.push(window.appConfig.timers[`spriteReturn${potentiallyGrabbedCoin.spriteFetching.num}`](potentiallyGrabbedCoin.spriteFetching))
-          console.log(window.appConfig.timers.activeTimers)
           potentiallyGrabbedCoin.spriteFetching.returnData = {
             startingPosition: potentiallyGrabbedCoin.spriteFetching.mesh.position.clone()
           }
@@ -4227,9 +4424,6 @@
           window.appConfig.coins.splice(coinIndexToRemove, 1);
           document.querySelector("#score").innerText =
             window.appConfig.score.coins;
-          // startStageEnd()
-          //add ten secs
-          console.log(window.appConfig.timer.getTimeValues())
           const currentTime = window.appConfig.timer.getTimeValues()
           const newTimer = new easytimer.Timer({ countdown: true, startValues: { seconds: currentTime.seconds + 10, secondTenths: currentTime.secondTenths }, precision: "secondTenths" });
 
@@ -4268,7 +4462,7 @@
       window.appConfig.coinFrameCheckNumber++
       requestAnimationFrame(render);
       renderer.render(scene, camera);
-      render_stats.update();
+      // render_stats.update();
     };
 
     window.appConfig.positionBall = (p) => {
@@ -4297,7 +4491,6 @@
     }
 
     const startStageEnd = () => {
-      //now start end of stage
       window.appConfig.userHasEnded = true
 
       scene.setGravity(new THREE.Vector3(0, 0, 0));
@@ -4318,8 +4511,6 @@
             .getTimeValues()
             .toString(["minutes", "seconds", "secondTenths"]),
         });
-      //now performance report and start level transition
-      console.dir(window.appConfig.results);
       const stageScore = calculateStageScore(window.appConfig.timer
         .getTimeValues().seconds, window.appConfig.score.coins)
       document.querySelector("#report-time").innerText =
@@ -4347,7 +4538,6 @@
         window.appConfig.howlSounds.backgroundMusic.play()
       )
       setTimeout(() => showHTMLElements(["pause-button", "game-scoreboard"]), 1000)
-      // window.appConfig.initialBallZoom.userHasClickedStart = true;
       window.appConfig.timers.activeTimers.push(timers.initialBallZoom())
       window.appConfig.timer.start();
       scene.setGravity(new THREE.Vector3(0, -10, 0));
@@ -4501,33 +4691,6 @@
         showStart();
       }
     };
-    const centerElement = (options) => {
-      const { id, offsetLeft, offsetTop } = options;
-      const element = document.getElementById(id);
-      const buttonHeight = element.offsetHeight;
-      const buttonWidth = element.offsetWidth;
-      let offsetHeight
-      if (typeof offsetTop === "number") {
-        offsetHeight = window.innerHeight / 2 - buttonHeight / 2 + offsetTop;
-      } else {
-        const parsedNum = Number.parseInt(offsetTop)
-        const percentFromTop = (50 + parsedNum) / 100 //assume it's a percent between -50% and 50%
-        offsetHeight = window.innerHeight * percentFromTop - buttonHeight / 2;
-      }
-      let offsetWidth
-      if (typeof offsetLeft === "number") {
-        offsetWidth = window.innerWidth / 2 - buttonWidth / 2 + offsetLeft;
-      } else {
-        const parsedNum = Number.parseInt(offsetLeft)
-        const percentFromLeft = (50 + parsedNum) / 100 //assume it's a percent between -50% and 50%
-        offsetWidth = window.innerWidth * percentFromLeft - buttonWidth / 2;
-      }
-
-
-      const root = document.documentElement;
-      root.style.setProperty(`--${id}-offset-top`, offsetHeight + "px");
-      root.style.setProperty(`--${id}-offset-left`, offsetWidth + "px");
-    };
 
     const setFontSizes = () => {
       let hSq = window.innerHeight * window.innerHeight
@@ -4545,51 +4708,11 @@
       root.style.setProperty(`--full-screen-width`, Math.ceil(window.innerWidth) + "px");
       root.style.setProperty(`--quarter-screen-height`, Math.ceil(window.innerHeight * .25) + "px");
     }
-    const changeMusicVolume = (val) => {
-      // window.appConfig.backgroundMusics.forEach((m, mIndex) => {
-      //   const currentVol = m.volume();
-      //   m.fade(currentVol, val * 0.1 * 0.01, 1);
-      // });
-    };
-    const changeSFXVolume = (val) => {
-      // window.appConfig.howlSounds.forEach((m, mIndex) => {
-      //   const currentVol = m.volume();
-      //   m.fade(currentVol, val * 0.01, 1);
-      // });
-    };
-    const allElements = [
-      "sounds",
-      "start-menu",
-      "pause-menu",
-      "report",
-      "level-select",
-      "game-scoreboard",
-      "title",
-      "credits",
-      "start-button-container",
-      "pause-button",
-      "tinted-overlay",
-      "stage-name",
-      "stage-number",
-      "stage-countdown-3",
-      "stage-countdown-2",
-      "stage-countdown-1",
-      "stage-countdown-start"
-    ];
-    const showHTMLElements = (elements) => {
-      // elements is an array of id strings
-      allElements.forEach((el) => {
-        document.getElementById(el).classList.add("hide");
-      });
-      elements.forEach((el) => {
-        document.getElementById(el).classList.remove("hide");
-      });
-    };
+
     const setLevel = (level) => {
       window.appConfig.level = level;
     };
     const toggleSFXButton = () => {
-      console.log('sfx firing')
       window.appConfig.sfxTurnedOn = !window.appConfig.sfxTurnedOn
       const sfxButton =
         document.querySelector('#sfx-toggle-button')
@@ -4602,7 +4725,6 @@
       }
     }
     const toggleMusicButton = () => {
-      console.log('music firing')
       window.appConfig.musicTurnedOn = !window.appConfig.musicTurnedOn
       const musicButton =
         document.querySelector('#music-toggle-button')
@@ -4616,140 +4738,5 @@
     }
     window.onload = initScene;
   </script>
-</head>
-
-<body>
-  <div class="debug hide">
-  </div>
-  <div id="viewport"></div>
-  <div id="tinted-overlay"></div>
-  <div id="game-scoreboard" class="hide">
-    <div id="timer"></div>
-    <div id="score"></div>
-  </div>
-  <div id="sounds" class="hide">
-    <div id="sounds-title" class="menu-title-text">Sounds</div>
-    <table id="sound-menu">
-      <tr>
-        <td class="sound-menu-button sound-menu-left-td">SFX</td>
-        <td class="sound-menu-right-td"><button class="sound-menu-button" id="sfx-toggle-button"
-            onClick="toggleSFXButton()"></button></td>
-      </tr>
-      <tr>
-        <td class="sound-menu-button sound-menu-left-td">Music</td>
-        <td class="sound-menu-right-td"><button class="sound-menu-button" id="music-toggle-button"
-            onClick="toggleMusicButton()"></button></td>
-      </tr>
-    </table>
-    <button class="start-menu-button" onClick="goBack()">Back</button>
-  </div>
-  <div id="credits" class="hide">
-    <div id="credits-title" class="menu-title-text">Credits</div>
-    <div id="credits-menu">
-      <div class="margin-bottom-2">
-        <div class="credits-role">Programming Design</div>
-        <div class="credits-name">Sean Lynch, Ian Lynch</div>
-      </div>
-      <div class="margin-bottom-2">
-        <div class="credits-role">UX Design</div>
-        <div class="credits-name">Haley Rheinhart, Sean Lynch</div>
-      </div class="margin-bottom-2">
-      <div>
-        <div class="credits-role">Music & Sound Design</div>
-        <div class="credits-name">Haley Rheinhart</div>
-      </div>
-    </div>
-    <button class="start-menu-button" onClick="goBack()">Back</button>
-  </div>
-  <div id="report" class="hide">
-    <table>
-      <tr>
-        <td>Time:</td>
-        <td id="report-time"></td>
-      </tr>
-      <tr>
-        <td>Crystals:</td>
-        <td id="report-coins"></td>
-      </tr>
-      <tr>
-        <td>Score:</td>
-        <td id="report-score"></td>
-      </tr>
-    </table>
-    <div id="report-options">
-      <button id="report-level-select-button" class="start-menu-button" onClick="showLevelSelect()">
-        Level Select
-      </button>
-      <button id="report-reset-button" class="start-menu-button" onClick="reset({action:'reset'})">
-        Try Again
-      </button>
-      <button id="report-reset-button" class="start-menu-button" onClick="reset({action:'next'})">
-        Next Level
-      </button>
-    </div>
-  </div>
-  <div id="level-select" class="hide">
-    <div id="level-select-title">Level Select</div>
-    <div class="level-select-menu-container">
-      <button class="level-select-button stage-0" onClick="reset({action:'levelSelect', level: 0})">Stage 0</button>
-      <button class="level-select-button stage-1" onClick="reset({action:'levelSelect', level: 1})">Stage 1</button>
-      <button class="level-select-button stage-2" onClick="reset({action:'levelSelect', level: 2})">Stage 2</button>
-      <button class="level-select-button stage-3" onClick="reset({action:'levelSelect', level: 3})">Stage 3</button>
-      <button class="level-select-button stage-4" onClick="reset({action:'levelSelect', level: 4})">Stage 4</button>
-      <button class="level-select-button stage-5" onClick="reset({action:'levelSelect', level: 5})">Stage 5</button>
-    </div>
-    <button class="start-menu-button" onClick="goBack()">Back</button>
-  </div>
-
-  <div id="pause-menu" class="hide">
-    <button id="pause-level-select-button" class="start-menu-button" onClick="pause()">
-      Resume
-    </button>
-    <button id="pause-level-select-button" class="start-menu-button" onClick="showLevelSelect()">
-      Level Select
-    </button>
-    <button id="pause-sounds-button" class="start-menu-button" onClick="showSounds()">
-      Sounds
-    </button>
-    <button id="pause-reset-button" class="start-menu-button" onClick="reset({action:'reset'})">
-      Restart Level
-    </button>
-  </div>
-  <div id="title">BALLSINKI</div>
-  <div id="start-button-container">
-    <button id="start-button" onClick="countdown()">Start</button>
-  </div>
-  <div id="start-menu">
-    <button id="start-level-select-button" class="start-menu-button" onClick="showLevelSelect()">
-      Level Select
-    </button>
-    <button id="start-sounds-button" class="start-menu-button" onClick="showSounds()">
-      Sounds
-    </button>
-    <button id="start-credits-button" class="start-menu-button" onClick="showCredits()">
-      Credits
-    </button>
-  </div>
-
-  <div id="stage-number">STAGE 1</div>
-  <div id="stage-name" class="hide">
-    <div id="stage-name-title">GILGAMESH</div>
-  </div>
-  <div id="stage-countdown-3" class="hide">3</div>
-  <div id="stage-countdown-2" class="hide">2</div>
-  <div id="stage-countdown-1" class="hide">1</div>
-  <div id="stage-countdown-start" class="hide">START!</div>
-
-  <div id="gradient-curtain"></div>
-
-  <img src="images/pause.png" id="pause-button" disabled class="hide" onClick="pause()" />
-  <div id="curtain"></div>
-</body>
-<script>
-  // window.console.log = () => { }
-  // window.console.warn = () => { }
-  // window.console.dir = () => { }
-  // window.console.error = () => { }
-</script>
-
+</footer>
 </html>

@@ -12,8 +12,6 @@ setTimeout(() => {
             window.appConfig.currentX - window.appConfig.prevX;
           window.appConfig.diffY =
             window.appConfig.currentY - window.appConfig.prevY;
-          console.log("TOUCHSTART", e);
-          console.log("APPCONFIG", window.appConfig);
         }
       });
     
@@ -32,13 +30,6 @@ setTimeout(() => {
               e.touches[0].clientX - window.appConfig.prevX;
             window.appConfig.diffY =
               e.touches[0].clientY - window.appConfig.prevY;
-            console.log(
-              "TOUCHMOVE",
-              e.touches[0].clientX,
-              e.touches[0].clientY
-            );
-            console.log("APPCONFIG", window.appConfig);
-            console.log(window.appConfig.diffX, window.appConfig.diffY);
             e.preventDefault();
             setTimeout(() => {
               window.appConfig.events.touchmove.active = false
@@ -56,14 +47,11 @@ setTimeout(() => {
           window.appConfig.currentY = 0;
           window.appConfig.diffX = 0;
           window.appConfig.diffY = 0;
-          console.log("TOUCHEND", e);
-          console.log("APPCONFIG", window.appConfig);
         }
       });
       const clickRay = new THREE.Raycaster();
       document.addEventListener("click", (e) => {
         e.preventDefault();
-        console.log("CLICK", e);
         const normalized = new THREE.Vector2((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
         clickRay.setFromCamera(normalized, camera);
 
@@ -78,9 +66,6 @@ setTimeout(() => {
             filteredIntersects.push(intersect)
           }
         })
-        console.log('filteredIntersects', filteredIntersects)
-
-        console.log("APPCONFIG", window.appConfig);
       });
     }, 1500)
 
