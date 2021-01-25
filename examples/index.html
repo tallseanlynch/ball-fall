@@ -3,7 +3,7 @@
 <html>
 
 <head>
-  <title>Ball Fall</title>
+  <title>Ballsinki</title>
   <style>
     body,
     html {
@@ -91,7 +91,7 @@
           new THREE.Color(0xFFCF00),
           new THREE.Color(0xEE6123),
           new THREE.Color(0xFA003F),
-          new THREE.Color(0xFFFD77) 
+          new THREE.Color(0xFFFD77)
         ],
         basicColors: [
           new THREE.Color(0x0070bf),
@@ -247,6 +247,8 @@
       pause: false,
       results: {},
       pause: false,
+      defaultSphereMass: 4.188790683884756,
+      defaultSceneGravity: -10,
       itemAmounts: {
         crystalCross: 0,
         crystalLine: 0,
@@ -1306,19 +1308,19 @@
               bgGroup.name = 'STAGE0BGGROUP'
               const elementGeometry = new THREE.IcosahedronGeometry(1, 0)
               const elementMaterials = [
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE0.backgroundColors[0], transparent: true, opacity: .25}),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE0.backgroundColors[1], transparent: true, opacity: .25}),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE0.backgroundColors[2], transparent: true, opacity: .25}),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE0.backgroundColors[3], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE0.backgroundColors[0], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE0.backgroundColors[1], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE0.backgroundColors[2], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE0.backgroundColors[3], transparent: true, opacity: .25 }),
               ]
 
               const numberOfElements = 50
               let elementI = 0
-              for(elementI;elementI<numberOfElements;elementI++) {
-                bgGroup.add(new THREE.Mesh( elementGeometry, elementMaterials[elementI % elementMaterials.length]))
+              for (elementI; elementI < numberOfElements; elementI++) {
+                bgGroup.add(new THREE.Mesh(elementGeometry, elementMaterials[elementI % elementMaterials.length]))
               }
               scene.add(bgGroup)
-              bgGroup.position.set(0,0,-10)
+              bgGroup.position.set(0, 0, -10)
               bgGroup.children.forEach(c => {
                 c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -2 + Math.random() * -10)
                 const bgElementScale = 1 + Math.random() * 10
@@ -1326,14 +1328,14 @@
                 c.rotation.z = (Math.random() * 2) * Math.PI
               })
               bgGroup.activeCallback = () => {
-                  if(scene.children.find((obj) => obj.name === "STAGE0BGGROUP")) {
-                    scene.children.find((obj) => obj.name === "STAGE0BGGROUP").children.forEach((c, ci) => {
-                    c.position.y += .005 * ci/2
+                if (scene.children.find((obj) => obj.name === "STAGE0BGGROUP")) {
+                  scene.children.find((obj) => obj.name === "STAGE0BGGROUP").children.forEach((c, ci) => {
+                    c.position.y += .005 * ci / 2
                     c.rotation.y += .005
-                    if(c.position.y > 125) {
+                    if (c.position.y > 125) {
                       c.position.y = -125
                     }
-                    c.scale.set(lfo(500 + ci* 1500) * 10 + 5, lfo(500 + ci* 1750) * 10 + 5, lfo(500 + ci* 2000) * 10 + 5)
+                    c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
                   })
                 }
               }
@@ -1797,19 +1799,19 @@
                 Math.ceil(Math.random() * 16 + 2)
               )
               const elementMaterials = [
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE2.backgroundColors[0], transparent: true, opacity: .25}),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE2.backgroundColors[1], transparent: true, opacity: .25}),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE2.backgroundColors[2], transparent: true, opacity: .25}),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE2.backgroundColors[3], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE2.backgroundColors[0], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE2.backgroundColors[1], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE2.backgroundColors[2], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE2.backgroundColors[3], transparent: true, opacity: .25 }),
               ]
 
               const numberOfElements = 50
               let elementI = 0
-              for(elementI;elementI<numberOfElements;elementI++) {
-                bgGroup.add(new THREE.Mesh( elementGeometry, elementMaterials[elementI % elementMaterials.length]))
+              for (elementI; elementI < numberOfElements; elementI++) {
+                bgGroup.add(new THREE.Mesh(elementGeometry, elementMaterials[elementI % elementMaterials.length]))
               }
               scene.add(bgGroup)
-              bgGroup.position.set(0,0,-10)
+              bgGroup.position.set(0, 0, -10)
               bgGroup.children.forEach(c => {
                 c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -2 + Math.random() * -10)
                 const bgElementScale = 1 + Math.random() * 10
@@ -1817,14 +1819,14 @@
                 c.rotation.z = (Math.random() * 2) * Math.PI
               })
               bgGroup.activeCallback = () => {
-                  if(scene.children.find((obj) => obj.name === "STAGE2BGGROUP")) {
-                    scene.children.find((obj) => obj.name === "STAGE2BGGROUP").children.forEach((c, ci) => {
-                    c.position.y += .005 * ci/2
+                if (scene.children.find((obj) => obj.name === "STAGE2BGGROUP")) {
+                  scene.children.find((obj) => obj.name === "STAGE2BGGROUP").children.forEach((c, ci) => {
+                    c.position.y += .005 * ci / 2
                     c.rotation.y += .005
-                    if(c.position.y > 125) {
+                    if (c.position.y > 125) {
                       c.position.y = -125
                     }
-                    c.scale.set(lfo(500 + ci* 1500) * 10 + 5, lfo(500 + ci* 1750) * 10 + 5, lfo(500 + ci* 2000) * 10 + 5)
+                    c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
                   })
                 }
               }
@@ -2064,19 +2066,19 @@
               bgGroup.name = 'STAGE3BGGROUP'
               const elementGeometry = new THREE.TetrahedronGeometry(1)
               const elementMaterials = [
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE3.backgroundColors[0], transparent: true, opacity: .25}),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE3.backgroundColors[1], transparent: true, opacity: .25}),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE3.backgroundColors[2], transparent: true, opacity: .25}),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE3.backgroundColors[3], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE3.backgroundColors[0], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE3.backgroundColors[1], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE3.backgroundColors[2], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE3.backgroundColors[3], transparent: true, opacity: .25 }),
               ]
 
               const numberOfElements = 50
               let elementI = 0
-              for(elementI;elementI<numberOfElements;elementI++) {
-                bgGroup.add(new THREE.Mesh( elementGeometry, elementMaterials[elementI % elementMaterials.length]))
+              for (elementI; elementI < numberOfElements; elementI++) {
+                bgGroup.add(new THREE.Mesh(elementGeometry, elementMaterials[elementI % elementMaterials.length]))
               }
               scene.add(bgGroup)
-              bgGroup.position.set(0,0,-10)
+              bgGroup.position.set(0, 0, -10)
               bgGroup.children.forEach(c => {
                 c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -2 + Math.random() * -10)
                 const bgElementScale = 1 + Math.random() * 10
@@ -2084,14 +2086,14 @@
                 c.rotation.z = (Math.random() * 2) * Math.PI
               })
               bgGroup.activeCallback = () => {
-                  if(scene.children.find((obj) => obj.name === "STAGE3BGGROUP")) {
-                    scene.children.find((obj) => obj.name === "STAGE3BGGROUP").children.forEach((c, ci) => {
-                    c.position.y += .005 * ci/2
+                if (scene.children.find((obj) => obj.name === "STAGE3BGGROUP")) {
+                  scene.children.find((obj) => obj.name === "STAGE3BGGROUP").children.forEach((c, ci) => {
+                    c.position.y += .005 * ci / 2
                     c.rotation.y += .005
-                    if(c.position.y > 125) {
+                    if (c.position.y > 125) {
                       c.position.y = -125
                     }
-                    c.scale.set(lfo(500 + ci* 1500) * 10 + 5, lfo(500 + ci* 1750) * 10 + 5, lfo(500 + ci* 2000) * 10 + 5)
+                    c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
                   })
                 }
               }
@@ -2452,19 +2454,19 @@
               bgGroup.name = 'STAGE4BGGROUP'
               const elementGeometry = new THREE.TetrahedronGeometry(3)
               const elementMaterials = [
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE4.backgroundColors[0], transparent: true, opacity: .25}),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE4.backgroundColors[1], transparent: true, opacity: .25}),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE4.backgroundColors[2], transparent: true, opacity: .25}),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE4.backgroundColors[3], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE4.backgroundColors[0], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE4.backgroundColors[1], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE4.backgroundColors[2], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE4.backgroundColors[3], transparent: true, opacity: .25 }),
               ]
 
               const numberOfElements = 50
               let elementI = 0
-              for(elementI;elementI<numberOfElements;elementI++) {
-                bgGroup.add(new THREE.Mesh( elementGeometry, elementMaterials[elementI % elementMaterials.length]))
+              for (elementI; elementI < numberOfElements; elementI++) {
+                bgGroup.add(new THREE.Mesh(elementGeometry, elementMaterials[elementI % elementMaterials.length]))
               }
               scene.add(bgGroup)
-              bgGroup.position.set(0,0,-10)
+              bgGroup.position.set(0, 0, -10)
               bgGroup.children.forEach(c => {
                 c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -2 + Math.random() * -20)
                 const bgElementScale = 1 + Math.random() * 10
@@ -2472,14 +2474,14 @@
                 c.rotation.z = (Math.random() * 2) * Math.PI
               })
               bgGroup.activeCallback = () => {
-                  if(scene.children.find((obj) => obj.name === "STAGE4BGGROUP")) {
-                    scene.children.find((obj) => obj.name === "STAGE4BGGROUP").children.forEach((c, ci) => {
-                    c.position.y += .005 * ci/2
+                if (scene.children.find((obj) => obj.name === "STAGE4BGGROUP")) {
+                  scene.children.find((obj) => obj.name === "STAGE4BGGROUP").children.forEach((c, ci) => {
+                    c.position.y += .005 * ci / 2
                     c.rotation.y += .005
-                    if(c.position.y > 125) {
+                    if (c.position.y > 125) {
                       c.position.y = -125
                     }
-                    c.scale.set(lfo(500 + ci* 1500) * 10 + 5, lfo(500 + ci* 1750) * 10 + 5, lfo(500 + ci* 2000) * 10 + 5)
+                    c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
                   })
                 }
               }
@@ -2925,19 +2927,19 @@
               bgGroup.name = 'STAGE5BGGROUP'
               const elementGeometry = new THREE.IcosahedronGeometry(1, 0)
               const elementMaterials = [
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE5.backgroundColors[0], transparent: true, opacity: .25}),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE5.backgroundColors[1], transparent: true, opacity: .25}),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE5.backgroundColors[2], transparent: true, opacity: .25}),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE5.backgroundColors[3], transparent: true, opacity: .25}),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE5.backgroundColors[0], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE5.backgroundColors[1], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE5.backgroundColors[2], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE5.backgroundColors[3], transparent: true, opacity: .25 }),
               ]
 
               const numberOfElements = 50
               let elementI = 0
-              for(elementI;elementI<numberOfElements;elementI++) {
-                bgGroup.add(new THREE.Mesh( elementGeometry, elementMaterials[elementI % elementMaterials.length]))
+              for (elementI; elementI < numberOfElements; elementI++) {
+                bgGroup.add(new THREE.Mesh(elementGeometry, elementMaterials[elementI % elementMaterials.length]))
               }
               scene.add(bgGroup)
-              bgGroup.position.set(0,0,-10)
+              bgGroup.position.set(0, 0, -10)
               bgGroup.children.forEach(c => {
                 c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -2 + Math.random() * -20)
                 const bgElementScale = 1 + Math.random() * 10
@@ -2945,14 +2947,14 @@
                 c.rotation.z = (Math.random() * 2) * Math.PI
               })
               bgGroup.activeCallback = () => {
-                  if(scene.children.find((obj) => obj.name === "STAGE5BGGROUP")) {
-                    scene.children.find((obj) => obj.name === "STAGE5BGGROUP").children.forEach((c, ci) => {
-                    c.position.y += .005 * ci/2
+                if (scene.children.find((obj) => obj.name === "STAGE5BGGROUP")) {
+                  scene.children.find((obj) => obj.name === "STAGE5BGGROUP").children.forEach((c, ci) => {
+                    c.position.y += .005 * ci / 2
                     c.rotation.y += .005
-                    if(c.position.y > 125) {
+                    if (c.position.y > 125) {
                       c.position.y = -125
                     }
-                    c.scale.set(lfo(500 + ci* 1500) * 10 + 5, lfo(500 + ci* 1750) * 10 + 5, lfo(500 + ci* 2000) * 10 + 5)
+                    c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
                   })
                 }
               }
@@ -3429,9 +3431,8 @@
             sprite0.mesh.position.z = spriteVector3.z
             sprite0.mesh.material.opacity = .5 + (lfoPositive(1000) + lfoPositive(77) / 2)
 
-            if (!sprite0.isFetchingCoin && window.appConfig.start && !window.appConfig.pause) {
+            if (!sprite0.isFetchingCoin && window.appConfig.start && !window.appConfig.pause && !window.appConfig.userHasEnded) {
               if (sprite0.returnData && sprite0.returnData.startingPosition) {
-                console.error('returning')
                 let percentComplete = window.appConfig.timers.data[`spriteReturn${sprite0.num}`].percentComplete
                 const newX = sprite0.returnData.startingPosition.x * (1 - percentComplete) + (spriteVector3.x * percentComplete)
                 const newY = sprite0.returnData.startingPosition.y * (1 - percentComplete) + (spriteVector3.y * percentComplete)
@@ -3574,19 +3575,19 @@
           },
           activeCallback: (percentComplete) => {
             const percentComputed = (percentComplete * 16) > 8 ? 8 : (percentComplete * 16)
-            document.querySelector('#stage-name-title').style.fontSize = percentComputed*.75 + "rem"
-            document.querySelector('#stage-number').style.fontSize = percentComputed/2 + "rem"
+            document.querySelector('#stage-name-title').style.fontSize = percentComputed * .75 + "rem"
+            document.querySelector('#stage-number').style.fontSize = percentComputed / 2 + "rem"
             document.querySelector('#gradient-curtain').style.background = window.appConfig.stages.components.background(
               lfoPositive(2750), window.appConfig.stages[window.appConfig.currentStage].backgroundColors
             )
-            if(percentComplete < .5) {
+            if (percentComplete < .5) {
               document.querySelector('#gradient-curtain').style.opacity = percentComplete * 2
             }
-            if(percentComplete > .5) {
-              document.querySelector('#gradient-curtain').style.opacity = (1 - ((percentComplete- .5) * 2 )) < 0 ? 0 : (1 - ((percentComplete-.5) * 2))
+            if (percentComplete > .5) {
+              document.querySelector('#gradient-curtain').style.opacity = (1 - ((percentComplete - .5) * 2)) < 0 ? 0 : (1 - ((percentComplete - .5) * 2))
             }
             centerElement({ id: "stage-name", offsetTop: 0, offsetLeft: 0 })
-            if(percentComplete > .9) {
+            if (percentComplete > .9) {
               document.querySelector('#stage-name-title').style.opacity = 1 - (percentComplete - .9) * 10
               document.querySelector('#stage-number').style.opacity = 1 - (percentComplete - .9) * 10
             }
@@ -3664,11 +3665,11 @@
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
             console.log('ACTIVE CALL BACK')
-            if(percentComplete < .5) {
+            if (percentComplete < .5) {
               document.querySelector('#gradient-curtain').style.opacity = percentComplete * 2
             }
-            if(percentComplete > .5) {
-              document.querySelector('#gradient-curtain').style.opacity = (1 - ((percentComplete- .5) * 2 )) < 0 ? 0 : (1 - ((percentComplete-.5) * 2))
+            if (percentComplete > .5) {
+              document.querySelector('#gradient-curtain').style.opacity = (1 - ((percentComplete - .5) * 2)) < 0 ? 0 : (1 - ((percentComplete - .5) * 2))
             }
           }
         }
@@ -3985,7 +3986,7 @@
       if (!window.appConfig.stages[window.appConfig.currentStage].data.started) {
         window.appConfig.stages[window.appConfig.currentStage].init()
       } else {
-        if (window.appConfig.pause === false) {
+        if (!window.appConfig.pause && !window.appConfig.userHasEnded) {
           window.appConfig.activeTransforms.length > 0 && window.appConfig.activeTransforms.forEach(t => {
             if (window.appConfig.stages[window.appConfig.currentStage].transforms[t].r && window.appConfig.stages[window.appConfig.currentStage][t]) {
               window.appConfig.stages[window.appConfig.currentStage][t].rotation.x += window.appConfig.stages[window.appConfig.currentStage].transforms[t].r.x
@@ -4298,6 +4299,10 @@
     const startStageEnd = () => {
       //now start end of stage
       window.appConfig.userHasEnded = true
+
+      scene.setGravity(new THREE.Vector3(0, 0, 0));
+      window.appConfig.sphere._physijs.mass = 0
+
       window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageResultsBallZoom())
       window.appConfig.timer.pause();
       window.appConfig.results[`stage${window.appConfig.level}`]
@@ -4346,6 +4351,7 @@
       window.appConfig.timers.activeTimers.push(timers.initialBallZoom())
       window.appConfig.timer.start();
       scene.setGravity(new THREE.Vector3(0, -10, 0));
+      window.appConfig.sphere._physijs.mass = window.appConfig.defaultSphereMass
       document.querySelector("#pause-button").disabled = false;
       const theBall = scene.children.find(c => c.gameName === 'SPHERE0')
       theBall.position.set(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition);
@@ -4366,10 +4372,12 @@
       if (window.appConfig.pause) {
         window.appConfig.timer.pause();
         scene.setGravity(new THREE.Vector3(0, 0, 0));
+        window.appConfig.sphere._physijs.mass = 0
         showPauseMenu();
       } else {
+        scene.setGravity(new THREE.Vector3(0, window.appConfig.defaultSceneGravity, 0));
+        window.appConfig.sphere._physijs.mass = window.appConfig.defaultSphereMass
         window.appConfig.timer.start();
-        scene.setGravity(new THREE.Vector3(0, -10, 0));
         showGameMode();
       }
     };
@@ -4378,6 +4386,8 @@
       window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageReset(action))
       window.appConfig.results = {}
       window.appConfig.score.coins = 0
+      window.appConfig.diffX = 0
+      window.appConfig.diffY = 0
       window.appConfig.sprites.forEach(sprite => {
         sprite.reset()
       })
@@ -4736,10 +4746,10 @@
   <div id="curtain"></div>
 </body>
 <script>
-  window.console.log = () => { }
-  window.console.warn = () => { }
-  window.console.dir = () => { }
-  window.console.error = () => { }
+  // window.console.log = () => { }
+  // window.console.warn = () => { }
+  // window.console.dir = () => { }
+  // window.console.error = () => { }
 </script>
 
 </html>
