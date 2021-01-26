@@ -19,7 +19,35 @@
 
   <script>
     // console.warn = () => {}
+
+    const generateBackground = (percentFinished, colors) => {
+      return "linear-gradient(180deg, " + colors[0] + " 0%, " + colors[1] + " 0%, " + colors[2] + " " +
+        Math.round((1.25 - percentFinished/2) * 100) * .66 +
+        "%, " + colors[3] + " " +
+        Math.round((1.25 - percentFinished/2) * 100) +
+        "%)";
+    }
+
+
+    const lfoPositive = (t = 1000) => {
+      let lfoValue = (0.5 + 0.5 * Math.cos(Date.now() / t)) * 1;
+      return lfoValue;
+    };
+
+    const lfo = (t = 1000) => {
+      return (0.5 - lfoPositive(t)) * 2;
+    };
+    const lfoPositiveStraight = (t = 1000) => {
+      let lfoValue = (0.5 + 0.5 * Math.cos(Date.now() / t)) * 1;
+      return lfoValue;
+    };
+
     window.appConfig = {
+      loadingInterval: {
+        started: false,
+        time: 0,
+        clearInterval: undefined
+      },
       touchStart: false,
       touchEnd: false,
       currentX: 0,
@@ -71,6 +99,36 @@
       ],
       loadedScripts: [],
     };
+
+    const startLoadingInterval = () => {
+
+      let loadingInterval = setInterval(() => {
+        // document.querySelector('#gradient-curtain').style.background = ''
+        document.querySelector('#circle0').style.left = (lfoPositive(3000) * 80 + 10) + '%'
+        document.querySelector('#circle0').style.top = (lfoPositive(1111) * 70 + 15) + '%'
+        document.querySelector('#circle1').style.left = (lfoPositive(2000) * 80 + 10) + '%'
+        document.querySelector('#circle1').style.top = (lfoPositive(3111) * 70 + 15) + '%'
+        document.querySelector('#circle2').style.left = (lfoPositive(900) * 80 + 10) + '%'
+        document.querySelector('#circle2').style.top = (lfoPositive(2111) * 70 + 15) + '%'
+        document.querySelector('#gradient-curtain').style.background = generateBackground(
+          .5 + (lfoPositive(1250)/2), [
+            "rgba(2,0,36,0)",
+            "rgba(121,9,117,1)",
+            "rgba(252,231,183,1)",
+            "rgba(0,212,255,1)"
+          ]
+        )
+        // console.log(lfoPositive(1000))
+      }, 1000/60)
+      window.appConfig.loadingInterval.clearInterval = () => {
+        clearInterval(loadingInterval)
+        document.body.removeChild(document.querySelector('#circle0'))
+        document.body.removeChild(document.querySelector('#circle1'))
+        document.body.removeChild(document.querySelector('#circle2'))
+      }
+    }
+
+    startLoadingInterval()
 
     const toggleMainLoading = () => {
       document.querySelector('#gradient-curtain').style.opacity = 0
@@ -147,6 +205,7 @@
         }
       })
       if(loadedNumber === expectedLoadedNumber) {
+        window.appConfig.loadingInterval.clearInterval()
         toggleMainLoading()
       }
     }
@@ -207,6 +266,9 @@
     <div id="loading-title">BALLSINKI</div>
     <div id="loading-label">LOADING</div>
   </div>
+  <div id="circle0" class="circle"></div>
+  <div id="circle1" class="circle"></div>
+  <div id="circle2" class="circle"></div>
   <div class="debug hide">
   </div>
   <div id="viewport"></div>
@@ -576,19 +638,6 @@
     const getRandomColor = () => {
       const basicColors = window.appConfig.stages ? window.appConfig.stages[window.appConfig.currentStage].basicColors : stageProperties.STAGE0.basicColors
       return basicColors[Math.floor(Math.random() * basicColors.length)];
-    };
-
-    const lfoPositive = (t = 1000) => {
-      let lfoValue = (0.5 + 0.5 * Math.cos(Date.now() / t)) * 1;
-      return lfoValue;
-    };
-
-    const lfo = (t = 1000) => {
-      return (0.5 - lfoPositive(t)) * 2;
-    };
-    const lfoPositiveStraight = (t = 1000) => {
-      let lfoValue = (0.5 + 0.5 * Math.cos(Date.now() / t)) * 1;
-      return lfoValue;
     };
 
     var initScene,

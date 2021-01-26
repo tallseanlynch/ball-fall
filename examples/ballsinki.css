@@ -435,3 +435,14 @@ vertical-align: middle;
   padding: var(--font-size-4);
   letter-spacing: 30px;
 }
+
+.circle {
+  width: 25px;
+  height: 25px;
+  background-color: white;
+  border-radius: 100%;
+  position: absolute;
+  z-index: 101;
+  left: 50%;
+  top: 50%;
+}
