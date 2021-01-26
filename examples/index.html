@@ -4,9 +4,7 @@
 
 <head>
   <title>Ballsinki</title>
-  <link rel="icon" 
-      type="image/png" 
-      href="icon.png">
+  <link rel="icon" type="image/png" href="icon.png">
   <style>
     body,
     html {
@@ -24,9 +22,9 @@
 
     const generateBackground = (percentFinished, colors) => {
       return "linear-gradient(180deg, " + colors[0] + " 0%, " + colors[1] + " 0%, " + colors[2] + " " +
-        Math.round((1.25 - percentFinished/2) * 100) * .66 +
+        Math.round((1.25 - percentFinished / 2) * 100) * .66 +
         "%, " + colors[3] + " " +
-        Math.round((1.25 - percentFinished/2) * 100) +
+        Math.round((1.25 - percentFinished / 2) * 100) +
         "%)";
     }
 
@@ -89,14 +87,14 @@
       },
       scripts: [
         'ammo.js',
-        'three.js', 
+        'three.js',
         // 'stats.js', 
-        'physi.js', 
-        'physijs_worker.js', 
-        'easytimer.js', 
-        'howler.js', 
-        'features.js', 
-        'event-handlers.js', 
+        'physi.js',
+        'physijs_worker.js',
+        'easytimer.js',
+        'howler.js',
+        'features.js',
+        'event-handlers.js',
         // 'debug.js'
       ],
       loadedScripts: [],
@@ -123,15 +121,15 @@
         document.querySelector('#circle5').style.left = (lfoPositive(1920) * 80 + 10) + '%'
         document.querySelector('#circle5').style.top = (lfoPositive(2139) * 70 + 15) + '%'
         document.querySelector('#gradient-curtain').style.background = generateBackground(
-          .5 + (lfoPositive(1250)/2), [
-            "rgba(2,0,36,0)",
-            "rgba(121,9,117,1)",
-            "rgba(252,231,183,1)",
-            "rgba(0,212,255,1)"
-          ]
+          .5 + (lfoPositive(1250) / 2), [
+          "rgba(2,0,36,0)",
+          "rgba(121,9,117,1)",
+          "rgba(252,231,183,1)",
+          "rgba(0,212,255,1)"
+        ]
         )
         // console.log(lfoPositive(1000))
-      }, 1000/60)
+      }, 1000 / 60)
       window.appConfig.loadingInterval.clearInterval = () => {
         clearInterval(loadingInterval)
         document.body.removeChild(document.querySelector('#circle0'))
@@ -215,11 +213,11 @@
       let loadedNumber = 0
       const expectedLoadedNumber = window.appConfig.scripts.length
       window.appConfig.scripts.forEach(s => {
-        if(window.appConfig.loadedScripts.indexOf(s) > -1) {
+        if (window.appConfig.loadedScripts.indexOf(s) > -1) {
           loadedNumber++
         }
       })
-      if(loadedNumber === expectedLoadedNumber) {
+      if (loadedNumber === expectedLoadedNumber) {
         window.appConfig.loadingInterval.clearInterval()
         toggleMainLoading()
       }
@@ -235,14 +233,17 @@
       left: 0;
       pointer-events: none;
       z-index: 99;
-      background: linear-gradient(180deg, rgba(2,0,36,0) 0%, rgba(121,9,117,1) 0%, rgba(252,231,183,1) 33%, rgba(0,212,255,1) 66%);
+      background: linear-gradient(180deg, rgba(2, 0, 36, 0) 0%, rgba(121, 9, 117, 1) 0%, rgba(252, 231, 183, 1) 33%, rgba(0, 212, 255, 1) 66%);
     }
 
     @keyframes loading-main-screen {
-      0%, 100% { 
+
+      0%,
+      100% {
         opacity: 1;
         letter-spacing: 15px;
       }
+
       50% {
         opacity: .25;
         letter-spacing: 5px;
@@ -267,7 +268,7 @@
       animation-duration: 5s;
       animation-name: loading-main-screen;
       animation-direction: alternate;
-      animation-iteration-count: infinite;      
+      animation-iteration-count: infinite;
     }
 
     #loading-title {
@@ -386,7 +387,7 @@
   </div>
   <div id="title">BALLSINKI</div>
   <div id="start-button-container">
-    <button id="start-button" onClick="countdown()">Start</button>
+    <button id="start-button" onClick="countdown()"> START</button>
   </div>
   <div id="start-menu">
     <button id="start-level-select-button" class="start-menu-button" onClick="showLevelSelect()">
@@ -838,30 +839,30 @@
           beamCapGeometry,
           Physijs.createMaterial(
             beamMaterial,
-            0.6,  
-            0.1 
+            0.6,
+            0.1
           ),
-          0 
+          0
         );
 
         const beam0cap1 = new Physijs.BoxMesh(
           beamCapGeometry,
           Physijs.createMaterial(
             beamMaterial,
-            0.6, 
-            0.1 
+            0.6,
+            0.1
           ),
-          0 
+          0
         );
 
         const beam0 = new Physijs.BoxMesh(
           beamBox,
           Physijs.createMaterial(
             beamMaterial,
-            0.6, 
-            0.1 
+            0.6,
+            0.1
           ),
-          0 
+          0
         );
 
         beam0.add(beam0cap0)
@@ -1058,7 +1059,7 @@
         var ellipsePath = new THREE.CurvePath();
         ellipsePath.add(ellipse);
         var ellipseGeometry = ellipsePath.createPointsGeometry(n);
-        
+
         let i = 0;
         for (i; i < ellipseGeometry.vertices.length - 1; i++) {
           crystalCircle.add(crystal(size, { x: ellipseGeometry.vertices[i].x * s + t.x, y: ellipseGeometry.vertices[i].y * s + t.y, z: 0 }));
@@ -2415,7 +2416,7 @@
             }
 
 
-            window.appConfig.createSphere({bounce: 1, name: 'SPHERECOIN', position:{x:Math.random() * 75, y:Math.random() * 75, z: 0}, handleCollision: () => console.log('Collided with SPHERECOIN')})
+            window.appConfig.createSphere({ bounce: 1, name: 'SPHERECOIN', position: { x: Math.random() * 75, y: Math.random() * 75, z: 0 }, handleCollision: () => console.log('Collided with SPHERECOIN') })
 
 
             createBackgroundAnimation()
@@ -3645,8 +3646,8 @@
             specular: 0x050505,
             shininess: 200
           }),
-          (config && config.bounce) ? config.bounce : 0.5, 
-          1 
+          (config && config.bounce) ? config.bounce : 0.5,
+          1
         );
         sphere = new Physijs.SphereMesh(sphere_geometry, material);
         sphere.collisions = 0;
@@ -3664,11 +3665,11 @@
         sphere.setCcdMotionThreshold(.5)
         sphere.setCcdSweptSphereRadius(1)
         scene.add(sphere);
-        if(!config) {
+        if (!config) {
           window.appConfig.sphere = sphere
         }
       };
-//      window.appConfig.stages.components.createSphere = createSphere
+      //      window.appConfig.stages.components.createSphere = createSphere
       return () => {
         window.appConfig.createSphere();
         const findCoin = (x, y, xMod = 10, yMod = 10) => {
@@ -3800,26 +3801,26 @@
         const sidesColor = getRandomColor();
 
         const glassMesh0 = new Physijs.BoxMesh(
-            new THREE.BoxGeometry(1000, 1000, 1),
-            new THREE.MeshBasicMaterial({
-          color: getRandomColor(),
-          opacity: 0,
-          transparent: true,
-          wifeframe: true,
-        }),
+          new THREE.BoxGeometry(1000, 1000, 1),
+          new THREE.MeshBasicMaterial({
+            color: getRandomColor(),
+            opacity: 0,
+            transparent: true,
+            wifeframe: true,
+          }),
           0
         );
         glassMesh0.gameName = "FRONTGLASS";
         glassMesh0.name = "glassMesh0";
 
         const glassMesh1 = new Physijs.BoxMesh(
-            new THREE.BoxGeometry(1000, 1000, 1),
-            new THREE.MeshBasicMaterial({
-          color: getRandomColor(),
-          opacity: 0.0,
-          transparent: true,
-          wifeframe: true,
-        }),
+          new THREE.BoxGeometry(1000, 1000, 1),
+          new THREE.MeshBasicMaterial({
+            color: getRandomColor(),
+            opacity: 0.0,
+            transparent: true,
+            wifeframe: true,
+          }),
           0
         );
         glassMesh1.gameName = "BACKGLASS";
@@ -4408,7 +4409,7 @@
       );
 
       if (currentTime % 25 < 1) {
-        if(scene.children.find((obj) => obj.gameName === "SPHERECOIN")) {
+        if (scene.children.find((obj) => obj.gameName === "SPHERECOIN")) {
           scene.children.find((obj) => obj.gameName === "SPHERECOIN").setLinearVelocity(new THREE.Vector3(Math.random() * 50 - 25, Math.random() * 50 - 25, 0))
         }
       }
@@ -4793,16 +4794,16 @@
       let wSq = window.innerWidth * window.innerWidth
       let diagonalLength = Math.sqrt(hSq + wSq)
       const root = document.documentElement;
-      root.style.setProperty(`--font-size-0`, Math.ceil(diagonalLength * .01) + "px");
-      root.style.setProperty(`--font-size-1`, Math.ceil(diagonalLength * .02) + "px");
-      root.style.setProperty(`--font-size-2`, Math.ceil(diagonalLength * .03) + "px");
-      root.style.setProperty(`--font-size-3`, Math.ceil(diagonalLength * .04) + "px");
-      root.style.setProperty(`--font-size-4`, Math.ceil(diagonalLength * .05) + "px");
-      root.style.setProperty(`--font-size-5`, Math.ceil(diagonalLength * .06) + "px");
-      root.style.setProperty(`--font-size-6`, Math.ceil(diagonalLength * .07) + "px");
-      root.style.setProperty(`--font-size-7`, Math.ceil(diagonalLength * .08) + "px");
-      root.style.setProperty(`--full-screen-width`, Math.ceil(window.innerWidth) + "px");
-      root.style.setProperty(`--quarter-screen-height`, Math.ceil(window.innerHeight * .25) + "px");
+      root.style.setProperty(`--font-size-0`, (diagonalLength * .01) + "px");
+      root.style.setProperty(`--font-size-1`, (diagonalLength * .02) + "px");
+      root.style.setProperty(`--font-size-2`, (diagonalLength * .03) + "px");
+      root.style.setProperty(`--font-size-3`, (diagonalLength * .04) + "px");
+      root.style.setProperty(`--font-size-4`, (diagonalLength * .05) + "px");
+      root.style.setProperty(`--font-size-5`, (diagonalLength * .06) + "px");
+      root.style.setProperty(`--font-size-6`, (diagonalLength * .07) + "px");
+      root.style.setProperty(`--font-size-7`, (diagonalLength * .08) + "px");
+      root.style.setProperty(`--full-screen-width`, (window.innerWidth) + "px");
+      root.style.setProperty(`--quarter-screen-height`, (window.innerHeight * .25) + "px");
     }
 
     const setLevel = (level) => {
@@ -4814,10 +4815,10 @@
         document.querySelector('#sfx-toggle-button')
       if (window.appConfig.sfxTurnedOn) {
         sfxButton.textContent = "ON"
-        changeSFXVolume(100)
+        // changeSFXVolume(100)
       } else {
         sfxButton.textContent = "OFF"
-        changeSFXVolume(0)
+        // changeSFXVolume(0)
       }
     }
     const toggleMusicButton = () => {
@@ -4826,13 +4827,14 @@
         document.querySelector('#music-toggle-button')
       if (window.appConfig.musicTurnedOn) {
         musicButton.textContent = "ON"
-        changeMusicVolume(100)
+        // changeMusicVolume(100)
       } else {
         musicButton.textContent = "OFF"
-        changeMusicVolume(0)
+        // changeMusicVolume(0)
       }
     }
     window.onload = initScene;
   </script>
 </footer>
+
 </html>

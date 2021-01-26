@@ -27,7 +27,9 @@ vertical-align: middle;
   font-family: "Coves Light";
   font-size: var(--font-size-3);
   font-weight: 900;
-  padding: var(--font-size-3);
+  padding-top: var(--font-size-1);
+  padding-bottom: var(--font-size-1);
+  padding-right: var(--font-size-3);
   border: 0;
   border-radius: 5px;
   opacity: 1;
@@ -40,13 +42,15 @@ vertical-align: middle;
 }
 @keyframes flux-start-button {
   0%, 100% { 
-    opacity: .6;
-    font-size: var(--font-size-3);
+    opacity: 1;
+    letter-spacing: var(--font-size-0);
+    padding-left: var(--font-size-4);
     font-weight: 700;
   }
   50% {
-    opacity: 1;
-    font-size: var(--font-size-6);
+    opacity: .3;
+    letter-spacing: var(--font-size-1);
+    padding-left: var(--font-size-5);
     font-weight: 900;
   }
 
