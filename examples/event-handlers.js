@@ -49,24 +49,25 @@ setTimeout(() => {
           window.appConfig.diffY = 0;
         }
       });
-      const clickRay = new THREE.Raycaster();
-      document.addEventListener("click", (e) => {
-        e.preventDefault();
-        const normalized = new THREE.Vector2((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
-        clickRay.setFromCamera(normalized, camera);
 
-        const intersects = clickRay.intersectObjects(
-          scene.children, true
-        )
-        const filteredIntersects = []
-        intersects.forEach(intersect => {
-          if (intersect.object.gameName && intersect.object.gameName !== "FRONTGLASS" && intersect.object.gameName !== "BACKGLASS") {
-            filteredIntersects.push(intersect)
-          } else {
-            filteredIntersects.push(intersect)
-          }
-        })
-      });
+      // const clickRay = new THREE.Raycaster();
+      // document.addEventListener("click", (e) => {
+      //   e.preventDefault();
+      //   const normalized = new THREE.Vector2((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
+      //   clickRay.setFromCamera(normalized, camera);
+
+      //   const intersects = clickRay.intersectObjects(
+      //     scene.children, true
+      //   )
+      //   const filteredIntersects = []
+      //   intersects.forEach(intersect => {
+      //     if (intersect.object.gameName && intersect.object.gameName !== "FRONTGLASS" && intersect.object.gameName !== "BACKGLASS") {
+      //       filteredIntersects.push(intersect)
+      //     } else {
+      //       filteredIntersects.push(intersect)
+      //     }
+      //   })
+      // });
     }, 1500)
 
 

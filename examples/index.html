@@ -112,6 +112,12 @@
         document.querySelector('#circle1').style.top = (lfoPositive(3111) * 70 + 15) + '%'
         document.querySelector('#circle2').style.left = (lfoPositive(900) * 80 + 10) + '%'
         document.querySelector('#circle2').style.top = (lfoPositive(2111) * 70 + 15) + '%'
+        document.querySelector('#circle3').style.left = (lfoPositive(3500) * 80 + 10) + '%'
+        document.querySelector('#circle3').style.top = (lfoPositive(1715) * 70 + 15) + '%'
+        document.querySelector('#circle4').style.left = (lfoPositive(2330) * 80 + 10) + '%'
+        document.querySelector('#circle4').style.top = (lfoPositive(1121) * 70 + 15) + '%'
+        document.querySelector('#circle5').style.left = (lfoPositive(1920) * 80 + 10) + '%'
+        document.querySelector('#circle5').style.top = (lfoPositive(2139) * 70 + 15) + '%'
         document.querySelector('#gradient-curtain').style.background = generateBackground(
           .5 + (lfoPositive(1250)/2), [
             "rgba(2,0,36,0)",
@@ -127,6 +133,9 @@
         document.body.removeChild(document.querySelector('#circle0'))
         document.body.removeChild(document.querySelector('#circle1'))
         document.body.removeChild(document.querySelector('#circle2'))
+        document.body.removeChild(document.querySelector('#circle3'))
+        document.body.removeChild(document.querySelector('#circle4'))
+        document.body.removeChild(document.querySelector('#circle5'))
       }
     }
 
@@ -228,28 +237,30 @@
     @keyframes loading-main-screen {
       0%, 100% { 
         opacity: 1;
+        letter-spacing: 15px;
       }
       50% {
         opacity: .25;
+        letter-spacing: 5px;
       }
 
     }
 
     #main-loading {
-      width: 200px;
+      width: 300px;
       height: 200px;
       position: fixed;
       z-index: 100;
       top: calc(50% - 100px);
-      left: calc(50% - 100px);
+      left: calc(50% - 150px);
       text-align: center;
-      font-size: 20px;
+      font-size: 30px;
       font-family: 'Arial';
       color: white;
     }
 
     #loading-label {
-      animation-duration: 3s;
+      animation-duration: 5s;
       animation-name: loading-main-screen;
       animation-direction: alternate;
       animation-iteration-count: infinite;      
@@ -265,12 +276,14 @@
 
 <body>
   <div id="main-loading">
-    <div id="loading-title">BALLSINKI</div>
     <div id="loading-label">LOADING</div>
   </div>
   <div id="circle0" class="circle"></div>
   <div id="circle1" class="circle"></div>
   <div id="circle2" class="circle"></div>
+  <div id="circle3" class="circle"></div>
+  <div id="circle4" class="circle"></div>
+  <div id="circle5" class="circle"></div>
   <div class="debug hide">
   </div>
   <div id="viewport"></div>
