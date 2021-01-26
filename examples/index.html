@@ -4,7 +4,9 @@
 
 <head>
   <title>Ballsinki</title>
-  
+  <link rel="icon" 
+      type="image/png" 
+      href="icon.png">
   <style>
     body,
     html {
@@ -2080,6 +2082,8 @@
             window.appConfig.lighting.hemisphereLight.color = getRandomColor()
             window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
 
+
+
             const createBackgroundAnimation = () => {
               const bgGroup = new THREE.Group()
               bgGroup.name = 'STAGE2BGGROUP'
@@ -2391,6 +2395,10 @@
               bgGroup.activeCallback()
               window.appConfig.stages['STAGE3'].bgGroupActiveCallback = bgGroup.activeCallback
             }
+
+
+            window.appConfig.createSphere({bounce: 1, name: 'SPHERECOIN', position:{x:Math.random() * 75, y:Math.random() * 75, z: 0}, handleCollision: () => console.log('Collided with SPHERECOIN')})
+
 
             createBackgroundAnimation()
 
@@ -3607,7 +3615,7 @@
           }
         }
 
-      let createSphere = function () {
+      window.appConfig.createSphere = function (config) {
         var sphere, material;
 
         material = Physijs.createMaterial(
@@ -3619,30 +3627,32 @@
             specular: 0x050505,
             shininess: 200
           }),
-          0.5, 
+          (config && config.bounce) ? config.bounce : 0.5, 
           1 
         );
         sphere = new Physijs.SphereMesh(sphere_geometry, material);
         sphere.collisions = 0;
-        sphere.position.set(0, 0, 0);
+        (config && config.position) ? sphere.position.set(config.position.x, config.position.y, 0) : sphere.position.set(0, 0, 0)
 
         sphere.rotation.set(
           Math.random() * Math.PI,
           Math.random() * Math.PI,
           Math.random() * Math.PI
         );
-
         sphere.castShadow = true;
-        sphere.addEventListener("collision", handleCollision);
-        sphere.gameName = "SPHERE0";
-        sphere.name = "SPHERE0";
+        sphere.addEventListener("collision", (config && config.handleCollision) ? config.handleCollision : handleCollision);
+        sphere.gameName = (config && config.name) ? config.name : "SPHERE0";
+        sphere.name = (config && config.name) ? config.name : "SPHERE0";
         sphere.setCcdMotionThreshold(.5)
         sphere.setCcdSweptSphereRadius(1)
         scene.add(sphere);
-        window.appConfig.sphere = sphere
+        if(!config) {
+          window.appConfig.sphere = sphere
+        }
       };
+//      window.appConfig.stages.components.createSphere = createSphere
       return () => {
-        createSphere();
+        window.appConfig.createSphere();
         const findCoin = (x, y, xMod = 10, yMod = 10) => {
           return window.appConfig.coins.find(
             (coin, coinIndex) => {
@@ -4378,6 +4388,12 @@
         sphere.position.y * lfo(500),
         sphere.position.z * lfo(1412)
       );
+
+      if (currentTime % 25 < 1) {
+        if(scene.children.find((obj) => obj.gameName === "SPHERECOIN")) {
+          scene.children.find((obj) => obj.gameName === "SPHERECOIN").setLinearVelocity(new THREE.Vector3(Math.random() * 50 - 25, Math.random() * 50 - 25, 0))
+        }
+      }
 
       if (currentTime % 10 < 3) {
         const percentFinished = Math.abs(sphere.position.y) / 375;
