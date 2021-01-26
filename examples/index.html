@@ -100,6 +100,10 @@
         // 'debug.js'
       ],
       loadedScripts: [],
+      events: {
+        primaryInput: undefined,
+        touchmove: { throttle: 50, active: false } 
+      }
     };
 
     const startLoadingInterval = () => {
@@ -804,6 +808,7 @@
 
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.render(scene, camera);
+        window.appConfig.events.primaryInput = undefined
       }
       onWindowResize();
       window.addEventListener("resize", onWindowResize, false);
@@ -4420,6 +4425,19 @@
 
       camera.position.x = sphere.position.x;
       camera.position.y = sphere.position.y;
+
+      if (currentTime % 10 < 1) {
+        if(window.appConfig.timers.data.initialBallZoom.percentComplete > .999) {
+          window.appConfig.timers.data.initialBallZoom.percentComplete = 1
+        }
+        if(window.appConfig.timers.data.stageResultsBallZoom.percentComplete > .999) {
+          window.appConfig.timers.data.stageResultsBallZoom.percentComplete = 1
+        }
+        if(window.appConfig.timers.data.stageReset.percentComplete > .999) {
+          window.appConfig.timers.data.stageReset.percentComplete = 1
+        }
+      }
+      
       camera.position.z =
         10 +
         80 * window.appConfig.timers.data.initialBallZoom.percentComplete -
