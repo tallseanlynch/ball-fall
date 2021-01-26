@@ -4784,10 +4784,10 @@
         document.querySelector('#sfx-toggle-button')
       if (window.appConfig.sfxTurnedOn) {
         sfxButton.textContent = "ON"
-        changeSFXVolume(100)
+        // changeSFXVolume(100)
       } else {
         sfxButton.textContent = "OFF"
-        changeSFXVolume(0)
+        // changeSFXVolume(0)
       }
     }
     const toggleMusicButton = () => {
@@ -4796,10 +4796,10 @@
         document.querySelector('#music-toggle-button')
       if (window.appConfig.musicTurnedOn) {
         musicButton.textContent = "ON"
-        changeMusicVolume(100)
+        // changeMusicVolume(100)
       } else {
         musicButton.textContent = "OFF"
-        changeMusicVolume(0)
+        // changeMusicVolume(0)
       }
     }
     window.onload = initScene;
