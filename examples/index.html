@@ -275,7 +275,19 @@
       font-size: 35px;
       padding-bottom: 30px;
     }
-  </style>
+
+    #stage-number, #stage-countdown-start {
+      animation-duration: 5s;
+      animation-name: loading-main-screen;
+      animation-direction: alternate;
+      animation-iteration-count: infinite;
+    }
+
+    #stage-number, #stage-countdown-start, #stage-countdown-1, #stage-countdown-2, #stage-countdown-3 {
+      z-index: 200;
+    }
+
+</style>
   <link rel="stylesheet" href="./ballsinki.css">
 </head>
 
@@ -361,12 +373,12 @@
   <div id="level-select" class="hide">
     <div id="level-select-title">Level Select</div>
     <div class="level-select-menu-container">
-      <button class="level-select-button stage-0" onClick="reset({action:'levelSelect', level: 0})">Stage 0</button>
-      <button class="level-select-button stage-1" onClick="reset({action:'levelSelect', level: 1})">Stage 1</button>
-      <button class="level-select-button stage-2" onClick="reset({action:'levelSelect', level: 2})">Stage 2</button>
-      <button class="level-select-button stage-3" onClick="reset({action:'levelSelect', level: 3})">Stage 3</button>
-      <button class="level-select-button stage-4" onClick="reset({action:'levelSelect', level: 4})">Stage 4</button>
-      <button class="level-select-button stage-5" onClick="reset({action:'levelSelect', level: 5})">Stage 5</button>
+      <button class="level-select-button stage-0" onClick="reset({action:'levelSelect', level: 0})">NATURAL WONDER</button>
+      <button class="level-select-button stage-1" onClick="reset({action:'levelSelect', level: 1})">PROXIMA</button>
+      <button class="level-select-button stage-2" onClick="reset({action:'levelSelect', level: 2})">BLANKET FORT</button>
+      <button class="level-select-button stage-3" onClick="reset({action:'levelSelect', level: 3})">HIDDEN HOLLOW</button>
+      <button class="level-select-button stage-4" onClick="reset({action:'levelSelect', level: 4})">CLOUD CASTLE</button>
+      <button class="level-select-button stage-5" onClick="reset({action:'levelSelect', level: 5})">STARLING</button>
     </div>
     <button class="start-menu-button" onClick="goBack()">Back</button>
   </div>
@@ -401,6 +413,8 @@
     </button>
   </div>
 
+  <div id="gradient-curtain"></div>
+
   <div id="stage-number">STAGE 1</div>
   <div id="stage-name" class="hide">
     <div id="stage-name-title">GILGAMESH</div>
@@ -409,8 +423,6 @@
   <div id="stage-countdown-2" class="hide">2</div>
   <div id="stage-countdown-1" class="hide">1</div>
   <div id="stage-countdown-start" class="hide">START!</div>
-
-  <div id="gradient-curtain"></div>
 
   <img src="images/pause.png" id="pause-button" disabled class="hide" onClick="pause()" />
   <div id="curtain"></div>
@@ -475,10 +487,14 @@
             "sounds/Sound FX/BALL FALL fx a8.mp3"
           ],
           prize: "sounds/Sound FX/PRIZE_1.mp3",
-          backgroundMusic: "sounds/BALL-FALL-jingle-flat-1.mp3"
-        }
+          backgroundMusic: "sounds/BALL-FALL-jingle-flat-1.mp3",
+        },
+        name: "NATURAL WONDER",
+        number: 1
       },
       STAGE1: {
+        name: "PROXIMA",
+        number: 2,
         backgroundColors: [
           "#FFDC6A",
           "#FFB83B",
@@ -516,6 +532,8 @@
         }
       },
       STAGE2: {
+        name: "BLANKET FORT",
+        number: 3,
         backgroundColors: [
           "#F16D9C",
           "#F16D9C",
@@ -546,6 +564,8 @@
         }
       },
       STAGE3: {
+        name: "HIDDEN HOLLOW",
+        number: 4,
         backgroundColors: [
           "#0F181F",
           "#23a373",
@@ -576,6 +596,8 @@
         }
       },
       STAGE4: {
+        name: "CLOUD CASTLE",
+        number: 5,
         backgroundColors: [
           "#0070bf",
           "#00a5e9",
@@ -606,6 +628,8 @@
         }
       },
       STAGE5: {
+        name: "STARLING",
+        number: 6,
         backgroundColors: [
           "rgba(2,0,36,0)",
           "rgba(121,9,117,1)",
@@ -1591,6 +1615,7 @@
           backgroundColors: stageProperties.STAGE0.backgroundColors,
           basicColors: stageProperties.STAGE0.basicColors,
           sounds: stageProperties.STAGE0.sounds,
+          number: stageProperties.STAGE0.number,
           defaultTransforms: [
             'STAGE0PRIZE0',
             'STAGE0PRIZE1',
@@ -1774,6 +1799,7 @@
             sAdj: 2,
             startingPosition: new THREE.Vector3(0, 0, 0)
           },
+          number: stageProperties.STAGE1.number,
           backgroundColors: stageProperties.STAGE1.backgroundColors,
           basicColors: stageProperties.STAGE1.basicColors,
           sounds: stageProperties.STAGE1.sounds,
@@ -2066,6 +2092,7 @@
           basicColors: stageProperties.STAGE2.basicColors,
           sounds: stageProperties.STAGE2.sounds,
           name: stageProperties.STAGE2.name,
+          number: stageProperties.STAGE2.number,
           defaultTransforms: [
             'STAGE2PRIZE0',
             'STAGE2PRIZE1',
@@ -2309,6 +2336,7 @@
           basicColors: stageProperties.STAGE3.basicColors,
           sounds: stageProperties.STAGE3.sounds,
           name: stageProperties.STAGE3.name,
+          number: stageProperties.STAGE3.number,
           defaultTransforms: [
             'STAGE3PRIZE0',
             'STAGE3PRIZE1',
@@ -2685,6 +2713,7 @@
             sAdj: 2,
             startingPosition: new THREE.Vector3(0, 0, 0)
           },
+          number: stageProperties.STAGE4.number,
           backgroundColors: stageProperties.STAGE4.backgroundColors,
           basicColors: stageProperties.STAGE4.basicColors,
           sounds: stageProperties.STAGE4.sounds,
@@ -3192,6 +3221,7 @@
           basicColors: stageProperties.STAGE5.basicColors,
           sounds: stageProperties.STAGE5.sounds,
           name: stageProperties.STAGE5.name,
+          number: stageProperties.STAGE5.number,
           defaultTransforms: [
             'STAGE5PRIZE0',
             'STAGE5PRIZE1',
@@ -4010,6 +4040,8 @@
             }
 
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName())
+            document.querySelector('#stage-number').innerHTML = 'MAZE ' + window.appConfig.stages[window.appConfig.currentStage].number
+            document.querySelector('#stage-name-title').innerHTML = window.appConfig.stages[window.appConfig.currentStage].name
 
             document.querySelector("#curtain").classList.add("opacity-0");
             const restartBallPosition = window.appConfig.stages[window.appConfig.currentStage].data.startingPosition

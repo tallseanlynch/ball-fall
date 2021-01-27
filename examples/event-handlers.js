@@ -108,7 +108,9 @@ setTimeout(() => {
       window.addEventListener('blur', function(e) {
         e.preventDefault();
         Howler.stop()
-        window.appConfig.gameModeFunctions.pause()
+        if(window.appConfig.start === true && window.appConfig.userHasEnded === false) {
+          window.appConfig.gameModeFunctions.pause()
+        }
       })
 
       window.addEventListener('beforeunload', function(e) {
@@ -116,7 +118,9 @@ setTimeout(() => {
           //want to leave. The text of this dialog is controlled by the browser.
           e.preventDefault(); //per the standard
           Howler.stop()
-          window.appConfig.gameModeFunctions.pause()
+          if(window.appConfig.start === true && window.appConfig.userHasEnded === false) {
+            window.appConfig.gameModeFunctions.pause()
+          }
           e.returnValue = ''; //required for Chrome
         //else: user is allowed to leave without a warning dialog
       });
