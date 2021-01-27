@@ -1756,7 +1756,7 @@
               scene.add(bgGroup)
               bgGroup.position.set(0, 0, -10)
               bgGroup.children.forEach(c => {
-                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -2 + Math.random() * -10)
+                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -20 + Math.random() * -30)
                 const bgElementScale = 1 + Math.random() * 10
                 c.scale.set(bgElementScale, bgElementScale, bgElementScale)
                 c.rotation.z = (Math.random() * 2) * Math.PI
@@ -1961,7 +1961,7 @@
               scene.add(bgGroup)
               bgGroup.position.set(0, 0, -10)
               bgGroup.children.forEach(c => {
-                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -2 + Math.random() * -10)
+                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -20 + Math.random() * -30)
                 const bgElementScale = 1 + Math.random() * 10
                 c.scale.set(bgElementScale, bgElementScale, bgElementScale)
                 c.rotation.z = (Math.random() * 2) * Math.PI
@@ -2244,7 +2244,7 @@
               scene.add(bgGroup)
               bgGroup.position.set(0, 0, -10)
               bgGroup.children.forEach(c => {
-                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -2 + Math.random() * -10)
+                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -20 + Math.random() * -30)
                 const bgElementScale = 1 + Math.random() * 10
                 c.scale.set(bgElementScale, bgElementScale, bgElementScale)
                 c.rotation.z = (Math.random() * 2) * Math.PI
@@ -2512,7 +2512,7 @@
               scene.add(bgGroup)
               bgGroup.position.set(0, 0, -10)
               bgGroup.children.forEach(c => {
-                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -2 + Math.random() * -10)
+                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -20 + Math.random() * -30)
                 const bgElementScale = 1 + Math.random() * 10
                 c.scale.set(bgElementScale, bgElementScale, bgElementScale)
                 c.rotation.z = (Math.random() * 2) * Math.PI
@@ -2905,7 +2905,7 @@
               scene.add(bgGroup)
               bgGroup.position.set(0, 0, -10)
               bgGroup.children.forEach(c => {
-                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -2 + Math.random() * -20)
+                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -20 + Math.random() * -30)
                 const bgElementScale = 1 + Math.random() * 10
                 c.scale.set(bgElementScale, bgElementScale, bgElementScale)
                 c.rotation.z = (Math.random() * 2) * Math.PI
@@ -3372,7 +3372,7 @@
               scene.add(bgGroup)
               bgGroup.position.set(0, 0, -10)
               bgGroup.children.forEach(c => {
-                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -2 + Math.random() * -20)
+                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -20 + Math.random() * -30)
                 const bgElementScale = 1 + Math.random() * 10
                 c.scale.set(bgElementScale, bgElementScale, bgElementScale)
                 c.rotation.z = (Math.random() * 2) * Math.PI
@@ -4003,7 +4003,7 @@
           },
           activeCallback: (percentComplete) => {
             const percentComputed = (percentComplete * 16) > 8 ? 8 : (percentComplete * 16)
-            document.querySelector('#stage-name-title').style.fontSize = percentComputed * .75 + "rem"
+            document.querySelector('#stage-name-title').style.fontSize = percentComputed * .33 + "rem"
             document.querySelector('#stage-number').style.fontSize = percentComputed / 2 + "rem"
             document.querySelector('#gradient-curtain').style.background = window.appConfig.stages.components.background(
               lfoPositive(2750), window.appConfig.stages[window.appConfig.currentStage].backgroundColors
