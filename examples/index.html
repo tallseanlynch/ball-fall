@@ -3675,7 +3675,7 @@
 
       requestAnimationFrame(render);
       scene.simulate();
-      window.appConfig.easyTimerLength = 5
+      window.appConfig.easyTimerLength = 30
       const timer = new easytimer.Timer({ countdown: true, startValues: { seconds: window.appConfig.easyTimerLength }, precision: "secondTenths" });
       window.appConfig.timer = timer
       timer.addEventListener("secondTenthsUpdated", function (e) {
@@ -3827,11 +3827,11 @@
           const thetaMod = Math.random()
           const phiMod = Math.random()
           const sprite0Mesh = new THREE.Mesh(spriteGeometry, spriteMaterial)
-          const spriteLight = new THREE.PointLight(getRandomColor(), 1)
-          spriteLight.power = 25;
-          spriteLight.decay = 1;
-          spriteLight.distance = 25;
-          sprite0Mesh.add(spriteLight)
+          // const spriteLight = new THREE.PointLight(getRandomColor(), 1)
+          // spriteLight.power = 25;
+          // spriteLight.decay = 1;
+          // spriteLight.distance = 25;
+          // sprite0Mesh.add(spriteLight)
           scene.add(sprite0Mesh)
           let sprite0 = {
             mesh: sprite0Mesh,
@@ -4518,20 +4518,23 @@
       pointLight1.position.set(
         sphere.position.x * lfo(1000),
         sphere.position.y * lfo(750),
-        sphere.position.z * lfo(1500)
+        // sphere.position.z * lfo(1500)
+        10
       );
 
       pointLight2.position.set(
         sphere.position.x * lfo(777),
         sphere.position.y * lfo(1212),
-        sphere.position.z * lfo(993)
+        // sphere.position.z * lfo(993)
+        10
       );
 
       pointLight3.position.set(
         sphere.position.x * lfo(750),
         sphere.position.y * lfo(500),
-        sphere.position.z * lfo(1412)
-      );
+        // sphere.position.z * lfo(1412)
+        10
+        );
 
       if (currentTime % 25 < 1) {
         if (scene.children.find((obj) => obj.gameName === "SPHERECOIN")) {
