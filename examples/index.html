@@ -103,12 +103,39 @@
       }
     };
 
+    const localStorageData = {
+      stages: {
+        STAGE0: {
+          highscores: []
+        },
+        STAGE1: {
+          highscores: []
+        },
+        STAGE2: {
+          highscores: []
+        },
+        STAGE3: {
+          highscores: []
+        },
+        STAGE4: {
+          highscores: []
+        },
+        STAGE5: {
+          highscores: []
+        },
+      }
+    }
+
     const handleHighScore = () => {
       const newScore = {
         date: new Date().getTime(),
         dateFormattedString: (new Date().getMonth()+1) + '/' + new Date().getDate() + '/' + new Date().getFullYear().toString().substr(-2),
         lengthPlayed: window.appConfig.stageTotalTimePlayed,
         totalScore: window.appConfig.score.coins
+      }
+      if(window.appConfig.highscores === undefined) {
+        console.log('HIGH SCORES WAS UNDEFINED')
+        window.appConfig.highscores = {...localStorageData.stages}
       }
       if(window.appConfig.highscores[window.appConfig.currentStage].highscores.length === 0) {
         window.appConfig.highscores[window.appConfig.currentStage].highscores.push(newScore)
@@ -133,29 +160,6 @@
       localStorage.setItem('appConfig', JSON.stringify(window.appConfig.highscores))
     }
     window.appConfig.handleHighScore = handleHighScore
-
-    const localStorageData = {
-      stages: {
-        STAGE0: {
-          highscores: []
-        },
-        STAGE1: {
-          highscores: []
-        },
-        STAGE2: {
-          highscores: []
-        },
-        STAGE3: {
-          highscores: []
-        },
-        STAGE4: {
-          highscores: []
-        },
-        STAGE5: {
-          highscores: []
-        },
-      }
-    }
 
     const localStorageInit = () => {
       if(localStorage.appConfig === undefined) {
@@ -3669,7 +3673,7 @@
 
       requestAnimationFrame(render);
       scene.simulate();
-      window.appConfig.easyTimerLength = 30
+      window.appConfig.easyTimerLength = 5
       const timer = new easytimer.Timer({ countdown: true, startValues: { seconds: window.appConfig.easyTimerLength }, precision: "secondTenths" });
       window.appConfig.timer = timer
       timer.addEventListener("secondTenthsUpdated", function (e) {
