@@ -19,7 +19,6 @@ setTimeout(() => {
       if(window.appConfig.events.primaryInput === undefined) {
         window.appConfig.events.primaryInput = 'mouse'
       }
-      console.log('MOUSEDOWN',e)
       if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'mouse') && !window.appConfig.userHasEnded) {
         window.appConfig.touchEnd = false;
         window.appConfig.touchStart = true;
@@ -61,7 +60,6 @@ setTimeout(() => {
       document.body.addEventListener(
         "mousemove",
         (e) => {
-          console.log('MOUSEMOVE', e)
           if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'mouse') && !window.appConfig.userHasEnded && window.appConfig.events.touchmove.active === false) {
             window.appConfig.events.touchmove.active = true
             window.appConfig.prevX = window.appConfig.currentX;
@@ -84,7 +82,6 @@ setTimeout(() => {
 
       document.addEventListener("mouseup", (e) => {
         if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'mouse') && !window.appConfig.userHasEnded) {
-          console.log('MOUSEUP', e)
           window.appConfig.touchEnd = true;
           window.appConfig.touchStart = false;
           window.appConfig.currentX = 0;

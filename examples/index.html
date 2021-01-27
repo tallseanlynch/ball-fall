@@ -3949,14 +3949,12 @@
           name: 'COUNTDOWN2',
           id: Math.round(Math.random() * 10000),
           startedCallback: () => {
-            console.error(window.appConfig.sfxTurnedOn)
             if (window.appConfig.sfxTurnedOn) {
               window.appConfig.howlSounds.count2.play()
             }
           },
           completedCallback: (percentComplete) => {
             showStageCountDown2()
-            console.error(window.appConfig.sfxTurnedOn)
             if (window.appConfig.sfxTurnedOn) {
               window.appConfig.howlSounds.count3.play()
             }
@@ -3974,7 +3972,6 @@
           name: 'COUNTDOWN1',
           id: Math.round(Math.random() * 10000),
           completedCallback: (percentComplete) => {
-            console.error(window.appConfig.sfxTurnedOn)
             if (window.appConfig.sfxTurnedOn) {
               window.appConfig.howlSounds.count1.play()
             }
@@ -3995,7 +3992,6 @@
           id: Math.round(Math.random() * 10000),
           completedCallback: (percentComplete) => {
             showStageCountDownStart()
-            console.error(window.appConfig.sfxTurnedOn)
             if (window.appConfig.sfxTurnedOn) {
               window.appConfig.howlSounds.start.play()
             }
