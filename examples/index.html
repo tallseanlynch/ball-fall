@@ -129,29 +129,29 @@
     const handleHighScore = () => {
       const newScore = {
         date: new Date().getTime(),
-        dateFormattedString: (new Date().getMonth()+1) + '/' + new Date().getDate() + '/' + new Date().getFullYear().toString().substr(-2),
+        dateFormattedString: (new Date().getMonth() + 1) + '/' + new Date().getDate() + '/' + new Date().getFullYear().toString().substr(-2),
         lengthPlayed: window.appConfig.stageTotalTimePlayed,
         totalScore: window.appConfig.score.coins
       }
       if(window.appConfig.highscores === undefined) {
         window.appConfig.highscores = {...localStorageData.stages}
       }
-      if(window.appConfig.highscores[window.appConfig.currentStage].highscores.length === 0) {
+      if (window.appConfig.highscores[window.appConfig.currentStage].highscores.length === 0) {
         window.appConfig.highscores[window.appConfig.currentStage].highscores.push(newScore)
       } else {
         let newHighScores = [...window.appConfig.highscores[window.appConfig.currentStage].highscores]
         let stopCheck = false
         window.appConfig.highscores[window.appConfig.currentStage].highscores.forEach((s, si) => {
-          if(s.totalScore < newScore.totalScore && stopCheck === false) {
+          if (s.totalScore < newScore.totalScore && stopCheck === false) {
             stopCheck = true
             newHighScores.splice(si, 0, newScore)
-            if(newHighScores.length === 4) {
+            if (newHighScores.length === 4) {
               newHighScores.pop()
             }
             window.appConfig.highscores[window.appConfig.currentStage].highscores = newHighScores
           }
         })
-        if(stopCheck === false && window.appConfig.highscores[window.appConfig.currentStage].highscores.length < 3) {
+        if (stopCheck === false && window.appConfig.highscores[window.appConfig.currentStage].highscores.length < 3) {
           newHighScores.push(newScore)
           window.appConfig.highscores[window.appConfig.currentStage].highscores = newHighScores
         }
@@ -161,9 +161,9 @@
     window.appConfig.handleHighScore = handleHighScore
 
     const localStorageInit = () => {
-      if(localStorage.appConfig === undefined) {
-        localStorage.setItem('appConfig', JSON.stringify({...localStorageData.stages}))
-        window.appConfig.highscores = {...localStorageData.stages}
+      if (localStorage.appConfig === undefined) {
+        localStorage.setItem('appConfig', JSON.stringify({ ...localStorageData.stages }))
+        window.appConfig.highscores = { ...localStorageData.stages }
       } else {
         window.appConfig.highscores = JSON.parse(localStorage.appConfig)
       }
@@ -4124,6 +4124,9 @@
           },
           completedCallback: (percentComplete) => {
             window.appConfig.stages[window.appConfig.currentStage].teardown()
+            window.appConfig.pause = false
+            window.appConfig.start = false
+            window.appConfig.userHasEnded = false
             if (action && action.action === 'levelSelect') {
               window.appConfig.currentStageIndex = action.level
               window.appConfig.currentStage = window.appConfig.stagesArray[window.appConfig.currentStageIndex]
@@ -4527,7 +4530,7 @@
         sphere.position.y * lfo(500),
         // sphere.position.z * lfo(1412)
         10
-        );
+      );
 
       if (currentTime % 25 < 1) {
         if (scene.children.find((obj) => obj.gameName === "SPHERECOIN")) {
@@ -4902,6 +4905,10 @@
       showHTMLElements(["pause-button", "game-scoreboard"]);
     };
     const goBack = () => {
+      console.log("pause", window.appConfig.pause)
+      console.log("userHasEnded", window.appConfig.userHasEnded)
+      console.log("start", window.appConfig.start)
+      // debugger
       if (window.appConfig.pause) {
         showPauseMenu();
       } else if (window.appConfig.userHasEnded) {
