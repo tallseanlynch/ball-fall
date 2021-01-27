@@ -100,7 +100,7 @@
       loadedScripts: [],
       events: {
         primaryInput: undefined,
-        touchmove: { throttle: 50, active: false } 
+        touchmove: { throttle: 50, active: false }
       }
     };
 
@@ -276,18 +276,22 @@
       padding-bottom: 30px;
     }
 
-    #stage-number, #stage-countdown-start {
+    #stage-number,
+    #stage-countdown-start {
       animation-duration: 5s;
       animation-name: loading-main-screen;
       animation-direction: alternate;
       animation-iteration-count: infinite;
     }
 
-    #stage-number, #stage-countdown-start, #stage-countdown-1, #stage-countdown-2, #stage-countdown-3 {
+    #stage-number,
+    #stage-countdown-start,
+    #stage-countdown-1,
+    #stage-countdown-2,
+    #stage-countdown-3 {
       z-index: 200;
     }
-
-</style>
+  </style>
   <link rel="stylesheet" href="./ballsinki.css">
 </head>
 
@@ -373,11 +377,15 @@
   <div id="level-select" class="hide">
     <div id="level-select-title">Level Select</div>
     <div class="level-select-menu-container">
-      <button class="level-select-button stage-0" onClick="reset({action:'levelSelect', level: 0})">NATURAL WONDER</button>
+      <button class="level-select-button stage-0" onClick="reset({action:'levelSelect', level: 0})">NATURAL
+        WONDER</button>
       <button class="level-select-button stage-1" onClick="reset({action:'levelSelect', level: 1})">PROXIMA</button>
-      <button class="level-select-button stage-2" onClick="reset({action:'levelSelect', level: 2})">BLANKET FORT</button>
-      <button class="level-select-button stage-3" onClick="reset({action:'levelSelect', level: 3})">HIDDEN HOLLOW</button>
-      <button class="level-select-button stage-4" onClick="reset({action:'levelSelect', level: 4})">CLOUD CASTLE</button>
+      <button class="level-select-button stage-2" onClick="reset({action:'levelSelect', level: 2})">BLANKET
+        FORT</button>
+      <button class="level-select-button stage-3" onClick="reset({action:'levelSelect', level: 3})">HIDDEN
+        HOLLOW</button>
+      <button class="level-select-button stage-4" onClick="reset({action:'levelSelect', level: 4})">CLOUD
+        CASTLE</button>
       <button class="level-select-button stage-5" onClick="reset({action:'levelSelect', level: 5})">STARLING</button>
     </div>
     <button class="start-menu-button" onClick="goBack()">Back</button>
@@ -4471,17 +4479,17 @@
       camera.position.y = sphere.position.y;
 
       if (currentTime % 10 < 1) {
-        if(window.appConfig.timers.data.initialBallZoom.percentComplete > .999) {
+        if (window.appConfig.timers.data.initialBallZoom.percentComplete > .999) {
           window.appConfig.timers.data.initialBallZoom.percentComplete = 1
         }
-        if(window.appConfig.timers.data.stageResultsBallZoom.percentComplete > .999) {
+        if (window.appConfig.timers.data.stageResultsBallZoom.percentComplete > .999) {
           window.appConfig.timers.data.stageResultsBallZoom.percentComplete = 1
         }
-        if(window.appConfig.timers.data.stageReset.percentComplete > .999) {
+        if (window.appConfig.timers.data.stageReset.percentComplete > .999) {
           window.appConfig.timers.data.stageReset.percentComplete = 1
         }
       }
-      
+
       camera.position.z =
         10 +
         80 * window.appConfig.timers.data.initialBallZoom.percentComplete -
@@ -4850,6 +4858,7 @@
       root.style.setProperty(`--font-size-6`, (diagonalLength * .07) + "px");
       root.style.setProperty(`--font-size-7`, (diagonalLength * .08) + "px");
       root.style.setProperty(`--full-screen-width`, (window.innerWidth) + "px");
+      root.style.setProperty(`--full-screen-height`, (window.innerHeight) + "px");
       root.style.setProperty(`--quarter-screen-height`, (window.innerHeight * .25) + "px");
     }
 
