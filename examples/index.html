@@ -18,8 +18,6 @@
   </style>
 
   <script>
-    // console.warn = () => {}
-
     const generateBackground = (percentFinished, colors) => {
       return "linear-gradient(180deg, " + colors[0] + " 0%, " + colors[1] + " 0%, " + colors[2] + " " +
         Math.round((1.25 - percentFinished / 2) * 100) * .66 +
@@ -43,6 +41,7 @@
     };
 
     window.appConfig = {
+      stageTotalTimePlayed: 0,
       loadingInterval: {
         started: false,
         time: 0,
@@ -101,8 +100,75 @@
       events: {
         primaryInput: undefined,
         touchmove: { throttle: 50, active: false } 
-      }
+      },
+      stageStart: undefined,
+      stageEnd: undefined
     };
+
+    const handleHighScore = () => {
+      const newScore = {
+        date: new Date().getTime(),
+        dateFormattedString: (new Date().getMonth()+1) + '/' + new Date().getDate() + '/' + new Date().getFullYear().toString().substr(-2),
+        lengthPlayed: window.appConfig.stageTotalTimePlayed,
+        totalScore: window.appConfig.score.coins
+      }
+      if(window.appConfig.highscores[window.appConfig.currentStage].highscores.length === 0) {
+        window.appConfig.highscores[window.appConfig.currentStage].highscores.push(newScore)
+      } else {
+        let newHighScores = [...window.appConfig.highscores[window.appConfig.currentStage].highscores]
+        let stopCheck = false
+        window.appConfig.highscores[window.appConfig.currentStage].highscores.forEach((s, si) => {
+          if(s.totalScore < newScore.totalScore && stopCheck === false) {
+            stopCheck = true
+            newHighScores.splice(si, 0, newScore)
+            if(newHighScores.length === 4) {
+              newHighScores.pop()
+            }
+            window.appConfig.highscores[window.appConfig.currentStage].highscores = newHighScores
+          }
+        })
+        if(stopCheck === false && window.appConfig.highscores[window.appConfig.currentStage].highscores.length < 3) {
+          newHighScores.push(newScore)
+          window.appConfig.highscores[window.appConfig.currentStage].highscores = newHighScores
+        }
+      }
+      localStorage.setItem('appConfig', JSON.stringify(window.appConfig.highscores))
+    }
+    window.appConfig.handleHighScore = handleHighScore
+
+    const localStorageData = {
+      stages: {
+        STAGE0: {
+          highscores: []
+        },
+        STAGE1: {
+          highscores: []
+        },
+        STAGE2: {
+          highscores: []
+        },
+        STAGE3: {
+          highscores: []
+        },
+        STAGE4: {
+          highscores: []
+        },
+        STAGE5: {
+          highscores: []
+        },
+      }
+    }
+
+    const localStorageInit = () => {
+      if(localStorage.appConfig === undefined) {
+        localStorage.setItem('appConfig', JSON.stringify(localStorageData))
+      } else {
+        window.appConfig.highscores = JSON.parse(localStorage.appConfig)
+      }
+      console.log(window.appConfig.highscores)
+    }
+
+    localStorageInit()
 
     const startLoadingInterval = () => {
 
@@ -3580,7 +3646,7 @@
 
       requestAnimationFrame(render);
       scene.simulate();
-      window.appConfig.easyTimerLength = 30
+      window.appConfig.easyTimerLength = 5
       const timer = new easytimer.Timer({ countdown: true, startValues: { seconds: window.appConfig.easyTimerLength }, precision: "secondTenths" });
       window.appConfig.timer = timer
       timer.addEventListener("secondTenthsUpdated", function (e) {
@@ -3996,6 +4062,7 @@
               window.appConfig.howlSounds.start.play()
             }
             window.appConfig.gameModeFunctions.start()
+            window.appConfig.stageTotalTimePlayed = window.appConfig.easyTimerLength
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownStartFlash())
           },
         }
@@ -4024,8 +4091,6 @@
         return {
           started: 0,
           ended: 0,
-          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
-            .position.z,
           percentComplete: 0,
           time: 2000,
           timeLeft: 0,
@@ -4067,8 +4132,6 @@
         return {
           started: 0,
           ended: 0,
-          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
-            .position.z,
           percentComplete: 0,
           time: 2000,
           timeLeft: 0,
@@ -4077,6 +4140,9 @@
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
             window.appConfig.timers.data.stageResultsBallZoom.percentComplete = percentComplete
+          },
+          startedCallback: (percentComplete) => {
+            window.appConfig.handleHighScore()
           }
         }
       },
@@ -4084,8 +4150,6 @@
         return {
           started: 0,
           ended: 0,
-          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
-            .position.z,
           percentComplete: 0,
           time: 2000,
           timeLeft: 0,
@@ -4101,8 +4165,6 @@
         return {
           started: 0,
           ended: 0,
-          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
-            .position.z,
           percentComplete: 0,
           time: 2000,
           timeLeft: 0,
@@ -4118,8 +4180,6 @@
         return {
           started: 0,
           ended: 0,
-          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
-            .position.z,
           percentComplete: 0,
           time: 2000,
           timeLeft: 0,
@@ -4135,8 +4195,6 @@
         return {
           started: 0,
           ended: 0,
-          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
-            .position.z,
           percentComplete: 0,
           time: 2000,
           timeLeft: 0,
@@ -4152,8 +4210,6 @@
         return {
           started: 0,
           ended: 0,
-          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
-            .position.z,
           percentComplete: 0,
           time: 2000,
           timeLeft: 0,
@@ -4169,8 +4225,6 @@
         return {
           started: 0,
           ended: 0,
-          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
-            .position.z,
           percentComplete: 0,
           time: 800,
           timeLeft: 0,
@@ -4191,8 +4245,6 @@
         return {
           started: 0,
           ended: 0,
-          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
-            .position.z,
           percentComplete: 0,
           time: 800,
           timeLeft: 0,
@@ -4213,8 +4265,6 @@
         return {
           started: 0,
           ended: 0,
-          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
-            .position.z,
           percentComplete: 0,
           time: 800,
           timeLeft: 0,
@@ -4235,8 +4285,6 @@
         return {
           started: 0,
           ended: 0,
-          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
-            .position.z,
           percentComplete: 0,
           time: 800,
           timeLeft: 0,
@@ -4257,8 +4305,6 @@
         return {
           started: 0,
           ended: 0,
-          z: scene.children.find((obj) => obj.gameName === "SPHERE0")
-            .position.z,
           percentComplete: 0,
           time: 800,
           timeLeft: 0,
@@ -4568,7 +4614,7 @@
             window.appConfig.score.coins;
           const currentTime = window.appConfig.timer.getTimeValues()
           const newTimer = new easytimer.Timer({ countdown: true, startValues: { seconds: currentTime.seconds + 10, secondTenths: currentTime.secondTenths }, precision: "secondTenths" });
-
+          window.appConfig.stageTotalTimePlayed += 10
           window.appConfig.timer.stop()
           window.appConfig.timer.removeEventListener("secondTenthsUpdated", function (e) {
             document.querySelector(
@@ -4655,10 +4701,7 @@
         });
       const stageScore = calculateStageScore(window.appConfig.timer
         .getTimeValues().seconds, window.appConfig.score.coins)
-      document.querySelector("#report-time").innerText =
-        window.appConfig.results[
-          `stage${window.appConfig.level}`
-        ].finalTime;
+      document.querySelector("#report-time").innerText = window.appConfig.stageTotalTimePlayed + ' sec';
       document.querySelector("#report-coins").innerText =
         window.appConfig.score.coins;
       document.querySelector("#report-score").innerText =
