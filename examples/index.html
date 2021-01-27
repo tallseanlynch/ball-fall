@@ -621,13 +621,12 @@
       const { src, type } = options;
       const sound = new Howl({
         src: [src],
-        autoPlay: type === "backgroundMusic" ? true : false,
+        autoPlay: false,
         loop: type === "backgroundMusic" ? true : false,
         volume: type === "backgroundMusic" ? .3 : .1,
       }).once("load", () => {
         if (type === "backgroundMusic") {
           window.appConfig.howlSounds.backgroundMusic = sound;
-          sound.play();
         }
       });
       return sound;
@@ -1110,7 +1109,9 @@
             self._src = newSrc;
             if (loop === true) {
               self._loop = true;
-              self.play()
+              if (window.appConfig.musicTurnedOn) {
+                self.play()
+              }
             }
             self.load();
           }
@@ -3605,7 +3606,9 @@
 
               const i = Math.floor(collisionInc % playHowlOnCollision.length)
               if (!(lastCollisions[0] === collided_with.uuid && lastCollisions[1] === collided_with.uuid && lastCollisions[2] === collided_with.uuid)) {
-                playHowlOnCollision[i]()
+                if (window.appConfig.sfxTurnedOn) {
+                  playHowlOnCollision[i]()
+                }
                 collisionInc++
                 lastCollisions.push(collided_with.uuid)
               }
@@ -3898,11 +3901,17 @@
           name: 'COUNTDOWN2',
           id: Math.round(Math.random() * 10000),
           startedCallback: () => {
-            window.appConfig.howlSounds.count2.play()
+            console.error(window.appConfig.sfxTurnedOn)
+            if (window.appConfig.sfxTurnedOn) {
+              window.appConfig.howlSounds.count2.play()
+            }
           },
           completedCallback: (percentComplete) => {
             showStageCountDown2()
-            window.appConfig.howlSounds.count3.play()
+            console.error(window.appConfig.sfxTurnedOn)
+            if (window.appConfig.sfxTurnedOn) {
+              window.appConfig.howlSounds.count3.play()
+            }
           }
         }
       },
@@ -3917,7 +3926,10 @@
           name: 'COUNTDOWN1',
           id: Math.round(Math.random() * 10000),
           completedCallback: (percentComplete) => {
-            window.appConfig.howlSounds.count1.play()
+            console.error(window.appConfig.sfxTurnedOn)
+            if (window.appConfig.sfxTurnedOn) {
+              window.appConfig.howlSounds.count1.play()
+            }
             showStageCountDown1()
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownStart())
           }
@@ -3935,7 +3947,10 @@
           id: Math.round(Math.random() * 10000),
           completedCallback: (percentComplete) => {
             showStageCountDownStart()
-            window.appConfig.howlSounds.start.play()
+            console.error(window.appConfig.sfxTurnedOn)
+            if (window.appConfig.sfxTurnedOn) {
+              window.appConfig.howlSounds.start.play()
+            }
             window.appConfig.gameModeFunctions.start()
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownStartFlash())
           },
@@ -4473,18 +4488,20 @@
           window.appConfig.coins.splice(coinIndexToRemove, 1);
           document.querySelector("#score").innerText =
             window.appConfig.score.coins;
-          if (potentiallyGrabbedCoin.coinType === 'single') {
+          if (potentiallyGrabbedCoin.coinType === 'single' && window.appConfig.sfxTurnedOn) {
             window.appConfig.howlSounds.coins.sCoin[Math.floor(Math.random() * 2.99)].play()
           }
-          if (potentiallyGrabbedCoin.coinType === 'double') {
+          if (potentiallyGrabbedCoin.coinType === 'double' && window.appConfig.sfxTurnedOn) {
             window.appConfig.howlSounds.coins.mCoin[Math.floor(Math.random() * 2.99)].play()
           }
-          if (potentiallyGrabbedCoin.coinType === 'triple') {
+          if (potentiallyGrabbedCoin.coinType === 'triple' && window.appConfig.sfxTurnedOn) {
             window.appConfig.howlSounds.coins.lCoin[Math.floor(Math.random() * 2.99)].play()
           }
 
         } else if (prizeValue > 0) {
-          window.appConfig.howlSounds.prize.play()
+          if (window.appConfig.sfxTurnedOn) {
+            window.appConfig.howlSounds.prize.play()
+          }
           window.appConfig.score.coins += potentiallyGrabbedCoin.prizeValue;
           potentiallyGrabbedCoin.visible = false
           window.appConfig.coins.splice(coinIndexToRemove, 1);
@@ -4600,9 +4617,9 @@
       window.appConfig.userHasEnded = false
       window.appConfig.start = true;
       window.appConfig.pause = false;
-      if (!window.appConfig.howlSounds.backgroundMusic.playing()) (
+      if (!window.appConfig.howlSounds.backgroundMusic.playing() && window.appConfig.musicTurnedOn) {
         window.appConfig.howlSounds.backgroundMusic.play()
-      )
+      }
       setTimeout(() => showHTMLElements(["pause-button", "game-scoreboard"]), 1000)
       window.appConfig.timers.activeTimers.push(timers.initialBallZoom())
       window.appConfig.timer.start();
@@ -4621,9 +4638,11 @@
     };
 
     const pause = () => {
-      window.appConfig.pause
-        ? window.appConfig.howlSounds.backgroundMusic.play()
-        : window.appConfig.howlSounds.backgroundMusic.pause();
+      if (window.appConfig.musicTurnedOn && window.appConfig.pause) {
+        window.appConfig.howlSounds.backgroundMusic.play()
+      } else if (window.appConfig.musicTurnedOn && window.appConfig.howlSounds.backgroundMusic.playing()) {
+        window.appConfig.howlSounds.backgroundMusic.pause()
+      }
       window.appConfig.pause = !window.appConfig.pause;
       if (window.appConfig.pause) {
         window.appConfig.timer.pause();
@@ -4800,6 +4819,7 @@
       } else {
         musicButton.textContent = "OFF"
         // changeMusicVolume(0)
+
       }
     }
     window.onload = initScene;
