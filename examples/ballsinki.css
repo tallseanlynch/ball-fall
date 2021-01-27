@@ -109,7 +109,6 @@ vertical-align: middle;
   margin: 0 auto;
 }
 .report-options-button {
-  /* display: block; */
   font-family: "Coves Light";
   font-size: var(--font-size-1);
   font-weight: 900;
@@ -252,9 +251,6 @@ vertical-align: middle;
 .hide {
   display: none;
   visibility: hidden;
-  /* transition: opacity 100ms;
-  opacity: 0 !important;
-  pointer-events: none; */
 }
 
 #game-scoreboard {
@@ -321,10 +317,6 @@ vertical-align: middle;
   width: var(--full-screen-width);
   height: var(--full-screen-height);
   opacity: .3;
-  /* animation-duration: 7s;
-  animation-name: flux-tint;
-  animation-direction: alternate;
-  animation-iteration-count: infinite; */
 }
 
 @keyframes flux-tint {
@@ -398,7 +390,6 @@ vertical-align: middle;
 
 #stage-name, #stage-countdown-3, #stage-countdown-2, #stage-countdown-1, #stage-countdown-start {
   font-family: "Aadhunik";
-  /* font-size: 1rem; */
   font-size: var(--font-size-2);
   font-weight: 900;
   color: #ffffff;
@@ -437,18 +428,11 @@ vertical-align: middle;
   top: var(--stage-number-offset-top);
   text-align: center;
   display: block;
-  /* margin-bottom: 3%; */
   position: fixed;
-  /* top: 5%; */
   font-size: var(--font-size-3) !important;
   z-index: 5;
   width: var(--full-screen-width);
-  /* background-color: rgba(255, 255, 255, 1); */
-  /* color: black; */
   color: white;
-  /* text-decoration: underline 10px; */
-  /* padding-bottom: 20px; */
-  /* border-bottom: 10px solid white; */
   padding: var(--font-size-4);
   letter-spacing: 30px;
 }

@@ -134,7 +134,6 @@
         totalScore: window.appConfig.score.coins
       }
       if(window.appConfig.highscores === undefined) {
-        console.log('HIGH SCORES WAS UNDEFINED')
         window.appConfig.highscores = {...localStorageData.stages}
       }
       if(window.appConfig.highscores[window.appConfig.currentStage].highscores.length === 0) {
@@ -168,7 +167,6 @@
       } else {
         window.appConfig.highscores = JSON.parse(localStorage.appConfig)
       }
-      console.log(window.appConfig.highscores)
     }
 
     localStorageInit()
@@ -176,7 +174,6 @@
     const startLoadingInterval = () => {
 
       let loadingInterval = setInterval(() => {
-        // document.querySelector('#gradient-curtain').style.background = ''
         document.querySelector('#circle0').style.left = (lfoPositive(3000) * 80 + 10) + '%'
         document.querySelector('#circle0').style.top = (lfoPositive(1111) * 70 + 15) + '%'
         document.querySelector('#circle1').style.left = (lfoPositive(2000) * 80 + 10) + '%'
@@ -197,7 +194,6 @@
           "rgba(0,212,255,1)"
         ]
         )
-        // console.log(lfoPositive(1000))
       }, 1000 / 60)
       window.appConfig.loadingInterval.clearInterval = () => {
         clearInterval(loadingInterval)
@@ -278,8 +274,6 @@
 
     const scriptLoaded = (scriptName) => {
       window.appConfig.loadedScripts.push(scriptName)
-      console.log('Loaded ' + scriptName)
-      console.log('Loaded Scripts = ' + window.appConfig.loadedScripts)
       let loadedNumber = 0
       const expectedLoadedNumber = window.appConfig.scripts.length
       window.appConfig.scripts.forEach(s => {
@@ -555,7 +549,7 @@
     const stageProperties = {
       STAGE0: {
         backgroundColors: [
-          "rgba(2,0,36,0)",
+          "rgb(2,0,36)",
           "rgba(121,9,117,1)",
           "rgba(252,231,183,1)",
           "rgba(0,212,255,1)"
@@ -724,7 +718,7 @@
         name: "STARLING",
         number: 6,
         backgroundColors: [
-          "rgba(2,0,36,0)",
+          "rgba(2,0,36)",
           "rgba(121,9,117,1)",
           "#2e3192",
           "rgba(0,0,0,1)"
@@ -869,15 +863,14 @@
       light.position.set(20, 80, 15);
       light.target.position.copy(scene.position);
       light.castShadow = true;
-      light.shadowCameraLeft = -60;
-      light.shadowCameraTop = -60;
-      light.shadowCameraRight = 60;
-      light.shadowCameraBottom = 60;
-      light.shadowCameraNear = 20;
-      light.shadowCameraFar = 200;
-      light.shadowBias = -0.0001;
-      light.shadowMapWidth = light.shadowMapHeight = 2048;
-      light.shadowDarkness = 0.7;
+      light.shadow.camera.left = -60;
+      light.shadow.camera.top = -60;
+      light.shadow.camera.right = 60;
+      light.shadow.camera.bottom = 60;
+      light.shadow.camera.near = 20;
+      light.shadow.camera.far = 200;
+      light.shadow.bias = -0.0001;
+      light.shadow.mapSize.width = light.shadow.mapSize.height = 2048;
       scene.add(light);
 
       const pointLight0 = new THREE.PointLight(getRandomColor(), 1);
@@ -3620,7 +3613,6 @@
             createCrystalCircle('STAGE5', 1.5, { x: -25, y: -90 }, 2, 2)
             createCrystalCircle('STAGE5', 2.5, { x: -25, y: -90 }, 1, 2)
 
-
             createCrystalCircle('STAGE5', 1.5, { x: 40, y: 60 }, 2, 2)
             createCrystalCircle('STAGE5', 2.5, { x: 40, y: 60 }, 1, 8)
             createCrystalCircle('STAGE5', 3, { x: 40, y: 60 }, 2, 8)
@@ -3935,7 +3927,7 @@
             color: getRandomColor(),
             opacity: 0,
             transparent: true,
-            wifeframe: true,
+            wireframe: true,
           }),
           0
         );
@@ -3948,7 +3940,7 @@
             color: getRandomColor(),
             opacity: 0.0,
             transparent: true,
-            wifeframe: true,
+            wireframe: true,
           }),
           0
         );
