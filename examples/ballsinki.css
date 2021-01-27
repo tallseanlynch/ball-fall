@@ -236,7 +236,7 @@ vertical-align: middle;
   margin-top:  var(--font-size-1);
   margin-bottom:  var(--font-size-1);
 }
-#pause-button {
+#pause-button, #play-button {
   height: var(--font-size-5);
   width: var(--font-size-5);
   position: fixed;
