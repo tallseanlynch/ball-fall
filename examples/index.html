@@ -163,7 +163,8 @@
 
     const localStorageInit = () => {
       if(localStorage.appConfig === undefined) {
-        localStorage.setItem('appConfig', JSON.stringify(localStorageData))
+        localStorage.setItem('appConfig', JSON.stringify({...localStorageData.stages}))
+        window.appConfig.highscores = {...localStorageData.stages}
       } else {
         window.appConfig.highscores = JSON.parse(localStorage.appConfig)
       }
@@ -3675,7 +3676,7 @@
 
       requestAnimationFrame(render);
       scene.simulate();
-      window.appConfig.easyTimerLength = 30
+      window.appConfig.easyTimerLength = 5
       const timer = new easytimer.Timer({ countdown: true, startValues: { seconds: window.appConfig.easyTimerLength }, precision: "secondTenths" });
       window.appConfig.timer = timer
       timer.addEventListener("secondTenthsUpdated", function (e) {
