@@ -690,6 +690,9 @@
       }).once("load", () => {
         if (type === "backgroundMusic") {
           window.appConfig.howlSounds.backgroundMusic = sound;
+          if (window.appConfig.start === false && window.appConfig.musicTurnedOn === true) {
+            sound.play()
+          }
         }
       });
       return sound;
