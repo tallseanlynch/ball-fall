@@ -94,7 +94,7 @@ vertical-align: middle;
   margin-right: var(--font-size-3);
 }
 .sound-menu-right-td {
-  width: var(--font-size-4);
+  width: var(--font-size-5);
 }
 #report {
   position: fixed;
@@ -206,6 +206,8 @@ vertical-align: middle;
   opacity: 1;
   background-color: rgba(0, 0, 0, 0);
   color: #ffffff;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .menu-title-text {
