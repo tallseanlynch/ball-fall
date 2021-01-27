@@ -160,6 +160,7 @@
       "credits",
       "start-button-container",
       "pause-button",
+      "play-button",
       "tinted-overlay",
       "stage-name",
       "stage-number",
@@ -446,7 +447,8 @@
   <div id="stage-countdown-1" class="hide">1</div>
   <div id="stage-countdown-start" class="hide">START!</div>
 
-  <img src="images/pause.png" id="pause-button" disabled class="hide" onClick="pause()" />
+  <img src="images/PAUSE.png" id="pause-button" disabled class="hide" onClick="pause()" />
+  <img src="images/PLAY.png" id="play-button" disabled class="hide" onClick="pause()" />
   <div id="curtain"></div>
 </body>
 
@@ -4825,7 +4827,7 @@
       centerElement({ id: "start-menu", offsetTop: "31%", offsetLeft: 0 });
     };
     const showPauseMenu = () => {
-      showHTMLElements(["pause-button", "pause-menu", "game-scoreboard", "tinted-overlay"]);
+      showHTMLElements(["play-button", "pause-menu", "game-scoreboard", "tinted-overlay"]);
       centerElement({ id: "pause-menu", offsetTop: 0, offsetLeft: 0 });
     };
 
