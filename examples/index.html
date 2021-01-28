@@ -3,6 +3,7 @@
 <html>
 
 <head>
+  <meta name = "viewport" content = "initial-scale = 1, user-scalable = no">
   <title>Ballsinki</title>
   <link rel="icon" type="image/png" href="icon.png">
   <style>
@@ -36,7 +37,6 @@
         Math.round((1.25 - percentFinished / 2) * 100) +
         "%)";
     }
-
 
     const lfoPositive = (t = 1000) => {
       let lfoValue = (0.5 + 0.5 * Math.cos(Date.now() / t)) * 1;
@@ -2577,7 +2577,8 @@
             }
 
 
-            window.appConfig.createSphere({ bounce: 1, name: 'STAGE3SPHERECOIN', position: { x: Math.random() * 75, y: Math.random() * 75, z: 0 }, handleCollision: () => console.log('Collided with STAGE3SPHERECOIN') })
+            window.appConfig.createSphere({ bounce: 1, name: 'STAGE3SPHERECOIN', position: { x: Math.random() * 75, y: Math.random() * 75, z: 0 }, handleCollision: (c) => window.appConfig.superBallHandleCollision(c, 'STAGE3SPHERECOIN') })
+            window.appConfig.createSphere({ bounce: 1, name: 'STAGE3SPHERECOIN1', position: { x: Math.random() * 75, y: Math.random() * 75, z: 0 }, handleCollision: (c) => window.appConfig.superBallHandleCollision(c, 'STAGE3SPHERECOIN1') })
 
 
             createBackgroundAnimation()
@@ -3807,6 +3808,25 @@
         shininess: 200
       })
 
+      const sphereTeleportationGroup = new THREE.Group()
+      const sphereTeleportationGeometry = new THREE.TetrahedronGeometry(16)
+      window.appConfig.sphereTeleportationMesh = () => {
+        return new THREE.Mesh(
+          sphereTeleportationGeometry,
+          superBallMaterial
+        )
+      }
+
+      window.appConfig.superBallHandleCollision = function(other_object, the_object) {
+        // console.log(this)
+        console.log(other_object, the_object)
+        if(other_object.name === 'SPHERE0') {
+          // add timer to activeTimers that handles the animtion of the sphere and the teleportation
+          window.appConfig.timers.activeTimers.push(window.appConfig.timers.superBallTeleport(the_object))
+          // debugger
+        }
+      }
+
       window.appConfig.createSphere = function (config) {
         var sphere, material;
 
@@ -4022,6 +4042,63 @@
     let currentTime = new Date().getTime();
 
     const timers = {
+      superBallTeleport: (superball, name = String(Math.round(Math.random() * 1000))) => {
+        return {
+          started: 0,
+          ended: 0,
+          percentComplete: 0,
+          time: 2000,
+          timeLeft: 0,
+          currentTime: 0,
+          name: 'SUPERBALL_' + name,
+          id: Math.round(Math.random() * 10000),
+          startedCallback: (percentComplete) => {
+            // debugger
+            // teleport the ball
+            let teleportationMesh = window.appConfig.sphereTeleportationMesh()
+            teleportationMesh.name = window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball
+            const theSuperBall = scene.children.find((obj) => obj.name === superball)
+            teleportationMesh.position.x = theSuperBall.position.x
+            teleportationMesh.position.y = theSuperBall.position.y
+            teleportationMesh.position.z = theSuperBall.position.z
+            teleportationMesh.scale.x = .5
+            teleportationMesh.scale.y = .5
+            teleportationMesh.scale.z = .5
+            scene.add(teleportationMesh)
+            theSuperBall.position.x = Math.random() * 75
+            theSuperBall.position.y = Math.random() * 75
+            theSuperBall.position.z = 0
+            theSuperBall.__dirtyPosition = true
+            console.log('STARTED SUPERBALL', superball)
+          },
+          activeCallback: (percentComplete) => {
+            if(scene.children.find((obj) => obj.name === window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball)) {
+              const theMesh = scene.children.find((obj) => obj.name === window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball)
+              theMesh.rotation.z += 1
+              theMesh.scale.x += .001
+              theMesh.scale.y += .001
+              theMesh.scale.z += .001
+              if(percentComplete > .8) {
+                // theMesh.material.opacity = 1 - ((.2 * percentComplete) * 5)  
+                theMesh.scale.x = 1 - ((.2 * percentComplete) * 5)  
+                theMesh.scale.y = 1 - ((.2 * percentComplete) * 5)  
+                theMesh.scale.z = 1 - ((.2 * percentComplete) * 5)  
+              }
+
+              // make the teleportation animation at the teleportStartCoors and teleportEndCoors
+              // percentComplete handles the rotation, size and opacity of the Meshes
+              console.log('ACTIVE SUPERBALL', superball)
+              // window.appConfig.timers.data.initialBallZoom.percentComplete = percentComplete
+
+            }
+          },
+          completedCallback: () => {
+            // debugger
+            scene.remove(scene.children.find((obj) => obj.name === window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball))
+            console.log(scene.children.find((obj) => obj.name === superball).position)
+          }
+        }
+      },
       initialBallZoom: () => {
         return {
           started: 0,
@@ -4049,6 +4126,7 @@
           id: Math.round(Math.random() * 10000),
           startedCallback: (percentComplete) => {
             showStageCountDownName()
+            window.appConfig.positionBall(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition)
             document.querySelector('#stage-name-title').style.opacity = 1
             document.querySelector('#stage-number').style.opacity = 1
           },
@@ -4583,19 +4661,25 @@
         10
       );
 
-      if (window.appConfig.pause === false && window.appConfig.userHasEnded === false && currentTime % 25 < 1) {
-        if (scene.children.find((obj) => obj.gameName === "STAGE3SPHERECOIN")) {
-          scene.children.find((obj) => obj.gameName === "STAGE3SPHERECOIN").setLinearVelocity(new THREE.Vector3(Math.random() * 50 - 25, Math.random() * 50 - 25, 0))
+      if (window.appConfig.pause === false && window.appConfig.userHasEnded === false && currentTime % 15 < 1) {
+        let sphereCoins = []
+        scene.children.forEach(c => {
+          if(c.name && c.name.indexOf('SPHERECOIN') > -1) {
+            sphereCoins.push(c)
+          }
+        })
+        if(sphereCoins.length > 0) {
+          window.appConfig.superballMaterialIncrement++
+          sphereCoins.forEach(sc => {
+            if(sc.setLinearVelocity) {
+              sc.setLinearVelocity(new THREE.Vector3(Math.random() * 50 - 25, Math.random() * 50 - 25, 0))
+              sc.material.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement%15][0])
+            }
+          })
         }
       }
 
-      if (currentTime % 10 < 3) {
-        window.appConfig.superballMaterialIncrement++
-        if(window.appConfig.pause === false && window.appConfig.userHasEnded === false) {
-          if (scene.children.find((obj) => obj.gameName === "STAGE3SPHERECOIN")) {
-            scene.children.find((obj) => obj.gameName === "STAGE3SPHERECOIN").material.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement%15][0])
-          }
-        }
+      if (currentTime % 5 < 1) {
         const percentFinished = Math.abs(sphere.position.y) / 375;
         window.appConfig.percentFinished = percentFinished;
         document.body.style.background =
@@ -4802,7 +4886,6 @@
         stageScore.toLocaleString('en-US').replace(',', comma());
       //show high scores now
       const theHighScores = window.appConfig.highscores[window.appConfig.currentStage].highscores
-      console.log(theHighScores)
       const hs1Row = document.querySelector("#high-score-1-row")
       const hs2Row = document.querySelector("#high-score-2-row")
       const hs3Row = document.querySelector("#high-score-3-row")
@@ -4997,10 +5080,6 @@
       showHTMLElements(["pause-button", "game-scoreboard"]);
     };
     const goBack = () => {
-      console.log("pause", window.appConfig.pause)
-      console.log("userHasEnded", window.appConfig.userHasEnded)
-      console.log("start", window.appConfig.start)
-      // debugger
       if (window.appConfig.pause) {
         showPauseMenu();
       } else if (window.appConfig.userHasEnded) {
@@ -5037,10 +5116,8 @@
         document.querySelector('#sfx-toggle-button')
       if (window.appConfig.sfxTurnedOn) {
         sfxButton.textContent = "ON"
-        // changeSFXVolume(100)
       } else {
         sfxButton.textContent = "OFF"
-        // changeSFXVolume(0)
       }
     }
     const toggleMusicButton = () => {
@@ -5049,15 +5126,22 @@
         document.querySelector('#music-toggle-button')
       if (window.appConfig.musicTurnedOn) {
         musicButton.textContent = "ON"
-        // changeMusicVolume(100)
       } else {
         musicButton.textContent = "OFF"
-        // changeMusicVolume(0)
-
       }
     }
     window.onload = initScene;
   </script>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PGJYVH2VWT"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-PGJYVH2VWT');
+  </script>
+
 </footer>
 
 </html>
