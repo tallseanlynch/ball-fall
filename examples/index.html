@@ -15,9 +15,19 @@
     html {
       touch-action: none;
     }
+
+    .comma {
+      display: inline-block;
+      bottom: -3px;
+      position: relative;
+    }
   </style>
 
   <script>
+
+    const comma = () => {
+      return `<span class="comma">,</span>`
+    }
 
     const generateBackground = (percentFinished, colors) => {
       return "linear-gradient(180deg, " + colors[0] + " 0%, " + colors[1] + " 0%, " + colors[2] + " " +
@@ -4673,8 +4683,8 @@
           window.appConfig.score.coins += potentiallyGrabbedCoin.coinValue;
           potentiallyGrabbedCoin.visible = false
           window.appConfig.coins.splice(coinIndexToRemove, 1);
-          document.querySelector("#score").innerText =
-            window.appConfig.score.coins.toLocaleString('en-US');
+          document.querySelector("#score").innerHTML =
+            window.appConfig.score.coins.toLocaleString('en-US').replace(',', comma())
           if (potentiallyGrabbedCoin.coinType === 'single' && window.appConfig.sfxTurnedOn) {
             window.appConfig.howlSounds.coins.sCoin[Math.floor(Math.random() * 2.99)].play()
           }
@@ -4692,8 +4702,8 @@
           window.appConfig.score.coins += potentiallyGrabbedCoin.prizeValue;
           potentiallyGrabbedCoin.visible = false
           window.appConfig.coins.splice(coinIndexToRemove, 1);
-          document.querySelector("#score").innerText =
-            window.appConfig.score.coins.toLocaleString('en-US');
+          document.querySelector("#score").innerHTML =
+            window.appConfig.score.coins.toLocaleString('en-US').replace(',', comma())
           const currentTime = window.appConfig.timer.getTimeValues()
           const newTimer = new easytimer.Timer({ countdown: true, startValues: { seconds: currentTime.seconds + 10, secondTenths: currentTime.secondTenths }, precision: "secondTenths" });
           window.appConfig.stageTotalTimePlayed += 10
@@ -4788,8 +4798,8 @@
       document.querySelector("#report-time").innerText = window.appConfig.stageTotalTimePlayed + ' sec';
       // document.querySelector("#report-coins").innerText =
       //   window.appConfig.score.coins;
-      document.querySelector("#report-score").innerText =
-        stageScore.toLocaleString('en-US');
+      document.querySelector("#report-score").innerHTML =
+        stageScore.toLocaleString('en-US').replace(',', comma());
       //show high scores now
       const theHighScores = window.appConfig.highscores[window.appConfig.currentStage].highscores
       console.log(theHighScores)
@@ -4803,21 +4813,21 @@
       const hs2Sec = document.querySelector("#high-score-2-sec")
       const hs3Sec = document.querySelector("#high-score-3-sec")
       if (theHighScores[0] && theHighScores[0].lengthPlayed && theHighScores[0].totalScore) {
-        hs1Score.innerText = theHighScores[0].totalScore.toLocaleString('en-US')
+        hs1Score.innerHTML = theHighScores[0].totalScore.toLocaleString('en-US').replace(',', comma())
         hs1Sec.innerText = theHighScores[0].lengthPlayed + " sec"
         hs1Row.classList.remove("hide")
       } else {
         hs1Row.classList.add("hide")
       }
       if (theHighScores[1] && theHighScores[1].lengthPlayed && theHighScores[1].totalScore) {
-        hs2Score.innerText = theHighScores[1].totalScore.toLocaleString('en-US')
+        hs2Score.innerHTML = theHighScores[1].totalScore.toLocaleString('en-US').replace(',', comma())
         hs2Sec.innerText = theHighScores[1].lengthPlayed + " sec"
         hs2Row.classList.remove("hide")
       } else {
         hs2Row.classList.add("hide")
       }
       if (theHighScores[2] && theHighScores[2].lengthPlayed && theHighScores[2].totalScore) {
-        hs3Score.innerText = theHighScores[2].totalScore.toLocaleString('en-US')
+        hs3Score.innerHTML = theHighScores[2].totalScore.toLocaleString('en-US').replace(',', comma())
         hs3Sec.innerText = theHighScores[2].lengthPlayed + " sec"
         hs3Row.classList.remove("hide")
       } else {
