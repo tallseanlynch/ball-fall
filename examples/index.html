@@ -133,8 +133,8 @@
         lengthPlayed: window.appConfig.stageTotalTimePlayed,
         totalScore: window.appConfig.score.coins
       }
-      if(window.appConfig.highscores === undefined) {
-        window.appConfig.highscores = {...localStorageData.stages}
+      if (window.appConfig.highscores === undefined) {
+        window.appConfig.highscores = { ...localStorageData.stages }
       }
       if (window.appConfig.highscores[window.appConfig.currentStage].highscores.length === 0) {
         window.appConfig.highscores[window.appConfig.currentStage].highscores.push(newScore)
@@ -403,8 +403,8 @@
       <div class="margin-bottom-2">
         <div class="credits-role">UX Design</div>
         <div class="credits-name">Haley Rheinhart, Sean Lynch</div>
-      </div class="margin-bottom-2">
-      <div>
+      </div>
+      <div class="margin-bottom-2">
         <div class="credits-role">Music & Sound Design</div>
         <div class="credits-name">Haley Rheinhart</div>
       </div>
@@ -418,12 +418,25 @@
         <td id="report-time"></td>
       </tr>
       <tr>
-        <td>Crystals:</td>
-        <td id="report-coins"></td>
-      </tr>
-      <tr>
         <td>Score:</td>
         <td id="report-score"></td>
+      </tr>
+    </table>
+    <table>
+      <tr id="high-score-1-row">
+        <td>1.</td>
+        <td id="high-score-1-score"></td>
+        <td id="high-score-1-sec"></td>
+      </tr>
+      <tr id="high-score-2-row">
+        <td>2.</td>
+        <td id="high-score-2-score"></td>
+        <td id="high-score-2-sec"></td>
+      </tr>
+      <tr id="high-score-3-row">
+        <td>3.</td>
+        <td id="high-score-3-score"></td>
+        <td id="high-score-3-sec"></td>
       </tr>
     </table>
     <div id="report-options">
@@ -3668,7 +3681,7 @@
 
       requestAnimationFrame(render);
       scene.simulate();
-      window.appConfig.easyTimerLength = 30
+      window.appConfig.easyTimerLength = 5
       const timer = new easytimer.Timer({ countdown: true, startValues: { seconds: window.appConfig.easyTimerLength }, precision: "secondTenths" });
       window.appConfig.timer = timer
       timer.addEventListener("secondTenthsUpdated", function (e) {
@@ -4174,7 +4187,6 @@
             window.appConfig.timers.data.stageResultsBallZoom.percentComplete = percentComplete
           },
           startedCallback: (percentComplete) => {
-            window.appConfig.handleHighScore()
           }
         }
       },
@@ -4627,7 +4639,7 @@
           potentiallyGrabbedCoin.visible = false
           window.appConfig.coins.splice(coinIndexToRemove, 1);
           document.querySelector("#score").innerText =
-            window.appConfig.score.coins;
+            window.appConfig.score.coins.toLocaleString('en-US');
           if (potentiallyGrabbedCoin.coinType === 'single' && window.appConfig.sfxTurnedOn) {
             window.appConfig.howlSounds.coins.sCoin[Math.floor(Math.random() * 2.99)].play()
           }
@@ -4646,7 +4658,7 @@
           potentiallyGrabbedCoin.visible = false
           window.appConfig.coins.splice(coinIndexToRemove, 1);
           document.querySelector("#score").innerText =
-            window.appConfig.score.coins;
+            window.appConfig.score.coins.toLocaleString('en-US');
           const currentTime = window.appConfig.timer.getTimeValues()
           const newTimer = new easytimer.Timer({ countdown: true, startValues: { seconds: currentTime.seconds + 10, secondTenths: currentTime.secondTenths }, precision: "secondTenths" });
           window.appConfig.stageTotalTimePlayed += 10
@@ -4720,6 +4732,7 @@
       window.appConfig.sphere._physijs.mass = 0
 
       window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageResultsBallZoom())
+      window.appConfig.handleHighScore()
       window.appConfig.timer.pause();
       window.appConfig.results[`stage${window.appConfig.level}`]
         ? (window.appConfig.results[
@@ -4734,13 +4747,47 @@
             .getTimeValues()
             .toString(["minutes", "seconds", "secondTenths"]),
         });
+
       const stageScore = calculateStageScore(window.appConfig.timer
         .getTimeValues().seconds, window.appConfig.score.coins)
       document.querySelector("#report-time").innerText = window.appConfig.stageTotalTimePlayed + ' sec';
-      document.querySelector("#report-coins").innerText =
-        window.appConfig.score.coins;
+      // document.querySelector("#report-coins").innerText =
+      //   window.appConfig.score.coins;
       document.querySelector("#report-score").innerText =
-        stageScore;
+        stageScore.toLocaleString('en-US');
+      //show high scores now
+      const theHighScores = window.appConfig.highscores[window.appConfig.currentStage].highscores
+      console.log(theHighScores)
+      const hs1Row = document.querySelector("#high-score-1-row")
+      const hs2Row = document.querySelector("#high-score-2-row")
+      const hs3Row = document.querySelector("#high-score-3-row")
+      const hs1Score = document.querySelector("#high-score-1-score")
+      const hs2Score = document.querySelector("#high-score-2-score")
+      const hs3Score = document.querySelector("#high-score-3-score")
+      const hs1Sec = document.querySelector("#high-score-1-sec")
+      const hs2Sec = document.querySelector("#high-score-2-sec")
+      const hs3Sec = document.querySelector("#high-score-3-sec")
+      if (theHighScores[0] && theHighScores[0].lengthPlayed && theHighScores[0].totalScore) {
+        hs1Score.innerText = theHighScores[0].totalScore.toLocaleString('en-US')
+        hs1Sec.innerText = theHighScores[0].lengthPlayed + " sec"
+        hs1Row.classList.remove("hide")
+      } else {
+        hs1Row.classList.add("hide")
+      }
+      if (theHighScores[1] && theHighScores[1].lengthPlayed && theHighScores[1].totalScore) {
+        hs2Score.innerText = theHighScores[1].totalScore.toLocaleString('en-US')
+        hs2Sec.innerText = theHighScores[1].lengthPlayed + " sec"
+        hs2Row.classList.remove("hide")
+      } else {
+        hs2Row.classList.add("hide")
+      }
+      if (theHighScores[2] && theHighScores[2].lengthPlayed && theHighScores[2].totalScore) {
+        hs3Score.innerText = theHighScores[2].totalScore.toLocaleString('en-US')
+        hs3Sec.innerText = theHighScores[2].lengthPlayed + " sec"
+        hs3Row.classList.remove("hide")
+      } else {
+        hs3Row.classList.add("hide")
+      }
       showReport()
       document.querySelector("#pause-button").disabled = true;
 
