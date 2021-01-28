@@ -105,8 +105,9 @@ vertical-align: middle;
   opacity: 1;
   background-color: rgba(0, 0, 0, 0);
 }
-#report-options {
-  margin: 0 auto;
+#report-options, #report-result-table, #high-scores-table, #high-scores-title {
+  margin-left: auto;
+  margin-right: auto;
 }
 .report-options-button {
   font-family: "Coves Light";
@@ -117,6 +118,45 @@ vertical-align: middle;
   opacity: 1;
   background-color: rgba(0, 0, 0, 0);
   color: #ffffff;
+}
+.font-a {
+  font-weight: 100;
+  font-family: "Coves Light";
+  font-size: var(--font-size-2);
+  color: #ffffff;
+  text-transform: uppercase;
+}
+.font-b {
+  font-weight: 900;
+  font-family: "Coves Light";
+  font-size: var(--font-size-2);
+  color: #ffffff;
+}
+.font-c {
+  font-weight: 100;
+  font-family: "Coves Light";
+  font-size: var(--font-size-1);
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+#report td.result-key {
+  width: var(--font-size-14);
+}
+#report td.result-value {
+  width: fit-content;
+}
+#report td.high-score-ordinal {
+  width: var(--font-size-4);
+}
+#report td.high-score-score {
+  width: var(--font-size-19);
+}
+#report td.high-score-sec {
+  width: fit-content;
+}
+#high-scores-title {
+  width: fit-content;
 }
 #pause-menu {
   position: fixed;
@@ -184,9 +224,6 @@ vertical-align: middle;
   margin: 0 auto;
   margin-top: 10px;
   display: block;
-  font-family: "Coves Light";
-  font-size: var(--font-size-2);
-  font-weight: 900;
   border: 0;
   border-radius: 5px;
   opacity: 1;
@@ -265,10 +302,7 @@ vertical-align: middle;
   text-align: right;
 }
 #timer,
-#score,
-#report-time,
-#report-coins,
-#report td {
+#score {
   font-family: "Coves Light";
   font-size: var(--font-size-3);
   font-weight: 900;
@@ -335,8 +369,50 @@ vertical-align: middle;
 .opacity-1 {
   opacity: 1 !important;
 }
+.margin-bottom-1 {
+  margin-bottom: 1vh;
+}
 .margin-bottom-2 {
-  margin-bottom: var(--font-size-1);
+  margin-bottom: 4vh;
+}
+.margin-bottom-3 {
+  margin-bottom: 6vh;
+}
+.table-margin-1 {
+  border-collapse:separate; 
+  border-spacing: 0 .5vh;
+}
+.table-margin-2 {
+  border-collapse:separate; 
+  border-spacing: 0 4vh;
+}
+.table-margin-3 {
+  border-collapse:separate; 
+  border-spacing: 0 6vh;
+}
+
+@media only screen and (max-height: 500px) {
+  .margin-bottom-1 {
+    margin-bottom: 0;
+  }
+  .margin-bottom-2 {
+    margin-bottom: 0;
+  }
+  .margin-bottom-3 {
+    margin-bottom: 0;
+  }
+  .table-margin-1 {
+    border-collapse:separate; 
+    border-spacing: 0 2px;
+  }
+  .table-margin-2 {
+    border-collapse:separate; 
+    border-spacing: 0 2px;
+  }
+  .table-margin-3 {
+    border-collapse:separate; 
+    border-spacing: 0 2px;
+  }
 }
 
 .debug {
