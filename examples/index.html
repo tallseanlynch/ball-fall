@@ -114,22 +114,22 @@
         touchmove: { throttle: 50, active: false }
       },
       colors: [
-        ["#f69679","#f26c4f","#ed1c24","#9e0b0f","#790000"],//0 red
-        ["#f9ad81","#f68e56","#f26522","#a0410d","#7b2e00"],//1 red organe
-        ["#fdc689","#fbaf5d","#f7941d","#a3620a","#7d4900"],//2 yellow orange
-        ["#fff799","#fff568","#fff200","#aba000","#827b00"],//3 yellow
-        ["#c4df9b","#acd373","#8dc63f","#598527","#406618"],//4 first green
-        ["#a3d39c","#7cc576","#39b54a","#197b30","#005e20"],//5 second green
-        ["#82ca9c","#3cb878","#00a651","#007236","#005826"],//6 third green
-        ["#7accc8","#1cbbb4","#00a99d","#00746b","#005952"],//7 green/blue
-        ["#6dcff6","#00bff3","#00aeef","#0076a3","#005b7f"],//8 light blue
-        ["#7da7d9","#448ccb","#0072bc","#004a80","#003663"],//9 dark blue 1
-        ["#8393ca","#5674b9","#0054a6","#003471","#002157"],//10 dark blue 2
-        ["#8781bd","#605ca8","#2e3192","#1b1464","#0d004c"],//11 cool purple
-        ["#a186be","#8560a8","#662d91","#440e62","#32004b"],//12 neutral purple
-        ["#bd8cbf","#a864a8","#92278f","#630460","#4b0049"],//13 warm putple
-        ["#f49ac1","#f06eaa","#ec008c","#9e005d","#7b0046"],//14 magenta
-        ["#f5989d","#f26d7d","#ed145b","#9e0039","#7a0026"]//15 cool red
+        ["#f69679", "#f26c4f", "#ed1c24", "#9e0b0f", "#790000"],//0 red
+        ["#f9ad81", "#f68e56", "#f26522", "#a0410d", "#7b2e00"],//1 red organe
+        ["#fdc689", "#fbaf5d", "#f7941d", "#a3620a", "#7d4900"],//2 yellow orange
+        ["#fff799", "#fff568", "#fff200", "#aba000", "#827b00"],//3 yellow
+        ["#c4df9b", "#acd373", "#8dc63f", "#598527", "#406618"],//4 first green
+        ["#a3d39c", "#7cc576", "#39b54a", "#197b30", "#005e20"],//5 second green
+        ["#82ca9c", "#3cb878", "#00a651", "#007236", "#005826"],//6 third green
+        ["#7accc8", "#1cbbb4", "#00a99d", "#00746b", "#005952"],//7 green/blue
+        ["#6dcff6", "#00bff3", "#00aeef", "#0076a3", "#005b7f"],//8 light blue
+        ["#7da7d9", "#448ccb", "#0072bc", "#004a80", "#003663"],//9 dark blue 1
+        ["#8393ca", "#5674b9", "#0054a6", "#003471", "#002157"],//10 dark blue 2
+        ["#8781bd", "#605ca8", "#2e3192", "#1b1464", "#0d004c"],//11 cool purple
+        ["#a186be", "#8560a8", "#662d91", "#440e62", "#32004b"],//12 neutral purple
+        ["#bd8cbf", "#a864a8", "#92278f", "#630460", "#4b0049"],//13 warm putple
+        ["#f49ac1", "#f06eaa", "#ec008c", "#9e005d", "#7b0046"],//14 magenta
+        ["#f5989d", "#f26d7d", "#ed145b", "#9e0039", "#7a0026"]//15 cool red
       ]
     };
 
@@ -248,7 +248,6 @@
       "sounds",
       "start-menu",
       "pause-menu",
-      "report",
       "level-select",
       "game-scoreboard",
       "title",
@@ -257,6 +256,7 @@
       "pause-button",
       "play-button",
       "tinted-overlay",
+      "report",
       "stage-name",
       "stage-number",
       "stage-countdown-3",
@@ -276,30 +276,32 @@
 
     const centerElement = (options) => {
       const { id, offsetLeft, offsetTop } = options;
-      const element = document.getElementById(id);
-      const buttonHeight = element.offsetHeight;
-      const buttonWidth = element.offsetWidth;
-      let offsetHeight
-      if (typeof offsetTop === "number") {
-        offsetHeight = window.innerHeight / 2 - buttonHeight / 2 + offsetTop;
-      } else {
-        const parsedNum = Number.parseInt(offsetTop)
-        const percentFromTop = (50 + parsedNum) / 100
-        offsetHeight = window.innerHeight * percentFromTop - buttonHeight / 2;
+      const innerCalc = () => {
+        const element = document.getElementById(id);
+        const buttonHeight = element.offsetHeight;
+        const buttonWidth = element.offsetWidth;
+        let offsetHeight
+        if (typeof offsetTop === "number") {
+          offsetHeight = window.innerHeight / 2 - buttonHeight / 2 + offsetTop;
+        } else {
+          const parsedNum = Number.parseInt(offsetTop)
+          const percentFromTop = (50 + parsedNum) / 100
+          offsetHeight = window.innerHeight * percentFromTop - buttonHeight / 2;
+        }
+        let offsetWidth
+        if (typeof offsetLeft === "number") {
+          offsetWidth = window.innerWidth / 2 - buttonWidth / 2 + offsetLeft;
+        } else {
+          const parsedNum = Number.parseInt(offsetLeft)
+          const percentFromLeft = (50 + parsedNum) / 100
+          offsetWidth = window.innerWidth * percentFromLeft - buttonWidth / 2;
+        }
+        const root = document.documentElement;
+        root.style.setProperty(`--${id}-offset-top`, offsetHeight + "px");
+        root.style.setProperty(`--${id}-offset-left`, offsetWidth + "px");
       }
-      let offsetWidth
-      if (typeof offsetLeft === "number") {
-        offsetWidth = window.innerWidth / 2 - buttonWidth / 2 + offsetLeft;
-      } else {
-        const parsedNum = Number.parseInt(offsetLeft)
-        const percentFromLeft = (50 + parsedNum) / 100
-        offsetWidth = window.innerWidth * percentFromLeft - buttonWidth / 2;
-      }
-
-
-      const root = document.documentElement;
-      root.style.setProperty(`--${id}-offset-top`, offsetHeight + "px");
-      root.style.setProperty(`--${id}-offset-left`, offsetWidth + "px");
+      innerCalc()
+      innerCalc()
     };
 
     const scriptLoaded = (scriptName) => {
@@ -421,7 +423,7 @@
             onClick="toggleMusicButton()"></button></td>
       </tr>
     </table>
-    <button class="start-menu-button" onClick="goBack()">Back</button>
+    <button class="start-menu-button font-b" onClick="goBack()">Back</button>
   </div>
   <div id="credits" class="hide">
     <div id="credits-title" class="menu-title-text">Credits</div>
@@ -439,47 +441,51 @@
         <div class="credits-name">Haley Rheinhart</div>
       </div>
     </div>
-    <button class="start-menu-button" onClick="goBack()">Back</button>
+    <button class="start-menu-button font-b" onClick="goBack()">Back</button>
   </div>
   <div id="report" class="hide">
-    <table>
+    <table id="report-result-table" class="margin-bottom-2">
       <tr>
-        <td>Time:</td>
-        <td id="report-time"></td>
+        <td class="font-a result-key">Score:</td>
+        <td class="font-b result-value" id="report-score"></td>
       </tr>
       <tr>
-        <td>Score:</td>
-        <td id="report-score"></td>
+        <td class="font-a result-key">Time:</td>
+        <td class="font-b result-value" id="report-time"></td>
       </tr>
     </table>
-    <table>
-      <tr id="high-score-1-row">
-        <td>1.</td>
-        <td id="high-score-1-score"></td>
-        <td id="high-score-1-sec"></td>
+    <div id="high-scores-title" class="font-c margin-bottom-2">High Scores</div>
+    <table id="high-scores-table" class="margin-bottom-2">
+      <tr id="high-score-1-row" class="margin-bottom-2">
+        <td class="font-a high-score-ordinal">1.</td>
+        <td class="font-b high-score-score" id="high-score-1-score"></td>
+        <td class="font-b high-score-sec" id="high-score-1-sec"></td>
       </tr>
-      <tr id="high-score-2-row">
-        <td>2.</td>
-        <td id="high-score-2-score"></td>
-        <td id="high-score-2-sec"></td>
+      <tr id="high-score-2-row" class="margin-bottom-2">
+        <td class="font-a high-score-ordinal">2.</td>
+        <td class="font-b high-score-score" id="high-score-2-score"></td>
+        <td class="font-b high-score-sec" id="high-score-2-sec"></td>
       </tr>
-      <tr id="high-score-3-row">
-        <td>3.</td>
-        <td id="high-score-3-score"></td>
-        <td id="high-score-3-sec"></td>
+      <tr id="high-score-3-row" class="margin-bottom-2">
+        <td class="font-a high-score-ordinal">3.</td>
+        <td class="font-b high-score-score" id="high-score-3-score"></td>
+        <td class="font-b high-score-sec" id="high-score-3-sec"></td>
       </tr>
     </table>
     <div id="report-options">
-      <button id="report-level-select-button" class="start-menu-button" onClick="showLevelSelect()">
+      <button id="report-level-select-button" class="start-menu-button font-b margin-bottom-2"
+        onClick="showLevelSelect()">
         Level Select
       </button>
-      <button id="report-reset-button" class="start-menu-button" onClick="reset({action:'reset', autoStart: true})">
+      <button id="report-reset-button" class="start-menu-button font-b margin-bottom-2"
+        onClick="reset({action:'reset', autoStart: true})">
         Try Again
       </button>
-      <button id="report-reset-button" class="start-menu-button" onClick="reset({action:'next', autoStart: true})">
+      <button id="report-reset-button" class="start-menu-button font-b margin-bottom-2"
+        onClick="reset({action:'next', autoStart: true})">
         Next Level
       </button>
-      <button id="report-main-menu-button" class="start-menu-button"
+      <button id="report-main-menu-button" class="start-menu-button font-b margin-bottom-2"
         onClick="reset({action:'levelSelect', level: 0, autoStart: false})">
         Main Menu
       </button>
@@ -505,23 +511,23 @@
       <button class="level-select-button stage-5"
         onClick="reset({action:'levelSelect', level: 5, autoStart: true})">STARLING</button>
     </div>
-    <button class="start-menu-button" onClick="goBack()">Back</button>
+    <button class="start-menu-button font-b" onClick="goBack()">Back</button>
   </div>
 
   <div id="pause-menu" class="hide">
-    <button id="pause-level-select-button" class="start-menu-button" onClick="pause()">
+    <button id="pause-level-select-button" class="start-menu-button font-b" onClick="pause()">
       Resume
     </button>
-    <button id="pause-level-select-button" class="start-menu-button" onClick="showLevelSelect()">
+    <button id="pause-level-select-button" class="start-menu-button font-b" onClick="showLevelSelect()">
       Level Select
     </button>
-    <button id="pause-sounds-button" class="start-menu-button" onClick="showSounds()">
+    <button id="pause-sounds-button" class="start-menu-button font-b" onClick="showSounds()">
       Sounds
     </button>
-    <button id="pause-reset-button" class="start-menu-button" onClick="reset({action:'reset', autoStart: true})">
+    <button id="pause-reset-button" class="start-menu-button font-b" onClick="reset({action:'reset', autoStart: true})">
       Restart Level
     </button>
-    <button id="pause-main-menu-button" class="start-menu-button"
+    <button id="pause-main-menu-button" class="start-menu-button font-b"
       onClick="reset({action:'levelSelect', level: 0, autoStart: false})">
       Main Menu
     </button>
@@ -531,13 +537,13 @@
     <button id="start-button" onClick="countdown()"> START</button>
   </div>
   <div id="start-menu">
-    <button id="start-level-select-button" class="start-menu-button" onClick="showLevelSelect()">
+    <button id="start-level-select-button" class="start-menu-button font-b" onClick="showLevelSelect()">
       Level Select
     </button>
-    <button id="start-sounds-button" class="start-menu-button" onClick="showSounds()">
+    <button id="start-sounds-button" class="start-menu-button font-b" onClick="showSounds()">
       Sounds
     </button>
-    <button id="start-credits-button" class="start-menu-button" onClick="showCredits()">
+    <button id="start-credits-button" class="start-menu-button font-b" onClick="showCredits()">
       Credits
     </button>
   </div>
@@ -953,6 +959,7 @@
         centerElement({ id: "pause-menu", offsetTop: 0, offsetLeft: 0 });
         centerElement({ id: "title", offsetTop: "-31%", offsetLeft: 0 });
         centerElement({ id: "start-menu", offsetTop: "31%", offsetLeft: 0 });
+        centerElement({ id: "credits", offsetTop: 0, offsetLeft: 0 });
         var tanFOV = Math.tan(((Math.PI / 180) * camera.fov) / 2);
         var windowHeight = window.innerHeight;
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -3711,7 +3718,7 @@
 
       requestAnimationFrame(render);
       scene.simulate();
-      window.appConfig.easyTimerLength = 30
+      window.appConfig.easyTimerLength = 3
       const timer = new easytimer.Timer({ countdown: true, startValues: { seconds: window.appConfig.easyTimerLength }, precision: "secondTenths" });
       window.appConfig.timer = timer
       timer.addEventListener("secondTenthsUpdated", function (e) {
@@ -4591,9 +4598,9 @@
 
       if (currentTime % 10 < 3) {
         window.appConfig.superballMaterialIncrement++
-        if(window.appConfig.pause === false && window.appConfig.userHasEnded === false) {
+        if (window.appConfig.pause === false && window.appConfig.userHasEnded === false) {
           if (scene.children.find((obj) => obj.gameName === "STAGE3SPHERECOIN")) {
-            scene.children.find((obj) => obj.gameName === "STAGE3SPHERECOIN").material.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement%15][0])
+            scene.children.find((obj) => obj.gameName === "STAGE3SPHERECOIN").material.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
           }
         }
         const percentFinished = Math.abs(sphere.position.y) / 375;
@@ -4833,7 +4840,9 @@
       } else {
         hs3Row.classList.add("hide")
       }
+
       showReport()
+      centerElement({ id: "report", offsetTop: 0, offsetLeft: 0 });
       document.querySelector("#pause-button").disabled = true;
 
     }
@@ -5023,6 +5032,18 @@
       root.style.setProperty(`--font-size-5`, (diagonalLength * .06) + "px");
       root.style.setProperty(`--font-size-6`, (diagonalLength * .07) + "px");
       root.style.setProperty(`--font-size-7`, (diagonalLength * .08) + "px");
+      root.style.setProperty(`--font-size-8`, (diagonalLength * .09) + "px");
+      root.style.setProperty(`--font-size-9`, (diagonalLength * .10) + "px");
+      root.style.setProperty(`--font-size-10`, (diagonalLength * .11) + "px");
+      root.style.setProperty(`--font-size-11`, (diagonalLength * .12) + "px");
+      root.style.setProperty(`--font-size-12`, (diagonalLength * .13) + "px");
+      root.style.setProperty(`--font-size-13`, (diagonalLength * .14) + "px");
+      root.style.setProperty(`--font-size-14`, (diagonalLength * .15) + "px");
+      root.style.setProperty(`--font-size-15`, (diagonalLength * .16) + "px");
+      root.style.setProperty(`--font-size-16`, (diagonalLength * .17) + "px");
+      root.style.setProperty(`--font-size-17`, (diagonalLength * .18) + "px");
+      root.style.setProperty(`--font-size-18`, (diagonalLength * .19) + "px");
+      root.style.setProperty(`--font-size-19`, (diagonalLength * .20) + "px");
       root.style.setProperty(`--full-screen-width`, (window.innerWidth) + "px");
       root.style.setProperty(`--full-screen-height`, (window.innerHeight) + "px");
       root.style.setProperty(`--quarter-screen-height`, (window.innerHeight * .25) + "px");
