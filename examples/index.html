@@ -4686,17 +4686,7 @@
         }
       }
 
-<<<<<<< HEAD
       if (currentTime % 5 < 1) {
-=======
-      if (currentTime % 10 < 3) {
-        window.appConfig.superballMaterialIncrement++
-        if (window.appConfig.pause === false && window.appConfig.userHasEnded === false) {
-          if (scene.children.find((obj) => obj.gameName === "STAGE3SPHERECOIN")) {
-            scene.children.find((obj) => obj.gameName === "STAGE3SPHERECOIN").material.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
-          }
-        }
->>>>>>> v2/highscore-css
         const percentFinished = Math.abs(sphere.position.y) / 375;
         window.appConfig.percentFinished = percentFinished;
         document.body.style.background =
