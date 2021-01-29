@@ -266,7 +266,8 @@
       "stage-countdown-2",
       "stage-countdown-1",
       "stage-countdown-start",
-      "main-loading"
+      "main-loading",
+      "instructions"
     ];
     const showHTMLElements = (elements) => {
       allElements.forEach((el) => {
@@ -549,7 +550,49 @@
     <button id="start-credits-button" class="start-menu-button font-b" onClick="showCredits()">
       Credits
     </button>
+    <button id="start-credits-button" class="start-menu-button font-b" onClick="showInstructions()">
+      Instructions
+    </button>
   </div>
+  <div id="instructions" class="hide">
+    <div id="instructions-title">
+      <span id="start-button">INSTRUCTIONS</span>
+    </div>
+    <div id="instructions-lists">
+      <div id="instruction-item">
+        <img src="images/sm-gem-txt.png">
+      </div>
+      <div id="instruction-item">
+        <img src="images/md-gem-txt.png">
+      </div>
+      <div id="instruction-item">
+        <img src="images/lg-gem-txt.png">
+      </div>
+      <div id="instruction-item">
+        <img src="images/time-bonus-txt.png">
+      </div>
+      <div id="instruction-item">
+        <img src="images/sprites-txt.png">
+      </div>  
+      <div id="instruction-item">
+        <img src="images/sm-gem-txt.png">
+      </div>
+      <div id="instruction-item">
+        <img src="images/md-gem-txt.png">
+      </div>
+      <div id="instruction-item">
+        <img src="images/lg-gem-txt.png">
+      </div>
+      <div id="instruction-item">
+        <img src="images/time-bonus-txt.png">
+      </div>
+      <div id="instruction-item">
+        <img src="images/sprites-txt.png">
+      </div>  
+    </div>
+    <button class="start-menu-button font-b" onClick="goBack()">Back</button>
+  </div>
+
 
   <div id="gradient-curtain"></div>
 
@@ -3878,7 +3921,7 @@
           window.appConfig.sphere = sphere
         }
       };
-      //      window.appConfig.stages.components.createSphere = createSphere
+
       return () => {
         window.appConfig.createSphere();
         const findCoin = (x, y, xMod = 10, yMod = 10) => {
@@ -4100,7 +4143,7 @@
           },
           completedCallback: () => {
             const theName = window.appConfig.currentStage + '_SPHERECOIN_' + Math.round(Math.random() * 1000)
-            window.appConfig.createSphere({ bounce: 1, name: theName, position: { x: Math.random() * 75, y: Math.random() * 75, z: 0 }, handleCollision: (c) => window.appConfig.superBallHandleCollision(c, theName) })
+            window.appConfig.createSphere({ bounce: 1, name: theName, position: { x: Math.random() * 50, y: Math.random() * 50, z: 0 }, handleCollision: (c) => window.appConfig.superBallHandleCollision(c, theName) })
             scene.remove(scene.children.find((obj) => obj.name === window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball))
           }
         }
@@ -5050,6 +5093,12 @@
       showHTMLElements(["credits", "tinted-overlay"]);
       centerElement({ id: "credits", offsetTop: 0, offsetLeft: 0 });
     };
+
+    const showInstructions = () => {
+      showHTMLElements(["instructions", "tinted-overlay"]);
+      centerElement({ id: "instructions", offsetTop: 0, offsetLeft: 0 });
+    };
+
     const showStart = () => {
       showHTMLElements(["start-menu", "title", "start-button-container", "tinted-overlay"]);
       centerElement({ id: "start-button-container", offsetTop: 0, offsetLeft: 0 });

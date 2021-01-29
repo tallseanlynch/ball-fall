@@ -111,15 +111,32 @@ setTimeout(() => {
       })
 
       window.addEventListener('beforeunload', function(e) {
-          if(window.appConfig.events.touchmove.active === true) {
-            e.preventDefault(); //per the standard
-            Howler.stop()
-            if(window.appConfig.start === true && window.appConfig.userHasEnded === false && window.appConfig.pause === false) {
-              window.appConfig.gameModeFunctions.pause()
-            }  
-          }
+          e.preventDefault(); //per the standard
+          Howler.stop()
+          if(window.appConfig.start === true && window.appConfig.userHasEnded === false && window.appConfig.pause === false) {
+            window.appConfig.gameModeFunctions.pause()
+          }  
           e.returnValue = '';
       });
+
+      // const clickRay = new THREE.Raycaster();
+      // document.addEventListener("click", (e) => {
+      //   e.preventDefault();
+      //   const normalized = new THREE.Vector2((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
+      //   clickRay.setFromCamera(normalized, camera);
+
+      //   const intersects = clickRay.intersectObjects(
+      //     scene.children, true
+      //   )
+      //   const filteredIntersects = []
+      //   intersects.forEach(intersect => {
+      //     if (intersect.object.gameName && intersect.object.gameName !== "FRONTGLASS" && intersect.object.gameName !== "BACKGLASS") {
+      //       filteredIntersects.push(intersect)
+      //     } else {
+      //       filteredIntersects.push(intersect)
+      //     }
+      //   })
+      // });
     }, 1500)
 
 

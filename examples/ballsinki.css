@@ -19,18 +19,18 @@ button:focus {
   top: var(--start-button-container-offset-top);
   line-height: var(--quarter-screen-height);
   text-align: center;
-vertical-align: middle;
-  
+  vertical-align: middle;  
 }
+
 #start-button {
   display: inline-block;
   font-family: "Coves Light";
   font-size: var(--font-size-3);
-  font-weight: 900;
+  /* font-weight: 900;
   padding-top: var(--font-size-1);
   padding-left: var(--font-size-3);
   padding-bottom: var(--font-size-1);
-  padding-right: var(--font-size-3);
+  padding-right: var(--font-size-3); */
   border: 0;
   border-radius: 5px;
   opacity: 1;
@@ -53,12 +53,12 @@ vertical-align: middle;
   0%, 100% { 
     opacity: 1;
     letter-spacing: 3px;
-    font-weight: 700;
+    /* font-weight: 700; */
   }
   50% {
     opacity: .3;
-    letter-spacing: 10px;
-    font-weight: 900;
+    letter-spacing: 7px;
+    /* font-weight: 900; */
   }
 
 }
@@ -472,7 +472,7 @@ vertical-align: middle;
 }
 
 #stage-name, #stage-countdown-3, #stage-countdown-2, #stage-countdown-1, #stage-countdown-start {
-  font-family: "Aadhunik";
+  font-family: "Coves Light";
   font-size: var(--font-size-2);
   font-weight: 900;
   color: #ffffff;
@@ -503,7 +503,25 @@ vertical-align: middle;
 #stage-countdown-start {
   left: var(--stage-countdown-start-offset-left);
   top: var(--stage-countdown-start-offset-top);
+  width: 300px;
+  text-align: center;
 }
+
+#instructions {
+  left: var(--instructions-offset-left);
+  top: var(--instructions-offset-top);
+  position: absolute;
+  text-align: center;
+}
+
+#instruction-item, #instruction-item img{
+  width: 75%;
+  max-height:200px;
+}
+
+/* #instructions-list {
+
+} */
 
 #stage-number {
   font-family: "Coves Light";
@@ -529,4 +547,10 @@ vertical-align: middle;
   z-index: 101;
   left: 50%;
   top: 50%;
+}
+
+#instructions-title {
+  text-align: center;
+  vertical-align: middle;  
+  width:100%;
 }
