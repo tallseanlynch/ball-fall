@@ -11,6 +11,9 @@
     html {
       margin: 0;
       padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
     }
 
     html {
@@ -249,13 +252,13 @@
 
     const allElements = [
       "sounds",
-      "start-menu",
+      // "start-menu",
       "pause-menu",
       "level-select",
       "game-scoreboard",
-      "title",
+      // "main-menu-title",
       "credits",
-      "start-button-container",
+      // "start-button-container",
       "pause-button",
       "play-button",
       "tinted-overlay",
@@ -267,7 +270,8 @@
       "stage-countdown-1",
       "stage-countdown-start",
       "main-loading",
-      "instructions"
+      "instructions",
+      "main-menu-container"
     ];
     const showHTMLElements = (elements) => {
       allElements.forEach((el) => {
@@ -278,35 +282,36 @@
       });
     };
 
-    const centerElement = (options) => {
-      const { id, offsetLeft, offsetTop } = options;
-      const innerCalc = () => {
-        const element = document.getElementById(id);
-        const buttonHeight = element.offsetHeight;
-        const buttonWidth = element.offsetWidth;
-        let offsetHeight
-        if (typeof offsetTop === "number") {
-          offsetHeight = window.innerHeight / 2 - buttonHeight / 2 + offsetTop;
-        } else {
-          const parsedNum = Number.parseInt(offsetTop)
-          const percentFromTop = (50 + parsedNum) / 100
-          offsetHeight = window.innerHeight * percentFromTop - buttonHeight / 2;
-        }
-        let offsetWidth
-        if (typeof offsetLeft === "number") {
-          offsetWidth = window.innerWidth / 2 - buttonWidth / 2 + offsetLeft;
-        } else {
-          const parsedNum = Number.parseInt(offsetLeft)
-          const percentFromLeft = (50 + parsedNum) / 100
-          offsetWidth = window.innerWidth * percentFromLeft - buttonWidth / 2;
-        }
-        const root = document.documentElement;
-        root.style.setProperty(`--${id}-offset-top`, offsetHeight + "px");
-        root.style.setProperty(`--${id}-offset-left`, offsetWidth + "px");
-      }
-      innerCalc()
-      innerCalc()
-    };
+    const centerElement = () => {}
+    // const centerElement = (options) => {
+    //   const { id, offsetLeft, offsetTop } = options;
+    //   const innerCalc = () => {
+    //     const element = document.getElementById(id);
+    //     const buttonHeight = element.offsetHeight;
+    //     const buttonWidth = element.offsetWidth;
+    //     let offsetHeight
+    //     if (typeof offsetTop === "number") {
+    //       offsetHeight = window.innerHeight / 2 - buttonHeight / 2 + offsetTop;
+    //     } else {
+    //       const parsedNum = Number.parseInt(offsetTop)
+    //       const percentFromTop = (50 + parsedNum) / 100
+    //       offsetHeight = window.innerHeight * percentFromTop - buttonHeight / 2;
+    //     }
+    //     let offsetWidth
+    //     if (typeof offsetLeft === "number") {
+    //       offsetWidth = window.innerWidth / 2 - buttonWidth / 2 + offsetLeft;
+    //     } else {
+    //       const parsedNum = Number.parseInt(offsetLeft)
+    //       const percentFromLeft = (50 + parsedNum) / 100
+    //       offsetWidth = window.innerWidth * percentFromLeft - buttonWidth / 2;
+    //     }
+    //     const root = document.documentElement;
+    //     root.style.setProperty(`--${id}-offset-top`, offsetHeight + "px");
+    //     root.style.setProperty(`--${id}-offset-left`, offsetWidth + "px");
+    //   }
+    //   innerCalc()
+    //   innerCalc()
+    // };
 
     const scriptLoaded = (scriptName) => {
       window.appConfig.loadedScripts.push(scriptName)
@@ -413,73 +418,58 @@
     <div id="timer"></div>
     <div id="score"></div>
   </div>
-  <div id="sounds" class="hide">
+  <div id="sounds" class="hide menu-container">
     <div id="sounds-title" class="menu-title-text margin-bottom-3 font-e">Sounds</div>
-    <table id="sound-menu" class="margin-bottom-3 table-margin-1">
-      <tr>
-        <td class="sound-menu-button sound-menu-left-td font-a">SFX</td>
-        <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="sfx-toggle-button"
-            onClick="toggleSFXButton()"></button></td>
-      </tr>
-      <tr>
-        <td class="sound-menu-button sound-menu-left-td font-a">Music</td>
-        <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="music-toggle-button"
-            onClick="toggleMusicButton()"></button></td>
-      </tr>
-    </table>
-    <button class="start-menu-button font-b" onClick="goBack()">Back</button>
-  </div>
-  <div id="credits" class="hide">
-    <div id="credits-title" class="menu-title-text margin-bottom-3 font-e">Credits</div>
-    <div id="credits-menu">
-      <div class="margin-bottom-2">
-        <div class="credits-role margin-bottom-1 font-d">Creative Direction</div>
-        <div class="credits-name font-a">Sean Lynch</div>
-      </div>
-      <div class="margin-bottom-2">
-        <div class="credits-role margin-bottom-1 font-d">Programming Design</div>
-        <div class="credits-name font-a">Sean Lynch, Ian Lynch</div>
-      </div>
-      <div class="margin-bottom-2">
-        <div class="credits-role margin-bottom-1 font-d">UX Design</div>
-        <div class="credits-name font-a">Haley Rheinhart, Sean Lynch</div>
-      </div>
-      <div class="margin-bottom-2">
-        <div class="credits-role margin-bottom-1 font-d">Music & Sound Design</div>
-        <div class="credits-name font-a">Haley Rheinhart</div>
-      </div>
+    <div class="scrolling-section margin-bottom-2">
+      <table id="sound-menu" class="margin-bottom-3 table-margin-1">
+        <tr>
+          <td class="sound-menu-button sound-menu-left-td font-a">SFX</td>
+          <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="sfx-toggle-button"
+              onClick="toggleSFXButton()"></button></td>
+        </tr>
+        <tr>
+          <td class="sound-menu-button sound-menu-left-td font-a">Music</td>
+          <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="music-toggle-button"
+              onClick="toggleMusicButton()"></button></td>
+        </tr>
+      </table>  
     </div>
-    <button class="start-menu-button font-b" onClick="goBack()">Back</button>
+    <div id="back-button" class="margin-top-2 font-b">
+      <button class="start-menu-button font-b" onClick="goBack()">Back</button>
+    </div>      
   </div>
-  <div id="report" class="hide">
-    <table id="report-result-table" class="margin-bottom-2 table-margin-1">
-      <tr>
-        <td class="font-a result-key">Score:</td>
-        <td class="font-b result-value" id="report-score"></td>
-      </tr>
-      <tr>
-        <td class="font-a result-key">Time:</td>
-        <td class="font-b result-value" id="report-time"></td>
-      </tr>
-    </table>
-    <div id="high-scores-title" class="font-c margin-bottom-2">High Scores</div>
-    <table id="high-scores-table" class="margin-bottom-3 table-margin-1">
-      <tr id="high-score-1-row">
-        <td class="font-a high-score-ordinal">1.</td>
-        <td class="font-b high-score-score" id="high-score-1-score"></td>
-        <td class="font-b high-score-sec" id="high-score-1-sec"></td>
-      </tr>
-      <tr id="high-score-2-row">
-        <td class="font-a high-score-ordinal">2.</td>
-        <td class="font-b high-score-score" id="high-score-2-score"></td>
-        <td class="font-b high-score-sec" id="high-score-2-sec"></td>
-      </tr>
-      <tr id="high-score-3-row">
-        <td class="font-a high-score-ordinal">3.</td>
-        <td class="font-b high-score-score" id="high-score-3-score"></td>
-        <td class="font-b high-score-sec" id="high-score-3-sec"></td>
-      </tr>
-    </table>
+  <div id="report" class="menu-container hide">
+    <div id="report-title" class="menu-title-text margin-bottom-2 font-e">RESULTS</div>
+    <div class="scrolling-section">
+      <table id="report-result-table" class="margin-bottom-2 table-margin-1">
+        <tr>
+          <td class="font-a result-key">Score:</td>
+          <td class="font-b result-value" id="report-score"></td>
+        </tr>
+        <tr>
+          <td class="font-a result-key">Time:</td>
+          <td class="font-b result-value" id="report-time"></td>
+        </tr>
+      </table>
+      <div id="high-scores-title" class="font-a margin-bottom-2">High Scores</div>
+      <table id="high-scores-table" class="margin-bottom-3 table-margin-1">
+        <tr id="high-score-1-row">
+          <td class="font-a high-score-ordinal">1.</td>
+          <td class="font-b high-score-score" id="high-score-1-score"></td>
+          <td class="font-b high-score-sec" id="high-score-1-sec"></td>
+        </tr>
+        <tr id="high-score-2-row">
+          <td class="font-a high-score-ordinal">2.</td>
+          <td class="font-b high-score-score" id="high-score-2-score"></td>
+          <td class="font-b high-score-sec" id="high-score-2-sec"></td>
+        </tr>
+        <tr id="high-score-3-row">
+          <td class="font-a high-score-ordinal">3.</td>
+          <td class="font-b high-score-score" id="high-score-3-score"></td>
+          <td class="font-b high-score-sec" id="high-score-3-sec"></td>
+        </tr>
+      </table>
+    </div>
     <div id="report-options">
       <button id="report-level-select-button" class="start-menu-button font-b margin-bottom-1"
         onClick="showLevelSelect()">
@@ -499,9 +489,9 @@
       </button>
     </div>
   </div>
-  <div id="level-select" class="hide">
-    <div id="level-select-title" class="margin-bottom-3 font-e">Level Select</div>
-    <div class="level-select-menu-container margin-bottom-3">
+  <div id="level-select" class="menu-container hide">
+    <div id="report-title" class="menu-title-text margin-bottom-2 font-e">LEVEL SELECT</div>
+    <div class="level-select-menu-container margin-bottom-3 scrolling-section">
       <button class="level-select-button stage-0 margin-bottom-2 font-d"
         onClick="reset({action:'levelSelect', level: 0, autoStart: true})">NATURAL
         WONDER</button>
@@ -519,10 +509,13 @@
       <button class="level-select-button stage-5 margin-bottom-2 font-d"
         onClick="reset({action:'levelSelect', level: 5, autoStart: true})">STARLING</button>
     </div>
-    <button class="start-menu-button font-b" onClick="goBack()">Back</button>
+    <div id="back-button" class="margin-top-2 font-b">
+      <button class="start-menu-button font-b" onClick="goBack()">Back</button>
+    </div>      
   </div>
 
-  <div id="pause-menu" class="hide">
+  <div id="pause-menu" class="menu-container hide">
+    <div class="spacer"></div>
     <button id="pause-level-select-button" class="start-menu-button font-b" onClick="pause()">
       Resume
     </button>
@@ -540,29 +533,30 @@
       Main Menu
     </button>
   </div>
-  <div id="title">BALLSINKI</div>
-  <div id="start-button-container">
-    <button id="start-button" onClick="countdown()"> START</button>
-  </div>
-  <div id="start-menu">
-    <button id="start-level-select-button" class="start-menu-button font-b" onClick="showLevelSelect()">
-      Level Select
-    </button>
-    <button id="start-sounds-button" class="start-menu-button font-b" onClick="showSounds()">
-      Sounds
-    </button>
-    <button id="start-credits-button" class="start-menu-button font-b" onClick="showCredits()">
-      Credits
-    </button>
-    <button id="start-credits-button" class="start-menu-button font-b" onClick="showInstructions()">
-      Instructions
-    </button>
-  </div>
-  <div id="instructions" class="hide">
-    <div id="instructions-title">
-      <span id="start-button">INSTRUCTIONS</span>
+
+  <div id="main-menu-container" class="menu-container">
+    <div id="main-menu-title" class="margin-bottom-3 title">BALLSINKI</div>
+    <div id="start-button-container">
+      <button id="start-button" onClick="countdown()"> START</button>
     </div>
-    <div id="instructions-lists">
+    <div id="start-menu">
+      <button id="start-level-select-button" class="start-menu-button font-b" onClick="showLevelSelect()">
+        Level Select
+      </button>
+      <button id="start-sounds-button" class="start-menu-button font-b" onClick="showSounds()">
+        Sounds
+      </button>
+      <button id="start-credits-button" class="start-menu-button font-b" onClick="showCredits()">
+        Credits
+      </button>
+      <button id="start-credits-button" class="start-menu-button font-b" onClick="showInstructions()">
+        Instructions
+      </button>
+    </div>  
+  </div>
+  <div id="instructions" class="menu-container hide">
+    <div id="credits-title" class="menu-title-text margin-bottom-2 font-e">INSTRUCTIONS</div>
+    <div id="instructions-list" class="scrolling-section margin-bottom-2">
       <div id="instruction-item">
         <img src="images/sm-gem-txt.png">
       </div>
@@ -594,7 +588,9 @@
         <img src="images/sprites-txt.png">
       </div>  
     </div>
-    <button class="start-menu-button font-b" onClick="goBack()">Back</button>
+    <div id="back-button" class="margin-top-2 font-b">
+      <button class="start-menu-button font-b" onClick="goBack()">Back</button>
+    </div>      
   </div>
 
 
@@ -611,7 +607,35 @@
 
   <img src="images/PAUSE.png" id="pause-button" disabled class="hide" onClick="pause()" />
   <img src="images/PLAY.png" id="play-button" disabled class="hide" onClick="pause()" />
+
   <div id="curtain"></div>
+
+  <div id="credits" class="hide menu-container">
+    <div id="credits-title" class="menu-title-text margin-bottom-2 font-e">Credits</div>
+    <div id="credits-menu" class="scrolling-section margin-bottom-2">
+      <div class="margin-bottom-2">
+        <div class="credits-role margin-bottom-1 font-d">Creative Direction</div>
+        <div class="credits-name font-a">Sean Lynch</div>
+      </div>
+      <div class="margin-bottom-2">
+        <div class="credits-role margin-bottom-1 font-d">Programming Design</div>
+        <div class="credits-name font-a">Sean Lynch</div>
+        <div class="credits-name font-a">Ian Lynch</div>
+      </div>
+      <div class="margin-bottom-2">
+        <div class="credits-role margin-bottom-1 font-d">UX Design</div>
+        <div class="credits-name font-a">Haley Rheinhart</div>
+        <div class="credits-name font-a">Sean Lynch</div>
+      </div>
+      <div class="margin-bottom-2">
+        <div class="credits-role margin-bottom-1 font-d">Music & Sound Design</div>
+        <div class="credits-name font-a">Haley Rheinhart</div>
+      </div>
+    </div>
+    <div id="back-button" class="margin-top-2 font-b">
+      <button class="start-menu-button font-b" onClick="goBack()">Back</button>
+    </div>      
+  </div>
 </body>
 
 <footer>
@@ -5104,7 +5128,7 @@
     };
 
     const showStart = () => {
-      showHTMLElements(["start-menu", "title", "start-button-container", "tinted-overlay"]);
+      showHTMLElements(["main-menu-container", "tinted-overlay"]);
       centerElement({ id: "start-button-container", offsetTop: 0, offsetLeft: 0 });
       centerElement({ id: "title", offsetTop: "-31%", offsetLeft: 0 });
       centerElement({ id: "start-menu", offsetTop: "31%", offsetLeft: 0 });
