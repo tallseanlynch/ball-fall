@@ -3,7 +3,7 @@
 <html>
 
 <head>
-  <meta name = "viewport" content = "initial-scale = 1, user-scalable = no">
+  <meta name="viewport" content="initial-scale = 1, user-scalable = no">
   <title>Ballsinki</title>
   <link rel="icon" type="image/png" href="icon.png">
   <style>
@@ -413,35 +413,39 @@
     <div id="score"></div>
   </div>
   <div id="sounds" class="hide">
-    <div id="sounds-title" class="menu-title-text">Sounds</div>
-    <table id="sound-menu">
+    <div id="sounds-title" class="menu-title-text margin-bottom-3 font-e">Sounds</div>
+    <table id="sound-menu" class="margin-bottom-3 table-margin-1">
       <tr>
-        <td class="sound-menu-button sound-menu-left-td">SFX</td>
-        <td class="sound-menu-right-td"><button class="sound-menu-button" id="sfx-toggle-button"
+        <td class="sound-menu-button sound-menu-left-td font-a">SFX</td>
+        <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="sfx-toggle-button"
             onClick="toggleSFXButton()"></button></td>
       </tr>
       <tr>
-        <td class="sound-menu-button sound-menu-left-td">Music</td>
-        <td class="sound-menu-right-td"><button class="sound-menu-button" id="music-toggle-button"
+        <td class="sound-menu-button sound-menu-left-td font-a">Music</td>
+        <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="music-toggle-button"
             onClick="toggleMusicButton()"></button></td>
       </tr>
     </table>
     <button class="start-menu-button font-b" onClick="goBack()">Back</button>
   </div>
   <div id="credits" class="hide">
-    <div id="credits-title" class="menu-title-text">Credits</div>
+    <div id="credits-title" class="menu-title-text margin-bottom-3 font-e">Credits</div>
     <div id="credits-menu">
       <div class="margin-bottom-2">
-        <div class="credits-role">Programming Design</div>
-        <div class="credits-name">Sean Lynch, Ian Lynch</div>
+        <div class="credits-role margin-bottom-1 font-d">Creative Direction</div>
+        <div class="credits-name font-a">Sean Lynch</div>
       </div>
       <div class="margin-bottom-2">
-        <div class="credits-role">UX Design</div>
-        <div class="credits-name">Haley Rheinhart, Sean Lynch</div>
+        <div class="credits-role margin-bottom-1 font-d">Programming Design</div>
+        <div class="credits-name font-a">Sean Lynch, Ian Lynch</div>
       </div>
       <div class="margin-bottom-2">
-        <div class="credits-role">Music & Sound Design</div>
-        <div class="credits-name">Haley Rheinhart</div>
+        <div class="credits-role margin-bottom-1 font-d">UX Design</div>
+        <div class="credits-name font-a">Haley Rheinhart, Sean Lynch</div>
+      </div>
+      <div class="margin-bottom-2">
+        <div class="credits-role margin-bottom-1 font-d">Music & Sound Design</div>
+        <div class="credits-name font-a">Haley Rheinhart</div>
       </div>
     </div>
     <button class="start-menu-button font-b" onClick="goBack()">Back</button>
@@ -495,23 +499,23 @@
     </div>
   </div>
   <div id="level-select" class="hide">
-    <div id="level-select-title">Level Select</div>
-    <div class="level-select-menu-container">
-      <button class="level-select-button stage-0"
+    <div id="level-select-title" class="margin-bottom-3 font-e">Level Select</div>
+    <div class="level-select-menu-container margin-bottom-3">
+      <button class="level-select-button stage-0 margin-bottom-2 font-d"
         onClick="reset({action:'levelSelect', level: 0, autoStart: true})">NATURAL
         WONDER</button>
-      <button class="level-select-button stage-1"
+      <button class="level-select-button stage-1 margin-bottom-2 font-d"
         onClick="reset({action:'levelSelect', level: 1, autoStart: true})">PROXIMA</button>
-      <button class="level-select-button stage-2"
+      <button class="level-select-button stage-2 margin-bottom-2 font-d"
         onClick="reset({action:'levelSelect', level: 2, autoStart: true})">BLANKET
         FORT</button>
-      <button class="level-select-button stage-3"
+      <button class="level-select-button stage-3 margin-bottom-2 font-d"
         onClick="reset({action:'levelSelect', level: 3, autoStart: true})">HIDDEN
         HOLLOW</button>
-      <button class="level-select-button stage-4"
+      <button class="level-select-button stage-4 margin-bottom-2 font-d"
         onClick="reset({action:'levelSelect', level: 4, autoStart: true})">CLOUD
         CASTLE</button>
-      <button class="level-select-button stage-5"
+      <button class="level-select-button stage-5 margin-bottom-2 font-d"
         onClick="reset({action:'levelSelect', level: 5, autoStart: true})">STARLING</button>
     </div>
     <button class="start-menu-button font-b" onClick="goBack()">Back</button>
@@ -3827,12 +3831,12 @@
         )
       }
 
-      window.appConfig.superBallHandleCollision = function(other_object, the_object) {
-        if(other_object.name === 'SPHERE0') {
+      window.appConfig.superBallHandleCollision = function (other_object, the_object) {
+        if (other_object.name === 'SPHERE0') {
           window.appConfig.timers.activeTimers.push(window.appConfig.timers.superBallTeleport(the_object))
           const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
           let superSounds
-          for(superSounds=0;superSounds<20;superSounds++) {
+          for (superSounds = 0; superSounds < 20; superSounds++) {
             setTimeout(() => {
               coinSounds[Math.round(Math.random() * (coinSounds.length - 1))].play()
               scene.add(window.appConfig.stages.components.crystal(superSounds % 3, { x: other_object.position.x + ((Math.random() * 25) - 12.5), y: other_object.position.y + ((Math.random() * 20) - 10), z: 0 }))
@@ -4085,16 +4089,16 @@
             theSuperBall.__dirtyPosition = true
           },
           activeCallback: (percentComplete) => {
-            if(scene.children.find((obj) => obj.name === window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball)) {
+            if (scene.children.find((obj) => obj.name === window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball)) {
               const theMesh = scene.children.find((obj) => obj.name === window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball)
               theMesh.rotation.z += 1
               theMesh.scale.x += .001
               theMesh.scale.y += .001
               theMesh.scale.z += .001
-              if(percentComplete > .8) {
-                theMesh.scale.x = 1 - ((.2 * percentComplete) * 5)  
-                theMesh.scale.y = 1 - ((.2 * percentComplete) * 5)  
-                theMesh.scale.z = 1 - ((.2 * percentComplete) * 5)  
+              if (percentComplete > .8) {
+                theMesh.scale.x = 1 - ((.2 * percentComplete) * 5)
+                theMesh.scale.y = 1 - ((.2 * percentComplete) * 5)
+                theMesh.scale.z = 1 - ((.2 * percentComplete) * 5)
               }
             }
           },
@@ -4222,7 +4226,7 @@
             window.appConfig.gameModeFunctions.start()
             window.appConfig.stageTotalTimePlayed = window.appConfig.easyTimerLength
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownStartFlash())
-            if(window.appConfig.achievements.superBall === true) {
+            if (window.appConfig.achievements.superBall === true) {
               window.appConfig.createSphere({ bounce: 1, name: window.appConfig.currentStage + '_SPHERECOIN', position: { x: Math.random() * 50, y: Math.random() * 50, z: 0 }, handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN') })
             }
           },
@@ -4673,16 +4677,16 @@
       if (window.appConfig.pause === false && window.appConfig.userHasEnded === false && currentTime % 15 < 1) {
         let sphereCoins = []
         scene.children.forEach(c => {
-          if(c.name && c.name.indexOf('SPHERECOIN') > -1) {
+          if (c.name && c.name.indexOf('SPHERECOIN') > -1) {
             sphereCoins.push(c)
           }
         })
-        if(sphereCoins.length > 0) {
+        if (sphereCoins.length > 0) {
           window.appConfig.superballMaterialIncrement++
           sphereCoins.forEach(sc => {
-            if(sc.setLinearVelocity) {
+            if (sc.setLinearVelocity) {
               sc.setLinearVelocity(new THREE.Vector3(Math.random() * 50 - 25, Math.random() * 50 - 25, 0))
-              sc.material.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement%15][0])
+              sc.material.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
             }
           })
         }
@@ -5160,7 +5164,7 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PGJYVH2VWT"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-PGJYVH2VWT');
   </script>
