@@ -64,12 +64,11 @@ button:focus {
 }
 
 #level-select-title {
-  font-family: "Coves Light";
-  font-size: var(--font-size-2);
-  font-weight: 900;
   color: #ffffff;
-  margin: 0 auto;
+  margin-left: auto;
+  margin-right: auto;
   text-align: center;
+  padding: 1px 6px;
 }
 #title {
   font-family: "Aadhunik";
@@ -86,8 +85,9 @@ button:focus {
 }
 #sounds {
   position: fixed;
-  left: var(--sounds-offset-left);
+  left: 0;
   top: var(--sounds-offset-top);
+  width: var(--full-screen-width);
   border: 0;
   border-radius: 5px;
   opacity: 1;
@@ -95,7 +95,8 @@ button:focus {
 }
 #sound-menu {
   margin-top:  var(--font-size-1);
-  margin-bottom:  var(--font-size-1);
+  margin-left: auto;
+  margin-right: auto;
 }
 .sound-menu-button.sound-menu-left-td {
   margin-right: var(--font-size-3);
@@ -105,8 +106,9 @@ button:focus {
 }
 #report {
   position: fixed;
-  left: var(--report-offset-left);
+  left: 0;
   top: var(--report-offset-top);
+  width: var(--full-screen-width);
   border: 0;
   border-radius: 5px;
   opacity: 1;
@@ -146,6 +148,22 @@ button:focus {
   color: #ffffff;
   text-transform: uppercase;
 }
+.font-d {
+  font-family: "Aadhunik";
+  font-size: var(--font-size-2);
+  color: #ffffff;
+}
+.font-e {
+  font-weight: 100;
+  font-family: "Coves Light";
+  font-size: var(--font-size-2);
+  color: #ffffff;
+  text-transform: uppercase;
+  animation-duration: 5s;
+  animation-name: flux-start-button;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+}
 
 #report td.result-key {
   width: var(--font-size-14);
@@ -176,31 +194,30 @@ button:focus {
 }
 #credits {
   position: fixed;
-  left: var(--credits-offset-left);
+  left: 0;
   top: var(--credits-offset-top);
   border: 0;
+  width: var(--full-screen-width);
   border-radius: 5px;
   opacity: 1;
   background-color: rgba(0, 0, 0, 0);
 }
 .credits-role {
   width: fit-content;
-  font-family: "Coves Light";
-  font-size: var(--font-size-2);
   line-height: var(--font-size-2);
   color: #ffffff;
-  font-weight: 900;
   margin: 0 auto;
+  margin-top:  var(--font-size-1);
+  margin-left: auto;
+  margin-right: auto;
 
 }
 .credits-name {
   width: fit-content;
-  font-family: "Coves Light";
-  font-size: var(--font-size-2);
   line-height: var(--font-size-2);
   color: #ffffff;
-  font-weight: 900;
   margin: 0 auto;
+  margin-top:  var(--font-size-1);
 
 }
 #credits-menu {
@@ -209,12 +226,13 @@ button:focus {
 }
 #level-select {
   position: fixed;
-  left: var(--level-select-offset-left);
+  left: 0;
   top: var(--level-select-offset-top);
   border: 0;
   border-radius: 5px;
   opacity: 1;
   background-color: rgba(0, 0, 0, 0);
+  width: var(--full-screen-width);
 }
 #start-menu {
   font-family: "Coves Light";
@@ -241,9 +259,6 @@ button:focus {
   width: max-content;
   margin: 0 auto;
   display: block;
-  font-family: "Coves Light";
-  font-size: var(--font-size-2);
-  font-weight: 900;
   border: 0;
   border-radius: 5px;
   opacity: 1;
@@ -277,7 +292,6 @@ button:focus {
 }
 .level-select-menu-container {
   margin-top:  var(--font-size-1);
-  margin-bottom:  var(--font-size-1);
 }
 #pause-button, #play-button {
   height: var(--font-size-5);
@@ -318,24 +332,18 @@ button:focus {
 .level-select-button {
   width: 100%;
   display: block;
-  font-family: "Coves Light";
-  font-size: var(--font-size-2);
-  font-weight: 100;
   border: 0;
   border-radius: 5px;
   opacity: 1;
   background-color: rgba(0, 0, 0, 0);
   color: #ffffff;
-  padding: 18px;
+  margin-top: var(--font-size-1);
+  padding: 1px 6px;
 }
 
-#level-select #level-select-title {
-  padding-bottom: 15%;
-}
-
-#level-select .start-menu-button {
+/* #level-select .start-menu-button {
   padding-top: 15%;
-}
+} */
 
 #curtain {
   transition: all 2000ms;
