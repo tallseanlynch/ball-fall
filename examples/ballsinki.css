@@ -539,41 +539,58 @@ button:focus {
 .bg-gray {
   background-color: #ececec;
 }
-
+#stage-name-container, #stage-countdown-3-container, #stage-countdown-2-container, #stage-countdown-1-container, #stage-countdown-start-container {
+ 
+  /* width: 90%; */
+  /* width: var(--full-screen-width);
+  height: var(--quarter-screen-height); */
+  position: fixed;
+  /* left: var(--start-button-container-offset-left);
+  top: var(--start-button-container-offset-top); */
+  /* line-height: var(--quarter-screen-height); */
+  /* text-align: center; */
+  vertical-align: middle;  
+  /* padding-top: 25%;
+  padding-bottom: 25%; */
+}
 #stage-name, #stage-countdown-3, #stage-countdown-2, #stage-countdown-1, #stage-countdown-start {
+  display: inline-block;
   font-family: "Coves Light";
-  font-size: var(--font-size-2);
+  position: fixed;
+  font-size: 3rem;
   font-weight: 900;
   color: #ffffff;
-  position: absolute;
+  /* top: calc(50% - 1.5rem); */
+  text-align: center;
+  vertical-align: middle;  
+  top: calc(50% - 1.5rem);
+  width: 90%;
 }
 
 #stage-name {
-  left: var(--stage-name-offset-left);
-  top: var(--stage-name-offset-top);
+  /* left: var(--stage-name-offset-left);
+  top: var(--stage-name-offset-top); */
   z-index: 5;
 }
 
 #stage-countdown-3 {
-  left: var(--stage-countdown-3-offset-left);
-  top: var(--stage-countdown-3-offset-top);
 }
 
 #stage-countdown-2 {
-  left: var(--stage-countdown-2-offset-left);
-  top: var(--stage-countdown-2-offset-top);
+  /* left: var(--stage-countdown-2-offset-left);
+  top: var(--stage-countdown-2-offset-top); */
 }
 
 #stage-countdown-1 {
-  left: var(--stage-countdown-1-offset-left);
-  top: var(--stage-countdown-1-offset-top);
+  /* left: var(--stage-countdown-1-offset-left);
+  top: var(--stage-countdown-1-offset-top); */
 }
 
 #stage-countdown-start {
-  left: var(--stage-countdown-start-offset-left);
-  top: var(--stage-countdown-start-offset-top);
-  width: 300px;
-  text-align: center;
+  /* left: var(--stage-countdown-start-offset-left);
+  top: var(--stage-countdown-start-offset-top); */
+  /* width: 300px;
+  text-align: center; */
 }
 
 /* #instructions {

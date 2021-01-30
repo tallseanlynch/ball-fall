@@ -263,12 +263,12 @@
       "play-button",
       "tinted-overlay",
       "report",
-      "stage-name",
+      "stage-name-container",
       "stage-number",
-      "stage-countdown-3",
-      "stage-countdown-2",
-      "stage-countdown-1",
-      "stage-countdown-start",
+      "stage-countdown-3-container",
+      "stage-countdown-2-container",
+      "stage-countdown-1-container",
+      "stage-countdown-start-container",
       "main-loading",
       "instructions",
       "main-menu-container"
@@ -282,7 +282,7 @@
       });
     };
 
-    const centerElement = () => {}
+    const centerElement = () => { }
     // const centerElement = (options) => {
     //   const { id, offsetLeft, offsetTop } = options;
     //   const innerCalc = () => {
@@ -432,11 +432,11 @@
           <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="music-toggle-button"
               onClick="toggleMusicButton()"></button></td>
         </tr>
-      </table>  
+      </table>
     </div>
     <div id="back-button" class="margin-top-2 font-b">
       <button class="start-menu-button font-b" onClick="goBack()">Back</button>
-    </div>      
+    </div>
   </div>
   <div id="report" class="menu-container hide">
     <div id="report-title" class="menu-title-text margin-bottom-2 font-e">RESULTS</div>
@@ -511,7 +511,7 @@
     </div>
     <div id="back-button" class="margin-top-2 font-b">
       <button class="start-menu-button font-b" onClick="goBack()">Back</button>
-    </div>      
+    </div>
   </div>
 
   <div id="pause-menu" class="menu-container hide">
@@ -552,7 +552,7 @@
       <button id="start-credits-button" class="start-menu-button font-b" onClick="showInstructions()">
         Instructions
       </button>
-    </div>  
+    </div>
   </div>
   <div id="instructions" class="menu-container hide">
     <div id="credits-title" class="menu-title-text margin-bottom-2 font-e">INSTRUCTIONS</div>
@@ -571,7 +571,7 @@
       </div>
       <div id="instruction-item">
         <img src="images/sprites-txt.png">
-      </div>  
+      </div>
       <div id="instruction-item">
         <img src="images/sm-gem-txt.png">
       </div>
@@ -586,24 +586,35 @@
       </div>
       <div id="instruction-item">
         <img src="images/sprites-txt.png">
-      </div>  
+      </div>
     </div>
     <div id="back-button" class="margin-top-2 font-b">
       <button class="start-menu-button font-b" onClick="goBack()">Back</button>
-    </div>      
+    </div>
   </div>
 
 
   <div id="gradient-curtain"></div>
 
   <div id="stage-number">STAGE 1</div>
-  <div id="stage-name" class="hide">
-    <div id="stage-name-title">NATURAL WONDER</div>
+  <div id="stage-name-container" class="hide menu-container">
+    <div id="stage-name">
+      <div id="stage-name-title">NATURAL WONDER</div>
+    </div>
   </div>
-  <div id="stage-countdown-3" class="hide">3</div>
-  <div id="stage-countdown-2" class="hide">2</div>
-  <div id="stage-countdown-1" class="hide">1</div>
-  <div id="stage-countdown-start" class="hide">START!</div>
+  <div id="stage-countdown-3-container" class="hide menu-container">
+    <div id="stage-countdown-3">3</div>
+  </div>
+
+  <div id="stage-countdown-2-container" class="hide menu-container">
+    <div id="stage-countdown-2">2</div>
+  </div>
+  <div id="stage-countdown-1-container" class="hide menu-container">
+    <div id="stage-countdown-1">1</div>
+  </div>
+  <div id="stage-countdown-start-container" class="hide menu-container">
+    <div id="stage-countdown-start">START!</div>
+  </div>
 
   <img src="images/PAUSE.png" id="pause-button" disabled class="hide" onClick="pause()" />
   <img src="images/PLAY.png" id="play-button" disabled class="hide" onClick="pause()" />
@@ -634,7 +645,7 @@
     </div>
     <div id="back-button" class="margin-top-2 font-b">
       <button class="start-menu-button font-b" onClick="goBack()">Back</button>
-    </div>      
+    </div>
   </div>
 </body>
 
@@ -5139,28 +5150,28 @@
     };
 
     const showStageCountDownName = () => {
-      showHTMLElements(["stage-name", "stage-number", "tinted-overlay"]);
+      showHTMLElements(["stage-name-container", "stage-number", "tinted-overlay"]);
       centerElement({ id: "stage-name", offsetTop: 0, offsetLeft: 0 });
       centerElement({ id: "stage-number", offsetTop: "-40%", offsetLeft: 0 });
     };
 
     const showStageCountDown3 = () => {
-      showHTMLElements(["stage-countdown-3", "tinted-overlay"]);
+      showHTMLElements(["stage-countdown-3-container", "tinted-overlay"]);
       centerElement({ id: "stage-countdown-3", offsetTop: 0, offsetLeft: 0 });
     };
 
     const showStageCountDown2 = () => {
-      showHTMLElements(["stage-countdown-2", "tinted-overlay"]);
+      showHTMLElements(["stage-countdown-2-container", "tinted-overlay"]);
       centerElement({ id: "stage-countdown-2", offsetTop: 0, offsetLeft: 0 });
     };
 
     const showStageCountDown1 = () => {
-      showHTMLElements(["stage-countdown-1", "tinted-overlay"]);
+      showHTMLElements(["stage-countdown-1-container", "tinted-overlay"]);
       centerElement({ id: "stage-countdown-1", offsetTop: 0, offsetLeft: 0 });
     };
 
     const showStageCountDownStart = () => {
-      showHTMLElements(["stage-countdown-start", "pause-button", "game-scoreboard"]);
+      showHTMLElements(["stage-countdown-start-container", "pause-button", "game-scoreboard"]);
       centerElement({ id: "stage-countdown-start", offsetTop: 0, offsetLeft: 0 });
     };
 
