@@ -264,7 +264,6 @@
       "tinted-overlay",
       "report",
       "stage-name-container",
-      "stage-number",
       "stage-countdown-3-container",
       "stage-countdown-2-container",
       "stage-countdown-1-container",
@@ -596,8 +595,8 @@
 
   <div id="gradient-curtain"></div>
 
-  <div id="stage-number">STAGE 1</div>
   <div id="stage-name-container" class="hide menu-container">
+    <div id="stage-number">MAZE 1</div>
     <div id="stage-name">
       <div id="stage-name-title">NATURAL WONDER</div>
     </div>
@@ -5150,7 +5149,7 @@
     };
 
     const showStageCountDownName = () => {
-      showHTMLElements(["stage-name-container", "stage-number", "tinted-overlay"]);
+      showHTMLElements(["stage-name-container", "tinted-overlay"]);
       centerElement({ id: "stage-name", offsetTop: 0, offsetLeft: 0 });
       centerElement({ id: "stage-number", offsetTop: "-40%", offsetLeft: 0 });
     };

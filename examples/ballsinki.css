@@ -306,7 +306,7 @@ button:focus {
   font-size: 2rem;
   font-weight: 900;
   color: #ffffff;
-  margin: 0 auto;
+  /* margin: 0 auto; */
   text-align: center;
   display: block;
   padding-top: 5%;
@@ -318,20 +318,6 @@ button:focus {
   margin-left: auto;
 }
 
-.menu-big-text {
-  width: 100%;
-  font-family: "Coves Light";
-  font-size: var(--font-size-2);
-  line-height: var(--font-size-2);
-  color: #ffffff;
-  font-weight: 900;
-  border: 0;
-  border-radius: 5px;
-  opacity: 1;
-  background-color: rgba(0, 0, 0, 0);
-  margin-top:  var(--font-size-1);
-  margin-bottom:  var(--font-size-1);
-}
 .level-select-menu-container {
   margin-top:  var(--font-size-1);
 }
@@ -457,39 +443,6 @@ button:focus {
   border-spacing: 0 6vh;
 }
 
-@media only screen and (max-height: 500px) {
-  .margin-top-1 {
-    margin-top: 0;
-  }
-  .margin-top-2 {
-    margin-top: 0;
-  }
-  .margin-top-3 {
-    margin-top: 0;
-  } 
-  
-  .margin-bottom-1 {
-    margin-bottom: 0;
-  }
-  .margin-bottom-2 {
-    margin-bottom: 0;
-  }
-  .margin-bottom-3 {
-    margin-bottom: 0;
-  }
-  .table-margin-1 {
-    border-collapse:separate; 
-    border-spacing: 0 2px;
-  }
-  .table-margin-2 {
-    border-collapse:separate; 
-    border-spacing: 0 2px;
-  }
-  .table-margin-3 {
-    border-collapse:separate; 
-    border-spacing: 0 2px;
-  }
-}
 
 .debug {
   width: 40%;
@@ -611,17 +564,15 @@ button:focus {
 
 #stage-number {
   font-family: "Coves Light";
-  left: var(--stage-number-offset-left);
-  top: var(--stage-number-offset-top);
   text-align: center;
   display: block;
-  position: fixed;
-  font-size: var(--font-size-3) !important;
+  font-size: 3rem !important;
   z-index: 5;
-  width: var(--full-screen-width);
+  width: 90%;
   color: white;
-  padding: var(--font-size-4);
+  /* padding: var(--font-size-4); */
   letter-spacing: 30px;
+  margin: 0 auto;
 }
 
 .circle {
@@ -679,4 +630,59 @@ button:focus {
   opacity: 1;
   background-color: rgba(0, 0, 0, 0);
   color: #ffffff;
+}
+@media only screen and (max-height: 500px) {
+  .margin-top-1 {
+    margin-top: 0;
+  }
+  .margin-top-2 {
+    margin-top: 0;
+  }
+  .margin-top-3 {
+    margin-top: 0;
+  } 
+  
+  .margin-bottom-1 {
+    margin-bottom: 0;
+  }
+  .margin-bottom-2 {
+    margin-bottom: 0;
+  }
+  .margin-bottom-3 {
+    margin-bottom: 0;
+  }
+  .table-margin-1 {
+    border-collapse:separate; 
+    border-spacing: 0 2px;
+  }
+  .table-margin-2 {
+    border-collapse:separate; 
+    border-spacing: 0 2px;
+  }
+  .table-margin-3 {
+    border-collapse:separate; 
+    border-spacing: 0 2px;
+  }
+  .title {
+    padding-top:0;
+    padding-bottom: 0;
+  }
+  .menu-title-text {
+    padding-top:0;
+    padding-bottom: 0;
+  }
+  .menu-container {
+    padding-top:2%;
+    padding-bottom: 2%;
+  }
+  #back-button {
+    padding-top:0;
+    padding-bottom: 2%;
+  }
+  .start-menu-button {
+    margin-top: 0;
+  }
+  .scrolling-section {
+    height: 79%;
+  }
 }
