@@ -25,6 +25,10 @@
       bottom: -3px;
       position: relative;
     }
+
+    body {
+      background: linear-gradient(180deg, rgb(2,0,36) 0%, rgba(121,9,117,1) 0%, rgba(252,231,183,1) 24%, rgba(0,212,255,1) 72%);
+    }
   </style>
 
   <script>
@@ -55,6 +59,7 @@
     };
 
     window.appConfig = {
+      coinScoreThrottle: false,
       achievements: {
         superBall: true
       },
@@ -105,7 +110,7 @@
       scripts: [
         'ammo.js',
         'three.js',
-        // 'stats.js', 
+        'stats.js', 
         'physi.js',
         'physijs_worker.js',
         'easytimer.js',
@@ -136,7 +141,8 @@
         ["#bd8cbf", "#a864a8", "#92278f", "#630460", "#4b0049"],//13 warm putple
         ["#f49ac1", "#f06eaa", "#ec008c", "#9e005d", "#7b0046"],//14 magenta
         ["#f5989d", "#f26d7d", "#ed145b", "#9e0039", "#7a0026"]//15 cool red
-      ]
+      ],
+      performanceLevel: 0
     };
 
     const localStorageData = {
@@ -628,7 +634,7 @@
 <footer>
   <script onLoad="scriptLoaded('ammo.js')" type="text/javascript" src="js/ammo.js"></script>
   <script onLoad="scriptLoaded('three.js')" type="text/javascript" src="js/three-121.js"></script>
-  <!-- <script onLoad="scriptLoaded('stats.js')" type="text/javascript" src="js/stats.js"></script> -->
+  <script onLoad="scriptLoaded('stats.js')" type="text/javascript" src="js/stats.js"></script>
   <script onLoad="scriptLoaded('physi.js')" type="text/javascript" src="js/physi.js"></script>
   <script onLoad="scriptLoaded('physijs_worker.js')" type="text/javascript" src="js/physijs_worker.js"></script>
   <script onLoad="scriptLoaded('easytimer.js')" type="text/javascript" src="js/easytimer.js"></script>
@@ -889,8 +895,8 @@
       spawnBox,
       loader,
       renderer,
-      // render_stats,
-      // physics_stats,
+      render_stats,
+      physics_stats,
       scene,
       ground_material,
       ground,
@@ -907,21 +913,21 @@
       renderer.shadowMapSoft = true;
       document.getElementById("viewport").appendChild(renderer.domElement);
 
-      // render_stats = new Stats();
-      // render_stats.domElement.style.position = "absolute";
-      // render_stats.domElement.style.top = "0px";
-      // render_stats.domElement.style.zIndex = 100;
-      // document
-      //   .getElementById("viewport")
-      //   .appendChild(render_stats.domElement);
+      render_stats = new Stats();
+      render_stats.domElement.style.position = "absolute";
+      render_stats.domElement.style.top = "0px";
+      render_stats.domElement.style.zIndex = 100;
+      document
+        .getElementById("viewport")
+        .appendChild(render_stats.domElement);
 
-      // physics_stats = new Stats();
-      // physics_stats.domElement.style.position = "absolute";
-      // physics_stats.domElement.style.top = "50px";
-      // physics_stats.domElement.style.zIndex = 100;
-      // document
-      //   .getElementById("viewport")
-      //   .appendChild(physics_stats.domElement);
+      physics_stats = new Stats();
+      physics_stats.domElement.style.position = "absolute";
+      physics_stats.domElement.style.top = "50px";
+      physics_stats.domElement.style.zIndex = 100;
+      document
+        .getElementById("viewport")
+        .appendChild(physics_stats.domElement);
 
       scene = new Physijs.Scene();
 
@@ -929,7 +935,7 @@
 
       scene.addEventListener("update", function () {
         scene.simulate(undefined, 1);
-        // physics_stats.update();
+        physics_stats.update();
       });
 
       window.appConfig.lighting = {
@@ -1013,7 +1019,7 @@
 
       function onWindowResize(event) {
 
-        setFontSizes()
+        // setFontSizes()
         centerElement({ id: "start-button-container", offsetTop: 0, offsetLeft: 0 });
         centerElement({ id: "level-select", offsetTop: 0, offsetLeft: 0 });
         centerElement({ id: "report", offsetTop: 0, offsetLeft: 0 });
@@ -4746,7 +4752,7 @@
         }
       }
 
-      if (currentTime % 5 < 1) {
+      if (window.appConfig.performanceLevel > 0 && currentTime % 5 < 1) {
         const percentFinished = Math.abs(sphere.position.y) / 375;
         window.appConfig.percentFinished = percentFinished;
         document.body.style.background =
@@ -4853,8 +4859,14 @@
           window.appConfig.score.coins += potentiallyGrabbedCoin.prizeValue;
           potentiallyGrabbedCoin.visible = false
           window.appConfig.coins.splice(coinIndexToRemove, 1);
-          document.querySelector("#score").innerHTML =
+          if(window.appConfig.coinScoreThrottle === false) {
+            window.appConfig.coinScoreThrottle = true            
+            setTimeout(() => {
+              window.appConfig.coinScoreThrottle = false
+            }, 250)
+            document.querySelector("#score").innerHTML =
             window.appConfig.score.coins.toLocaleString('en-US').replace(',', comma())
+          }
           const currentTime = window.appConfig.timer.getTimeValues()
           const newTimer = new easytimer.Timer({ countdown: true, startValues: { seconds: currentTime.seconds + 10, secondTenths: currentTime.secondTenths }, precision: "secondTenths" });
           window.appConfig.stageTotalTimePlayed += 10
@@ -4893,7 +4905,7 @@
       window.appConfig.coinFrameCheckNumber++
       requestAnimationFrame(render);
       renderer.render(scene, camera);
-      // render_stats.update();
+      render_stats.update();
     };
 
     window.appConfig.positionBall = (p) => {
@@ -4946,13 +4958,12 @@
 
       const stageScore = calculateStageScore(window.appConfig.timer
         .getTimeValues().seconds, window.appConfig.score.coins)
+
       document.querySelector("#report-time").innerText = window.appConfig.stageTotalTimePlayed + ' sec';
-      // document.querySelector("#report-coins").innerText =
-      //   window.appConfig.score.coins;
       document.querySelector("#report-score").innerHTML =
         stageScore.toLocaleString('en-US').replace(',', comma());
-      //show high scores now
-      const theHighScores = window.appConfig.highscores[window.appConfig.currentStage].highscores
+
+        const theHighScores = window.appConfig.highscores[window.appConfig.currentStage].highscores
       const hs1Row = document.querySelector("#high-score-1-row")
       const hs2Row = document.querySelector("#high-score-2-row")
       const hs3Row = document.querySelector("#high-score-3-row")
@@ -4992,6 +5003,11 @@
 
     const countdown = () => {
       window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName())
+      document.body.style.background =
+        window.appConfig.stages.components.background(
+          .5,
+          window.appConfig.stages[window.appConfig.currentStage].backgroundColors
+        )
     }
 
     const start = () => {
@@ -5164,35 +5180,35 @@
       }
     };
 
-    const setFontSizes = () => {
-      let hSq = window.innerHeight * window.innerHeight
-      let wSq = window.innerWidth * window.innerWidth
-      let diagonalLength = Math.sqrt(hSq + wSq)
-      const root = document.documentElement;
-      root.style.setProperty(`--font-size-0`, (diagonalLength * .01) + "px");
-      root.style.setProperty(`--font-size-1`, (diagonalLength * .02) + "px");
-      root.style.setProperty(`--font-size-2`, (diagonalLength * .03) + "px");
-      root.style.setProperty(`--font-size-3`, (diagonalLength * .04) + "px");
-      root.style.setProperty(`--font-size-4`, (diagonalLength * .05) + "px");
-      root.style.setProperty(`--font-size-5`, (diagonalLength * .06) + "px");
-      root.style.setProperty(`--font-size-6`, (diagonalLength * .07) + "px");
-      root.style.setProperty(`--font-size-7`, (diagonalLength * .08) + "px");
-      root.style.setProperty(`--font-size-8`, (diagonalLength * .09) + "px");
-      root.style.setProperty(`--font-size-9`, (diagonalLength * .10) + "px");
-      root.style.setProperty(`--font-size-10`, (diagonalLength * .11) + "px");
-      root.style.setProperty(`--font-size-11`, (diagonalLength * .12) + "px");
-      root.style.setProperty(`--font-size-12`, (diagonalLength * .13) + "px");
-      root.style.setProperty(`--font-size-13`, (diagonalLength * .14) + "px");
-      root.style.setProperty(`--font-size-14`, (diagonalLength * .15) + "px");
-      root.style.setProperty(`--font-size-15`, (diagonalLength * .16) + "px");
-      root.style.setProperty(`--font-size-16`, (diagonalLength * .17) + "px");
-      root.style.setProperty(`--font-size-17`, (diagonalLength * .18) + "px");
-      root.style.setProperty(`--font-size-18`, (diagonalLength * .19) + "px");
-      root.style.setProperty(`--font-size-19`, (diagonalLength * .20) + "px");
-      root.style.setProperty(`--full-screen-width`, (window.innerWidth) + "px");
-      root.style.setProperty(`--full-screen-height`, (window.innerHeight) + "px");
-      root.style.setProperty(`--quarter-screen-height`, (window.innerHeight * .25) + "px");
-    }
+    // const setFontSizes = () => {
+    //   let hSq = window.innerHeight * window.innerHeight
+    //   let wSq = window.innerWidth * window.innerWidth
+    //   let diagonalLength = Math.sqrt(hSq + wSq)
+    //   const root = document.documentElement;
+    //   root.style.setProperty(`--font-size-0`, (diagonalLength * .01) + "px");
+    //   root.style.setProperty(`--font-size-1`, (diagonalLength * .02) + "px");
+    //   root.style.setProperty(`--font-size-2`, (diagonalLength * .03) + "px");
+    //   root.style.setProperty(`--font-size-3`, (diagonalLength * .04) + "px");
+    //   root.style.setProperty(`--font-size-4`, (diagonalLength * .05) + "px");
+    //   root.style.setProperty(`--font-size-5`, (diagonalLength * .06) + "px");
+    //   root.style.setProperty(`--font-size-6`, (diagonalLength * .07) + "px");
+    //   root.style.setProperty(`--font-size-7`, (diagonalLength * .08) + "px");
+    //   root.style.setProperty(`--font-size-8`, (diagonalLength * .09) + "px");
+    //   root.style.setProperty(`--font-size-9`, (diagonalLength * .10) + "px");
+    //   root.style.setProperty(`--font-size-10`, (diagonalLength * .11) + "px");
+    //   root.style.setProperty(`--font-size-11`, (diagonalLength * .12) + "px");
+    //   root.style.setProperty(`--font-size-12`, (diagonalLength * .13) + "px");
+    //   root.style.setProperty(`--font-size-13`, (diagonalLength * .14) + "px");
+    //   root.style.setProperty(`--font-size-14`, (diagonalLength * .15) + "px");
+    //   root.style.setProperty(`--font-size-15`, (diagonalLength * .16) + "px");
+    //   root.style.setProperty(`--font-size-16`, (diagonalLength * .17) + "px");
+    //   root.style.setProperty(`--font-size-17`, (diagonalLength * .18) + "px");
+    //   root.style.setProperty(`--font-size-18`, (diagonalLength * .19) + "px");
+    //   root.style.setProperty(`--font-size-19`, (diagonalLength * .20) + "px");
+    //   root.style.setProperty(`--full-screen-width`, (window.innerWidth) + "px");
+    //   root.style.setProperty(`--full-screen-height`, (window.innerHeight) + "px");
+    //   root.style.setProperty(`--quarter-screen-height`, (window.innerHeight * .25) + "px");
+    // }
 
     const setLevel = (level) => {
       window.appConfig.level = level;

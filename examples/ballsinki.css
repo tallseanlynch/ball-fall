@@ -87,15 +87,15 @@ button:focus {
   background-color: rgba(0, 0, 0, 0);
 }
 #sound-menu {
-  margin-top:  var(--font-size-1);
+  /* margin-top:  var(--font-size-1); */
   margin-left: auto;
   margin-right: auto;
 }
 .sound-menu-button.sound-menu-left-td {
-  margin-right: var(--font-size-3);
+  /* margin-right: var(--font-size-3); */
 }
 .sound-menu-right-td {
-  width: var(--font-size-5);
+  /* width: var(--font-size-5); */
 }
 #report {
   /* position: fixed;
@@ -120,7 +120,7 @@ button:focus {
 
 .report-options-button {
   font-family: "Coves Light";
-  font-size: var(--font-size-1);
+  /* font-size: var(--font-size-1); */
   font-weight: 900;
   border: 0;
   border-radius: 5px;
@@ -131,20 +131,20 @@ button:focus {
 .font-a {
   font-weight: 100;
   font-family: "Coves Light";
-  font-size: var(--font-size-2);
+  /* font-size: var(--font-size-2); */
   color: #ffffff;
   text-transform: uppercase;
 }
 .font-b {
   font-weight: 900;
   font-family: "Coves Light";
-  font-size: var(--font-size-2);
+  /* font-size: var(--font-size-2); */
   color: #ffffff;
 }
 .font-c {
   font-weight: 100;
   font-family: "Coves Light";
-  font-size: var(--font-size-1);
+  /* font-size: var(--font-size-1); */
   color: #ffffff;
   text-transform: uppercase;
 }
@@ -167,7 +167,7 @@ button:focus {
 }
 
 #report td.result-key {
-  width: var(--font-size-14);
+  /* width: var(--font-size-14); */
 }
 #report td.result-value {
   width: fit-content;
@@ -319,16 +319,16 @@ button:focus {
 }
 
 .level-select-menu-container {
-  margin-top:  var(--font-size-1);
+  /* margin-top:  var(--font-size-1); */
 }
 #pause-button, #play-button {
-  height: var(--font-size-5);
-  width: var(--font-size-5);
+  /* height: var(--font-size-5);
+  width: var(--font-size-5); */
   position: fixed;
   bottom: 0;
   left: 0;
-  padding-bottom: var(--font-size-0);
-  padding-left: var(--font-size-0);
+  /* padding-bottom: var(--font-size-0);
+  padding-left: var(--font-size-0); */
   border: 0;
   opacity: 1;
   max-width: 75px;
@@ -343,8 +343,8 @@ button:focus {
   position: fixed;
   top: 0;
   right: 0;
-  padding-top: var(--font-size-0);
-  padding-right: var(--font-size-0);
+  /* padding-top: var(--font-size-0);
+  padding-right: var(--font-size-0); */
 }
 #timer,
 #score {
@@ -353,7 +353,7 @@ button:focus {
 #timer,
 #score {
   font-family: "Coves Light";
-  font-size: var(--font-size-3);
+  /* font-size: var(--font-size-3); */
   font-weight: 900;
   color: #ffffff;
 }
@@ -365,7 +365,7 @@ button:focus {
   opacity: 1;
   background-color: rgba(0, 0, 0, 0);
   color: #ffffff;
-  margin-top: var(--font-size-1);
+  /* margin-top: var(--font-size-1); */
   padding: 1px 6px;
 }
 
@@ -391,8 +391,8 @@ button:focus {
   position:absolute;
   left: 0;
   top: 0;
-  width: var(--full-screen-width);
-  height: var(--full-screen-height);
+  width: 100%;
+  height: 100%;
   opacity: .3;
 }
 
