@@ -27,7 +27,7 @@
     }
 
     body {
-      background: linear-gradient(180deg, rgb(2,0,36) 0%, rgba(121,9,117,1) 0%, rgba(252,231,183,1) 24%, rgba(0,212,255,1) 72%);
+      background: linear-gradient(180deg, rgb(2, 0, 36) 0%, rgba(121, 9, 117, 1) 0%, rgba(252, 231, 183, 1) 24%, rgba(0, 212, 255, 1) 72%);
     }
   </style>
 
@@ -110,7 +110,7 @@
       scripts: [
         'ammo.js',
         'three.js',
-        'stats.js', 
+        'stats.js',
         'physi.js',
         'physijs_worker.js',
         'easytimer.js',
@@ -443,7 +443,7 @@
             <td class="font-b high-score-score" id="high-score-3-score"></td>
             <td class="font-b high-score-sec" id="high-score-3-sec"></td>
           </tr>
-        </table>  
+        </table>
       </div>
     </div>
     <div id="report-options">
@@ -1107,68 +1107,112 @@
         }
       ]
       const crystal = (size = 0, p = { x: 0, y: 0, z: 0 }) => {
+        let coin
+        if (window.appConfig.performanceLevel > 0) {
+          coin = new THREE.Mesh();
+          const crystalTop = new THREE.Mesh(
+            crystalTopGeometry,
+            window.appConfig.crystalMaterials[size].standard
+          );
+          crystalTop.translateY(0.75);
+          const crystalMiddle = new THREE.Mesh(
+            crystalMiddleGeometry,
+            window.appConfig.crystalMaterials[size].standard
+          );
 
-        const coin = new THREE.Mesh();
-        const crystalTop = new THREE.Mesh(
-          crystalTopGeometry,
-          window.appConfig.crystalMaterials[size].standard
-        );
-        crystalTop.translateY(0.75);
-        const crystalMiddle = new THREE.Mesh(
-          crystalMiddleGeometry,
-          window.appConfig.crystalMaterials[size].standard
-        );
+          const crystalBottom = new THREE.Mesh(
+            crystalBottomGeometry,
+            window.appConfig.crystalMaterials[size].standard
+          );
+          crystalBottom.translateY(-0.75);
+          coin.add(crystalTop);
+          coin.add(crystalMiddle);
+          coin.add(crystalBottom);
+          coin.position.set(p.x, p.y, 0);
 
-        const crystalBottom = new THREE.Mesh(
-          crystalBottomGeometry,
-          window.appConfig.crystalMaterials[size].standard
-        );
-        crystalBottom.translateY(-0.75);
-        coin.add(crystalTop);
-        coin.add(crystalMiddle);
-        coin.add(crystalBottom);
-        coin.position.set(p.x, p.y, 0);
+        } else {
+          coin = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), window.appConfig.crystalMaterials[size].standard)
+          coin.position.set(p.x, p.y, 0);
+        }
         coin.featureType = "COIN";
         if (size === 0) {
-          coin.scale.set(
-            singleScale * xScaleMod,
-            singleScale * yScaleMod,
-            singleScale * zScaleMod
-          );
+          if (window.appConfig.performanceLevel > 0) {
+            coin.scale.set(
+              singleScale * xScaleMod,
+              singleScale * yScaleMod,
+              singleScale * zScaleMod
+            );
+
+          } else {
+            coin.scale.set(
+              singleScale,
+              singleScale,
+              singleScale
+            );
+          }
           coin.coinType = "single";
           coin.coinValue = 100;
           coin.baseColor = singleHex
-          coin.coinHeight =
+          if (window.appConfig.performanceLevel > 0) {
             coin.children.forEach((child) => {
               child.material.color.setHex(singleHex);
             });
+
+          }
         }
         if (size === 1) {
-          coin.scale.set(
-            doubleScale * xScaleMod,
-            doubleScale * yScaleMod,
-            doubleScale * zScaleMod
-          );
+          if (window.appConfig.performanceLevel > 0) {
+            coin.scale.set(
+              doubleScale * xScaleMod,
+              doubleScale * yScaleMod,
+              doubleScale * zScaleMod
+            );
+
+          } else {
+            coin.scale.set(
+              doubleScale,
+              doubleScale,
+              doubleScale
+            );
+          }
           coin.coinType = "double";
           coin.coinValue = 200;
           coin.baseColor = doubleHex
-          coin.children.forEach((child) => {
-            child.material.color.setHex(doubleHex);
-          });
+          if (window.appConfig.performanceLevel > 0) {
+            coin.children.forEach((child) => {
+              child.material.color.setHex(doubleHex);
+            });
+
+          }
         }
 
         if (size === 2) {
-          coin.scale.set(
-            tripleScale * xScaleMod,
-            tripleScale * yScaleMod,
-            tripleScale * zScaleMod
-          );
+          if (window.appConfig.performanceLevel > 0) {
+            coin.scale.set(
+              tripleScale * xScaleMod,
+              tripleScale * yScaleMod,
+              tripleScale * zScaleMod
+            );
+
+          } else {
+            coin.scale.set(
+              tripleScale,
+              tripleScale,
+              tripleScale
+            );
+          }
           coin.coinType = "triple";
           coin.coinValue = 300;
           coin.baseColor = tripleHex
-          coin.children.forEach((child) => {
-            child.material.color.setHex(tripleHex);
-          });
+          if (window.appConfig.performanceLevel > 0) {
+            coin.children.forEach((child) => {
+              child.material.color.setHex(tripleHex);
+            });
+          }
+        }
+        if (window.appConfig.performanceLevel === 0) {
+
+          coin.rotation.z = Math.PI / 4
         }
         window.appConfig.coins.push(coin);
         coin.size = size
@@ -4824,13 +4868,13 @@
           window.appConfig.score.coins += potentiallyGrabbedCoin.prizeValue;
           potentiallyGrabbedCoin.visible = false
           window.appConfig.coins.splice(coinIndexToRemove, 1);
-          if(window.appConfig.coinScoreThrottle === false) {
-            window.appConfig.coinScoreThrottle = true            
+          if (window.appConfig.coinScoreThrottle === false) {
+            window.appConfig.coinScoreThrottle = true
             setTimeout(() => {
               window.appConfig.coinScoreThrottle = false
             }, 250)
             document.querySelector("#score").innerHTML =
-            window.appConfig.score.coins.toLocaleString('en-US').replace(',', comma())
+              window.appConfig.score.coins.toLocaleString('en-US').replace(',', comma())
           }
           const currentTime = window.appConfig.timer.getTimeValues()
           const newTimer = new easytimer.Timer({ countdown: true, startValues: { seconds: currentTime.seconds + 10, secondTenths: currentTime.secondTenths }, precision: "secondTenths" });
@@ -4928,7 +4972,7 @@
       document.querySelector("#report-score").innerHTML =
         stageScore.toLocaleString('en-US').replace(',', comma());
 
-        const theHighScores = window.appConfig.highscores[window.appConfig.currentStage].highscores
+      const theHighScores = window.appConfig.highscores[window.appConfig.currentStage].highscores
       const hs1Row = document.querySelector("#high-score-1-row")
       const hs2Row = document.querySelector("#high-score-2-row")
       const hs3Row = document.querySelector("#high-score-3-row")
