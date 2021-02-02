@@ -102,6 +102,18 @@ setTimeout(() => {
         }
       });
 
+      // document.addEventListener("click", (e) => {
+      //   if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'mouse') && !window.appConfig.userHasEnded) {
+      //     const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
+      //     // window.appConfig.touchEnd = true;
+      //     // window.appConfig.touchStart = false;
+      //     // window.appConfig.currentX = 0;
+      //     // window.appConfig.currentY = 0;
+      //     // window.appConfig.diffX = 0;
+      //     // window.appConfig.diffY = 0;
+      //   }
+      // });
+
       window.addEventListener('blur', function(e) {
         e.preventDefault();
         Howler.stop()

@@ -287,37 +287,6 @@
       });
     };
 
-    const centerElement = () => { }
-    // const centerElement = (options) => {
-    //   const { id, offsetLeft, offsetTop } = options;
-    //   const innerCalc = () => {
-    //     const element = document.getElementById(id);
-    //     const buttonHeight = element.offsetHeight;
-    //     const buttonWidth = element.offsetWidth;
-    //     let offsetHeight
-    //     if (typeof offsetTop === "number") {
-    //       offsetHeight = window.innerHeight / 2 - buttonHeight / 2 + offsetTop;
-    //     } else {
-    //       const parsedNum = Number.parseInt(offsetTop)
-    //       const percentFromTop = (50 + parsedNum) / 100
-    //       offsetHeight = window.innerHeight * percentFromTop - buttonHeight / 2;
-    //     }
-    //     let offsetWidth
-    //     if (typeof offsetLeft === "number") {
-    //       offsetWidth = window.innerWidth / 2 - buttonWidth / 2 + offsetLeft;
-    //     } else {
-    //       const parsedNum = Number.parseInt(offsetLeft)
-    //       const percentFromLeft = (50 + parsedNum) / 100
-    //       offsetWidth = window.innerWidth * percentFromLeft - buttonWidth / 2;
-    //     }
-    //     const root = document.documentElement;
-    //     root.style.setProperty(`--${id}-offset-top`, offsetHeight + "px");
-    //     root.style.setProperty(`--${id}-offset-left`, offsetWidth + "px");
-    //   }
-    //   innerCalc()
-    //   innerCalc()
-    // };
-
     const scriptLoaded = (scriptName) => {
       window.appConfig.loadedScripts.push(scriptName)
       let loadedNumber = 0
@@ -1018,15 +987,6 @@
       scene.add(pointLight3);
 
       function onWindowResize(event) {
-
-        // setFontSizes()
-        centerElement({ id: "start-button-container", offsetTop: 0, offsetLeft: 0 });
-        centerElement({ id: "level-select", offsetTop: 0, offsetLeft: 0 });
-        centerElement({ id: "report", offsetTop: 0, offsetLeft: 0 });
-        centerElement({ id: "pause-menu", offsetTop: 0, offsetLeft: 0 });
-        centerElement({ id: "title", offsetTop: "-31%", offsetLeft: 0 });
-        centerElement({ id: "start-menu", offsetTop: "31%", offsetLeft: 0 });
-        centerElement({ id: "credits", offsetTop: 0, offsetLeft: 0 });
         var tanFOV = Math.tan(((Math.PI / 180) * camera.fov) / 2);
         var windowHeight = window.innerHeight;
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -1062,27 +1022,37 @@
       const beamCapGeometry = new THREE.BoxGeometry(1.45, 2, 1.45)
 
       const createBeam = (config) => {
-        const beamBox = new THREE.BoxGeometry((10 * config.s), 2, 2)
+        const lengthMod = window.appConfig.performanceLevel > 0 ? 10 : 10.15
+        const beamBox = new THREE.BoxGeometry((lengthMod * config.s), 2, 2)
 
-        const beam0cap0 = new Physijs.BoxMesh(
-          beamCapGeometry,
-          Physijs.createMaterial(
-            beamMaterial,
-            0.6,
-            0.1
-          ),
-          0
-        );
+        if(window.appConfig.performanceLevel > 0) {
+          const beam0cap0 = new Physijs.BoxMesh(
+            beamCapGeometry,
+            Physijs.createMaterial(
+              beamMaterial,
+              0.6,
+              0.1
+            ),
+            0
+          );
 
-        const beam0cap1 = new Physijs.BoxMesh(
-          beamCapGeometry,
-          Physijs.createMaterial(
-            beamMaterial,
-            0.6,
-            0.1
-          ),
-          0
-        );
+          const beam0cap1 = new Physijs.BoxMesh(
+            beamCapGeometry,
+            Physijs.createMaterial(
+              beamMaterial,
+              0.6,
+              0.1
+            ),
+            0
+          );
+
+          beam0.add(beam0cap0)
+          beam0.add(beam0cap1)
+          beam0cap0.rotation.y = 0.25 * Math.PI;
+          beam0cap0.position.x = -5 * config.s;
+          beam0cap1.rotation.y = 0.25 * Math.PI;
+          beam0cap1.position.x = 5 * config.s;
+        }
 
         const beam0 = new Physijs.BoxMesh(
           beamBox,
@@ -1093,14 +1063,6 @@
           ),
           0
         );
-
-        beam0.add(beam0cap0)
-        beam0.add(beam0cap1)
-        beam0cap0.rotation.y = 0.25 * Math.PI;
-        beam0cap0.position.x = -5 * config.s;
-        beam0cap1.rotation.y = 0.25 * Math.PI;
-        beam0cap1.position.x = 5 * config.s;
-
 
         beam0.position.set(config.p[0], config.p[1], config.p[2]);
         beam0.rotation.set(config.r[0], config.r[1], config.r[2]);
@@ -2419,6 +2381,7 @@
               "STAGE2MINORSTRUCTURE",
               { x: 0, y: 0 }
             );
+            stage2MinorBeamStructure.rotation.z = .25 * Math.PI
             scene.add(stage2MinorBeamStructure);
 
             const stage2MinorBeamStructureA = createStage1MinorBeamStructure(
@@ -2717,6 +2680,7 @@
               "STAGE3MAINSTRUCTUREF",
               { x: 0, y: 0 }
             );
+            stage3MainBeamStructureF.rotation.z = .25 * Math.PI
             scene.add(stage3MainBeamStructureF);
 
             const stage3MainBeamStructure1 = window.appConfig.stages.components.createStage0MainBeamStructure(
@@ -4213,7 +4177,6 @@
             if (percentComplete > .5) {
               document.querySelector('#gradient-curtain').style.opacity = (1 - ((percentComplete - .5) * 2)) < 0 ? 0 : (1 - ((percentComplete - .5) * 2))
             }
-            centerElement({ id: "stage-name", offsetTop: 0, offsetLeft: 0 })
             if (percentComplete > .9) {
               document.querySelector('#stage-name-title').style.opacity = 1 - (percentComplete - .9) * 10
               document.querySelector('#stage-number').style.opacity = 1 - (percentComplete - .9) * 10
@@ -4610,7 +4573,7 @@
       if (!window.appConfig.stages[window.appConfig.currentStage].data.started) {
         window.appConfig.stages[window.appConfig.currentStage].init()
       } else {
-        if (!window.appConfig.pause && !window.appConfig.userHasEnded) {
+        if (window.appConfig.performanceLevel > 0 && !window.appConfig.pause && !window.appConfig.userHasEnded) {
           window.appConfig.activeTransforms.length > 0 && window.appConfig.activeTransforms.forEach(t => {
             if (window.appConfig.stages[window.appConfig.currentStage].transforms[t].r && window.appConfig.stages[window.appConfig.currentStage][t]) {
               window.appConfig.stages[window.appConfig.currentStage][t].rotation.x += window.appConfig.stages[window.appConfig.currentStage].transforms[t].r.x
@@ -4765,7 +4728,7 @@
       camera.position.x = sphere.position.x;
       camera.position.y = sphere.position.y;
 
-      if (currentTime % 10 < 1) {
+      if (currentTime % 20 < 1) {
         if (window.appConfig.timers.data.initialBallZoom.percentComplete > .999) {
           window.appConfig.timers.data.initialBallZoom.percentComplete = 1
         }
@@ -4814,8 +4777,10 @@
           }
         }
       );
-      if (window.appConfig.stages[window.appConfig.currentStage].bgGroupActiveCallback) {
-        window.appConfig.stages[window.appConfig.currentStage].bgGroupActiveCallback()
+      if (window.appConfig.performanceLevel > 1) {
+        if (window.appConfig.stages[window.appConfig.currentStage].bgGroupActiveCallback) {
+          window.appConfig.stages[window.appConfig.currentStage].bgGroupActiveCallback()
+        }
       }
 
       if (potentiallyGrabbedCoin) {
@@ -4996,7 +4961,6 @@
       }
 
       showReport()
-      centerElement({ id: "report", offsetTop: 0, offsetLeft: 0 });
       document.querySelector("#pause-button").disabled = true;
 
     }
@@ -5110,61 +5074,46 @@
     }
     const showReport = () => {
       showHTMLElements(["report", "tinted-overlay"]);
-      centerElement({ id: "report", offsetTop: 0, offsetLeft: 0 });
     }
     const showLevelSelect = () => {
       showHTMLElements(["level-select", "tinted-overlay"]);
-      centerElement({ id: "level-select", offsetTop: 0, offsetLeft: 0 });
     };
     const showSounds = () => {
       showHTMLElements(["sounds", "tinted-overlay"]);
-      centerElement({ id: "sounds", offsetTop: 0, offsetLeft: 0 });
     };
     const showCredits = () => {
       showHTMLElements(["credits", "tinted-overlay"]);
-      centerElement({ id: "credits", offsetTop: 0, offsetLeft: 0 });
     };
 
     const showInstructions = () => {
       showHTMLElements(["instructions", "tinted-overlay"]);
-      centerElement({ id: "instructions", offsetTop: 0, offsetLeft: 0 });
     };
 
     const showStart = () => {
       showHTMLElements(["main-menu-container", "tinted-overlay"]);
-      centerElement({ id: "start-button-container", offsetTop: 0, offsetLeft: 0 });
-      centerElement({ id: "title", offsetTop: "-31%", offsetLeft: 0 });
-      centerElement({ id: "start-menu", offsetTop: "31%", offsetLeft: 0 });
     };
     const showPauseMenu = () => {
       showHTMLElements(["play-button", "pause-menu", "game-scoreboard", "tinted-overlay"]);
-      centerElement({ id: "pause-menu", offsetTop: 0, offsetLeft: 0 });
     };
 
     const showStageCountDownName = () => {
       showHTMLElements(["stage-name-container", "tinted-overlay"]);
-      centerElement({ id: "stage-name", offsetTop: 0, offsetLeft: 0 });
-      centerElement({ id: "stage-number", offsetTop: "-40%", offsetLeft: 0 });
     };
 
     const showStageCountDown3 = () => {
       showHTMLElements(["stage-countdown-3-container", "tinted-overlay"]);
-      centerElement({ id: "stage-countdown-3", offsetTop: 0, offsetLeft: 0 });
     };
 
     const showStageCountDown2 = () => {
       showHTMLElements(["stage-countdown-2-container", "tinted-overlay"]);
-      centerElement({ id: "stage-countdown-2", offsetTop: 0, offsetLeft: 0 });
     };
 
     const showStageCountDown1 = () => {
       showHTMLElements(["stage-countdown-1-container", "tinted-overlay"]);
-      centerElement({ id: "stage-countdown-1", offsetTop: 0, offsetLeft: 0 });
     };
 
     const showStageCountDownStart = () => {
       showHTMLElements(["stage-countdown-start-container", "pause-button", "game-scoreboard"]);
-      centerElement({ id: "stage-countdown-start", offsetTop: 0, offsetLeft: 0 });
     };
 
     const showGameMode = () => {
@@ -5179,36 +5128,6 @@
         showStart();
       }
     };
-
-    // const setFontSizes = () => {
-    //   let hSq = window.innerHeight * window.innerHeight
-    //   let wSq = window.innerWidth * window.innerWidth
-    //   let diagonalLength = Math.sqrt(hSq + wSq)
-    //   const root = document.documentElement;
-    //   root.style.setProperty(`--font-size-0`, (diagonalLength * .01) + "px");
-    //   root.style.setProperty(`--font-size-1`, (diagonalLength * .02) + "px");
-    //   root.style.setProperty(`--font-size-2`, (diagonalLength * .03) + "px");
-    //   root.style.setProperty(`--font-size-3`, (diagonalLength * .04) + "px");
-    //   root.style.setProperty(`--font-size-4`, (diagonalLength * .05) + "px");
-    //   root.style.setProperty(`--font-size-5`, (diagonalLength * .06) + "px");
-    //   root.style.setProperty(`--font-size-6`, (diagonalLength * .07) + "px");
-    //   root.style.setProperty(`--font-size-7`, (diagonalLength * .08) + "px");
-    //   root.style.setProperty(`--font-size-8`, (diagonalLength * .09) + "px");
-    //   root.style.setProperty(`--font-size-9`, (diagonalLength * .10) + "px");
-    //   root.style.setProperty(`--font-size-10`, (diagonalLength * .11) + "px");
-    //   root.style.setProperty(`--font-size-11`, (diagonalLength * .12) + "px");
-    //   root.style.setProperty(`--font-size-12`, (diagonalLength * .13) + "px");
-    //   root.style.setProperty(`--font-size-13`, (diagonalLength * .14) + "px");
-    //   root.style.setProperty(`--font-size-14`, (diagonalLength * .15) + "px");
-    //   root.style.setProperty(`--font-size-15`, (diagonalLength * .16) + "px");
-    //   root.style.setProperty(`--font-size-16`, (diagonalLength * .17) + "px");
-    //   root.style.setProperty(`--font-size-17`, (diagonalLength * .18) + "px");
-    //   root.style.setProperty(`--font-size-18`, (diagonalLength * .19) + "px");
-    //   root.style.setProperty(`--font-size-19`, (diagonalLength * .20) + "px");
-    //   root.style.setProperty(`--full-screen-width`, (window.innerWidth) + "px");
-    //   root.style.setProperty(`--full-screen-height`, (window.innerHeight) + "px");
-    //   root.style.setProperty(`--quarter-screen-height`, (window.innerHeight * .25) + "px");
-    // }
 
     const setLevel = (level) => {
       window.appConfig.level = level;
