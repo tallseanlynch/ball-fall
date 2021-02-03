@@ -131,33 +131,33 @@ button:focus {
 .font-a {
   font-weight: 100;
   font-family: "Coves Light";
-  /* font-size: var(--font-size-2); */
+  font-size: var(--font-size-2);
   color: #ffffff;
   text-transform: uppercase;
 }
 .font-b {
   font-weight: 900;
   font-family: "Coves Light";
-  /* font-size: var(--font-size-2); */
+  font-size: var(--font-size-2);
   color: #ffffff;
 }
 .font-c {
   font-weight: 100;
   font-family: "Coves Light";
-  /* font-size: var(--font-size-1); */
+  font-size: var(--font-size-1);
   color: #ffffff;
   text-transform: uppercase;
 }
 .font-d {
   font-family: "Aadhunik";
   font-size: 1.5rem;
-  /* font-size: var(--font-size-2); */
+  font-size: var(--font-size-2);
   color: #ffffff;
 }
 .font-e {
   font-weight: 100;
   font-family: "Coves Light";
-  /* font-size: var(--font-size-2); */
+  font-size: var(--font-size-2);
   color: #ffffff;
   text-transform: uppercase;
   animation-duration: 5s;
@@ -167,17 +167,17 @@ button:focus {
 }
 
 #report td.result-key {
-  /* width: var(--font-size-14); */
+  width: var(--font-size-14);
 }
 #report td.result-value {
   width: fit-content;
 }
 #report td.high-score-ordinal {
-  /* width: var(--font-size-4); */
+  width: var(--font-size-4);
   width: 2rem;
 }
 #report td.high-score-score {
-  /* width: var(--font-size-16); */
+  width: var(--font-size-16);
   width: 7rem;
 }
 #report td.high-score-sec {
@@ -217,10 +217,10 @@ button:focus {
 } */
 .credits-role {
   width: fit-content;
-  /* line-height: var(--font-size-2); */
+  line-height: var(--font-size-2);
   color: #ffffff;
   margin: 0 auto;
-  /* margin-top:  var(--font-size-1); */
+  margin-top:  var(--font-size-1);
   margin-left: auto;
   margin-right: auto;
   font-style: italic;
@@ -744,4 +744,8 @@ button:focus {
   .scrolling-section {
     height: 79%;
   }
+}
+
+#start-menu .start-menu-button, #report-options {
+  font-size: 2rem;
 }
