@@ -194,6 +194,7 @@ button:focus {
 }
 #high-scores-title {
   width: fit-content;
+  font-size: 2rem;
 }
 #pause-menu {
   /* padding-top: 30%; */
