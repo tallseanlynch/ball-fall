@@ -118,8 +118,7 @@ setTimeout(() => {
           const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
           var inputVectorX = (e.clientX / window.innerWidth * 2) - 1;
           var inputVectorY = (e.clientY / window.innerHeight * -2) + 1;
-          const clickScale = 100
-          console.log(inputVectorX * clickScale, inputVectorY * clickScale, 0)
+          const clickScale = 50
           sphere.setLinearVelocity(new THREE.Vector3(inputVectorX * clickScale, inputVectorY * clickScale, 0))
         }
       });

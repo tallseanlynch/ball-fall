@@ -83,40 +83,18 @@ var Stats = function () {
                 }
                 window.appConfig.healthCheck.averageFPS = window.appConfig.healthCheck.fpsArray.reduce((fpsTotal, fpsVal) => fpsTotal + fpsVal) / window.appConfig.healthCheck.fpsArray.length
 
-                // if(window.appConfig.healthCheck.fpsArray.length === 5 && window.appConfig.healthCheck.healthChecked === false) {
-                //     if(window.innerHeight < 376 || window.innerWidth < 376) {
-                //         window.appConfig.events.primaryInput = 'click'
-                //     }
-                //     if(window.appConfig.healthCheck.averageFPS < 15) {
-                //         window.appConfig.healthCheck.healthChecked = true
-                //         window.appConfig.performanceLevel = 0
-                //         window.appConfig.events.primaryInput = 'click'
-                //         reset({action:'levelSelectHealthCheck', level: window.appConfig.currentStageIndex, autoStart: false})
-                //         // window.appConfig.stages[window.appConfig.currentStage].teardown()
-                //         // window.appConfig.stages.components.stageInit() 
-                //         // window.appConfig.stages[window.appConfig.currentStage].init()                
-                //     }
-                // }
-
                 if(window.appConfig.healthCheck.fpsArray.length > 10 && window.appConfig.healthCheck.healthChecked === false) {
                     window.appConfig.healthCheck.healthChecked = true
                     if(window.appConfig.healthCheck.averageFPS < 50 && window.appConfig.healthCheck.averageFPS > 45) {
                         window.appConfig.performanceLevel = 1
                         reset({action:'levelSelectHealthCheck', level: window.appConfig.currentStageIndex, autoStart: false})
-                        // window.appConfig.stages[window.appConfig.currentStage].teardown()
-                        // window.appConfig.stages.components.stageInit() 
-                        // window.appConfig.stages[window.appConfig.currentStage].init()                
                     }
                     if(window.appConfig.healthCheck.averageFPS < 45) {
                         window.appConfig.performanceLevel = 0
                         window.appConfig.events.primaryInput = 'click'
                         reset({action:'levelSelectHealthCheck', level: window.appConfig.currentStageIndex, autoStart: false})
-                        // window.appConfig.stages[window.appConfig.currentStage].teardown()
-                        // window.appConfig.stages.components.stageInit() 
-                        // window.appConfig.stages[window.appConfig.currentStage].init()                
                     }
                 }
-                console.log(appConfig.healthCheck)
 
 				fpsPanel.update( frameRate, 100 );
 
@@ -209,5 +187,3 @@ Stats.Panel = function ( name, fg, bg ) {
 	};
 
 };
-
-// export { Stats as default };
