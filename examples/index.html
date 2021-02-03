@@ -89,6 +89,12 @@
       pause: false,
       defaultSphereMass: 4.188790683884756,
       defaultSceneGravity: -10,
+      controlTypes: [
+        "mouse",
+        "touch",
+        "click"
+      ],
+      controlTypeIndex: 0,
       itemAmounts: {
         crystalCross: 0,
         crystalLine: 0,
@@ -410,6 +416,11 @@
           <td class="sound-menu-button sound-menu-left-td font-a">Music</td>
           <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="music-toggle-button"
               onClick="toggleMusicButton()"></button></td>
+        </tr>
+        <tr>
+          <td class="sound-menu-button sound-menu-left-td font-a">Controls</td>
+          <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="controls-toggle-button"
+              onClick="toggleControlsButton()"></button></td>
         </tr>
       </table>
     </div>
@@ -937,6 +948,7 @@
       } else {
         musicButton.textContent = "OFF"
       }
+
 
       camera = new THREE.PerspectiveCamera(
         35,
@@ -5192,6 +5204,16 @@
       } else {
         musicButton.textContent = "OFF"
       }
+    }
+    const toggleControlsButton = () => {
+      // window.appConfig.musicTurnedOn = !window.appConfig.musicTurnedOn
+      // const musicButton =
+      //   document.querySelector('#music-toggle-button')
+      // if (window.appConfig.musicTurnedOn) {
+      //   musicButton.textContent = "ON"
+      // } else {
+      //   musicButton.textContent = "OFF"
+      // }
     }
     window.onload = initScene;
 

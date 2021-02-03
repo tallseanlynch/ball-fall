@@ -88,10 +88,14 @@ var Stats = function () {
                     if(window.appConfig.healthCheck.averageFPS < 50 && window.appConfig.healthCheck.averageFPS > 45) {
                         window.appConfig.performanceLevel = 1
                         reset({action:'levelSelectHealthCheck', level: window.appConfig.currentStageIndex, autoStart: false})
+						document.querySelector('#controls-toggle-button').textContent = "SWIPE"
+						window.appConfig.controlTypeIndex = 1
                     }
                     if(window.appConfig.healthCheck.averageFPS < 45) {
                         window.appConfig.performanceLevel = 0
-                        window.appConfig.events.primaryInput = 'click'
+						window.appConfig.events.primaryInput = 'click'
+						document.querySelector('#controls-toggle-button').textContent = "CLICK"
+						window.appConfig.controlTypeIndex = 2
                         reset({action:'levelSelectHealthCheck', level: window.appConfig.currentStageIndex, autoStart: false})
                     }
                 }
