@@ -142,7 +142,7 @@
         ["#f49ac1", "#f06eaa", "#ec008c", "#9e005d", "#7b0046"],//14 magenta
         ["#f5989d", "#f26d7d", "#ed145b", "#9e0039", "#7a0026"]//15 cool red
       ],
-      performanceLevel: 0
+      performanceLevel: 1
     };
 
     const localStorageData = {
@@ -1550,6 +1550,19 @@
 
       window.appConfig.stages = {
         components: {
+          stageInit: () => {
+            document.body.style.background = window.appConfig.stages.components.background(
+              .5,
+              window.appConfig.stages[window.appConfig.currentStage].backgroundColors
+            )
+
+            window.appConfig.initStageSounds()
+            window.appConfig.lighting.hemisphereLight.color = getRandomColor()
+            window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
+            if(window.appConfig.performanceLevel > 0) {
+              window.appConfig.stages[window.appConfig.currentStage].initBackground()
+            }
+          },
           crystal: crystal,
           createCrystalLine: createCrystalLine,
           createCrystalCircle: createCrystalCircle,
@@ -1856,11 +1869,7 @@
             teardownStage('STAGE0')
             window.appConfig.stages.STAGE0.data.started = false
           },
-          init: () => {
-            window.appConfig.initStageSounds()
-            window.appConfig.lighting.hemisphereLight.color = getRandomColor()
-            window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
-
+          initBackground: () => {
             const createBackgroundAnimation = () => {
               const bgGroup = new THREE.Group()
               bgGroup.name = 'STAGE0BGGROUP'
@@ -1902,8 +1911,8 @@
             }
 
             createBackgroundAnimation()
-
-
+          },
+          init: () => {
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
 
             const stage0MainBeamStructure = createStage0MainBeamStructure(
@@ -2058,14 +2067,7 @@
             teardownStage('STAGE1')
             window.appConfig.stages.STAGE1.data.started = false
           },
-          init: () => {
-            window.appConfig.initStageSounds()
-            window.appConfig.lighting.hemisphereLight.color = getRandomColor()
-            window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
-
-            const createStage1MainBeamStructure = window.appConfig.stages.components.createStage1MainBeamStructure
-            const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
-
+          initBackground: () => {
             const createBackgroundAnimation = () => {
               const bgGroup = new THREE.Group()
               bgGroup.name = 'STAGE1BGGROUP'
@@ -2107,6 +2109,10 @@
             }
 
             createBackgroundAnimation()
+          },
+          init: () => {
+            const createStage1MainBeamStructure = window.appConfig.stages.components.createStage1MainBeamStructure
+            const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
 
             const stage1MainBeamStructure = createStage1MainBeamStructure(
               4,
@@ -2147,8 +2153,6 @@
             );
             stage1MinorBeamStructureB.rotation.z = .25 * Math.PI
             scene.add(stage1MinorBeamStructureB);
-
-
 
             const stage1MinorBeamStructure1 = createStage1MinorBeamStructure(
               .5,
@@ -2337,13 +2341,7 @@
             teardownStage('STAGE2')
             window.appConfig.stages.STAGE2.data.started = false
           },
-          init: () => {
-            window.appConfig.initStageSounds()
-            window.appConfig.lighting.hemisphereLight.color = getRandomColor()
-            window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
-
-
-
+          initBackground: () => {
             const createBackgroundAnimation = () => {
               const bgGroup = new THREE.Group()
               bgGroup.name = 'STAGE2BGGROUP'
@@ -2390,8 +2388,8 @@
             }
 
             createBackgroundAnimation()
-
-
+          },
+          init: () => {
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
 
@@ -2612,12 +2610,7 @@
             teardownStage('STAGE3')
             window.appConfig.stages.STAGE3.data.started = false
           },
-          init: () => {
-            window.appConfig.initStageSounds()
-            window.appConfig.lighting.hemisphereLight.color = getRandomColor()
-            window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
-
-
+          initBackground: () => {
             const createBackgroundAnimation = () => {
               const bgGroup = new THREE.Group()
               bgGroup.name = 'STAGE3BGGROUP'
@@ -2658,11 +2651,9 @@
               window.appConfig.stages['STAGE3'].bgGroupActiveCallback = bgGroup.activeCallback
             }
 
-            // window.appConfig.createSphere({ bounce: 1, name: 'STAGE3SPHERECOIN', position: { x: Math.random() * 75, y: Math.random() * 75, z: 0 }, handleCollision: (c) => window.appConfig.superBallHandleCollision(c, 'STAGE3SPHERECOIN') })
-            // window.appConfig.createSphere({ bounce: 1, name: 'STAGE3SPHERECOIN1', position: { x: Math.random() * 75, y: Math.random() * 75, z: 0 }, handleCollision: (c) => window.appConfig.superBallHandleCollision(c, 'STAGE3SPHERECOIN1') })
-
             createBackgroundAnimation()
-
+          },
+          init: () => {
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
             const createStage3CrossBeamStructure = window.appConfig.stages.components.createStage3CrossBeamStructure
@@ -3006,11 +2997,7 @@
             teardownStage('STAGE4')
             window.appConfig.stages.STAGE4.data.started = false
           },
-          init: () => {
-            window.appConfig.initStageSounds()
-            window.appConfig.lighting.hemisphereLight.color = getRandomColor()
-            window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
-
+          initBackground: () => {
             const createBackgroundAnimation = () => {
               const bgGroup = new THREE.Group()
               bgGroup.name = 'STAGE4BGGROUP'
@@ -3052,9 +3039,8 @@
             }
 
             createBackgroundAnimation()
-
-
-
+          },
+          init: () => {
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
             const createStage3CrossBeamStructure = window.appConfig.stages.components.createStage3CrossBeamStructure
@@ -3473,11 +3459,7 @@
             teardownStage('STAGE5')
             window.appConfig.stages.STAGE5.data.started = false
           },
-          init: () => {
-            window.appConfig.initStageSounds()
-            window.appConfig.lighting.hemisphereLight.color = getRandomColor()
-            window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
-
+          initBackground: () => {
             const createBackgroundAnimation = () => {
               const bgGroup = new THREE.Group()
               bgGroup.name = 'STAGE5BGGROUP'
@@ -3519,7 +3501,8 @@
             }
 
             createBackgroundAnimation()
-
+          },
+          init: () => {
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
             const createStage3CrossBeamStructure = window.appConfig.stages.components.createStage3CrossBeamStructure
@@ -3787,7 +3770,9 @@
 
       }
 
+      window.appConfig.stages.components.stageInit() 
       window.appConfig.stages[window.appConfig.currentStage].init()
+
 
       spawnBox();
 
@@ -4615,6 +4600,7 @@
       currentTime = new Date().getTime();
 
       if (!window.appConfig.stages[window.appConfig.currentStage].data.started) {
+        window.appConfig.stages.components.stageInit() 
         window.appConfig.stages[window.appConfig.currentStage].init()
       } else {
         if (window.appConfig.performanceLevel > 0 && !window.appConfig.pause && !window.appConfig.userHasEnded) {

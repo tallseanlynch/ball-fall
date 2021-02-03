@@ -103,7 +103,7 @@ setTimeout(() => {
       });
 
       // document.addEventListener("click", (e) => {
-      //   if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'mouse') && !window.appConfig.userHasEnded) {
+      //   if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'click') && !window.appConfig.userHasEnded) {
       //     const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
       //     // window.appConfig.touchEnd = true;
       //     // window.appConfig.touchStart = false;
