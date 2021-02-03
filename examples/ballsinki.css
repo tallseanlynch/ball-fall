@@ -189,7 +189,7 @@ button:focus {
   width: fit-content;
 }
 #pause-menu {
-  padding-top: 30%;
+  /* padding-top: 30%; */
   /* position: absolute; */
   /* left: var(--pause-menu-offset-left);
   top: var(--pause-menu-offset-top); */
@@ -577,17 +577,6 @@ button:focus {
   margin: 0 auto;
 }
 
-.circle {
-  width: 25px;
-  height: 25px;
-  background-color: white;
-  border-radius: 100%;
-  position: absolute;
-  z-index: 101;
-  left: 50%;
-  top: 50%;
-}
-
 #instructions-title {
   text-align: center;
   vertical-align: middle;  
@@ -634,7 +623,7 @@ button:focus {
   color: #ffffff;
 }
 
-@media only screen and (max-width: 400px) {
+@media only screen and (max-width: 500px) {
   #instructions-list img {
     width: 75% !important;
   }

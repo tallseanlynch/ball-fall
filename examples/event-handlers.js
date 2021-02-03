@@ -5,7 +5,7 @@ setTimeout(() => {
         var inputVectorX = (e.touches[0].clientX / window.innerWidth * 2) - 1;
         var inputVectorY = (e.touches[0].clientY / window.innerHeight * -2) + 1;
         const clickScale = 100
-        console.log(inputVectorX * clickScale, inputVectorY * clickScale, 0)
+        // console.log(inputVectorX * clickScale, inputVectorY * clickScale, 0)
         sphere.setLinearVelocity(new THREE.Vector3(inputVectorX * clickScale, inputVectorY * clickScale, 0))
       }
 
@@ -113,14 +113,14 @@ setTimeout(() => {
         }
       });
 
-      document.addEventListener("click", (e) => {
-        if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'click') && !window.appConfig.userHasEnded) {
-          const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
-          var inputVectorX = (e.clientX / window.innerWidth * 2) - 1;
-          var inputVectorY = (e.clientY / window.innerHeight * -2) + 1;
-          const clickScale = 50
-          sphere.setLinearVelocity(new THREE.Vector3(inputVectorX * clickScale, inputVectorY * clickScale, 0))
-        }
+      document.querySelector('body').addEventListener("click", (e) => {
+          if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'click') && !window.appConfig.userHasEnded) {
+            const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
+            var inputVectorX = (e.clientX / window.innerWidth * 2) - 1;
+            var inputVectorY = (e.clientY / window.innerHeight * -2) + 1;
+            const clickScale = 50
+            sphere.setLinearVelocity(new THREE.Vector3(inputVectorX * clickScale, inputVectorY * clickScale, 0))  
+          }  
       });
 
       window.addEventListener('blur', function(e) {

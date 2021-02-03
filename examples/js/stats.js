@@ -87,12 +87,27 @@ var Stats = function () {
                     window.appConfig.healthCheck.healthChecked = true
                     if(window.appConfig.healthCheck.averageFPS < 50 && window.appConfig.healthCheck.averageFPS > 45) {
                         window.appConfig.performanceLevel = 1
-                        reset({action:'levelSelectHealthCheck', level: window.appConfig.currentStageIndex, autoStart: false})
+                        reset({action:'levelSelectHealthCheck', level: 0, autoStart: false})
+                        setTimeout(() => {
+                            window.appConfig.loadingInterval.clearInterval()
+                            toggleMainLoading()
+                        }, 2000)
                     }
                     if(window.appConfig.healthCheck.averageFPS < 45) {
                         window.appConfig.performanceLevel = 0
                         window.appConfig.events.primaryInput = 'click'
-                        reset({action:'levelSelectHealthCheck', level: window.appConfig.currentStageIndex, autoStart: false})
+                        reset({action:'levelSelectHealthCheck', level: 0, autoStart: false})
+                        setTimeout(() => {
+                            window.appConfig.loadingInterval.clearInterval()
+                            toggleMainLoading()
+                        }, 2000)
+                    }
+                    if(window.appConfig.performanceLevel === 2) {
+                        reset({action:'levelSelectHealthCheck', level: 0, autoStart: false})
+                        setTimeout(() => {
+                            window.appConfig.loadingInterval.clearInterval()
+                            toggleMainLoading()
+                        }, 2000)
                     }
                 }
 

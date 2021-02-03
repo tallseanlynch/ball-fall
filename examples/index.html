@@ -29,6 +29,22 @@
     body {
       background: linear-gradient(180deg, rgb(2, 0, 36) 0%, rgba(121, 9, 117, 1) 0%, rgba(252, 231, 183, 1) 24%, rgba(0, 212, 255, 1) 72%);
     }
+
+    #play-button {
+      z-index: 3000;
+    }
+
+    .circle {
+      width: 25px;
+      height: 25px;
+      background-color: white;
+      border-radius: 100%;
+      position: absolute;
+      z-index: 1002;
+      left: 50%;
+      top: 50%;
+    }
+
   </style>
 
   <script>
@@ -233,7 +249,7 @@
         document.querySelector('#circle4').style.top = (lfoPositive(1121) * 70 + 15) + '%'
         document.querySelector('#circle5').style.left = (lfoPositive(1920) * 80 + 10) + '%'
         document.querySelector('#circle5').style.top = (lfoPositive(2139) * 70 + 15) + '%'
-        document.querySelector('#gradient-curtain').style.background = generateBackground(
+        document.querySelector('#loading-gradient-curtain').style.background = generateBackground(
           .5 + (lfoPositive(1250) / 2), [
           "rgba(2,0,36,0)",
           "rgba(121,9,117,1)",
@@ -244,12 +260,13 @@
       }, 1000 / 60)
       window.appConfig.loadingInterval.clearInterval = () => {
         clearInterval(loadingInterval)
-        document.body.removeChild(document.querySelector('#circle0'))
-        document.body.removeChild(document.querySelector('#circle1'))
-        document.body.removeChild(document.querySelector('#circle2'))
-        document.body.removeChild(document.querySelector('#circle3'))
-        document.body.removeChild(document.querySelector('#circle4'))
-        document.body.removeChild(document.querySelector('#circle5'))
+        document.querySelector('#circle0') && document.body.removeChild(document.querySelector('#circle0'))
+        document.querySelector('#circle1') && document.body.removeChild(document.querySelector('#circle1'))
+        document.querySelector('#circle2') && document.body.removeChild(document.querySelector('#circle2'))
+        document.querySelector('#circle3') && document.body.removeChild(document.querySelector('#circle3'))
+        document.querySelector('#circle4') && document.body.removeChild(document.querySelector('#circle4'))
+        document.querySelector('#circle5') && document.body.removeChild(document.querySelector('#circle5'))
+        document.querySelector('#loading-gradient-curtain') && document.body.removeChild(document.querySelector('#loading-gradient-curtain'))
       }
     }
 
@@ -302,23 +319,31 @@
         }
       })
       if (loadedNumber === expectedLoadedNumber) {
-        window.appConfig.loadingInterval.clearInterval()
-        toggleMainLoading()
+        // window.appConfig.loadingInterval.clearInterval()
+        // toggleMainLoading()
       }
     }
 
   </script>
   <style>
-    #gradient-curtain {
+    #gradient-curtain, #loading-gradient-curtain {
       position: fixed;
       width: 100%;
       height: 100%;
       top: 0;
       left: 0;
       pointer-events: none;
-      z-index: 99;
       background: linear-gradient(180deg, rgba(2, 0, 36, 0) 0%, rgba(121, 9, 117, 1) 0%, rgba(252, 231, 183, 1) 33%, rgba(0, 212, 255, 1) 66%);
     }
+
+    #gradient-curtain {
+      z-index: 99;
+    }
+
+    #loading-gradient-curtain {
+      z-index: 1000;
+    }
+
 
     @keyframes loading-main-screen {
 
@@ -339,7 +364,7 @@
       width: 300px;
       height: 200px;
       position: fixed;
-      z-index: 100;
+      z-index: 1001;
       top: calc(50% - 100px);
       left: calc(50% - 150px);
       text-align: center;
@@ -375,6 +400,8 @@
     #stage-countdown-3 {
       z-index: 200;
     }
+
+
   </style>
   <link rel="stylesheet" href="./ballsinki.css">
 </head>
@@ -389,6 +416,7 @@
   <div id="circle3" class="circle"></div>
   <div id="circle4" class="circle"></div>
   <div id="circle5" class="circle"></div>
+
   <div class="debug hide">
   </div>
   <div id="viewport"></div>
@@ -398,7 +426,7 @@
     <div id="score"></div>
   </div>
   <div id="sounds" class="hide menu-container">
-    <div id="sounds-title" class="menu-title-text margin-bottom-3 font-e">Sounds</div>
+    <div id="sounds-title" class="menu-title-text margin-bottom-3 font-e">Settings</div>
     <div class="scrolling-section margin-bottom-2">
       <table id="sound-menu" class="margin-bottom-3 table-margin-1">
         <tr>
@@ -454,7 +482,7 @@
     <div id="report-options">
       <button id="report-level-select-button" class="start-menu-button font-b margin-bottom-1"
         onClick="showLevelSelect()">
-        Level Select
+        Zone Select
       </button>
       <button id="report-reset-button" class="start-menu-button font-b margin-bottom-1"
         onClick="reset({action:'reset', autoStart: true})">
@@ -471,7 +499,7 @@
     </div>
   </div>
   <div id="level-select" class="menu-container hide">
-    <div id="report-title" class="menu-title-text margin-bottom-2 font-e">LEVEL SELECT</div>
+    <div id="report-title" class="menu-title-text margin-bottom-2 font-e">ZONE SELECT</div>
     <div class="level-select-menu-container margin-bottom-3 scrolling-section">
       <button class="level-select-button stage-0 margin-bottom-2 font-d"
         onClick="reset({action:'levelSelect', level: 0, autoStart: true})">NATURAL
@@ -501,10 +529,10 @@
       Resume
     </button>
     <button id="pause-level-select-button" class="start-menu-button font-b" onClick="showLevelSelect()">
-      Level Select
+      Zone Select
     </button>
     <button id="pause-sounds-button" class="start-menu-button font-b" onClick="showSounds()">
-      Sounds
+      Settings
     </button>
     <button id="pause-reset-button" class="start-menu-button font-b" onClick="reset({action:'reset', autoStart: true})">
       Restart Level
@@ -522,16 +550,16 @@
     </div>
     <div id="start-menu">
       <button id="start-level-select-button" class="start-menu-button font-b" onClick="showLevelSelect()">
-        Level Select
-      </button>
-      <button id="start-sounds-button" class="start-menu-button font-b" onClick="showSounds()">
-        Sounds
-      </button>
-      <button id="start-credits-button" class="start-menu-button font-b" onClick="showCredits()">
-        Credits
+        Zone Select
       </button>
       <button id="start-credits-button" class="start-menu-button font-b" onClick="showInstructions()">
         Instructions
+      </button>
+      <button id="start-sounds-button" class="start-menu-button font-b" onClick="showSounds()">
+        Settings
+      </button>
+      <button id="start-credits-button" class="start-menu-button font-b" onClick="showCredits()">
+        Credits
       </button>
     </div>
   </div>
@@ -551,9 +579,10 @@
 
 
   <div id="gradient-curtain"></div>
+  <div id="loading-gradient-curtain"></div>  
 
   <div id="stage-name-container" class="hide menu-container">
-    <div id="stage-number">MAZE 1</div>
+    <div id="stage-number">ZONE 1</div>
     <div id="stage-name">
       <div id="stage-name-title">NATURAL WONDER</div>
     </div>
@@ -910,7 +939,10 @@
 
       scene.addEventListener("update", function () {
         scene.simulate(undefined, 1);
-        physics_stats.update();
+        if(window.appConfig.healthCheck.healthChecked === false) {
+
+          physics_stats.update();
+        }
       });
 
       window.appConfig.lighting = {
@@ -1838,6 +1870,7 @@
         },
         STAGE0: {
           data: {
+            superBallPositionScale: 30,
             started: false,
             xAdj: -60,
             vAdj: -70,
@@ -4163,7 +4196,8 @@
           },
           completedCallback: () => {
             const theName = window.appConfig.currentStage + '_SPHERECOIN_' + Math.round(Math.random() * 1000)
-            window.appConfig.createSphere({ bounce: 1, name: theName, position: { x: Math.random() * 50, y: Math.random() * 50, z: 0 }, handleCollision: (c) => window.appConfig.superBallHandleCollision(c, theName) })
+            const superBallPositionScale = window.appConfig.stages[window.appConfig.currentStage].data.superBallPositionScale ? window.appConfig.stages[window.appConfig.currentStage].data.superBallPositionScale : 50
+            window.appConfig.createSphere({ bounce: 1, name: theName, position: { x: (Math.random() * superBallPositionScale * 2) - superBallPositionScale, y: (Math.random() * superBallPositionScale * 2) - superBallPositionScale, z: 0 }, handleCollision: (c) => window.appConfig.superBallHandleCollision(c, theName) })
             scene.remove(scene.children.find((obj) => obj.name === window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball))
           }
         }
@@ -4285,7 +4319,8 @@
             window.appConfig.stageTotalTimePlayed = window.appConfig.easyTimerLength
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownStartFlash())
             if (window.appConfig.achievements.superBall === true) {
-              window.appConfig.createSphere({ bounce: 1, name: window.appConfig.currentStage + '_SPHERECOIN', position: { x: Math.random() * 50, y: Math.random() * 50, z: 0 }, handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN') })
+              const superBallPositionScale = window.appConfig.stages[window.appConfig.currentStage].data.superBallPositionScale ? window.appConfig.stages[window.appConfig.currentStage].data.superBallPositionScale : 50
+              window.appConfig.createSphere({ bounce: 1, name: window.appConfig.currentStage + '_SPHERECOIN', position: { x: (Math.random() * superBallPositionScale * 2) - superBallPositionScale, y: (Math.random() * superBallPositionScale * 2) - superBallPositionScale, z: 0 }, handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN') })
             }
           },
         }
@@ -4354,7 +4389,7 @@
             }
             scene.setGravity(new THREE.Vector3(0, 0, 0));
             window.appConfig.sphere._physijs.mass = 0
-            document.querySelector('#stage-number').innerHTML = 'MAZE ' + window.appConfig.stages[window.appConfig.currentStage].number
+            document.querySelector('#stage-number').innerHTML = 'ZONE ' + window.appConfig.stages[window.appConfig.currentStage].number
             document.querySelector('#stage-name-title').innerHTML = window.appConfig.stages[window.appConfig.currentStage].name
 
             document.querySelector("#curtain").classList.add("opacity-0");
@@ -4911,7 +4946,9 @@
       window.appConfig.coinFrameCheckNumber++
       requestAnimationFrame(render);
       renderer.render(scene, camera);
-      render_stats.update();
+      if(window.appConfig.healthCheck.healthChecked === false) {
+        render_stats.update();
+      }
     };
 
     window.appConfig.positionBall = (p) => {
@@ -5194,12 +5231,6 @@
       }
     }
     window.onload = initScene;
-
-    // setTimeout(() => {
-    //   document.querySelectorAll('.STATS').forEach(e => {
-    //     e.classList.add('hide')
-    //   })
-    // }, 2000)
 </script>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
