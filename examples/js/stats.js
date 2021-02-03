@@ -86,7 +86,7 @@ var Stats = function () {
                     if(window.innerHeight < 376 || window.innerWidth < 376) {
                         window.appConfig.events.primaryInput = 'click'
                     }
-                    if(window.appConfig.healthCheck.averageFPS < 25) {
+                    if(window.appConfig.healthCheck.averageFPS < 15) {
                         window.appConfig.healthCheck.healthChecked = true
                         window.appConfig.performanceLevel = 0
                         window.appConfig.events.primaryInput = 'click'
