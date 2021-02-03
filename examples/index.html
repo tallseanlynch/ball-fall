@@ -419,7 +419,7 @@
   </div>
   <div id="report" class="menu-container hide">
     <div id="report-title" class="menu-title-text margin-bottom-2 font-e">RESULTS</div>
-    <div class="scrolling-section">
+    <div id="report-scrolling-section" class="scrolling-section">
       <div class="results-left">
         <table id="report-result-table" class="margin-bottom-2 table-margin-1">
           <tr>
@@ -1041,7 +1041,7 @@
           0
         );
 
-        if(window.appConfig.performanceLevel > 0) {
+        if (window.appConfig.performanceLevel > 0) {
           const beam0cap0 = new Physijs.BoxMesh(
             beamCapGeometry,
             Physijs.createMaterial(
@@ -1565,7 +1565,7 @@
             window.appConfig.initStageSounds()
             window.appConfig.lighting.hemisphereLight.color = getRandomColor()
             window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
-            if(window.appConfig.performanceLevel > 0) {
+            if (window.appConfig.performanceLevel > 0) {
               window.appConfig.stages[window.appConfig.currentStage].initBackground()
             }
           },
@@ -3776,7 +3776,7 @@
 
       }
 
-      window.appConfig.stages.components.stageInit() 
+      window.appConfig.stages.components.stageInit()
       window.appConfig.stages[window.appConfig.currentStage].init()
 
 
@@ -4611,7 +4611,7 @@
       currentTime = new Date().getTime();
 
       if (!window.appConfig.stages[window.appConfig.currentStage].data.started) {
-        window.appConfig.stages.components.stageInit() 
+        window.appConfig.stages.components.stageInit()
         window.appConfig.stages[window.appConfig.currentStage].init()
       } else {
         if (window.appConfig.performanceLevel > 0 && !window.appConfig.pause && !window.appConfig.userHasEnded) {
@@ -5200,7 +5200,7 @@
     //     e.classList.add('hide')
     //   })
     // }, 2000)
-</script>
+  </script>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PGJYVH2VWT"></script>
