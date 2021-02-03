@@ -746,6 +746,6 @@ button:focus {
   }
 }
 
-#start-menu .start-menu-button, #report-options {
+#start-menu .start-menu-button, #report-options, #pause-menu .start-menu-button {
   font-size: 2rem;
 }

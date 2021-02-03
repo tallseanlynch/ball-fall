@@ -6,8 +6,9 @@ var Stats = function () {
 
 	var mode = 0;
 
-	var container = document.createElement( 'div' );
-	container.style.cssText = 'position:fixed;top:0;left:0;cursor:pointer;opacity:0.9;z-index:10000';
+    var container = document.createElement( 'div' );
+    container.style.cssText = 'position:fixed;top:0;left:0;cursor:pointer;opacity:0.9;z-index:10000';
+    container.className = 'hide'
 	container.addEventListener( 'click', function ( event ) {
 
 		event.preventDefault();
@@ -82,20 +83,20 @@ var Stats = function () {
                 }
                 window.appConfig.healthCheck.averageFPS = window.appConfig.healthCheck.fpsArray.reduce((fpsTotal, fpsVal) => fpsTotal + fpsVal) / window.appConfig.healthCheck.fpsArray.length
 
-                if(window.appConfig.healthCheck.fpsArray.length === 5 && window.appConfig.healthCheck.healthChecked === false) {
-                    if(window.innerHeight < 376 || window.innerWidth < 376) {
-                        window.appConfig.events.primaryInput = 'click'
-                    }
-                    if(window.appConfig.healthCheck.averageFPS < 15) {
-                        window.appConfig.healthCheck.healthChecked = true
-                        window.appConfig.performanceLevel = 0
-                        window.appConfig.events.primaryInput = 'click'
-                        reset({action:'levelSelectHealthCheck', level: window.appConfig.currentStageIndex, autoStart: false})
-                        // window.appConfig.stages[window.appConfig.currentStage].teardown()
-                        // window.appConfig.stages.components.stageInit() 
-                        // window.appConfig.stages[window.appConfig.currentStage].init()                
-                    }
-                }
+                // if(window.appConfig.healthCheck.fpsArray.length === 5 && window.appConfig.healthCheck.healthChecked === false) {
+                //     if(window.innerHeight < 376 || window.innerWidth < 376) {
+                //         window.appConfig.events.primaryInput = 'click'
+                //     }
+                //     if(window.appConfig.healthCheck.averageFPS < 15) {
+                //         window.appConfig.healthCheck.healthChecked = true
+                //         window.appConfig.performanceLevel = 0
+                //         window.appConfig.events.primaryInput = 'click'
+                //         reset({action:'levelSelectHealthCheck', level: window.appConfig.currentStageIndex, autoStart: false})
+                //         // window.appConfig.stages[window.appConfig.currentStage].teardown()
+                //         // window.appConfig.stages.components.stageInit() 
+                //         // window.appConfig.stages[window.appConfig.currentStage].init()                
+                //     }
+                // }
 
                 if(window.appConfig.healthCheck.fpsArray.length > 10 && window.appConfig.healthCheck.healthChecked === false) {
                     window.appConfig.healthCheck.healthChecked = true
