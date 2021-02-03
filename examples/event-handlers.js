@@ -1,5 +1,14 @@
 setTimeout(() => {
     document.addEventListener("touchstart", (e) => {
+      if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'click') && !window.appConfig.userHasEnded) {
+        const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
+        var inputVectorX = (e.touches[0].clientX / window.innerWidth * 2) - 1;
+        var inputVectorY = (e.touches[0].clientY / window.innerHeight * -2) + 1;
+        const clickScale = 100
+        console.log(inputVectorX * clickScale, inputVectorY * clickScale, 0)
+        sphere.setLinearVelocity(new THREE.Vector3(inputVectorX * clickScale, inputVectorY * clickScale, 0))
+      }
+
       if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'touch') && !window.appConfig.userHasEnded) {
         window.appConfig.touchEnd = false;
         window.appConfig.touchStart = true;
@@ -112,12 +121,6 @@ setTimeout(() => {
           const clickScale = 100
           console.log(inputVectorX * clickScale, inputVectorY * clickScale, 0)
           sphere.setLinearVelocity(new THREE.Vector3(inputVectorX * clickScale, inputVectorY * clickScale, 0))
-          // window.appConfig.touchEnd = true;
-          // window.appConfig.touchStart = false;
-          // window.appConfig.currentX = 0;
-          // window.appConfig.currentY = 0;
-          // window.appConfig.diffX = 0;
-          // window.appConfig.diffY = 0;
         }
       });
 
