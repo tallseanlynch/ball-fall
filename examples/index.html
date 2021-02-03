@@ -44,7 +44,6 @@
       left: 50%;
       top: 50%;
     }
-
   </style>
 
   <script>
@@ -105,6 +104,12 @@
       pause: false,
       defaultSphereMass: 4.188790683884756,
       defaultSceneGravity: -10,
+      controlTypes: [
+        "mouse",
+        "touch",
+        "click"
+      ],
+      controlTypeIndex: 0,
       itemAmounts: {
         crystalCross: 0,
         crystalLine: 0,
@@ -326,7 +331,8 @@
 
   </script>
   <style>
-    #gradient-curtain, #loading-gradient-curtain {
+    #gradient-curtain,
+    #loading-gradient-curtain {
       position: fixed;
       width: 100%;
       height: 100%;
@@ -400,8 +406,6 @@
     #stage-countdown-3 {
       z-index: 200;
     }
-
-
   </style>
   <link rel="stylesheet" href="./ballsinki.css">
 </head>
@@ -439,6 +443,11 @@
           <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="music-toggle-button"
               onClick="toggleMusicButton()"></button></td>
         </tr>
+        <tr>
+          <td class="sound-menu-button sound-menu-left-td font-a">Controls</td>
+          <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="controls-toggle-button"
+              onClick="toggleControlsButton()"></button></td>
+        </tr>
       </table>
     </div>
     <div id="back-button" class="margin-top-2 font-b">
@@ -447,7 +456,7 @@
   </div>
   <div id="report" class="menu-container hide">
     <div id="report-title" class="menu-title-text margin-bottom-2 font-e">RESULTS</div>
-    <div class="scrolling-section">
+    <div id="report-scrolling-section" class="scrolling-section">
       <div class="results-left">
         <table id="report-result-table" class="margin-bottom-2 table-margin-1">
           <tr>
@@ -579,7 +588,7 @@
 
 
   <div id="gradient-curtain"></div>
-  <div id="loading-gradient-curtain"></div>  
+  <div id="loading-gradient-curtain"></div>
 
   <div id="stage-name-container" class="hide menu-container">
     <div id="stage-number">ZONE 1</div>
@@ -939,7 +948,7 @@
 
       scene.addEventListener("update", function () {
         scene.simulate(undefined, 1);
-        if(window.appConfig.healthCheck.healthChecked === false) {
+        if (window.appConfig.healthCheck.healthChecked === false) {
 
           physics_stats.update();
         }
@@ -969,6 +978,7 @@
       } else {
         musicButton.textContent = "OFF"
       }
+
 
       camera = new THREE.PerspectiveCamera(
         35,
@@ -1073,7 +1083,7 @@
           0
         );
 
-        if(window.appConfig.performanceLevel > 0) {
+        if (window.appConfig.performanceLevel > 0) {
           const beam0cap0 = new Physijs.BoxMesh(
             beamCapGeometry,
             Physijs.createMaterial(
@@ -1597,7 +1607,7 @@
             window.appConfig.initStageSounds()
             window.appConfig.lighting.hemisphereLight.color = getRandomColor()
             window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
-            if(window.appConfig.performanceLevel > 0) {
+            if (window.appConfig.performanceLevel > 0) {
               window.appConfig.stages[window.appConfig.currentStage].initBackground()
             }
           },
@@ -3809,7 +3819,7 @@
 
       }
 
-      window.appConfig.stages.components.stageInit() 
+      window.appConfig.stages.components.stageInit()
       window.appConfig.stages[window.appConfig.currentStage].init()
 
 
@@ -4646,7 +4656,7 @@
       currentTime = new Date().getTime();
 
       if (!window.appConfig.stages[window.appConfig.currentStage].data.started) {
-        window.appConfig.stages.components.stageInit() 
+        window.appConfig.stages.components.stageInit()
         window.appConfig.stages[window.appConfig.currentStage].init()
       } else {
         if (window.appConfig.performanceLevel > 0 && !window.appConfig.pause && !window.appConfig.userHasEnded) {
@@ -4946,7 +4956,7 @@
       window.appConfig.coinFrameCheckNumber++
       requestAnimationFrame(render);
       renderer.render(scene, camera);
-      if(window.appConfig.healthCheck.healthChecked === false) {
+      if (window.appConfig.healthCheck.healthChecked === false) {
         render_stats.update();
       }
     };
@@ -5230,8 +5240,18 @@
         musicButton.textContent = "OFF"
       }
     }
+    const toggleControlsButton = () => {
+      // window.appConfig.musicTurnedOn = !window.appConfig.musicTurnedOn
+      // const musicButton =
+      //   document.querySelector('#music-toggle-button')
+      // if (window.appConfig.musicTurnedOn) {
+      //   musicButton.textContent = "ON"
+      // } else {
+      //   musicButton.textContent = "OFF"
+      // }
+    }
     window.onload = initScene;
-</script>
+  </script>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PGJYVH2VWT"></script>

@@ -85,24 +85,30 @@ var Stats = function () {
 
                 if(window.appConfig.healthCheck.fpsArray.length > 10 && window.appConfig.healthCheck.healthChecked === false) {
                     window.appConfig.healthCheck.healthChecked = true
-                    if(window.appConfig.healthCheck.averageFPS < 50 && window.appConfig.healthCheck.averageFPS > 45) {
+                    if(window.appConfig.healthCheck.averageFPS < 50 && window.appConfig.healthCheck.averageFPS > 45) {//1
                         window.appConfig.performanceLevel = 1
+						document.querySelector('#controls-toggle-button').textContent = "SWIPE"
+						window.appConfig.controlTypeIndex = 1
                         reset({action:'levelSelectHealthCheck', level: 0, autoStart: false})
                         setTimeout(() => {
                             window.appConfig.loadingInterval.clearInterval()
                             toggleMainLoading()
                         }, 2000)
                     }
-                    if(window.appConfig.healthCheck.averageFPS < 45) {
+                    if(window.appConfig.healthCheck.averageFPS < 45) {//0
                         window.appConfig.performanceLevel = 0
                         window.appConfig.events.primaryInput = 'click'
+						document.querySelector('#controls-toggle-button').textContent = "CLICK"
+						window.appConfig.controlTypeIndex = 2
                         reset({action:'levelSelectHealthCheck', level: 0, autoStart: false})
                         setTimeout(() => {
                             window.appConfig.loadingInterval.clearInterval()
                             toggleMainLoading()
                         }, 2000)
                     }
-                    if(window.appConfig.performanceLevel === 2) {
+                    if(window.appConfig.performanceLevel === 2) {//2
+						document.querySelector('#controls-toggle-button').textContent = "SWIPE"
+						window.appConfig.controlTypeIndex = 1
                         reset({action:'levelSelectHealthCheck', level: 0, autoStart: false})
                         setTimeout(() => {
                             window.appConfig.loadingInterval.clearInterval()
