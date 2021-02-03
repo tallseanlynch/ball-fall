@@ -83,11 +83,14 @@ var Stats = function () {
                 window.appConfig.healthCheck.averageFPS = window.appConfig.healthCheck.fpsArray.reduce((fpsTotal, fpsVal) => fpsTotal + fpsVal) / window.appConfig.healthCheck.fpsArray.length
 
                 if(window.appConfig.healthCheck.fpsArray.length === 5 && window.appConfig.healthCheck.healthChecked === false) {
+                    if(window.innerHeight < 376 || window.innerWidth < 376) {
+                        window.appConfig.events.primaryInput = 'click'
+                    }
                     if(window.appConfig.healthCheck.averageFPS < 25) {
                         window.appConfig.healthCheck.healthChecked = true
                         window.appConfig.performanceLevel = 0
                         window.appConfig.events.primaryInput = 'click'
-                        reset({action:'levelSelect', level: window.appConfig.currentStageIndex, autoStart: false})
+                        reset({action:'levelSelectHealthCheck', level: window.appConfig.currentStageIndex, autoStart: false})
                         // window.appConfig.stages[window.appConfig.currentStage].teardown()
                         // window.appConfig.stages.components.stageInit() 
                         // window.appConfig.stages[window.appConfig.currentStage].init()                
@@ -98,7 +101,7 @@ var Stats = function () {
                     window.appConfig.healthCheck.healthChecked = true
                     if(window.appConfig.healthCheck.averageFPS < 50 && window.appConfig.healthCheck.averageFPS > 45) {
                         window.appConfig.performanceLevel = 1
-                        reset({action:'levelSelect', level: window.appConfig.currentStageIndex, autoStart: false})
+                        reset({action:'levelSelectHealthCheck', level: window.appConfig.currentStageIndex, autoStart: false})
                         // window.appConfig.stages[window.appConfig.currentStage].teardown()
                         // window.appConfig.stages.components.stageInit() 
                         // window.appConfig.stages[window.appConfig.currentStage].init()                
@@ -106,7 +109,7 @@ var Stats = function () {
                     if(window.appConfig.healthCheck.averageFPS < 45) {
                         window.appConfig.performanceLevel = 0
                         window.appConfig.events.primaryInput = 'click'
-                        reset({action:'levelSelect', level: window.appConfig.currentStageIndex, autoStart: false})
+                        reset({action:'levelSelectHealthCheck', level: window.appConfig.currentStageIndex, autoStart: false})
                         // window.appConfig.stages[window.appConfig.currentStage].teardown()
                         // window.appConfig.stages.components.stageInit() 
                         // window.appConfig.stages[window.appConfig.currentStage].init()                
