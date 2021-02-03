@@ -59,6 +59,11 @@
     };
 
     window.appConfig = {
+      healthCheck: {
+        fpsArray: [],
+        averageFPS: undefined,
+        healthChecked: false
+      },
       coinScoreThrottle: false,
       achievements: {
         superBall: true
@@ -91,9 +96,9 @@
         bumperGroup: 0,
         prize: 0
       },
-      currentStage: 'STAGE0',
+      currentStage: 'STAGE5',
       stagesArray: ['STAGE0', 'STAGE1', 'STAGE2', 'STAGE3', 'STAGE4', 'STAGE5'],
-      currentStageIndex: 0,
+      currentStageIndex: 5,
       musicTurnedOn: true,
       sfxTurnedOn: true,
       howlSounds: {
@@ -142,7 +147,7 @@
         ["#f49ac1", "#f06eaa", "#ec008c", "#9e005d", "#7b0046"],//14 magenta
         ["#f5989d", "#f26d7d", "#ed145b", "#9e0039", "#7a0026"]//15 cool red
       ],
-      performanceLevel: 1
+      performanceLevel: 2
     };
 
     const localStorageData = {
@@ -883,6 +888,7 @@
       document.getElementById("viewport").appendChild(renderer.domElement);
 
       render_stats = new Stats();
+      window.appConfig.stats = render_stats
       render_stats.domElement.style.position = "absolute";
       render_stats.domElement.style.top = "0px";
       render_stats.domElement.style.zIndex = 100;
@@ -4323,6 +4329,11 @@
             window.appConfig.start = false
             window.appConfig.userHasEnded = false
             if (action && action.action === 'levelSelect') {
+              window.appConfig.currentStageIndex = action.level
+              window.appConfig.currentStage = window.appConfig.stagesArray[window.appConfig.currentStageIndex]
+            }
+
+            if (action && action.action === 'levelSelectHealthCheck') {
               window.appConfig.currentStageIndex = action.level
               window.appConfig.currentStage = window.appConfig.stagesArray[window.appConfig.currentStageIndex]
             }

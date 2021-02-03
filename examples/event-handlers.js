@@ -37,7 +37,9 @@ setTimeout(() => {
       document.body.addEventListener(
         "touchmove",
         (e) => {
-          window.appConfig.events.primaryInput = 'touch'
+          if(window.appConfig.events.primaryInput !== 'click'){
+            window.appConfig.events.primaryInput = 'touch'
+          }
           if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'touch') && !window.appConfig.userHasEnded && window.appConfig.events.touchmove.active === false) {
             window.appConfig.events.touchmove.active = true
             window.appConfig.prevX = window.appConfig.currentX;
@@ -102,17 +104,22 @@ setTimeout(() => {
         }
       });
 
-      // document.addEventListener("click", (e) => {
-      //   if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'click') && !window.appConfig.userHasEnded) {
-      //     const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
-      //     // window.appConfig.touchEnd = true;
-      //     // window.appConfig.touchStart = false;
-      //     // window.appConfig.currentX = 0;
-      //     // window.appConfig.currentY = 0;
-      //     // window.appConfig.diffX = 0;
-      //     // window.appConfig.diffY = 0;
-      //   }
-      // });
+      document.addEventListener("click", (e) => {
+        if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'click') && !window.appConfig.userHasEnded) {
+          const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
+          var inputVectorX = (e.clientX / window.innerWidth * 2) - 1;
+          var inputVectorY = (e.clientY / window.innerHeight * -2) + 1;
+          const clickScale = 100
+          console.log(inputVectorX * clickScale, inputVectorY * clickScale, 0)
+          sphere.setLinearVelocity(new THREE.Vector3(inputVectorX * clickScale, inputVectorY * clickScale, 0))
+          // window.appConfig.touchEnd = true;
+          // window.appConfig.touchStart = false;
+          // window.appConfig.currentX = 0;
+          // window.appConfig.currentY = 0;
+          // window.appConfig.diffX = 0;
+          // window.appConfig.diffY = 0;
+        }
+      });
 
       window.addEventListener('blur', function(e) {
         e.preventDefault();
