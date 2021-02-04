@@ -5,7 +5,6 @@ setTimeout(() => {
         var inputVectorX = (e.touches[0].clientX / window.innerWidth * 2) - 1;
         var inputVectorY = (e.touches[0].clientY / window.innerHeight * -2) + 1;
         const clickScale = 100
-        // console.log(inputVectorX * clickScale, inputVectorY * clickScale, 0)
         sphere.setLinearVelocity(new THREE.Vector3(inputVectorX * clickScale, inputVectorY * clickScale, 0))
       }
 
