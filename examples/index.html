@@ -48,6 +48,8 @@
 
   <script>
 
+    const hasPerformanceReport = (window.localStorage.getItem('performanceLevel') !== null)
+
     const comma = () => {
       return `<span class="comma">,</span>`
     }
@@ -117,9 +119,9 @@
         bumperGroup: 0,
         prize: 0
       },
-      currentStage: 'STAGE5',
+      currentStage: hasPerformanceReport ? 'STAGE0' : 'STAGE5',
       stagesArray: ['STAGE0', 'STAGE1', 'STAGE2', 'STAGE3', 'STAGE4', 'STAGE5'],
-      currentStageIndex: 5,
+      currentStageIndex: hasPerformanceReport ? 0 : 5,
       musicTurnedOn: true,
       sfxTurnedOn: true,
       howlSounds: {
@@ -301,7 +303,7 @@
       "stage-countdown-2-container",
       "stage-countdown-1-container",
       "stage-countdown-start-container",
-      "main-loading",
+      // "main-loading",
       "instructions",
       "main-menu-container"
     ];
@@ -323,9 +325,11 @@
           loadedNumber++
         }
       })
-      if (loadedNumber === expectedLoadedNumber) {
-        // window.appConfig.loadingInterval.clearInterval()
-        // toggleMainLoading()
+      if (loadedNumber === expectedLoadedNumber && window.localStorage.getItem('performanceLevel') !== null) {
+        window.appConfig.healthCheck.healthChecked = true
+        window.appConfig.performanceLevel = JSON.parse(window.localStorage.getItem('performanceLevel')).performanceLevel
+        window.appConfig.loadingInterval.clearInterval()
+        toggleMainLoading()	
       }
     }
 
@@ -702,7 +706,7 @@
             "sounds/Sound FX/BALL FALL fx a8.mp3"
           ],
           prize: "sounds/Sound FX/PRIZE_1.mp3",
-          backgroundMusic: "sounds/BALL-FALL-jingle-flat-1.mp3",
+          backgroundMusic: "sounds/NATURAL-WONDER.mp3",
         },
         name: "NATURAL WONDER",
         number: 1
@@ -743,7 +747,7 @@
             "sounds/Sound FX/BALL FALL fx b8.mp3"
           ],
           prize: "sounds/Sound FX/PRIZE_1.mp3",
-          backgroundMusic: "sounds/Crystal-Canopy.mp3"
+          backgroundMusic: "sounds/PROXIMA.mp3"
         }
       },
       STAGE2: {
@@ -775,7 +779,7 @@
             "sounds/Sound FX/BALL FALL fx c8.mp3"
           ],
           prize: "sounds/Sound FX/PRIZE_1.mp3",
-          backgroundMusic: "sounds/Goose-Down.mp3"
+          backgroundMusic: "sounds/BLANKET-FORT.mp3"
         }
       },
       STAGE3: {
@@ -807,7 +811,7 @@
             "sounds/Sound FX/BALL FALL fx d8.mp3"
           ],
           prize: "sounds/Sound FX/PRIZE_1.mp3",
-          backgroundMusic: "sounds/In-A-Pinch.mp3"
+          backgroundMusic: "sounds/HIDDEN-HOLLOW.mp3"
         }
       },
       STAGE4: {
@@ -839,7 +843,7 @@
             "sounds/Sound FX/BALL FALL fx e8.mp3"
           ],
           prize: "sounds/Sound FX/PRIZE_1.mp3",
-          backgroundMusic: "sounds/Ballsinki-Friendship.mp3"
+          backgroundMusic: "sounds/CLOUD-CASTLE.mp3"
         }
       },
       STAGE5: {
@@ -868,7 +872,7 @@
             "sounds/Sound FX/BALL FALL fx a8.mp3"
           ],
           prize: "sounds/Sound FX/PRIZE_1.mp3",
-          backgroundMusic: "sounds/Ballsinki-Remix.mp3"
+          backgroundMusic: "sounds/STARLING.mp3"
         }
       }
     }
@@ -1068,6 +1072,7 @@
       })
 
       const beamCapGeometry = new THREE.BoxGeometry(1.45, 2, 1.45)
+      const switchIndicatorGeo = new THREE.BoxGeometry(1, 1, 1)
 
       const createBeam = (config) => {
         const lengthMod = window.appConfig.performanceLevel > 0 ? 10 : 10.15
@@ -1110,6 +1115,46 @@
           beam0cap0.position.x = -5 * config.s;
           beam0cap1.rotation.y = 0.25 * Math.PI;
           beam0cap1.position.x = 5 * config.s;
+
+          if(config.switchBeam) {
+
+            const switchIndicator = new THREE.Mesh(
+              switchIndicatorGeo,
+              new THREE.MeshPhongMaterial({
+                color: new THREE.Color(config.switchBeam.color),
+                transparent: true,
+                opacity: .5
+              })
+            )
+            beam0.add(switchIndicator)
+            // switchIndicator.rotation.x = .25 * Math.PI
+            switchIndicator.rotation.y = .5 * Math.PI
+            switchIndicator.rotation.z = .25 * Math.PI
+            switchIndicator.position.z = 1
+
+            beam0.name = window.appConfig.currentStage + '_SWITCHBEAM' + Math.round(Math.random() * 10000)
+            beam0.switchBeam = {
+              rotated: false,
+              switchIndicators: config.switchBeam.switchIndicators,
+              activeSwitchIndicators: 0,
+              switchIndicatorsThrottle: false
+            }
+            beam0.addEventListener('collision', (other_object) => {
+              if(other_object.name === 'SPHERE0') {
+                const theSwitchBeam = scene.children.find((obj) => obj.name === beam0.name)
+                if(theSwitchBeam.switchBeam.rotated === false && theSwitchBeam.switchBeam.switchIndicators === theSwitchBeam.switchBeam.activeSwitchIndicators) {
+                  theSwitchBeam.switchBeam.rotated = true
+                  window.appConfig.timers.activeTimers.push(window.appConfig.timers.switchBeamRotate(theSwitchBeam))
+                } else {
+                  theSwitchBeam.switchBeam.activeSwitchIndicators++
+                  theSwitchBeam.switchBeam.switchIndicatorsThrottle = true
+                  setTimeout(() => {
+                    theSwitchBeam.switchBeam.switchIndicatorsThrottle = false
+                  }, 100)
+                }
+              }
+            })
+          }
         }
 
         beam0.position.set(config.p[0], config.p[1], config.p[2]);
@@ -1598,6 +1643,24 @@
 
       window.appConfig.stages = {
         components: {
+          // createSwitch: (options) => {
+          //   // const theOptions = {
+          //   //   name,
+          //   //   geo,
+          //   //   material,
+          //   //   position,
+          //   //   roation,
+          //   //   scale,
+          //   //   timer,
+          //   //   data,
+          //   //   target,
+          //   //   type
+          //   // }
+          //   const switchGeo = new THREE.SphereGeometry(3, 24, 24)
+          //   const switchMaterial = new THREE.MeshPhongMaterial({
+          //     transparent: true, opacity: .5
+          //   })
+          // },
           stageInit: () => {
             document.body.style.background = window.appConfig.stages.components.background(
               .5,
@@ -1962,6 +2025,17 @@
             createBackgroundAnimation()
           },
           init: () => {
+
+            scene.add(createBeam({
+              p: [0 , -8 , 0],
+              r: [0, 0, 0],
+              s: 1,
+              switchBeam: {
+                switchIndicators: 3,
+                color: window.appConfig.stages[window.appConfig.currentStage].backgroundColors[3]
+              }
+            }))
+
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
 
             const stage0MainBeamStructure = createStage0MainBeamStructure(
@@ -4162,6 +4236,34 @@
     let currentTime = new Date().getTime();
 
     const timers = {
+      switchBeamRotate: (switchBeam) => {
+        return {
+          started: 0,
+          ended: 0,
+          percentComplete: 0,
+          time: 2000,
+          timeLeft: 0,
+          currentTime: 0,
+          name: switchBeam.name,
+          id: Math.round(Math.random() * 10000),
+          activeCallback: (percentComplete) => {
+            switchBeam.rotation.z = (.5 * Math.PI) * percentComplete
+            switchBeam.__dirtyRotation = true
+            // if (scene.children.find((obj) => obj.name === window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball)) {
+            //   const theMesh = scene.children.find((obj) => obj.name === window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball)
+            //   theMesh.rotation.z += 1
+            //   theMesh.scale.x += .001
+            //   theMesh.scale.y += .001
+            //   theMesh.scale.z += .001
+            //   if (percentComplete > .8) {
+            //     theMesh.scale.x = 1 - ((.2 * percentComplete) * 5)
+            //     theMesh.scale.y = 1 - ((.2 * percentComplete) * 5)
+            //     theMesh.scale.z = 1 - ((.2 * percentComplete) * 5)
+            //   }
+            // }
+          }
+        }
+      },
       superBallTeleport: (superball, name = String(Math.round(Math.random() * 1000))) => {
         return {
           started: 0,
