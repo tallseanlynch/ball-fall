@@ -145,7 +145,7 @@
         'howler.js',
         'features.js',
         'event-handlers.js',
-        // 'debug.js'
+        'debug.js'
       ],
       loadedScripts: [],
       events: {
@@ -410,6 +410,10 @@
     #stage-countdown-3 {
       z-index: 200;
     }
+
+    .debug {
+      z-index: 3000;
+    }
   </style>
   <link rel="stylesheet" href="./ballsinki.css">
 </head>
@@ -425,8 +429,6 @@
   <div id="circle4" class="circle"></div>
   <div id="circle5" class="circle"></div>
 
-  <div class="debug hide">
-  </div>
   <div id="viewport"></div>
   <div id="tinted-overlay"></div>
   <div id="game-scoreboard" class="hide">
@@ -645,6 +647,8 @@
       <button class="start-menu-button font-b" onClick="goBack()">Back</button>
     </div>
   </div>
+  <div class="debug hide" style="z-index: 10000;">
+  </div>
 </body>
 
 <footer>
@@ -657,7 +661,7 @@
   <script onLoad="scriptLoaded('howler.js')" type="text/javascript" src="js/howler.min.js"></script>
   <script onLoad="scriptLoaded('features.js')" type="text/javascript" src="./features.js"></script>
   <script onLoad="scriptLoaded('event-handlers.js')" type="text/javascript" src="./event-handlers.js"></script>
-  <!-- <script onLoad="scriptLoaded('debug.js')" type="text/javascript" src="./debug.js"></script> -->
+  <script onLoad="scriptLoaded('debug.js')" type="text/javascript" src="./debug.js"></script>
   <script onLoad="scriptLoaded('main')" type="text/javascript">
     "use strict";
     const coinProperties = {
@@ -1115,51 +1119,68 @@
           beam0cap0.position.x = -5 * config.s;
           beam0cap1.rotation.y = 0.25 * Math.PI;
           beam0cap1.position.x = 5 * config.s;
+        }
+
+          beam0.name = window.appConfig.currentStage + '_BEAM'
 
           if(config.switchBeam) {
 
-            const switchIndicator = new THREE.Mesh(
-              switchIndicatorGeo,
-              new THREE.MeshPhongMaterial({
-                color: new THREE.Color(config.switchBeam.color),
-                transparent: true,
-                opacity: .5
-              })
-            )
-            beam0.add(switchIndicator)
-            // switchIndicator.rotation.x = .25 * Math.PI
-            switchIndicator.rotation.y = .5 * Math.PI
-            switchIndicator.rotation.z = .25 * Math.PI
-            switchIndicator.position.z = 1
+            const switchIndicator = () => {
+              return new THREE.Mesh(
+                switchIndicatorGeo,
+                new THREE.MeshPhongMaterial({
+                  color: new THREE.Color(config.switchBeam.color),
+                  transparent: true,
+                  opacity: .15
+                })
+              )
+            }
 
             beam0.name = window.appConfig.currentStage + '_SWITCHBEAM' + Math.round(Math.random() * 10000)
             beam0.switchBeam = {
               rotated: false,
               switchIndicators: config.switchBeam.switchIndicators,
               activeSwitchIndicators: 0,
-              switchIndicatorsThrottle: false
+              switchIndicatorsThrottle: false,
+              switchIndicatorsGeos: []
             }
+
+            const switchesNum = config.switchBeam.switchIndicators
+            let switchesNumI = 0
+            for(switchesNumI;switchesNumI<switchesNum;switchesNumI++) {
+              let beamPositionUnit = (10 * config.s) / (switchesNum + 1)
+              let beamPosition = ((switchesNumI+1) * beamPositionUnit) - (5 * config.s)
+              let beamSwitchIndicator = switchIndicator()
+              beamSwitchIndicator.name = window.appConfig.currentStage + "_SWITCHINDICATOR"
+              beam0.switchBeam.switchIndicatorsGeos.push(beamSwitchIndicator)
+              beam0.add(beamSwitchIndicator)
+              beamSwitchIndicator.position.x = beamPosition
+              beamSwitchIndicator.rotation.y = .5 * Math.PI
+              beamSwitchIndicator.rotation.z = .25 * Math.PI
+              beamSwitchIndicator.position.z = 1
+            } 
+
             beam0.addEventListener('collision', (other_object) => {
-              if(other_object.name === 'SPHERE0') {
-                const theSwitchBeam = scene.children.find((obj) => obj.name === beam0.name)
-                if(theSwitchBeam.switchBeam.rotated === false && theSwitchBeam.switchBeam.switchIndicators === theSwitchBeam.switchBeam.activeSwitchIndicators) {
+              const theSwitchBeam = scene.children.find((obj) => obj.name === beam0.name)
+              if(other_object.name === 'SPHERE0' && theSwitchBeam.switchBeam.rotated === false) {
+                let theSwitchIndicator = beam0.switchBeam.switchIndicatorsGeos[theSwitchBeam.switchBeam.activeSwitchIndicators]
+                theSwitchBeam.switchBeam.activeSwitchIndicators++
+                theSwitchBeam.switchBeam.switchIndicatorsThrottle = true
+                window.appConfig.timers.activeTimers.push(window.appConfig.timers.switchIndicatorActivate(theSwitchIndicator))
+                if(theSwitchBeam.switchBeam.switchIndicators === theSwitchBeam.switchBeam.activeSwitchIndicators) {
                   theSwitchBeam.switchBeam.rotated = true
                   window.appConfig.timers.activeTimers.push(window.appConfig.timers.switchBeamRotate(theSwitchBeam))
-                } else {
-                  theSwitchBeam.switchBeam.activeSwitchIndicators++
-                  theSwitchBeam.switchBeam.switchIndicatorsThrottle = true
-                  setTimeout(() => {
-                    theSwitchBeam.switchBeam.switchIndicatorsThrottle = false
-                  }, 100)
                 }
+                setTimeout(() => {
+                  theSwitchBeam.switchBeam.switchIndicatorsThrottle = false
+                }, 200)
               }
             })
           }
-        }
+        
 
         beam0.position.set(config.p[0], config.p[1], config.p[2]);
         beam0.rotation.set(config.r[0], config.r[1], config.r[2]);
-
         return beam0;
       };
 
@@ -1682,7 +1703,8 @@
             scale,
             scaleAdj = 0,
             name,
-            p = { x: 0, y: 0 }
+            p = { x: 0, y: 0 },
+            skipArray = [0, 0, 0, 0]
           ) => {
             const mainStructure = new Physijs.BoxMesh(
               new THREE.BoxGeometry(0.01, 0.01, 0.01),
@@ -1694,28 +1716,29 @@
               0
             );
             mainStructure.position.set(0 + p.x, 0 + p.y, 1.5);
-            mainStructure.add(
+            
+            skipArray[0] === 0 && mainStructure.add(
               createBeam({
                 p: [0 * scale, -8 * scale, -1],
                 r: [0, 0, 0],
                 s: (1 + scaleAdj) * scale,
               })
             );
-            mainStructure.add(
+            skipArray[1] === 0 && mainStructure.add(
               createBeam({
                 p: [-8 * scale, 0 * scale, -1],
                 r: [0, 0, 0.5 * Math.PI],
                 s: (1 + scaleAdj) * scale,
               })
             );
-            mainStructure.add(
+            skipArray[2] === 0 && mainStructure.add(
               createBeam({
                 p: [8 * scale, 0 * scale, -1],
                 r: [0, 0, 0.5 * Math.PI],
                 s: (1 + scaleAdj) * scale,
               })
             );
-            mainStructure.add(
+            skipArray[3] === 0 && mainStructure.add(
               createBeam({
                 p: [0 * scale, 8 * scale, -1],
                 r: [0, 0, 0],
@@ -2025,16 +2048,40 @@
             createBackgroundAnimation()
           },
           init: () => {
+            
+            const createSwitchBeamWall = (config) => {   
+              const performanceAdj = window.appConfig.performanceLevel === 0 ? .25 : 0
+                         
+              scene.add(createBeam({
+                p: [0 + config.p.x , 0 + config.p.y, 0 + config.p.z],
+                r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
+                s: (config.s * 2.5) * .1 + performanceAdj
+              }))
 
-            scene.add(createBeam({
-              p: [0 , -8 , 0],
-              r: [0, 0, 0],
-              s: 1,
-              switchBeam: {
-                switchIndicators: 3,
-                color: window.appConfig.stages[window.appConfig.currentStage].backgroundColors[3]
-              }
-            }))
+              scene.add(createBeam({
+                p: config.dir === 'x' ? [(config.s * 3.3) + config.p.x, 0 + config.p.y , 0 + config.p.z] : [0 + config.p.x, (config.s * 3.3) + config.p.y , 0 + config.p.z],
+                r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
+                s: (config.s * 2.5) * .1 + performanceAdj,
+                switchBeam: {
+                  switchIndicators: 3,
+                  color: window.appConfig.stages[window.appConfig.currentStage].backgroundColors[3]
+                }
+              }))
+
+              scene.add(createBeam({
+                p: config.dir === 'x' ? [(config.s * 6.6) + config.p.x , 0 + config.p.y , 0 + config.p.z] : [0 + config.p.x , (config.s * 6.6) + config.p.y , 0 + config.p.z],
+                r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
+                s: (config.s * 2.5) * .1 + performanceAdj
+              }))
+              // scene.add(beamGroup)
+            }
+
+            createSwitchBeamWall({s: 4.6, dir: 'x', p: {x: -71.2, y: 20, z: 0 }})
+            createSwitchBeamWall({s: 4.6, dir: 'x', p: {x: -71.2, y: -20, z: 0 }})
+
+            createSwitchBeamWall({s: 4.6, dir: 'x', p: {x: 72.5, y: 20, z: 0 }})
+            createSwitchBeamWall({s: 4.6, dir: 'x', p: {x: 72.5, y: -20, z: 0 }})
+
 
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
 
@@ -2053,9 +2100,29 @@
             const stage0MainBeamStructure2 = createStage0MainBeamStructure(
               8,
               0.525,
-              "STAGE0MAINSTRUCTURE2"
+              "STAGE0MAINSTRUCTURE2",
+              {x: 0, y: 0},
+              [0, 1, 0, 0]
             );
             scene.add(stage0MainBeamStructure2);
+
+            const stage0MainBeamStructure3 = createStage0MainBeamStructure(
+              10,
+              0.55,
+              "STAGE0MAINSTRUCTURE3",
+              {x: 0, y: 0},
+              [0, 0, 1, 0]
+              // [bottom, left, right, top]
+            );
+            scene.add(stage0MainBeamStructure3);
+
+            const stage0MainBeamStructure4 = createStage0MainBeamStructure(
+              14,
+              0.575,
+              "STAGE0MAINSTRUCTURE4"
+            );
+            scene.add(stage0MainBeamStructure4);
+
             const stage0MinorBeamStructure = createStage0MainBeamStructure(
               1,
               -0.5,
@@ -2112,18 +2179,27 @@
             createCrystalCross('STAGE0', 3, { x: -35, y: 55 }, 0);
             createCrystalCross('STAGE0', 3, { x: -35, y: 35 }, 0);
             createCrystalCross('STAGE0', 3, { x: -55, y: 35 }, 0);
-            createCrystalLine('STAGE0', 10, { x: -47.5, y: -20 }, 2, 5, "y");
             createCrystalLine('STAGE0', 5, { x: 54.5, y: -22 }, 0, 10, "y");
             createCrystalLine('STAGE0', 5, { x: 40.5, y: -22.5 }, 0, 10, "y");
             createCrystalLine('STAGE0', 10, { x: 47.5, y: -20 }, 2, 5, "y");
-            createCrystalLine('STAGE0', 5, { x: -54.5, y: -22 }, 0, 10, "y");
-            createCrystalLine('STAGE0', 5, { x: -40.5, y: -22.5 }, 0, 10, "y");
             createCrystalLine('STAGE0', 10, { x: -20, y: -47.5 }, 2, 5, "x");
             createCrystalLine('STAGE0', 5, { x: -22.5, y: -40 }, 0, 10, "x");
             createCrystalLine('STAGE0', 5, { x: -22.5, y: -54.5 }, 0, 10, "x");
             createCrystalLine('STAGE0', 10, { x: -20, y: 47.5 }, 2, 5, "x");
             createCrystalLine('STAGE0', 5, { x: -22.5, y: 40 }, 0, 10, "x");
             createCrystalLine('STAGE0', 5, { x: -22.5, y: 54.5 }, 0, 10, "x");
+
+            createCrystalLine('STAGE0--0', 5, { x: -90.5, y: -72.5 }, 0, 30, "y");
+            createCrystalLine('STAGE0--1', 5, { x: -97.5, y: -72.5 }, 1, 30, "y");
+            createCrystalLine('STAGE0--2', 5, { x: -104.5, y: -72 }, 2, 30, "y");
+
+            createCrystalLine('STAGE0--3', 5, { y: -90.5, x: -72.5 }, 0, 30, "x");
+            createCrystalLine('STAGE0--4', 5, { y: -97.5, x: -72.5 }, 1, 30, "x");
+            createCrystalLine('STAGE0--5', 5, { y: -104.5, x: -72 }, 2, 30, "x");
+
+            createCrystalLine('STAGE0--6', 5, { y: 90.5, x: -72.5 }, 0, 30, "x");
+            createCrystalLine('STAGE0--7', 5, { y: 97.5, x: -72.5 }, 1, 30, "x");
+            createCrystalLine('STAGE0--8', 5, { y: 104.5, x: -72 }, 2, 30, "x");
 
             window.appConfig.stages.STAGE0.STAGE0PRIZE0 = scene.children.find((obj) => obj.name === "STAGE0PRIZE0")
             window.appConfig.stages.STAGE0.STAGE0PRIZE1 = scene.children.find((obj) => obj.name === "STAGE0PRIZE1")
@@ -3901,7 +3977,7 @@
 
       requestAnimationFrame(render);
       scene.simulate();
-      window.appConfig.easyTimerLength = 30
+      window.appConfig.easyTimerLength = 60
       const timer = new easytimer.Timer({ countdown: true, startValues: { seconds: window.appConfig.easyTimerLength }, precision: "secondTenths" });
       window.appConfig.timer = timer
       timer.addEventListener("secondTenthsUpdated", function (e) {
@@ -4236,6 +4312,21 @@
     let currentTime = new Date().getTime();
 
     const timers = {
+      switchIndicatorActivate: (switchIndicator) => {
+        return {
+          started: 0,
+          ended: 0,
+          percentComplete: 0,
+          time: 2000,
+          timeLeft: 0,
+          currentTime: 0,
+          name: switchIndicator.name + Math.round(Math.random() * 10000),
+          id: Math.round(Math.random() * 10000),
+          activeCallback: (percentComplete) => {
+            switchIndicator.material.opacity = .15 + (percentComplete * .85)
+          }
+        }
+      },
       switchBeamRotate: (switchBeam) => {
         return {
           started: 0,
@@ -4246,21 +4337,17 @@
           currentTime: 0,
           name: switchBeam.name,
           id: Math.round(Math.random() * 10000),
+          startedCallback: () => {
+            switchBeam.originalRotationZ = switchBeam.rotation.z
+            switchBeam.finalRotationZ = switchBeam.rotation.z + (.5 * Math.PI)
+          },
           activeCallback: (percentComplete) => {
-            switchBeam.rotation.z = (.5 * Math.PI) * percentComplete
+            if(switchBeam.rotation.z > switchBeam.finalRotationZ || switchBeam.rotation.z + ((.5 * Math.PI)/100) > switchBeam.finalRotationZ) {
+              switchBeam.rotation.z = switchBeam.finalRotationZ
+            } else {
+              switchBeam.rotation.z += (.5 * Math.PI)/100
+            }
             switchBeam.__dirtyRotation = true
-            // if (scene.children.find((obj) => obj.name === window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball)) {
-            //   const theMesh = scene.children.find((obj) => obj.name === window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball)
-            //   theMesh.rotation.z += 1
-            //   theMesh.scale.x += .001
-            //   theMesh.scale.y += .001
-            //   theMesh.scale.z += .001
-            //   if (percentComplete > .8) {
-            //     theMesh.scale.x = 1 - ((.2 * percentComplete) * 5)
-            //     theMesh.scale.y = 1 - ((.2 * percentComplete) * 5)
-            //     theMesh.scale.z = 1 - ((.2 * percentComplete) * 5)
-            //   }
-            // }
           }
         }
       },
@@ -4913,9 +5000,6 @@
           )
       }
 
-      camera.position.x = sphere.position.x;
-      camera.position.y = sphere.position.y;
-
       if (currentTime % 20 < 1) {
         if (window.appConfig.timers.data.initialBallZoom.percentComplete > .999) {
           window.appConfig.timers.data.initialBallZoom.percentComplete = 1
@@ -4928,11 +5012,17 @@
         }
       }
 
-      camera.position.z =
+      camera.position.x = sphere.position.x;
+      camera.position.y = sphere.position.y;
+
+
+      if(!window.appConfig.debug || window.appConfig.debug.previousCameraZToggle === false) {
+        camera.position.z =
         10 +
         80 * window.appConfig.timers.data.initialBallZoom.percentComplete -
         window.appConfig.timers.data.stageResultsBallZoom.percentComplete * 80 -
         window.appConfig.timers.data.stageReset.percentComplete * 5;
+      }
 
       if (window.appConfig.userHasEnded) {
         sphere

@@ -1,6 +1,11 @@
 // app debug menu for items
 
 setTimeout(() => {
+
+    const gridHelper = new THREE.GridHelper( 200, 40 );
+    scene.add( gridHelper );
+    gridHelper.rotation.x = .5 * Math.PI
+
     window.appConfig.debug = {
         menuVisible: false,
         stage: 0,
@@ -11,7 +16,8 @@ setTimeout(() => {
             down: 40,
             leftBracket: 188,
             rightBracket: 190,
-            tilde: 192
+            tilde: 192,
+            q: 81
         },
         currentDebugMeshIndex: 4,
         setCurrentMesh: false
@@ -103,6 +109,20 @@ setTimeout(() => {
             console.log("SHOWDEBUGMENU")
         }
 
+        window.appConfig.debug.previousCameraZ = undefined
+        window.appConfig.debug.previousCameraZToggle = false
+
+        const toggleDebugCamera = () => {
+            if(window.appConfig.debug.previousCameraZToggle === false) {
+                window.appConfig.debug.previousCameraZ = camera.position.z
+                camera.position.z = 300
+                window.appConfig.debug.previousCameraZToggle = true                    
+            } else {
+                window.appConfig.debug.previousCameraZToggle = false                    
+                camera.position.z = window.appConfig.debug.previousCameraZ
+            }
+        }
+
         const keydownFunctions = {
         37: (e) => translateObject(e),
         39: (e) => translateObject(e),
@@ -110,12 +130,13 @@ setTimeout(() => {
         40: (e) => translateObject(e),
         188: decrementDebugObject,
         190: incrementDebugObject,
-        192: showDebugMenu
+        192: showDebugMenu,
+        81: (e) => toggleDebugCamera(e)
         }
     
         const keycodesArray = Object.values(window.appConfig.debug.debugKeyCodes)
         document.addEventListener('keydown', function (e) {
-            // console.log(e.keyCode)
+            console.log(e.keyCode)
         if (keycodesArray.indexOf(e.keyCode) > -1) {
             console.log('Keydown event fired')
             console.log(e)
@@ -123,4 +144,4 @@ setTimeout(() => {
             keydownFunctions[e.keyCode](e)
         }
         });
-}, 1000)
+}, 3000)
