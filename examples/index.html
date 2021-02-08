@@ -2082,6 +2082,48 @@
             createSwitchBeamWall({s: 4.6, dir: 'x', p: {x: 72.5, y: 20, z: 0 }})
             createSwitchBeamWall({s: 4.6, dir: 'x', p: {x: 72.5, y: -20, z: 0 }})
 
+            const createRemoteSwitch = () => {
+              let transmitterGroup = new THREE.Group()
+              let transmitterMaterial = new THREE.MeshPhongMaterial(
+                {
+                  transparent: true,
+                  opacity: 25,
+                  color: new THREE.Color(0x000000)
+                }
+              )
+              let transmitterGeo = new THREE.TorusGeometry(2.5, .5, 6, 8)
+              let transmitterMesh = new THREE.Mesh(
+                transmitterGeo, 
+                transmitterMaterial
+              )
+              transmitterMesh.position.z = -5
+              transmitterMesh.name = window.appConfig.currentStage + '_TRANSMITTER'
+              let ico = new THREE.Mesh(
+                new THREE.IcosahedronGeometry(1.25),
+                transmitterMaterial
+              )
+              ico.position.z = -5
+              transmitterGroup.add(transmitterMesh)
+              transmitterGroup.add(ico)
+
+              let receiverGroup = new THREE.Group()
+              let receiver = new THREE.Mesh(
+                new THREE.TorusGeometry(2.5, .5, 6, 4),
+                transmitterMaterial
+              )
+              receiverGroup.add(receiver)
+              let receiverIco = new THREE.Mesh(
+                new THREE.IcosahedronGeometry(1.25),
+                transmitterMaterial
+              )
+              receiverGroup.add(receiverIco)
+              receiverGroup.position.x = 20
+              receiverGroup.position.z = -5
+              scene.add(transmitterGroup)
+              scene.add(receiverGroup)
+              return transmitterGroup
+            }
+            createRemoteSwitch()
 
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
 
