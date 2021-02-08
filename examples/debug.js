@@ -40,24 +40,24 @@ setTimeout(() => {
         }
     
         const translateObject = (e) => {
-        const s = 5
-        const objectToTranslate = window.appConfig.debug.setCurrentMesh === false ? scene.children[window.appConfig.debug.currentDebugMeshIndex] : window.appConfig.debug.setCurrentMesh
-        const dirs = {
-            37: { x: -5, y: 0, z: 0 },
-            39: { x: 5, y: 0, z: 0 },
-            38: { x: 0, y: 5, z: 0 },
-            40: { x: 0, y: -5, z: 0 }
-        }
-        objectToTranslate.position.x += dirs[e.keyCode].x
-        objectToTranslate.position.y += dirs[e.keyCode].y
-        objectToTranslate.__dirtyPosition = true
-        console.log(window.appConfig.debug)
-        const queryNamePx = '#'+objectToTranslate.name+' .px'
-        document.querySelector(queryNamePx).value = objectToTranslate.position.x
-        const queryNamePy = '#'+objectToTranslate.name+' .py'
-        document.querySelector(queryNamePy).value = objectToTranslate.position.y
-        const queryNamePz = '#'+objectToTranslate.name+' .pz'
-        document.querySelector(queryNamePz).value = objectToTranslate.position.z
+            const s = 5
+            const objectToTranslate = window.appConfig.debug.setCurrentMesh === false ? scene.children[window.appConfig.debug.currentDebugMeshIndex] : window.appConfig.debug.setCurrentMesh
+            const dirs = {
+                37: { x: -5, y: 0, z: 0 },
+                39: { x: 5, y: 0, z: 0 },
+                38: { x: 0, y: 5, z: 0 },
+                40: { x: 0, y: -5, z: 0 }
+            }
+            objectToTranslate.position.x += dirs[e.keyCode].x
+            objectToTranslate.position.y += dirs[e.keyCode].y
+            objectToTranslate.__dirtyPosition = true
+            console.log(window.appConfig.debug)
+            const queryNamePx = '#'+objectToTranslate.name+' .px'
+            document.querySelector(queryNamePx).value = objectToTranslate.position.x
+            const queryNamePy = '#'+objectToTranslate.name+' .py'
+            document.querySelector(queryNamePy).value = objectToTranslate.position.y
+            const queryNamePz = '#'+objectToTranslate.name+' .pz'
+            document.querySelector(queryNamePz).value = objectToTranslate.position.z
         }
     
         const showDebugMenu = () => {            

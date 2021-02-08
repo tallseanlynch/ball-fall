@@ -2119,9 +2119,80 @@
               receiverGroup.add(receiverIco)
               receiverGroup.position.x = 20
               receiverGroup.position.z = -5
+              receiverGroup.name = window.appConfig.currentStage + '_RECEIVERGROUP_' + Math.round(Math.random() * 10000)
+              transmitterGroup.name = window.appConfig.currentStage + '_TRANSMITTERGROUP_' + Math.round(Math.random() * 10000)
               scene.add(transmitterGroup)
               scene.add(receiverGroup)
-              return transmitterGroup
+
+              const transmitterMeshMaterial = new THREE.MeshPhongMaterial({
+                transparent: true,
+                opacity: .25,
+                color: 0x000000
+              })
+
+              const transmitterSphere = (config = {
+                name: Math.round(Math.random() * 1000000),
+                p: {x: 5, y: 5, z: 0}
+              }) => {
+                let transmitterSphereMesh = new THREE.Mesh(
+                  new THREE.SphereGeometry(.5, .5, 12),
+                  transmitterMeshMaterial
+                )
+                transmitterSphereMesh.name = window.appConfig.currentStage + '_TRANSMITTERSPHERE_' + config.name
+                transmitterSphereMesh.position.x = config.p.x
+                transmitterSphereMesh.position.y = config.p.y
+                transmitterSphereMesh.position.z = config.p.z
+                console.log(transmitterSphereMesh)
+                return transmitterSphereMesh
+              }
+
+              const generate10PointsBetweenTwo3dObjects = (start3d, end3d) => {
+                const nPoints = 10
+                let iPoint
+                let points = []
+                const percentRatio = 1 / (nPoints + 2)
+                const worldStart3d = start3d.getWorldPosition()
+                const worldEnd3d = end3d.getWorldPosition()
+                for(iPoint = 0;iPoint < nPoints;iPoint++ ) {
+                  points.push({
+                    x: ((worldStart3d.x * ((nPoints - iPoint)*.1)) + (worldEnd3d.x * ((iPoint)*.1))),
+                    y: ((worldStart3d.y * ((nPoints - iPoint)*.1)) + (worldEnd3d.y * ((iPoint)*.1))),
+                    z: ((worldStart3d.z * ((nPoints - iPoint)*.1)) + (worldEnd3d.z * ((iPoint)*.1)))
+                  })
+                }
+                console.log(points)
+                return points
+              }
+
+              const createTransmitterSphereLine = (start3d, end3d) => {
+                  const transmitterGroup = new THREE.Group()
+                  const startPosition = start3d.position
+                  const endPosition = end3d.position
+                  const points = generate10PointsBetweenTwo3dObjects(start3d.children[1], end3d.children[1])
+                  points.forEach((p, pi) => {
+                    if(pi > 0 && pi < (points.length - 1)) {
+                      transmitterGroup.add(transmitterSphere({p: p}))
+                    }  // && transmitterGroup.add(transmitterSphere({p: p}))
+                  })
+                  // debugger
+                  transmitterGroup.transmitter = start3d
+                  transmitterGroup.receiver = end3d
+                  transmitterGroup.updatePoints = () => {
+                    const newPoints = generate10PointsBetweenTwo3dObjects(start3d.children[1], end3d.children[1])
+                    transmitterGroup.children.forEach((c, ci) => {
+                      c.position.x = newPoints[ci + 1].x
+                      c.position.y = newPoints[ci + 1].y
+                      c.position.z = newPoints[ci + 1].z
+                    })
+                  }
+                  transmitterGroup.name = window.appConfig.currentStage + "_TRANSMITTER_LINE_" + Math.round(Math.random() * 1000)
+                  console.log(transmitterGroup)
+                return transmitterGroup
+              }
+              // debugger
+              const theTransmitterSphereLine = createTransmitterSphereLine(transmitterGroup, receiverGroup)
+              console.log(theTransmitterSphereLine)
+              scene.add(theTransmitterSphereLine)
             }
             createRemoteSwitch()
 
