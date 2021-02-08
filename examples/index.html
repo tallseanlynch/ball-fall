@@ -329,7 +329,7 @@
         window.appConfig.healthCheck.healthChecked = true
         window.appConfig.performanceLevel = JSON.parse(window.localStorage.getItem('performanceLevel')).performanceLevel
         window.appConfig.loadingInterval.clearInterval()
-        toggleMainLoading()	
+        toggleMainLoading()
       }
     }
 
@@ -1121,63 +1121,63 @@
           beam0cap1.position.x = 5 * config.s;
         }
 
-          beam0.name = window.appConfig.currentStage + '_BEAM'
+        beam0.name = window.appConfig.currentStage + '_BEAM'
 
-          if(config.switchBeam) {
+        if (config.switchBeam) {
 
-            const switchIndicator = () => {
-              return new THREE.Mesh(
-                switchIndicatorGeo,
-                new THREE.MeshPhongMaterial({
-                  color: new THREE.Color(config.switchBeam.color),
-                  transparent: true,
-                  opacity: .15
-                })
-              )
-            }
-
-            beam0.name = window.appConfig.currentStage + '_SWITCHBEAM' + Math.round(Math.random() * 10000)
-            beam0.switchBeam = {
-              rotated: false,
-              switchIndicators: config.switchBeam.switchIndicators,
-              activeSwitchIndicators: 0,
-              switchIndicatorsThrottle: false,
-              switchIndicatorsGeos: []
-            }
-
-            const switchesNum = config.switchBeam.switchIndicators
-            let switchesNumI = 0
-            for(switchesNumI;switchesNumI<switchesNum;switchesNumI++) {
-              let beamPositionUnit = (10 * config.s) / (switchesNum + 1)
-              let beamPosition = ((switchesNumI+1) * beamPositionUnit) - (5 * config.s)
-              let beamSwitchIndicator = switchIndicator()
-              beamSwitchIndicator.name = window.appConfig.currentStage + "_SWITCHINDICATOR"
-              beam0.switchBeam.switchIndicatorsGeos.push(beamSwitchIndicator)
-              beam0.add(beamSwitchIndicator)
-              beamSwitchIndicator.position.x = beamPosition
-              beamSwitchIndicator.rotation.y = .5 * Math.PI
-              beamSwitchIndicator.rotation.z = .25 * Math.PI
-              beamSwitchIndicator.position.z = 1
-            } 
-
-            beam0.addEventListener('collision', (other_object) => {
-              const theSwitchBeam = scene.children.find((obj) => obj.name === beam0.name)
-              if(other_object.name === 'SPHERE0' && theSwitchBeam.switchBeam.rotated === false) {
-                let theSwitchIndicator = beam0.switchBeam.switchIndicatorsGeos[theSwitchBeam.switchBeam.activeSwitchIndicators]
-                theSwitchBeam.switchBeam.activeSwitchIndicators++
-                theSwitchBeam.switchBeam.switchIndicatorsThrottle = true
-                window.appConfig.timers.activeTimers.push(window.appConfig.timers.switchIndicatorActivate(theSwitchIndicator))
-                if(theSwitchBeam.switchBeam.switchIndicators === theSwitchBeam.switchBeam.activeSwitchIndicators) {
-                  theSwitchBeam.switchBeam.rotated = true
-                  window.appConfig.timers.activeTimers.push(window.appConfig.timers.switchBeamRotate(theSwitchBeam))
-                }
-                setTimeout(() => {
-                  theSwitchBeam.switchBeam.switchIndicatorsThrottle = false
-                }, 200)
-              }
-            })
+          const switchIndicator = () => {
+            return new THREE.Mesh(
+              switchIndicatorGeo,
+              new THREE.MeshPhongMaterial({
+                color: new THREE.Color(config.switchBeam.color),
+                transparent: true,
+                opacity: .15
+              })
+            )
           }
-        
+
+          beam0.name = window.appConfig.currentStage + '_SWITCHBEAM' + Math.round(Math.random() * 10000)
+          beam0.switchBeam = {
+            rotated: false,
+            switchIndicators: config.switchBeam.switchIndicators,
+            activeSwitchIndicators: 0,
+            switchIndicatorsThrottle: false,
+            switchIndicatorsGeos: []
+          }
+
+          const switchesNum = config.switchBeam.switchIndicators
+          let switchesNumI = 0
+          for (switchesNumI; switchesNumI < switchesNum; switchesNumI++) {
+            let beamPositionUnit = (10 * config.s) / (switchesNum + 1)
+            let beamPosition = ((switchesNumI + 1) * beamPositionUnit) - (5 * config.s)
+            let beamSwitchIndicator = switchIndicator()
+            beamSwitchIndicator.name = window.appConfig.currentStage + "_SWITCHINDICATOR"
+            beam0.switchBeam.switchIndicatorsGeos.push(beamSwitchIndicator)
+            beam0.add(beamSwitchIndicator)
+            beamSwitchIndicator.position.x = beamPosition
+            beamSwitchIndicator.rotation.y = .5 * Math.PI
+            beamSwitchIndicator.rotation.z = .25 * Math.PI
+            beamSwitchIndicator.position.z = 1
+          }
+
+          beam0.addEventListener('collision', (other_object) => {
+            const theSwitchBeam = scene.children.find((obj) => obj.name === beam0.name)
+            if (other_object.name === 'SPHERE0' && theSwitchBeam.switchBeam.rotated === false) {
+              let theSwitchIndicator = beam0.switchBeam.switchIndicatorsGeos[theSwitchBeam.switchBeam.activeSwitchIndicators]
+              theSwitchBeam.switchBeam.activeSwitchIndicators++
+              theSwitchBeam.switchBeam.switchIndicatorsThrottle = true
+              window.appConfig.timers.activeTimers.push(window.appConfig.timers.switchIndicatorActivate(theSwitchIndicator))
+              if (theSwitchBeam.switchBeam.switchIndicators === theSwitchBeam.switchBeam.activeSwitchIndicators) {
+                theSwitchBeam.switchBeam.rotated = true
+                window.appConfig.timers.activeTimers.push(window.appConfig.timers.switchBeamRotate(theSwitchBeam))
+              }
+              setTimeout(() => {
+                theSwitchBeam.switchBeam.switchIndicatorsThrottle = false
+              }, 200)
+            }
+          })
+        }
+
 
         beam0.position.set(config.p[0], config.p[1], config.p[2]);
         beam0.rotation.set(config.r[0], config.r[1], config.r[2]);
@@ -1661,6 +1661,33 @@
           window.appConfig.howlSounds.beams[7].changeSrc(stageSounds.beams[7])
         }
       }
+      window.appConfig.bumperMaterials = [
+        {
+          standard: new THREE.MeshPhongMaterial({
+            color: 0xffffff,
+          }),
+          bumped: new THREE.MeshPhongMaterial({
+            color: 0xffffff,
+          })
+        }
+      ]
+
+      const createBumper = (name = "NO_NAME", size = 0, p = { x: 0, y: 0, z: 0 }, sides = 5) => {
+        const bumperGeo = new THREE.CylinderGeometry((3 + size) * (2 / 3), 3 + size, 1, sides)
+        const material = Physijs.createMaterial(
+          window.appConfig.bumperMaterials[0].standard,
+          0.5,
+          2
+        )
+        const bumper = new Physijs.CylinderMesh(bumperGeo, material, 0);
+
+        bumper.position.set(p.x, p.y, p.z)
+        bumper.rotation.x = Math.PI / 2
+        bumper.name = name
+        bumper.__dirtyPosition = true
+        bumper.__dirtyRotation = true
+        scene.add(bumper)
+      }
 
       window.appConfig.stages = {
         components: {
@@ -1689,6 +1716,7 @@
             )
 
             window.appConfig.initStageSounds()
+            window.appConfig.bumperMaterials[0].standard.color = getRandomColor()
             window.appConfig.lighting.hemisphereLight.color = getRandomColor()
             window.appConfig.lighting.hemisphereLight.groundColor = getRandomColor()
             if (window.appConfig.performanceLevel > 0) {
@@ -1699,6 +1727,7 @@
           createCrystalLine: createCrystalLine,
           createCrystalCircle: createCrystalCircle,
           createCrystalCross: createCrystalCross,
+          createBumper: createBumper,
           createStage0MainBeamStructure: (
             scale,
             scaleAdj = 0,
@@ -1716,7 +1745,7 @@
               0
             );
             mainStructure.position.set(0 + p.x, 0 + p.y, 1.5);
-            
+
             skipArray[0] === 0 && mainStructure.add(
               createBeam({
                 p: [0 * scale, -8 * scale, -1],
@@ -2048,18 +2077,20 @@
             createBackgroundAnimation()
           },
           init: () => {
-            
-            const createSwitchBeamWall = (config) => {   
+            // window.appConfig.stages.components.createBumper("STAGE0BUMPER0", 0, { x: 0, y: -5, z: 0 }, 5)
+            // window.appConfig.stages.components.createBumper("STAGE0BUMPER1", 0, { x: 0, y: -15, z: 0 }, 5)
+            // window.appConfig.stages.components.createBumper("STAGE0BUMPER2", 0, { x: 0, y: -25, z: 0 }, 5)
+            const createSwitchBeamWall = (config) => {
               const performanceAdj = window.appConfig.performanceLevel === 0 ? .25 : 0
-                         
+
               scene.add(createBeam({
-                p: [0 + config.p.x , 0 + config.p.y, 0 + config.p.z],
+                p: [0 + config.p.x, 0 + config.p.y, 0 + config.p.z],
                 r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
                 s: (config.s * 2.5) * .1 + performanceAdj
               }))
 
               scene.add(createBeam({
-                p: config.dir === 'x' ? [(config.s * 3.3) + config.p.x, 0 + config.p.y , 0 + config.p.z] : [0 + config.p.x, (config.s * 3.3) + config.p.y , 0 + config.p.z],
+                p: config.dir === 'x' ? [(config.s * 3.3) + config.p.x, 0 + config.p.y, 0 + config.p.z] : [0 + config.p.x, (config.s * 3.3) + config.p.y, 0 + config.p.z],
                 r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
                 s: (config.s * 2.5) * .1 + performanceAdj,
                 switchBeam: {
@@ -2069,18 +2100,18 @@
               }))
 
               scene.add(createBeam({
-                p: config.dir === 'x' ? [(config.s * 6.6) + config.p.x , 0 + config.p.y , 0 + config.p.z] : [0 + config.p.x , (config.s * 6.6) + config.p.y , 0 + config.p.z],
+                p: config.dir === 'x' ? [(config.s * 6.6) + config.p.x, 0 + config.p.y, 0 + config.p.z] : [0 + config.p.x, (config.s * 6.6) + config.p.y, 0 + config.p.z],
                 r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
                 s: (config.s * 2.5) * .1 + performanceAdj
               }))
               // scene.add(beamGroup)
             }
 
-            createSwitchBeamWall({s: 4.6, dir: 'x', p: {x: -71.2, y: 20, z: 0 }})
-            createSwitchBeamWall({s: 4.6, dir: 'x', p: {x: -71.2, y: -20, z: 0 }})
+            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: -71.2, y: 20, z: 0 } })
+            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: -71.2, y: -20, z: 0 } })
 
-            createSwitchBeamWall({s: 4.6, dir: 'x', p: {x: 72.5, y: 20, z: 0 }})
-            createSwitchBeamWall({s: 4.6, dir: 'x', p: {x: 72.5, y: -20, z: 0 }})
+            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: 20, z: 0 } })
+            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: -20, z: 0 } })
 
             const createRemoteSwitch = () => {
               let transmitterGroup = new THREE.Group()
@@ -2093,7 +2124,7 @@
               )
               let transmitterGeo = new THREE.TorusGeometry(2.5, .5, 6, 8)
               let transmitterMesh = new THREE.Mesh(
-                transmitterGeo, 
+                transmitterGeo,
                 transmitterMaterial
               )
               transmitterMesh.position.z = -5
@@ -2143,7 +2174,7 @@
               8,
               0.525,
               "STAGE0MAINSTRUCTURE2",
-              {x: 0, y: 0},
+              { x: 0, y: 0 },
               [0, 1, 0, 0]
             );
             scene.add(stage0MainBeamStructure2);
@@ -2152,7 +2183,7 @@
               10,
               0.55,
               "STAGE0MAINSTRUCTURE3",
-              {x: 0, y: 0},
+              { x: 0, y: 0 },
               [0, 0, 1, 0]
               // [bottom, left, right, top]
             );
@@ -4384,10 +4415,10 @@
             switchBeam.finalRotationZ = switchBeam.rotation.z + (.5 * Math.PI)
           },
           activeCallback: (percentComplete) => {
-            if(switchBeam.rotation.z > switchBeam.finalRotationZ || switchBeam.rotation.z + ((.5 * Math.PI)/100) > switchBeam.finalRotationZ) {
+            if (switchBeam.rotation.z > switchBeam.finalRotationZ || switchBeam.rotation.z + ((.5 * Math.PI) / 100) > switchBeam.finalRotationZ) {
               switchBeam.rotation.z = switchBeam.finalRotationZ
             } else {
-              switchBeam.rotation.z += (.5 * Math.PI)/100
+              switchBeam.rotation.z += (.5 * Math.PI) / 100
             }
             switchBeam.__dirtyRotation = true
           }
@@ -5058,12 +5089,12 @@
       camera.position.y = sphere.position.y;
 
 
-      if(!window.appConfig.debug || window.appConfig.debug.previousCameraZToggle === false) {
+      if (!window.appConfig.debug || window.appConfig.debug.previousCameraZToggle === false) {
         camera.position.z =
-        10 +
-        80 * window.appConfig.timers.data.initialBallZoom.percentComplete -
-        window.appConfig.timers.data.stageResultsBallZoom.percentComplete * 80 -
-        window.appConfig.timers.data.stageReset.percentComplete * 5;
+          10 +
+          80 * window.appConfig.timers.data.initialBallZoom.percentComplete -
+          window.appConfig.timers.data.stageResultsBallZoom.percentComplete * 80 -
+          window.appConfig.timers.data.stageReset.percentComplete * 5;
       }
 
       if (window.appConfig.userHasEnded) {
