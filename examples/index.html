@@ -2130,7 +2130,14 @@
                   color: new THREE.Color(0x000000)
                 }
               )
-              let transmitterGeo = new THREE.TorusGeometry(2.5, .5, 6, 8)
+              let receiverMaterial = new THREE.MeshPhongMaterial(
+                {
+                  transparent: true,
+                  opacity: 25,
+                  color: new THREE.Color(0x000000)
+                }
+              )
+              let transmitterGeo = new THREE.TorusGeometry(2.5, .5, 6, 6)
               let transmitterMesh = new THREE.Mesh(
                 transmitterGeo,
                 transmitterMaterial
@@ -2143,19 +2150,25 @@
                 transmitterMaterial
               )
               ico.position.z = -5
+              ico.scale.x = .1
+              ico.scale.y = .1
+              ico.scale.z = .1
               transmitterGroup.add(transmitterMesh)
               transmitterGroup.add(ico)
 
               let receiverGroup = new THREE.Group()
               let receiver = new THREE.Mesh(
                 new THREE.TorusGeometry(2.5, .5, 6, 4),
-                transmitterMaterial
+                receiverMaterial
               )
               receiverGroup.add(receiver)
               let receiverIco = new THREE.Mesh(
                 new THREE.IcosahedronGeometry(1.25),
-                transmitterMaterial
+                receiverMaterial
               )
+              receiverIco.scale.x = .1
+              receiverIco.scale.y = .1
+              receiverIco.scale.z = .1
               receiverGroup.add(receiverIco)
               receiverGroup.position.x = 20
               receiverGroup.position.z = -5
@@ -2182,7 +2195,7 @@
                 transmitterSphereMesh.position.x = config.p.x
                 transmitterSphereMesh.position.y = config.p.y
                 transmitterSphereMesh.position.z = config.p.z
-                console.log(transmitterSphereMesh)
+                // console.log(transmitterSphereMesh)
                 return transmitterSphereMesh
               }
 
@@ -2200,50 +2213,47 @@
                     z: ((worldStart3d.z * ((nPoints - iPoint)*.1)) + (worldEnd3d.z * ((iPoint)*.1)))
                   })
                 }
-                console.log(points)
+                // console.log(points)
                 return points
               }
 
               const createTransmitterSphereLine = (start3d, end3d) => {
-                  const transmitterGroup = new THREE.Group()
-                  const startPosition = start3d.position
-                  const endPosition = end3d.position
-                  const points = generate10PointsBetweenTwo3dObjects(start3d.children[1], end3d.children[1])
-                  points.forEach((p, pi) => {
-                    if(pi > 0 && pi < (points.length - 1)) {
-                      transmitterGroup.add(transmitterSphere({p: p}))
-                    }  // && transmitterGroup.add(transmitterSphere({p: p}))
+                const transmitterGroup = new THREE.Group()
+                const startPosition = start3d.position
+                const endPosition = end3d.position
+                const points = generate10PointsBetweenTwo3dObjects(start3d.children[1], end3d.children[1])
+                points.forEach((p, pi) => {
+                  if(pi > 0 && pi < (points.length - 1)) {
+                    transmitterGroup.add(transmitterSphere({p: p}))
+                  }  
+                })
+                transmitterGroup.transmitter = start3d
+                transmitterGroup.receiver = end3d
+                transmitterGroup.updatePoints = () => {
+                  const newPoints = generate10PointsBetweenTwo3dObjects(start3d.children[1], end3d.children[1])
+                  transmitterGroup.children.forEach((c, ci) => {
+                    c.position.x = newPoints[ci + 1].x
+                    c.position.y = newPoints[ci + 1].y
+                    c.position.z = newPoints[ci + 1].z
                   })
-                  // debugger
-                  transmitterGroup.transmitter = start3d
-                  transmitterGroup.receiver = end3d
-                  transmitterGroup.updatePoints = () => {
-                    const newPoints = generate10PointsBetweenTwo3dObjects(start3d.children[1], end3d.children[1])
-                    transmitterGroup.children.forEach((c, ci) => {
-                      c.position.x = newPoints[ci + 1].x
-                      c.position.y = newPoints[ci + 1].y
-                      c.position.z = newPoints[ci + 1].z
-                    })
-                  }
-                  transmitterGroup.name = window.appConfig.currentStage + "_TRANSMITTER_LINE_" + Math.round(Math.random() * 1000)
-                  console.log(transmitterGroup)
+                }
+                transmitterGroup.name = window.appConfig.currentStage + "_TRANSMITTER_LINE_" + Math.round(Math.random() * 1000)
+                // console.log(transmitterGroup)
                 return transmitterGroup
               }
-              // debugger
+
               const theTransmitterSphereLine = createTransmitterSphereLine(transmitterGroup, receiverGroup)
-              console.log(theTransmitterSphereLine)
+              // console.log(theTransmitterSphereLine)
               scene.add(theTransmitterSphereLine)
-              // if(!window.appConfig.stages[window.appConfig.currentStage].data.remotes) {
-              //   window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
-              // }
               window.appConfig.stages[window.appConfig.currentStage].data.remotes.push({
                 transmitter: transmitterGroup,
                 receiver: receiverGroup,
                 line: theTransmitterSphereLine
               })
-            }
-            createRemoteSwitch()
 
+            }
+
+            createRemoteSwitch()
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
 
             const stage0MainBeamStructure = createStage0MainBeamStructure(
@@ -4517,9 +4527,6 @@
         let remoteLine = remoteSwitch.line
         let remoteSwitchMaterial = new THREE.Color().copy(remoteTransmitter.material.color)
         const activeCallback = (percentComplete) => {
-          // if(window.appConfig.debugger === true) {
-          //   debugger
-          // }
           remoteLine.children.forEach((rlc, rlci) => {
             rlc.material.color = remoteSwitchMaterial.lerp(
               window.appConfig.superBallMaterial.color,
@@ -4527,19 +4534,24 @@
             )
             rlc.material.opacity = percentComplete
           })
-          // let remoteLineLength = remoteLine.children.length
-          // let remoteLineChildIndex = Math.floor(remoteLineLength * (percentComplete * .99))
-          // console.log(remoteLineLength, remoteLineChildIndex)
-          // remoteLine.children[remoteLineChildIndex].material.color = remoteSwitchMaterial.lerp(
-          //   window.appConfig.superBallMaterial.color,
-          //   (percentComplete % 10) * 10
-          // )
-
           remoteTransmitter.material.color = remoteSwitchMaterial.lerp(
             window.appConfig.superBallMaterial.color,
             .01 * percentComplete
           )
-          console.log(percentComplete)
+          remoteTransmitterIco.scale.x = percentComplete
+          remoteTransmitterIco.scale.y = percentComplete
+          remoteTransmitterIco.scale.z = percentComplete
+
+          remoteReceiverIco.scale.x = percentComplete
+          remoteReceiverIco.scale.y = percentComplete
+          remoteReceiverIco.scale.z = percentComplete
+
+          if(percentComplete > .5) {
+            remoteReceiver.material.color = remoteSwitchMaterial.lerp(
+              window.appConfig.superBallMaterial.color,
+              (percentComplete - .5) * 2
+            )
+          }
         }
         return {
           started: 0,
@@ -5470,7 +5482,7 @@
         ] = {
           finalTime: window.appConfig.timer
             .getTimeValues()
-            .toString(["minutes", "seconds", "secondTenths"]),
+            .toString(["minutes", "seconds", "secondTenths"])
         });
 
       const stageScore = calculateStageScore(window.appConfig.timer
