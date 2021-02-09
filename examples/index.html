@@ -1674,12 +1674,16 @@
 
       const createBumper = (name = "NO_NAME", size = 0, p = { x: 0, y: 0, z: 0 }, sides = 5) => {
         const bumperGeo = new THREE.CylinderGeometry((3 + size) * (2 / 3), 3 + size, 1, sides)
+        const bumperColor = window.appConfig.bumperMaterials[0].standard.color.clone()
         const material = Physijs.createMaterial(
-          window.appConfig.bumperMaterials[0].standard,
+          new THREE.MeshPhongMaterial({
+            color: bumperColor,
+          }),
           0.5,
           2
         )
         const bumper = new Physijs.CylinderMesh(bumperGeo, material, 0);
+        bumper.standardColor = bumperColor
 
         bumper.position.set(p.x, p.y, p.z)
         bumper.rotation.x = Math.PI / 2
@@ -1687,6 +1691,9 @@
         bumper.__dirtyPosition = true
         bumper.__dirtyRotation = true
         scene.add(bumper)
+        bumper.addEventListener('collision', (other_object) => {
+          window.appConfig.timers.activeTimers.push(window.appConfig.timers.bumperHit(bumper))
+        })
       }
 
       window.appConfig.stages = {
@@ -2078,9 +2085,9 @@
             createBackgroundAnimation()
           },
           init: () => {
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER0", 0, { x: 0, y: -5, z: 0 }, 5)
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER1", 0, { x: 0, y: -15, z: 0 }, 5)
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER2", 0, { x: 0, y: -25, z: 0 }, 5)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER0", 0, { x: 0, y: -5, z: 0 }, 5)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER1", 0, { x: 0, y: -15, z: 0 }, 5)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER2", 0, { x: 0, y: -25, z: 0 }, 5)
             const createSwitchBeamWall = (config) => {
               const performanceAdj = window.appConfig.performanceLevel === 0 ? .25 : 0
 
@@ -4472,6 +4479,35 @@
     }
 
     const timers = {
+      bumperHit: (bumper) => {
+        const name = bumper.name + Math.round(Math.random() * 10000)
+        return {
+          started: 0,
+          ended: 0,
+          percentComplete: 0,
+          time: 500,
+          timeLeft: 0,
+          currentTime: 0,
+          name: name,
+          id: Math.round(Math.random() * 10000),
+          startedCallback: (percentComplete) => {
+            // if (bumper.bumperHitTimerName !== undefined) {
+            //   const theIndex = window.appConfig.timers.activeTimers.findIndex(at => at.name === bumper.bumperHitTimerName)
+            //   window.appConfig.timers.activeTimers.splice(theIndex, 1)
+            // }
+            bumper.bumperHitTimerName = name
+            bumper.material.color = bumper.standardColor.clone()
+          },
+          activeCallback: (percentComplete) => {
+            bumper.material.color.lerp(new THREE.Color(0x000000), percentComplete)
+            // bumper.material.color.lerp(window.appConfig.bumperMaterials[0].bumped.color, percentComplete)
+          },
+          completedCallback: (percentComplete) => {
+            bumper.material.color = bumper.standardColor.clone()
+            bumper.bumperHitTimerName = undefined
+          }
+        }
+      },
       activateRemoteSwitch: (remoteSwitch) => {
         // debugger
         let remoteTransmitter = remoteSwitch.transmitter.children[0]
