@@ -4393,6 +4393,7 @@
 
     const timers = {
       bumperHit: (bumper) => {
+        const name = bumper.name + Math.round(Math.random() * 10000)
         return {
           started: 0,
           ended: 0,
@@ -4400,15 +4401,23 @@
           time: 500,
           timeLeft: 0,
           currentTime: 0,
-          name: bumper.name + Math.round(Math.random() * 10000),
+          name: name,
           id: Math.round(Math.random() * 10000),
+          startedCallback: (percentComplete) => {
+            // if (bumper.bumperHitTimerName !== undefined) {
+            //   const theIndex = window.appConfig.timers.activeTimers.findIndex(at => at.name === bumper.bumperHitTimerName)
+            //   window.appConfig.timers.activeTimers.splice(theIndex, 1)
+            // }
+            bumper.bumperHitTimerName = name
+            bumper.material.color = bumper.standardColor.clone()
+          },
           activeCallback: (percentComplete) => {
-            // console.log(bumper.standardColor)
-            // debugger
-            bumper.material.color = bumper.standardColor.lerp(window.appConfig.bumperMaterials[0].bumped.color, percentComplete * .01)
+            bumper.material.color.lerp(new THREE.Color(0x000000), percentComplete)
+            // bumper.material.color.lerp(window.appConfig.bumperMaterials[0].bumped.color, percentComplete)
           },
           completedCallback: (percentComplete) => {
-            bumper.material.color = bumper.standardColor
+            bumper.material.color = bumper.standardColor.clone()
+            bumper.bumperHitTimerName = undefined
           }
         }
       },
