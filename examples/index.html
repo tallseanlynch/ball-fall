@@ -1673,7 +1673,7 @@
       ]
 
       const createBumper = (name = "NO_NAME", size = 0, p = { x: 0, y: 0, z: 0 }, sides = 5) => {
-        const bumperGeo = new THREE.CylinderGeometry((3 + size) * (2 / 3), 3 + size, 1, sides)
+        const bumperGeo = new THREE.CylinderGeometry((2 + size) * (2 / 3), 3 + size, 1, sides)
         const bumperColor = window.appConfig.bumperMaterials[0].standard.color.clone()
         const material = Physijs.createMaterial(
           new THREE.MeshPhongMaterial({
@@ -2085,9 +2085,12 @@
             createBackgroundAnimation()
           },
           init: () => {
-            window.appConfig.stages.components.createBumper("STAGE0BUMPER0", 0, { x: 0, y: -5, z: 0 }, 5)
-            window.appConfig.stages.components.createBumper("STAGE0BUMPER1", 0, { x: 0, y: -15, z: 0 }, 5)
-            window.appConfig.stages.components.createBumper("STAGE0BUMPER2", 0, { x: 0, y: -25, z: 0 }, 5)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER0", 1, { x: -70, y: -72.5, z: 0 }, 5)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER1", 1, { x: 70, y: -72.5, z: 0 }, 5)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER2", 1, { x: -70, y: 72.5, z: 0 }, 5)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER3", 1, { x: 70, y: 72.5, z: 0 }, 5)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER4", 1, { x: 87.5, y: 32.5, z: 0 }, 5)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER5", 1, { x: 87.5, y: -32.5, z: 0 }, 5)
             const createSwitchBeamWall = (config) => {
               const performanceAdj = window.appConfig.performanceLevel === 0 ? .25 : 0
 
@@ -2126,14 +2129,14 @@
               let transmitterMaterial = new THREE.MeshPhongMaterial(
                 {
                   transparent: true,
-                  opacity: 25,
+                  opacity: .25,
                   color: new THREE.Color(0x000000)
                 }
               )
               let receiverMaterial = new THREE.MeshPhongMaterial(
                 {
                   transparent: true,
-                  opacity: 25,
+                  opacity: .25,
                   color: new THREE.Color(0x000000)
                 }
               )
@@ -2185,7 +2188,7 @@
 
               const transmitterSphere = (config = {
                 name: Math.round(Math.random() * 1000000),
-                p: {x: 5, y: 5, z: 0}
+                p: { x: 5, y: 5, z: 0 }
               }) => {
                 let transmitterSphereMesh = new THREE.Mesh(
                   new THREE.SphereGeometry(.5, 16, 16),
@@ -2206,11 +2209,11 @@
                 const percentRatio = 1 / (nPoints + 2)
                 const worldStart3d = start3d.getWorldPosition()
                 const worldEnd3d = end3d.getWorldPosition()
-                for(iPoint = 0;iPoint < nPoints;iPoint++ ) {
+                for (iPoint = 0; iPoint < nPoints; iPoint++) {
                   points.push({
-                    x: ((worldStart3d.x * ((nPoints - iPoint)*.1)) + (worldEnd3d.x * ((iPoint)*.1))),
-                    y: ((worldStart3d.y * ((nPoints - iPoint)*.1)) + (worldEnd3d.y * ((iPoint)*.1))),
-                    z: ((worldStart3d.z * ((nPoints - iPoint)*.1)) + (worldEnd3d.z * ((iPoint)*.1)))
+                    x: ((worldStart3d.x * ((nPoints - iPoint) * .1)) + (worldEnd3d.x * ((iPoint) * .1))),
+                    y: ((worldStart3d.y * ((nPoints - iPoint) * .1)) + (worldEnd3d.y * ((iPoint) * .1))),
+                    z: ((worldStart3d.z * ((nPoints - iPoint) * .1)) + (worldEnd3d.z * ((iPoint) * .1)))
                   })
                 }
                 // console.log(points)
@@ -4501,20 +4504,10 @@
           name: name,
           id: Math.round(Math.random() * 10000),
           startedCallback: (percentComplete) => {
-            // if (bumper.bumperHitTimerName !== undefined) {
-            //   const theIndex = window.appConfig.timers.activeTimers.findIndex(at => at.name === bumper.bumperHitTimerName)
-            //   window.appConfig.timers.activeTimers.splice(theIndex, 1)
-            // }
-            bumper.bumperHitTimerName = name
-            bumper.material.color = bumper.standardColor.clone()
-          },
-          activeCallback: (percentComplete) => {
-            bumper.material.color.lerp(new THREE.Color(0x000000), percentComplete)
-            // bumper.material.color.lerp(window.appConfig.bumperMaterials[0].bumped.color, percentComplete)
+            bumper.material.color = window.appConfig.superBallMaterial.color
           },
           completedCallback: (percentComplete) => {
             bumper.material.color = bumper.standardColor.clone()
-            bumper.bumperHitTimerName = undefined
           }
         }
       },
@@ -4530,14 +4523,15 @@
           remoteLine.children.forEach((rlc, rlci) => {
             rlc.material.color = remoteSwitchMaterial.lerp(
               window.appConfig.superBallMaterial.color,
-              ((.005 * percentComplete)/(rlci + 1))
+              ((.005 * percentComplete) / (rlci + 1))
             )
-            rlc.material.opacity = percentComplete
+            rlc.material.opacity = .25 + (percentComplete * .75)
           })
           remoteTransmitter.material.color = remoteSwitchMaterial.lerp(
             window.appConfig.superBallMaterial.color,
             .01 * percentComplete
           )
+          remoteTransmitter.material.opacity = .25 + (percentComplete * .75)
           remoteTransmitterIco.scale.x = percentComplete
           remoteTransmitterIco.scale.y = percentComplete
           remoteTransmitterIco.scale.z = percentComplete
@@ -4551,6 +4545,7 @@
               window.appConfig.superBallMaterial.color,
               (percentComplete - .5) * 2
             )
+            remoteReceiver.material.opacity = .25 + (.75 * percentComplete)
           }
         }
         return {
@@ -4567,13 +4562,13 @@
             window.appConfig.superBallMaterial.color
           }
           // activeCallback: (percentComplete) => {
-            //            remoteTransmitter.material.color = 0xffffff
-            // remoteTransmitter.material.color = remoteTransmitter.material.color.lerp(
-            //   window.appConfig.stages[window.appConfig.currentStage].backgroundColors[2],
-            //   percentComplete > 1 ? 1 : percentComplete
-            // )
-            // remoteSwitch.transmitter.material
-            // switchIndicator.material.opacity = .15 + (percentComplete * .85)
+          //            remoteTransmitter.material.color = 0xffffff
+          // remoteTransmitter.material.color = remoteTransmitter.material.color.lerp(
+          //   window.appConfig.stages[window.appConfig.currentStage].backgroundColors[2],
+          //   percentComplete > 1 ? 1 : percentComplete
+          // )
+          // remoteSwitch.transmitter.material
+          // switchIndicator.material.opacity = .15 + (percentComplete * .85)
           // }
         }
       },
@@ -5274,7 +5269,7 @@
       if (window.appConfig.stages[window.appConfig.currentStage].data.remotes) {
         window.appConfig.stages[window.appConfig.currentStage].data.remotes.forEach((r, ri) => {
           // console.log(r.transmitter.transmitterActive)
-          if(r.transmitter.transmitterActive === false && r.transmitter.position.distanceTo(sphere.position) < 5) {
+          if (r.transmitter.transmitterActive === false && r.transmitter.position.distanceTo(sphere.position) < 5) {
             r.transmitter.transmitterActive = true
             window.appConfig.timers.activeTimers.push(
               window.appConfig.timers.activateRemoteSwitch(r)
