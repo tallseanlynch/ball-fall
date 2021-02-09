@@ -1710,6 +1710,7 @@
           //   })
           // },
           stageInit: () => {
+            window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
             document.body.style.background = window.appConfig.stages.components.background(
               .5,
               window.appConfig.stages[window.appConfig.currentStage].backgroundColors
@@ -2127,6 +2128,7 @@
                 transmitterGeo,
                 transmitterMaterial
               )
+              transmitterGroup.transmitterActive = false
               transmitterMesh.position.z = -5
               transmitterMesh.name = window.appConfig.currentStage + '_TRANSMITTER'
               let ico = new THREE.Mesh(
@@ -2166,7 +2168,7 @@
                 p: {x: 5, y: 5, z: 0}
               }) => {
                 let transmitterSphereMesh = new THREE.Mesh(
-                  new THREE.SphereGeometry(.5, .5, 12),
+                  new THREE.SphereGeometry(.5, 16, 16),
                   transmitterMeshMaterial
                 )
                 transmitterSphereMesh.name = window.appConfig.currentStage + '_TRANSMITTERSPHERE_' + config.name
@@ -2224,6 +2226,14 @@
               const theTransmitterSphereLine = createTransmitterSphereLine(transmitterGroup, receiverGroup)
               console.log(theTransmitterSphereLine)
               scene.add(theTransmitterSphereLine)
+              // if(!window.appConfig.stages[window.appConfig.currentStage].data.remotes) {
+              //   window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
+              // }
+              window.appConfig.stages[window.appConfig.currentStage].data.remotes.push({
+                transmitter: transmitterGroup,
+                receiver: receiverGroup,
+                line: theTransmitterSphereLine
+              })
             }
             createRemoteSwitch()
 
@@ -4216,6 +4226,7 @@
         specular: 0x050505,
         shininess: 200
       })
+      window.appConfig.superBallMaterial = superBallMaterial
 
       const sphereTeleportationGroup = new THREE.Group()
       const sphereTeleportationGeometry = new THREE.TetrahedronGeometry(16)
@@ -4455,7 +4466,69 @@
 
     let currentTime = new Date().getTime();
 
+    window.appConfig.debugger = true
+    window.appConfig.toggleDebugger = () => {
+      window.appConfig.debugger = !window.appConfig.debugger
+    }
+
     const timers = {
+      activateRemoteSwitch: (remoteSwitch) => {
+        // debugger
+        let remoteTransmitter = remoteSwitch.transmitter.children[0]
+        let remoteTransmitterIco = remoteSwitch.transmitter.children[1]
+        let remoteReceiver = remoteSwitch.receiver.children[0]
+        let remoteReceiverIco = remoteSwitch.receiver.children[1]
+        let remoteLine = remoteSwitch.line
+        let remoteSwitchMaterial = new THREE.Color().copy(remoteTransmitter.material.color)
+        const activeCallback = (percentComplete) => {
+          // if(window.appConfig.debugger === true) {
+          //   debugger
+          // }
+          remoteLine.children.forEach((rlc, rlci) => {
+            rlc.material.color = remoteSwitchMaterial.lerp(
+              window.appConfig.superBallMaterial.color,
+              ((.005 * percentComplete)/(rlci + 1))
+            )
+            rlc.material.opacity = percentComplete
+          })
+          // let remoteLineLength = remoteLine.children.length
+          // let remoteLineChildIndex = Math.floor(remoteLineLength * (percentComplete * .99))
+          // console.log(remoteLineLength, remoteLineChildIndex)
+          // remoteLine.children[remoteLineChildIndex].material.color = remoteSwitchMaterial.lerp(
+          //   window.appConfig.superBallMaterial.color,
+          //   (percentComplete % 10) * 10
+          // )
+
+          remoteTransmitter.material.color = remoteSwitchMaterial.lerp(
+            window.appConfig.superBallMaterial.color,
+            .01 * percentComplete
+          )
+          console.log(percentComplete)
+        }
+        return {
+          started: 0,
+          ended: 0,
+          percentComplete: 0,
+          time: 3000,
+          timeLeft: 0,
+          currentTime: 0,
+          name: 'REMOTE_SWITCH_' + Math.round(Math.random() * 10000),
+          id: Math.round(Math.random() * 10000),
+          activeCallback,
+          completedCallback: () => {
+            window.appConfig.superBallMaterial.color
+          }
+          // activeCallback: (percentComplete) => {
+            //            remoteTransmitter.material.color = 0xffffff
+            // remoteTransmitter.material.color = remoteTransmitter.material.color.lerp(
+            //   window.appConfig.stages[window.appConfig.currentStage].backgroundColors[2],
+            //   percentComplete > 1 ? 1 : percentComplete
+            // )
+            // remoteSwitch.transmitter.material
+            // switchIndicator.material.opacity = .15 + (percentComplete * .85)
+          // }
+        }
+      },
       switchIndicatorActivate: (switchIndicator) => {
         return {
           started: 0,
@@ -5129,6 +5202,12 @@
             if (sc.setLinearVelocity) {
               sc.setLinearVelocity(new THREE.Vector3(Math.random() * 50 - 25, Math.random() * 50 - 25, 0))
               sc.material.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
+              window.appConfig.superBallMaterial.color = sc.material.color
+              // if(window.appConfig.stages[window.appConfig.currentStage].data.remotes.length > 0) {
+              //   window.appConfig.stages[window.appConfig.currentStage].data.remotes.forEach(
+              //     r
+              //   )
+              // }
             }
           })
         }
@@ -5142,6 +5221,19 @@
             percentFinished,
             window.appConfig.stages[window.appConfig.currentStage].backgroundColors
           )
+      }
+
+      if (window.appConfig.stages[window.appConfig.currentStage].data.remotes) {
+        window.appConfig.stages[window.appConfig.currentStage].data.remotes.forEach((r, ri) => {
+          // console.log(r.transmitter.transmitterActive)
+          if(r.transmitter.transmitterActive === false && r.transmitter.position.distanceTo(sphere.position) < 5) {
+            r.transmitter.transmitterActive = true
+            window.appConfig.timers.activeTimers.push(
+              window.appConfig.timers.activateRemoteSwitch(r)
+            )
+            console.log('TRANSMITTER ACTIVATED!')
+          }
+        })
       }
 
       if (currentTime % 20 < 1) {
