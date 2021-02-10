@@ -2037,6 +2037,187 @@
               "%, " + colors[3] + " " +
               Math.round((1 - percentFinished) * 100) +
               "%)";
+          },
+          createSwitchBeamWall: (config) => {
+            const performanceAdj = window.appConfig.performanceLevel === 0 ? .25 : 0
+
+            scene.add(createBeam({
+              p: [0 + config.p.x, 0 + config.p.y, 0 + config.p.z],
+              r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
+              s: (config.s * 2.5) * .1 + performanceAdj
+            }))
+
+            const normalSwitchBeamConfig = {
+              switchIndicators: 3,
+              color: window.appConfig.stages[window.appConfig.currentStage].backgroundColors[3]
+            }
+
+            const remoteSwitchBeamConfig = () => {
+              // debugger
+              // #2 add the name using the config
+              return {
+                switchIndicators: 1,
+                color: window.appConfig.stages[window.appConfig.currentStage].backgroundColors[3],
+                receiver: { name: config.receiver.name }
+              }
+            }
+
+            scene.add(createBeam({
+              p: config.dir === 'x' ? [(config.s * 3.3) + config.p.x, 0 + config.p.y, 0 + config.p.z] : [0 + config.p.x, (config.s * 3.3) + config.p.y, 0 + config.p.z],
+              r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
+              s: (config.s * 2.5) * .1 + performanceAdj,
+              switchBeam: config.receiver ? remoteSwitchBeamConfig() : normalSwitchBeamConfig
+            }))
+
+            scene.add(createBeam({
+              p: config.dir === 'x' ? [(config.s * 6.6) + config.p.x, 0 + config.p.y, 0 + config.p.z] : [0 + config.p.x, (config.s * 6.6) + config.p.y, 0 + config.p.z],
+              r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
+              s: (config.s * 2.5) * .1 + performanceAdj
+            }))
+          },
+          createRemoteSwitch: (config = {
+            transmitter: {
+              p: {x: 0, y: 0, z: 0}
+            },
+            receiver: {
+              p: {x: 0, y: 0, z: 0}
+            }
+          }) => {
+            let transmitterGroup = new THREE.Group()
+            let transmitterMaterial = new THREE.MeshPhongMaterial(
+              {
+                transparent: true,
+                opacity: .25,
+                color: new THREE.Color(0x000000)
+              }
+            )
+            let receiverMaterial = new THREE.MeshPhongMaterial(
+              {
+                transparent: true,
+                opacity: .25,
+                color: new THREE.Color(0x000000)
+              }
+            )
+            let transmitterGeo = new THREE.TorusGeometry(2.5, .5, 6, 6)
+            let transmitterMesh = new THREE.Mesh(
+              transmitterGeo,
+              transmitterMaterial
+            )
+            transmitterGroup.transmitterActive = false
+            transmitterGroup.position.x = config.transmitter.p.x
+            transmitterGroup.position.y = config.transmitter.p.y
+            transmitterMesh.position.z = -5
+            transmitterMesh.name = window.appConfig.currentStage + '_TRANSMITTER'
+            let ico = new THREE.Mesh(
+              new THREE.IcosahedronGeometry(1.25),
+              transmitterMaterial
+            )
+            ico.position.z = -5
+            ico.scale.x = .1
+            ico.scale.y = .1
+            ico.scale.z = .1
+            transmitterGroup.add(transmitterMesh)
+            transmitterGroup.add(ico)
+
+            let receiverGroup = new THREE.Group()
+            let receiver = new THREE.Mesh(
+              new THREE.TorusGeometry(2.5, .5, 6, 4),
+              receiverMaterial
+            )
+            receiverGroup.add(receiver)
+            let receiverIco = new THREE.Mesh(
+              new THREE.IcosahedronGeometry(1.25),
+              receiverMaterial
+            )
+            receiverIco.scale.x = .1
+            receiverIco.scale.y = .1
+            receiverIco.scale.z = .1
+            receiverGroup.add(receiverIco)
+            receiverGroup.position.x = config.receiver.p.x
+            receiverGroup.position.y = config.receiver.p.y
+            receiverGroup.position.z = 10
+            // debugger
+            // #1 create the remote switch
+            receiverGroup.name = window.appConfig.currentStage + '_' + config.receiver.name + '_RECEIVERGROUP_' + Math.round(Math.random() * 10000)
+            receiverGroup.switchName = config.receiver.name
+            transmitterGroup.name = window.appConfig.currentStage + '_TRANSMITTERGROUP_' + Math.round(Math.random() * 10000)
+            scene.add(transmitterGroup)
+            scene.add(receiverGroup)
+
+            const transmitterMeshMaterial = new THREE.MeshPhongMaterial({
+              transparent: true,
+              opacity: .25,
+              color: 0x000000
+            })
+
+            const transmitterSphere = (config = {
+              name: Math.round(Math.random() * 1000000),
+              p: { x: 5, y: 5, z: 0 }
+            }) => {
+              let transmitterSphereMesh = new THREE.Mesh(
+                new THREE.SphereGeometry(.5, 16, 16),
+                transmitterMeshMaterial
+              )
+              transmitterSphereMesh.name = window.appConfig.currentStage + '_TRANSMITTERSPHERE_' + config.name
+              transmitterSphereMesh.position.x = config.p.x
+              transmitterSphereMesh.position.y = config.p.y
+              transmitterSphereMesh.position.z = config.p.z
+              // console.log(transmitterSphereMesh)
+              return transmitterSphereMesh
+            }
+
+            const generate10PointsBetweenTwo3dObjects = (start3d, end3d) => {
+              const nPoints = 10
+              let iPoint
+              let points = []
+              const percentRatio = 1 / (nPoints + 2)
+              const worldStart3d = start3d.getWorldPosition()
+              const worldEnd3d = end3d.getWorldPosition()
+              for (iPoint = 0; iPoint < nPoints; iPoint++) {
+                points.push({
+                  x: ((worldStart3d.x * ((nPoints - iPoint) * .1)) + (worldEnd3d.x * ((iPoint) * .1))),
+                  y: ((worldStart3d.y * ((nPoints - iPoint) * .1)) + (worldEnd3d.y * ((iPoint) * .1))),
+                  z: ((worldStart3d.z * ((nPoints - iPoint) * .1)) + (worldEnd3d.z * ((iPoint) * .1)))
+                })
+              }
+              // console.log(points)
+              return points
+            }
+
+            const createTransmitterSphereLine = (start3d, end3d) => {
+              const transmitterGroup = new THREE.Group()
+              const startPosition = start3d.position
+              const endPosition = end3d.position
+              const points = generate10PointsBetweenTwo3dObjects(start3d.children[1], end3d.children[1])
+              points.forEach((p, pi) => {
+                if(pi > 0 && pi < points.length) {
+                  transmitterGroup.add(transmitterSphere({p: p}))
+                }  
+              })
+              transmitterGroup.transmitter = start3d
+              transmitterGroup.receiver = end3d
+              transmitterGroup.updatePoints = () => {
+                const newPoints = generate10PointsBetweenTwo3dObjects(start3d.children[1], end3d.children[1])
+                transmitterGroup.children.forEach((c, ci) => {
+                  c.position.x = newPoints[ci + 1].x
+                  c.position.y = newPoints[ci + 1].y
+                  c.position.z = newPoints[ci + 1].z
+                })
+              }
+              transmitterGroup.name = window.appConfig.currentStage + "_TRANSMITTER_LINE_" + Math.round(Math.random() * 1000)
+              // console.log(transmitterGroup)
+              return transmitterGroup
+            }
+
+            const theTransmitterSphereLine = createTransmitterSphereLine(transmitterGroup, receiverGroup)
+            // console.log(theTransmitterSphereLine)
+            scene.add(theTransmitterSphereLine)
+            window.appConfig.stages[window.appConfig.currentStage].data.remotes.push({
+              transmitter: transmitterGroup,
+              receiver: receiverGroup,
+              line: theTransmitterSphereLine
+            })
+
           }
         },
         STAGE0: {
@@ -2127,194 +2308,84 @@
             window.appConfig.stages.components.createBumper("STAGE0BUMPER1", 1, { x: 70, y: -72.5, z: 0 }, 5)
             window.appConfig.stages.components.createBumper("STAGE0BUMPER2", 1, { x: -70, y: 72.5, z: 0 }, 5)
             window.appConfig.stages.components.createBumper("STAGE0BUMPER3", 1, { x: 70, y: 72.5, z: 0 }, 5)
-            window.appConfig.stages.components.createBumper("STAGE0BUMPER4", 1, { x: 87.5, y: 32.5, z: 0 }, 5)
-            window.appConfig.stages.components.createBumper("STAGE0BUMPER5", 1, { x: 87.5, y: -32.5, z: 0 }, 5)
-            const createSwitchBeamWall = (config) => {
-              const performanceAdj = window.appConfig.performanceLevel === 0 ? .25 : 0
+            // window.appConfig.stages.components.createBumper("STAGE0BUMPER4", 1, { x: 87.5, y: 32.5, z: 0 }, 5)
+            // window.appConfig.stages.components.createBumper("STAGE0BUMPER5", 1, { x: 87.5, y: -32.5, z: 0 }, 5)
 
-              scene.add(createBeam({
-                p: [0 + config.p.x, 0 + config.p.y, 0 + config.p.z],
-                r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
-                s: (config.s * 2.5) * .1 + performanceAdj
-              }))
 
-              const normalSwitchBeamConfig = {
-                switchIndicators: 3,
-                color: window.appConfig.stages[window.appConfig.currentStage].backgroundColors[3]
-              }
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER6", 1, { x: 87.5, y: -30, z: 0 }, 3)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER7", 1, { x: 77.5, y: -40, z: 0 }, 3)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER8", 1, { x: 97.5, y: -40, z: 0 }, 3)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER9", 1, { x: 87.5, y: -50, z: 0 }, 3)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER10", 1, { x: 77.5, y: -60, z: 0 }, 3)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER11", 1, { x: 97.5, y: -60, z: 0 }, 3)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER6", 1, { x: 87.5, y: -70, z: 0 }, 3)
 
-              const remoteSwitchBeamConfig = () => {
-                // debugger
-                // #2 add the name using the config
-                return {
-                  switchIndicators: 1,
-                  color: window.appConfig.stages[window.appConfig.currentStage].backgroundColors[3],
-                  receiver: { name: config.receiver.name }
-                }
-              }
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER6", 1, { x: 87.5, y: 30, z: 0 }, 3)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER7", 1, { x: 77.5, y: 40, z: 0 }, 3)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER8", 1, { x: 97.5, y: 40, z: 0 }, 3)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER9", 1, { x: 87.5, y: 50, z: 0 }, 3)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER10", 1, { x: 77.5, y: 60, z: 0 }, 3)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER11", 1, { x: 97.5, y: 60, z: 0 }, 3)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER6", 1, { x: 87.5, y: 70, z: 0 }, 3)
 
-              scene.add(createBeam({
-                p: config.dir === 'x' ? [(config.s * 3.3) + config.p.x, 0 + config.p.y, 0 + config.p.z] : [0 + config.p.x, (config.s * 3.3) + config.p.y, 0 + config.p.z],
-                r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
-                s: (config.s * 2.5) * .1 + performanceAdj,
-                switchBeam: config.receiver ? remoteSwitchBeamConfig() : normalSwitchBeamConfig
-              }))
 
-              scene.add(createBeam({
-                p: config.dir === 'x' ? [(config.s * 6.6) + config.p.x, 0 + config.p.y, 0 + config.p.z] : [0 + config.p.x, (config.s * 6.6) + config.p.y, 0 + config.p.z],
-                r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
-                s: (config.s * 2.5) * .1 + performanceAdj
-              }))
-            }
+            const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
+            const createSwitchBeamWall = window.appConfig.stages.components.createSwitchBeamWall
+            const createRemoteSwitch = window.appConfig.stages.components.createRemoteSwitch
 
+            createCrystalCircle('STAGE0', 3.75, { x: -57, y: 0 }, 0, 16)
+            createCrystalCircle('STAGE0', 3.5, { x: -57, y: 0 }, 1, 8)
+            createCrystalCircle('STAGE0', 3, { x: -57, y: 0 }, 2, 8)
+
+            createCrystalCircle('STAGE0', 3.75, { x: 87.5, y: 0 }, 0, 16)
+            createCrystalCircle('STAGE0', 3.5, { x: 87.5, y: 0 }, 1, 8)
+            createCrystalCircle('STAGE0', 3, { x: 87.5, y: 0 }, 2, 8)
+
+            window.appConfig.createSphere({ 
+              bounce: 1, 
+              name: window.appConfig.currentStage + '_SPHERECOIN', 
+              position: {
+                  x: -55, 
+                  y: 0,
+                  z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN') 
+            })
+            window.appConfig.createSphere({ 
+              bounce: 1, 
+              name: window.appConfig.currentStage + '_SPHERECOIN', 
+              position: {
+                  x: -55, 
+                  y: 0,
+                  z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN') 
+            })
+            window.appConfig.createSphere({ 
+              bounce: 1, 
+              name: window.appConfig.currentStage + '_SPHERECOIN', 
+              position: {
+                  x: -55, 
+                  y: 0,
+                  z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN') 
+            })
+            window.appConfig.createSphere({ 
+              bounce: 1, 
+              name: window.appConfig.currentStage + '_SPHERECOIN', 
+              position: {
+                  x: -55, 
+                  y: 0,
+                  z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN') 
+            })
+
+            // createCrystalCircle('STAGE0', 4.5, { x: -50, y: 50 }, 1, 4)
 
             createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: 20, z: 0 } })
             createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: -20, z: 0 } })
-
-            const createRemoteSwitch = (config = {
-              transmitter: {
-                p: {x: 0, y: 0, z: 0}
-              },
-              receiver: {
-                p: {x: 0, y: 0, z: 0}
-              }
-            }) => {
-              let transmitterGroup = new THREE.Group()
-              let transmitterMaterial = new THREE.MeshPhongMaterial(
-                {
-                  transparent: true,
-                  opacity: .25,
-                  color: new THREE.Color(0x000000)
-                }
-              )
-              let receiverMaterial = new THREE.MeshPhongMaterial(
-                {
-                  transparent: true,
-                  opacity: .25,
-                  color: new THREE.Color(0x000000)
-                }
-              )
-              let transmitterGeo = new THREE.TorusGeometry(2.5, .5, 6, 6)
-              let transmitterMesh = new THREE.Mesh(
-                transmitterGeo,
-                transmitterMaterial
-              )
-              transmitterGroup.transmitterActive = false
-              transmitterGroup.position.x = config.transmitter.p.x
-              transmitterGroup.position.y = config.transmitter.p.y
-              transmitterMesh.position.z = -5
-              transmitterMesh.name = window.appConfig.currentStage + '_TRANSMITTER'
-              let ico = new THREE.Mesh(
-                new THREE.IcosahedronGeometry(1.25),
-                transmitterMaterial
-              )
-              ico.position.z = -5
-              ico.scale.x = .1
-              ico.scale.y = .1
-              ico.scale.z = .1
-              transmitterGroup.add(transmitterMesh)
-              transmitterGroup.add(ico)
-
-              let receiverGroup = new THREE.Group()
-              let receiver = new THREE.Mesh(
-                new THREE.TorusGeometry(2.5, .5, 6, 4),
-                receiverMaterial
-              )
-              receiverGroup.add(receiver)
-              let receiverIco = new THREE.Mesh(
-                new THREE.IcosahedronGeometry(1.25),
-                receiverMaterial
-              )
-              receiverIco.scale.x = .1
-              receiverIco.scale.y = .1
-              receiverIco.scale.z = .1
-              receiverGroup.add(receiverIco)
-              receiverGroup.position.x = config.receiver.p.x
-              receiverGroup.position.y = config.receiver.p.y
-              receiverGroup.position.z = 10
-              // debugger
-              // #1 create the remote switch
-              receiverGroup.name = window.appConfig.currentStage + '_' + config.receiver.name + '_RECEIVERGROUP_' + Math.round(Math.random() * 10000)
-              receiverGroup.switchName = config.receiver.name
-              transmitterGroup.name = window.appConfig.currentStage + '_TRANSMITTERGROUP_' + Math.round(Math.random() * 10000)
-              scene.add(transmitterGroup)
-              scene.add(receiverGroup)
-
-              const transmitterMeshMaterial = new THREE.MeshPhongMaterial({
-                transparent: true,
-                opacity: .25,
-                color: 0x000000
-              })
-
-              const transmitterSphere = (config = {
-                name: Math.round(Math.random() * 1000000),
-                p: { x: 5, y: 5, z: 0 }
-              }) => {
-                let transmitterSphereMesh = new THREE.Mesh(
-                  new THREE.SphereGeometry(.5, 16, 16),
-                  transmitterMeshMaterial
-                )
-                transmitterSphereMesh.name = window.appConfig.currentStage + '_TRANSMITTERSPHERE_' + config.name
-                transmitterSphereMesh.position.x = config.p.x
-                transmitterSphereMesh.position.y = config.p.y
-                transmitterSphereMesh.position.z = config.p.z
-                // console.log(transmitterSphereMesh)
-                return transmitterSphereMesh
-              }
-
-              const generate10PointsBetweenTwo3dObjects = (start3d, end3d) => {
-                const nPoints = 10
-                let iPoint
-                let points = []
-                const percentRatio = 1 / (nPoints + 2)
-                const worldStart3d = start3d.getWorldPosition()
-                const worldEnd3d = end3d.getWorldPosition()
-                for (iPoint = 0; iPoint < nPoints; iPoint++) {
-                  points.push({
-                    x: ((worldStart3d.x * ((nPoints - iPoint) * .1)) + (worldEnd3d.x * ((iPoint) * .1))),
-                    y: ((worldStart3d.y * ((nPoints - iPoint) * .1)) + (worldEnd3d.y * ((iPoint) * .1))),
-                    z: ((worldStart3d.z * ((nPoints - iPoint) * .1)) + (worldEnd3d.z * ((iPoint) * .1)))
-                  })
-                }
-                // console.log(points)
-                return points
-              }
-
-              const createTransmitterSphereLine = (start3d, end3d) => {
-                const transmitterGroup = new THREE.Group()
-                const startPosition = start3d.position
-                const endPosition = end3d.position
-                const points = generate10PointsBetweenTwo3dObjects(start3d.children[1], end3d.children[1])
-                points.forEach((p, pi) => {
-                  if(pi > 0 && pi < points.length) {
-                    transmitterGroup.add(transmitterSphere({p: p}))
-                  }  
-                })
-                transmitterGroup.transmitter = start3d
-                transmitterGroup.receiver = end3d
-                transmitterGroup.updatePoints = () => {
-                  const newPoints = generate10PointsBetweenTwo3dObjects(start3d.children[1], end3d.children[1])
-                  transmitterGroup.children.forEach((c, ci) => {
-                    c.position.x = newPoints[ci + 1].x
-                    c.position.y = newPoints[ci + 1].y
-                    c.position.z = newPoints[ci + 1].z
-                  })
-                }
-                transmitterGroup.name = window.appConfig.currentStage + "_TRANSMITTER_LINE_" + Math.round(Math.random() * 1000)
-                // console.log(transmitterGroup)
-                return transmitterGroup
-              }
-
-              const theTransmitterSphereLine = createTransmitterSphereLine(transmitterGroup, receiverGroup)
-              // console.log(theTransmitterSphereLine)
-              scene.add(theTransmitterSphereLine)
-              window.appConfig.stages[window.appConfig.currentStage].data.remotes.push({
-                transmitter: transmitterGroup,
-                receiver: receiverGroup,
-                line: theTransmitterSphereLine
-              })
-
-            }
 
             createRemoteSwitch({
               transmitter: {
@@ -2328,7 +2399,6 @@
 
             createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: -71.2, y: -20, z: 0 } , receiver: {name: 'STAGE0RECEIVER_A'}})
 
-
             createRemoteSwitch({
               transmitter: {
                 p: {x: -95, y: 95, z: 0}
@@ -2340,9 +2410,6 @@
             })
 
             createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: -71.2, y: 20, z: 0 } , receiver: {name: 'STAGE0RECEIVER_B'}})
-
-            const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
-
 
             const stage0MainBeamStructure = createStage0MainBeamStructure(
               2,
@@ -2416,6 +2483,21 @@
             prize(0, 2, { x: -45, y: -45, z: 0 })
             prize(0, 3, { x: -45, y: 45, z: 0 })
 
+            prize(0, 4, { x: -75, y: 15, z: 0 })
+            prize(0, 5, { x: -75, y: -15, z: 0 })
+            prize(0, 6, { x: -40, y: 15, z: 0 })
+            prize(0, 7, { x: -40, y: -15, z: 0 })
+
+            prize(0, 8, { x: 70, y: 15, z: 0 })
+            prize(0, 9, { x: 70, y: -15, z: 0 })
+            prize(0, 10, { x: 105, y: 15, z: 0 })
+            prize(0, 11, { x: 105, y: -15, z: 0 })
+
+            prize(0, 12, { x: 95, y: 90, z: 0 })
+            prize(0, 13, { x: 95, y: -90, z: 0 })
+            // prize(0, 14, { x: -105, y: -105, z: 0 })
+            // prize(0, 15, { x: -105, y: 105, z: 0 })
+
             createCrystalCross('STAGE0', 5);
             createCrystalCross('STAGE0', 10);
             createCrystalCross('STAGE0', 5, { x: 20, y: 20 }, 1);
@@ -2448,17 +2530,23 @@
             createCrystalLine('STAGE0', 5, { x: -22.5, y: 40 }, 0, 10, "x");
             createCrystalLine('STAGE0', 5, { x: -22.5, y: 54.5 }, 0, 10, "x");
 
-            createCrystalLine('STAGE0--0', 5, { x: -90.5, y: -72.5 }, 0, 30, "y");
-            createCrystalLine('STAGE0--1', 5, { x: -97.5, y: -72.5 }, 1, 30, "y");
-            createCrystalLine('STAGE0--2', 5, { x: -104.5, y: -72 }, 2, 30, "y");
+            createCrystalLine('STAGE0--0', 8, { x: -90.5, y: -75 }, 0, 20, "y");
+            createCrystalLine('STAGE0--1', 8, { x: -97.5, y: -75 }, 1, 20, "y");
+            createCrystalLine('STAGE0--2', 8, { x: -104.5, y: -75 }, 2, 20, "y");
 
-            createCrystalLine('STAGE0--3', 5, { y: -90.5, x: -72.5 }, 0, 30, "x");
-            createCrystalLine('STAGE0--4', 5, { y: -97.5, x: -72.5 }, 1, 30, "x");
-            createCrystalLine('STAGE0--5', 5, { y: -104.5, x: -72 }, 2, 30, "x");
+            createCrystalLine('STAGE0--3', 8, { y: -90.5, x: -75 }, 0, 20, "x");
+            createCrystalLine('STAGE0--4', 8, { y: -97.5, x: -75 }, 1, 20, "x");
+            createCrystalLine('STAGE0--5', 8, { y: -104.5, x: -75 }, 2, 20, "x");
 
-            createCrystalLine('STAGE0--6', 5, { y: 90.5, x: -72.5 }, 0, 30, "x");
-            createCrystalLine('STAGE0--7', 5, { y: 97.5, x: -72.5 }, 1, 30, "x");
-            createCrystalLine('STAGE0--8', 5, { y: 104.5, x: -72 }, 2, 30, "x");
+            createCrystalLine('STAGE0--6', 8, { y: 90.5, x: -75 }, 0, 20, "x");
+            createCrystalLine('STAGE0--7', 8, { y: 97.5, x: -75 }, 1, 20, "x");
+            createCrystalLine('STAGE0--8', 8, { y: 104.5, x: -75 }, 2, 20, "x");
+
+            createCrystalLine('STAGE0--9', 6, { y: 70, x: -57.5 }, 1, 20, "x");
+            createCrystalLine('STAGE0--10', 6, { y: 75, x: -57.5 }, 0, 20, "x");
+
+            createCrystalLine('STAGE0--9', 6, { y: -70, x: -57.5 }, 1, 20, "x");
+            createCrystalLine('STAGE0--10', 6, { y: -75, x: -57.5 }, 0, 20, "x");
 
             window.appConfig.stages.STAGE0.STAGE0PRIZE0 = scene.children.find((obj) => obj.name === "STAGE0PRIZE0")
             window.appConfig.stages.STAGE0.STAGE0PRIZE1 = scene.children.find((obj) => obj.name === "STAGE0PRIZE1")
@@ -4869,10 +4957,10 @@
             window.appConfig.gameModeFunctions.start()
             window.appConfig.stageTotalTimePlayed = window.appConfig.easyTimerLength
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownStartFlash())
-            if (window.appConfig.achievements.superBall === true) {
-              const superBallPositionScale = window.appConfig.stages[window.appConfig.currentStage].data.superBallPositionScale ? window.appConfig.stages[window.appConfig.currentStage].data.superBallPositionScale : 50
-              window.appConfig.createSphere({ bounce: 1, name: window.appConfig.currentStage + '_SPHERECOIN', position: { x: (Math.random() * superBallPositionScale * 2) - superBallPositionScale, y: (Math.random() * superBallPositionScale * 2) - superBallPositionScale, z: 0 }, handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN') })
-            }
+            // if (window.appConfig.achievements.superBall === true) {
+            // const superBallPositionScale = window.appConfig.stages[window.appConfig.currentStage].data.superBallPositionScale ? window.appConfig.stages[window.appConfig.currentStage].data.superBallPositionScale : 50
+            // window.appConfig.createSphere({ bounce: 1, name: window.appConfig.currentStage + '_SPHERECOIN', position: { x: (Math.random() * superBallPositionScale * 2) - superBallPositionScale, y: (Math.random() * superBallPositionScale * 2) - superBallPositionScale, z: 0 }, handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN') })
+            // }
           },
         }
       },
