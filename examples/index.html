@@ -1183,12 +1183,12 @@
         beam0.position.set(config.p[0], config.p[1], config.p[2]);
         beam0.rotation.set(config.r[0], config.r[1], config.r[2]);
 
-        if(config.switchBeam) {
+        if (config.switchBeam) {
           console.log(config)
           // debugger
         }
 
-        if(config && config.switchBeam && config.switchBeam.receiver) {
+        if (config && config.switchBeam && config.switchBeam.receiver) {
           // debugger
           // #3 add the name using the config
           beam0.name = window.appConfig.currentStage + '_' + config.switchBeam.receiver.name + '_SWITCHBEAM_RECEIVER_' + Math.round(Math.random() * 10000)
@@ -1199,14 +1199,14 @@
             switchIndicatorsThrottle: false,
             switchIndicatorsGeos: []
           }
-          
+
           let theReceiver = scene.children.find((rec) => rec.name.indexOf(config.switchBeam.receiver.name + '_RECEIVERGROUP') > -1)
           console.log(theReceiver)
           theReceiver.position.x = beam0.position.x
           theReceiver.position.y = beam0.position.y
           theReceiver.position.z = 5
 
-          let beamToRotate = () => {return scene.children.find((rec) => rec.name.indexOf(beam0.name) > -1)}
+          let beamToRotate = () => { return scene.children.find((rec) => rec.name.indexOf(beam0.name) > -1) }
 
           setTimeout(() => {
             console.log('SWITCHBEAM RECEIVER', beamToRotate(), beam0.name)
@@ -1216,7 +1216,7 @@
               console.log(window.appConfig.timers.activeTimers)
             }
           },
-          1000
+            1000
           )
         }
         return beam0;
@@ -1712,7 +1712,8 @@
 
       const createBumper = (name = "NO_NAME", size = 0, p = { x: 0, y: 0, z: 0 }, sides = 5) => {
         const bumperGeo = new THREE.CylinderGeometry((2 + size) * (2 / 3), 3 + size, 1, sides)
-        const bumperColor = window.appConfig.bumperMaterials[0].standard.color.clone()
+        // const bumperColor = window.appConfig.bumperMaterials[0].standard.color.clone()
+        const bumperColor = new THREE.Color(0xffffff)
         const material = Physijs.createMaterial(
           new THREE.MeshPhongMaterial({
             color: bumperColor,
@@ -1734,6 +1735,70 @@
         })
       }
 
+      window.appConfig.diamonds = []
+      const createDiamond = (name = "NO_NAME", size = 0, p = { x: 0, y: 0, z: 0 }, detail = 1) => {
+        const diamondGeo = new THREE.TetrahedronGeometry(1 + size, detail)
+        const diamondColor = new THREE.Color(0xffffff)
+        const material = new THREE.MeshPhongMaterial({
+          color: diamondColor,
+        })
+        const diamond = new THREE.Mesh(diamondGeo, material)
+        diamond.material.color = window.appConfig.superBallMaterial.color
+        diamond.hasTarget = false
+        diamond.travelData = {}
+        diamond.activeCallback = () => {
+          if (window.appConfig.start === true && window.appConfig.pause === false && window.appConfig.userHasEnded === false) {
+            if (diamond.hasTarget === false) {
+              const randomNum = Math.floor(Math.random() * window.appConfig.coins.length)
+              const targetCoin = window.appConfig.coins[randomNum]
+              const v0 = new THREE.Vector2(diamond.position.x, diamond.position.y)
+              const v1 = new THREE.Vector2()
+              const v2 = new THREE.Vector2()
+              const v3 = new THREE.Vector2(targetCoin.position.x, targetCoin.position.y)
+              v1.lerpVectors(v0, v3, .25)
+              v1.x += 30
+              v1.y += 30
+              v2.lerpVectors(v0, v3, .75)
+              v2.x -= 30
+              v2.y -= 30
+              const curve = new THREE.CubicBezierCurve(v0, v1, v2, v3)
+              diamond.travelData.curve = curve
+              diamond.hasTarget = true
+              const ms = Math.ceil(curve.getLength() * 50)
+              window.appConfig.timers.activeTimers.push(window.appConfig.timers.diamondTravel(diamond, ms))
+
+            }
+          }
+        }
+        diamond.travelCallback = (percentComplete) => {
+          if (window.appConfig.start === true && window.appConfig.pause === false && window.appConfig.userHasEnded === false) {
+
+            if (diamond.hasTarget === true) {
+              const point = diamond.travelData.curve.getPoint(percentComplete)
+              diamond.position.set(point.x, point.y, lfo(747) * 5)
+            }
+          }
+        }
+        diamond.completedCallback = () => {
+          if (window.appConfig.start === true && window.appConfig.pause === false && window.appConfig.userHasEnded === false) {
+
+            diamond.hasTarget = false
+            diamond.travelData = {}
+          }
+        }
+        diamond.capturedCallback = () => {
+
+        }
+        diamond.position.set(p.x, p.y, p.z)
+        diamond.name = name
+        diamond.rotation.x = Math.PI / 2
+        diamond.__dirtyPosition = true
+        diamond.__dirtyRotation = true
+        diamond.coinValue = 10000
+        scene.add(diamond)
+        window.appConfig.diamonds.push(diamond)
+        window.appConfig.coins.push(diamond)
+      }
       window.appConfig.stages = {
         components: {
           // createSwitch: (options) => {
@@ -1774,6 +1839,7 @@
           createCrystalCircle: createCrystalCircle,
           createCrystalCross: createCrystalCross,
           createBumper: createBumper,
+          createDiamond: createDiamond,
           createStage0MainBeamStructure: (
             scale,
             scaleAdj = 0,
@@ -2129,6 +2195,7 @@
             window.appConfig.stages.components.createBumper("STAGE0BUMPER3", 1, { x: 70, y: 72.5, z: 0 }, 5)
             window.appConfig.stages.components.createBumper("STAGE0BUMPER4", 1, { x: 87.5, y: 32.5, z: 0 }, 5)
             window.appConfig.stages.components.createBumper("STAGE0BUMPER5", 1, { x: 87.5, y: -32.5, z: 0 }, 5)
+            window.appConfig.stages.components.createDiamond("STAGE0DIAMOND0", 1, { x: 0, y: -10, z: 0 }, 2)
             const createSwitchBeamWall = (config) => {
               const performanceAdj = window.appConfig.performanceLevel === 0 ? .25 : 0
 
@@ -2173,10 +2240,10 @@
 
             const createRemoteSwitch = (config = {
               transmitter: {
-                p: {x: 0, y: 0, z: 0}
+                p: { x: 0, y: 0, z: 0 }
               },
               receiver: {
-                p: {x: 0, y: 0, z: 0}
+                p: { x: 0, y: 0, z: 0 }
               }
             }) => {
               let transmitterGroup = new THREE.Group()
@@ -2286,9 +2353,9 @@
                 const endPosition = end3d.position
                 const points = generate10PointsBetweenTwo3dObjects(start3d.children[1], end3d.children[1])
                 points.forEach((p, pi) => {
-                  if(pi > 0 && pi < points.length) {
-                    transmitterGroup.add(transmitterSphere({p: p}))
-                  }  
+                  if (pi > 0 && pi < points.length) {
+                    transmitterGroup.add(transmitterSphere({ p: p }))
+                  }
                 })
                 transmitterGroup.transmitter = start3d
                 transmitterGroup.receiver = end3d
@@ -2318,28 +2385,28 @@
 
             createRemoteSwitch({
               transmitter: {
-                p: {x: -95, y: -95, z: 0}
+                p: { x: -95, y: -95, z: 0 }
               },
               receiver: {
-                p: {x: -55, y: -20, z: 0},
+                p: { x: -55, y: -20, z: 0 },
                 name: 'STAGE0RECEIVER_A'
               }
             })
 
-            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: -71.2, y: -20, z: 0 } , receiver: {name: 'STAGE0RECEIVER_A'}})
+            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: -71.2, y: -20, z: 0 }, receiver: { name: 'STAGE0RECEIVER_A' } })
 
 
             createRemoteSwitch({
               transmitter: {
-                p: {x: -95, y: 95, z: 0}
+                p: { x: -95, y: 95, z: 0 }
               },
               receiver: {
-                p: {x: -55, y: 20, z: 0},
+                p: { x: -55, y: 20, z: 0 },
                 name: 'STAGE0RECEIVER_B'
               }
             })
 
-            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: -71.2, y: 20, z: 0 } , receiver: {name: 'STAGE0RECEIVER_B'}})
+            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: -71.2, y: 20, z: 0 }, receiver: { name: 'STAGE0RECEIVER_B' } })
 
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
 
@@ -4577,6 +4644,25 @@
     }
 
     const timers = {
+      diamondTravel: (diamond, ms) => {
+        const name = diamond.name + Math.round(Math.random() * 10000)
+        return {
+          started: 0,
+          ended: 0,
+          percentComplete: 0,
+          time: ms,
+          timeLeft: 0,
+          currentTime: 0,
+          name: name,
+          id: Math.round(Math.random() * 10000),
+          activeCallback: (percentComplete) => {
+            diamond.travelCallback(percentComplete)
+          },
+          completedCallback: (percentComplete) => {
+            diamond.completedCallback(percentComplete)
+          }
+        }
+      },
       bumperHit: (bumper) => {
         const name = bumper.name + Math.round(Math.random() * 10000)
         return {
@@ -4625,7 +4711,7 @@
           remoteReceiverIco.scale.y = percentComplete
           remoteReceiverIco.scale.z = percentComplete
 
-          if(percentComplete > .5) {
+          if (percentComplete > .5) {
             remoteReceiver.material.color = remoteSwitchMaterial.lerp(
               window.appConfig.superBallMaterial.color,
               (percentComplete - .5) * 2
@@ -4635,7 +4721,7 @@
         }
 
         const completedCallback = () => {
-        //  debugger
+          //  debugger
           let theReceiverBeam = scene.children.find((rec) => rec.name.indexOf(remoteSwitch.receiver.switchName + '_SWITCHBEAM_RECEIVER_') > -1)
           theReceiverBeam.rotate()
         }
@@ -5256,7 +5342,7 @@
             })
           })
         }
-        if(window.appConfig.debug && window.appConfig.debug.menuVisible===true) {
+        if (window.appConfig.debug && window.appConfig.debug.menuVisible === true) {
           window.appConfig.debug.populateActiveTimersList()
         }
       }
@@ -5515,8 +5601,10 @@
 
       window.appConfig.sprites.forEach(sprite => {
         sprite.activeCallback()
-      }
-      )
+      })
+      window.appConfig.diamonds.forEach(diamond => {
+        diamond.activeCallback()
+      })
 
 
       window.appConfig.coinFrameCheckNumber++
