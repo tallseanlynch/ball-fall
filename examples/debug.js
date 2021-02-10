@@ -59,9 +59,10 @@ setTimeout(() => {
             const queryNamePz = '#'+objectToTranslate.name+' .pz'
             document.querySelector(queryNamePz).value = objectToTranslate.position.z
         }
-    
+
         const showDebugMenu = () => {            
             window.appConfig.debug.menuVisible ? document.querySelector('.debug').classList.add('hide') : document.querySelector('.debug').classList.remove('hide')
+            window.appConfig.debug.menuVisible ? document.querySelector('.debug-timers').classList.add('hide') : document.querySelector('.debug-timers').classList.remove('hide')
             window.appConfig.debug.menuVisible = !window.appConfig.debug.menuVisible
             document.querySelector('.debug').innerHTML = ''    
             scene.children.forEach((c, ci) => {
@@ -106,11 +107,41 @@ setTimeout(() => {
                     }, 100)
                 }
             })
+            
             console.log("SHOWDEBUGMENU")
+        }
+//            ${JSON.stringify(timer, null, 2)}
+
+        const timerValue = (valueObj) => {
+            return `<div><b>${valueObj.key}</b>: ${valueObj.value}</div>`
+        }
+
+        const activeTimerComponent = (timer) => {
+            return `<div class="active-timer">
+                <span style="color:red !important;">${timerValue({key: 'NAME', value: timer.name})}</span>
+                ${timerValue({key: 'PERCENT COMPLETE', value: timer.percentComplete})}
+                ${timerValue({key: 'LENGTH', value: timer.time})}
+                ${timerValue({key: 'TIME LEFT', value: timer.timeLeft})}
+            </div>`
+        }
+
+        const activeTimersListComponent = () => {
+            return `<div class="active-timers-list">
+                ${window.appConfig.timers.activeTimers.map( at => {
+                        return activeTimerComponent(at)
+                    }
+                ).join('')}
+            </div>`
+        }
+
+        const populateActiveTimersList = () => {
+            document.querySelector('.debug-timers').innerHTML = activeTimersListComponent()
         }
 
         window.appConfig.debug.previousCameraZ = undefined
         window.appConfig.debug.previousCameraZToggle = false
+
+        window.appConfig.debug.populateActiveTimersList = populateActiveTimersList
 
         const toggleDebugCamera = () => {
             if(window.appConfig.debug.previousCameraZToggle === false) {

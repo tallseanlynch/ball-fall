@@ -459,7 +459,7 @@ button:focus {
 }
 
 
-.debug {
+.debug, .debug-timers {
   width: 40%;
   height: 40%;
   top: 5%;
@@ -471,6 +471,11 @@ button:focus {
   padding: 1%;
   overflow-y: scroll;
   max-width: 300px;
+  opacity: .75;
+}
+
+.debug-timers {
+  left: 50% !important;
 }
 
 .debug .debug-item {

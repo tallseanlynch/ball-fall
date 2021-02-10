@@ -649,6 +649,8 @@
   </div>
   <div class="debug hide" style="z-index: 10000;">
   </div>
+  <div class="debug-timers hide" style="z-index: 10000;">
+  </div>
 </body>
 
 <footer>
@@ -1204,12 +1206,13 @@
           theReceiver.position.y = beam0.position.y
           theReceiver.position.z = 5
 
+          let beamToRotate = () => {return scene.children.find((rec) => rec.name.indexOf(beam0.name) > -1)}
+
           setTimeout(() => {
-            let beamToRotate = scene.children.find((rec) => rec.name.indexOf(beam0.name) > -1)
-            console.log('SWITCHBEAM RECEIVER', beamToRotate, beam0.name)
+            console.log('SWITCHBEAM RECEIVER', beamToRotate(), beam0.name)
             beam0.rotate = () => {
               beam0.switchBeam.rotated = true
-              window.appConfig.timers.activeTimers.push(window.appConfig.timers.switchBeamRotate(beamToRotate))
+              window.appConfig.timers.activeTimers.push(window.appConfig.timers.switchBeamRotate(beamToRotate()))
               console.log(window.appConfig.timers.activeTimers)
             }
           },
@@ -2232,6 +2235,7 @@
               // debugger
               // #1 create the remote switch
               receiverGroup.name = window.appConfig.currentStage + '_' + config.receiver.name + '_RECEIVERGROUP_' + Math.round(Math.random() * 10000)
+              receiverGroup.switchName = config.receiver.name
               transmitterGroup.name = window.appConfig.currentStage + '_TRANSMITTERGROUP_' + Math.round(Math.random() * 10000)
               scene.add(transmitterGroup)
               scene.add(receiverGroup)
@@ -4631,8 +4635,8 @@
         }
 
         const completedCallback = () => {
-          // debugger
-          let theReceiverBeam = scene.children.find((rec) => rec.name.indexOf('_SWITCHBEAM_RECEIVER_' + remoteReceiver.name) > -1)
+        //  debugger
+          let theReceiverBeam = scene.children.find((rec) => rec.name.indexOf(remoteSwitch.receiver.switchName + '_SWITCHBEAM_RECEIVER_') > -1)
           theReceiverBeam.rotate()
         }
 
@@ -5251,6 +5255,9 @@
               }
             })
           })
+        }
+        if(window.appConfig.debug && window.appConfig.debug.menuVisible===true) {
+          window.appConfig.debug.populateActiveTimersList()
         }
       }
 
