@@ -1082,7 +1082,7 @@
         const lengthMod = window.appConfig.performanceLevel > 0 ? 10 : 10.15
         const beamBox = new THREE.BoxGeometry((lengthMod * config.s), 2, 2)
 
-        const beam0 = new Physijs.BoxMesh(
+        let beam0 = new Physijs.BoxMesh(
           beamBox,
           Physijs.createMaterial(
             beamMaterial,
@@ -1123,8 +1123,7 @@
 
         beam0.name = window.appConfig.currentStage + '_BEAM'
 
-        if (config.switchBeam) {
-
+        if (config.switchBeam && config.switchBeam.receiver === undefined) {
           const switchIndicator = () => {
             return new THREE.Mesh(
               switchIndicatorGeo,
@@ -1181,6 +1180,42 @@
 
         beam0.position.set(config.p[0], config.p[1], config.p[2]);
         beam0.rotation.set(config.r[0], config.r[1], config.r[2]);
+
+        if(config.switchBeam) {
+          console.log(config)
+          // debugger
+        }
+
+        if(config && config.switchBeam && config.switchBeam.receiver) {
+          // debugger
+          // #3 add the name using the config
+          beam0.name = window.appConfig.currentStage + '_' + config.switchBeam.receiver.name + '_SWITCHBEAM_RECEIVER_' + Math.round(Math.random() * 10000)
+          beam0.switchBeam = {
+            rotated: false,
+            switchIndicators: config.switchBeam.switchIndicators,
+            activeSwitchIndicators: 0,
+            switchIndicatorsThrottle: false,
+            switchIndicatorsGeos: []
+          }
+          
+          let theReceiver = scene.children.find((rec) => rec.name.indexOf(config.switchBeam.receiver.name + '_RECEIVERGROUP') > -1)
+          console.log(theReceiver)
+          theReceiver.position.x = beam0.position.x
+          theReceiver.position.y = beam0.position.y
+          theReceiver.position.z = 5
+
+          setTimeout(() => {
+            let beamToRotate = scene.children.find((rec) => rec.name.indexOf(beam0.name) > -1)
+            console.log('SWITCHBEAM RECEIVER', beamToRotate, beam0.name)
+            beam0.rotate = () => {
+              beam0.switchBeam.rotated = true
+              window.appConfig.timers.activeTimers.push(window.appConfig.timers.switchBeamRotate(beamToRotate))
+              console.log(window.appConfig.timers.activeTimers)
+            }
+          },
+          1000
+          )
+        }
         return beam0;
       };
 
@@ -2100,14 +2135,26 @@
                 s: (config.s * 2.5) * .1 + performanceAdj
               }))
 
+              const normalSwitchBeamConfig = {
+                switchIndicators: 3,
+                color: window.appConfig.stages[window.appConfig.currentStage].backgroundColors[3]
+              }
+
+              const remoteSwitchBeamConfig = () => {
+                // debugger
+                // #2 add the name using the config
+                return {
+                  switchIndicators: 1,
+                  color: window.appConfig.stages[window.appConfig.currentStage].backgroundColors[3],
+                  receiver: { name: config.receiver.name }
+                }
+              }
+
               scene.add(createBeam({
                 p: config.dir === 'x' ? [(config.s * 3.3) + config.p.x, 0 + config.p.y, 0 + config.p.z] : [0 + config.p.x, (config.s * 3.3) + config.p.y, 0 + config.p.z],
                 r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
                 s: (config.s * 2.5) * .1 + performanceAdj,
-                switchBeam: {
-                  switchIndicators: 3,
-                  color: window.appConfig.stages[window.appConfig.currentStage].backgroundColors[3]
-                }
+                switchBeam: config.receiver ? remoteSwitchBeamConfig() : normalSwitchBeamConfig
               }))
 
               scene.add(createBeam({
@@ -2115,16 +2162,20 @@
                 r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
                 s: (config.s * 2.5) * .1 + performanceAdj
               }))
-              // scene.add(beamGroup)
             }
 
-            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: -71.2, y: 20, z: 0 } })
-            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: -71.2, y: -20, z: 0 } })
 
             createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: 20, z: 0 } })
             createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: -20, z: 0 } })
 
-            const createRemoteSwitch = () => {
+            const createRemoteSwitch = (config = {
+              transmitter: {
+                p: {x: 0, y: 0, z: 0}
+              },
+              receiver: {
+                p: {x: 0, y: 0, z: 0}
+              }
+            }) => {
               let transmitterGroup = new THREE.Group()
               let transmitterMaterial = new THREE.MeshPhongMaterial(
                 {
@@ -2146,6 +2197,8 @@
                 transmitterMaterial
               )
               transmitterGroup.transmitterActive = false
+              transmitterGroup.position.x = config.transmitter.p.x
+              transmitterGroup.position.y = config.transmitter.p.y
               transmitterMesh.position.z = -5
               transmitterMesh.name = window.appConfig.currentStage + '_TRANSMITTER'
               let ico = new THREE.Mesh(
@@ -2173,9 +2226,12 @@
               receiverIco.scale.y = .1
               receiverIco.scale.z = .1
               receiverGroup.add(receiverIco)
-              receiverGroup.position.x = 20
-              receiverGroup.position.z = -5
-              receiverGroup.name = window.appConfig.currentStage + '_RECEIVERGROUP_' + Math.round(Math.random() * 10000)
+              receiverGroup.position.x = config.receiver.p.x
+              receiverGroup.position.y = config.receiver.p.y
+              receiverGroup.position.z = 10
+              // debugger
+              // #1 create the remote switch
+              receiverGroup.name = window.appConfig.currentStage + '_' + config.receiver.name + '_RECEIVERGROUP_' + Math.round(Math.random() * 10000)
               transmitterGroup.name = window.appConfig.currentStage + '_TRANSMITTERGROUP_' + Math.round(Math.random() * 10000)
               scene.add(transmitterGroup)
               scene.add(receiverGroup)
@@ -2226,7 +2282,7 @@
                 const endPosition = end3d.position
                 const points = generate10PointsBetweenTwo3dObjects(start3d.children[1], end3d.children[1])
                 points.forEach((p, pi) => {
-                  if(pi > 0 && pi < (points.length - 1)) {
+                  if(pi > 0 && pi < points.length) {
                     transmitterGroup.add(transmitterSphere({p: p}))
                   }  
                 })
@@ -2256,8 +2312,33 @@
 
             }
 
-            createRemoteSwitch()
+            createRemoteSwitch({
+              transmitter: {
+                p: {x: -95, y: -95, z: 0}
+              },
+              receiver: {
+                p: {x: -55, y: -20, z: 0},
+                name: 'STAGE0RECEIVER_A'
+              }
+            })
+
+            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: -71.2, y: -20, z: 0 } , receiver: {name: 'STAGE0RECEIVER_A'}})
+
+
+            createRemoteSwitch({
+              transmitter: {
+                p: {x: -95, y: 95, z: 0}
+              },
+              receiver: {
+                p: {x: -55, y: 20, z: 0},
+                name: 'STAGE0RECEIVER_B'
+              }
+            })
+
+            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: -71.2, y: 20, z: 0 } , receiver: {name: 'STAGE0RECEIVER_B'}})
+
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
+
 
             const stage0MainBeamStructure = createStage0MainBeamStructure(
               2,
@@ -4548,6 +4629,13 @@
             remoteReceiver.material.opacity = .25 + (.75 * percentComplete)
           }
         }
+
+        const completedCallback = () => {
+          // debugger
+          let theReceiverBeam = scene.children.find((rec) => rec.name.indexOf('_SWITCHBEAM_RECEIVER_' + remoteReceiver.name) > -1)
+          theReceiverBeam.rotate()
+        }
+
         return {
           started: 0,
           ended: 0,
@@ -4558,9 +4646,7 @@
           name: 'REMOTE_SWITCH_' + Math.round(Math.random() * 10000),
           id: Math.round(Math.random() * 10000),
           activeCallback,
-          completedCallback: () => {
-            window.appConfig.superBallMaterial.color
-          }
+          completedCallback
           // activeCallback: (percentComplete) => {
           //            remoteTransmitter.material.color = 0xffffff
           // remoteTransmitter.material.color = remoteTransmitter.material.color.lerp(
@@ -4588,6 +4674,8 @@
         }
       },
       switchBeamRotate: (switchBeam) => {
+        console.log(switchBeam)
+        // debugger
         return {
           started: 0,
           ended: 0,
@@ -4595,7 +4683,7 @@
           time: 2000,
           timeLeft: 0,
           currentTime: 0,
-          name: switchBeam.name,
+          name: switchBeam.name + Math.round(Math.random() * 10000),
           id: Math.round(Math.random() * 10000),
           startedCallback: () => {
             switchBeam.originalRotationZ = switchBeam.rotation.z
