@@ -1735,23 +1735,23 @@
         })
       }
 
-      window.appConfig.diamonds = []
-      const createDiamond = (name = "NO_NAME", size = 0, p = { x: 0, y: 0, z: 0 }, detail = 1) => {
-        const diamondGeo = new THREE.TetrahedronGeometry(1 + size, detail)
-        const diamondColor = new THREE.Color(0xffffff)
+      window.appConfig.sapphires = []
+      const createSapphire = (p = { x: 0, y: 0, z: 0 }) => {
+        const sapphireGeo = new THREE.TetrahedronGeometry(1, 1)
+        const sapphireColor = new THREE.Color(0xffffff)
         const material = new THREE.MeshPhongMaterial({
-          color: diamondColor,
+          color: sapphireColor,
         })
-        const diamond = new THREE.Mesh(diamondGeo, material)
-        diamond.material.color = window.appConfig.superBallMaterial.color
-        diamond.hasTarget = false
-        diamond.travelData = {}
-        diamond.activeCallback = () => {
+        const sapphire = new THREE.Mesh(sapphireGeo, material)
+        sapphire.material.color = window.appConfig.superBallMaterial.color
+        sapphire.hasTarget = false
+        sapphire.travelData = {}
+        sapphire.activeCallback = () => {
           if (window.appConfig.start === true && window.appConfig.pause === false && window.appConfig.userHasEnded === false) {
-            if (diamond.hasTarget === false) {
+            if (sapphire.hasTarget === false) {
               const randomNum = Math.floor(Math.random() * window.appConfig.coins.length)
               const targetCoin = window.appConfig.coins[randomNum]
-              const v0 = new THREE.Vector2(diamond.position.x, diamond.position.y)
+              const v0 = new THREE.Vector2(sapphire.position.x, sapphire.position.y)
               const v1 = new THREE.Vector2()
               const v2 = new THREE.Vector2()
               const v3 = new THREE.Vector2(targetCoin.position.x, targetCoin.position.y)
@@ -1762,41 +1762,82 @@
               v2.x -= 30
               v2.y -= 30
               const curve = new THREE.CubicBezierCurve(v0, v1, v2, v3)
-              diamond.travelData.curve = curve
-              diamond.hasTarget = true
+              sapphire.travelData.curve = curve
+              sapphire.hasTarget = true
               const ms = Math.ceil(curve.getLength() * 50)
-              window.appConfig.timers.activeTimers.push(window.appConfig.timers.diamondTravel(diamond, ms))
+              window.appConfig.timers.activeTimers.push(window.appConfig.timers.sapphireTravel(sapphire, ms))
 
             }
           }
         }
-        diamond.travelCallback = (percentComplete) => {
+        sapphire.travelCallback = (percentComplete) => {
           if (window.appConfig.start === true && window.appConfig.pause === false && window.appConfig.userHasEnded === false) {
 
-            if (diamond.hasTarget === true) {
-              const point = diamond.travelData.curve.getPoint(percentComplete)
-              diamond.position.set(point.x, point.y, lfo(747) * 5)
+            if (sapphire.hasTarget === true) {
+              const point = sapphire.travelData.curve.getPoint(percentComplete)
+              sapphire.position.set(point.x, point.y, lfo(747) * 5)
             }
           }
         }
-        diamond.completedCallback = () => {
+        sapphire.completedCallback = () => {
           if (window.appConfig.start === true && window.appConfig.pause === false && window.appConfig.userHasEnded === false) {
 
-            diamond.hasTarget = false
-            diamond.travelData = {}
+            sapphire.hasTarget = false
+            sapphire.travelData = {}
           }
         }
-        diamond.capturedCallback = () => {
+        sapphire.capturedCallback = () => {
 
         }
+        sapphire.position.set(p.x, p.y, p.z)
+
+        sapphire.name = window.appConfig.currentStage + "SAPPHIRE" + Math.floor(Math.random() * 10000)
+        sapphire.rotation.x = Math.PI / 2
+        sapphire.__dirtyPosition = true
+        sapphire.__dirtyRotation = true
+        sapphire.coinValue = 2500
+        scene.add(sapphire)
+        window.appConfig.sapphires.push(sapphire)
+        window.appConfig.coins.push(sapphire)
+      }
+      const createRuby = (p = { x: 0, y: 0, z: 0 }) => {
+        const ruby = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial({
+          color: 0xff0000,
+          specular: 0x050505,
+          shininess: 100
+        })
+        )
+        ruby.position.set(p.x, p.y, p.z)
+        ruby.name = window.appConfig.currentStage + "RUBY" + Math.floor(Math.random() * 10000)
+        ruby.coinValue = 5000
+        scene.add(ruby)
+        window.appConfig.coins.push(ruby)
+      }
+
+      const createEmerald = (p = { x: 0, y: 0, z: 0 }) => {
+        const emerald = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial({
+          color: 0x00ff00,
+          specular: 0x050505,
+          shininess: 100
+        })
+        )
+        emerald.position.set(p.x, p.y, p.z)
+        emerald.name = window.appConfig.currentStage + "EMERALD" + Math.floor(Math.random() * 10000)
+        emerald.coinValue = 10000
+        scene.add(emerald)
+        window.appConfig.coins.push(emerald)
+      }
+      const createDiamond = (p = { x: 0, y: 0, z: 0 }) => {
+        const diamond = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial({
+          color: 0x000ff,
+          specular: 0x050505,
+          shininess: 100
+        })
+        )
         diamond.position.set(p.x, p.y, p.z)
-        diamond.name = name
-        diamond.rotation.x = Math.PI / 2
-        diamond.__dirtyPosition = true
-        diamond.__dirtyRotation = true
-        diamond.coinValue = 10000
+        diamond.name = window.appConfig.currentStage + "DIAMOND" + Math.floor(Math.random() * 10000)
+        diamond.coinValue = 25000
         scene.add(diamond)
-        window.appConfig.diamonds.push(diamond)
         window.appConfig.coins.push(diamond)
       }
       window.appConfig.stages = {
@@ -1839,6 +1880,9 @@
           createCrystalCircle: createCrystalCircle,
           createCrystalCross: createCrystalCross,
           createBumper: createBumper,
+          createSapphire: createSapphire,
+          createRuby: createRuby,
+          createEmerald: createEmerald,
           createDiamond: createDiamond,
           createStage0MainBeamStructure: (
             scale,
@@ -2195,7 +2239,13 @@
             window.appConfig.stages.components.createBumper("STAGE0BUMPER3", 1, { x: 70, y: 72.5, z: 0 }, 5)
             window.appConfig.stages.components.createBumper("STAGE0BUMPER4", 1, { x: 87.5, y: 32.5, z: 0 }, 5)
             window.appConfig.stages.components.createBumper("STAGE0BUMPER5", 1, { x: 87.5, y: -32.5, z: 0 }, 5)
-            window.appConfig.stages.components.createDiamond("STAGE0DIAMOND0", 1, { x: 0, y: -10, z: 0 }, 2)
+            window.appConfig.stages.components.createSapphire({ x: 0, y: -50, z: 0 })
+            window.appConfig.stages.components.createRuby({ x: 0, y: -25, z: 0 })
+            window.appConfig.stages.components.createRuby({ x: 0, y: 25, z: 0 })
+            window.appConfig.stages.components.createEmerald({ x: 25, y: 0, z: 0 })
+            window.appConfig.stages.components.createEmerald({ x: -25, y: 0, z: 0 })
+            window.appConfig.stages.components.createDiamond({ x: 25, y: 25, z: 0 })
+            window.appConfig.stages.components.createDiamond({ x: -25, y: 25, z: 0 })
             const createSwitchBeamWall = (config) => {
               const performanceAdj = window.appConfig.performanceLevel === 0 ? .25 : 0
 
@@ -4644,8 +4694,8 @@
     }
 
     const timers = {
-      diamondTravel: (diamond, ms) => {
-        const name = diamond.name + Math.round(Math.random() * 10000)
+      sapphireTravel: (sapphire, ms) => {
+        const name = sapphire.name + Math.round(Math.random() * 10000)
         return {
           started: 0,
           ended: 0,
@@ -4656,10 +4706,10 @@
           name: name,
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
-            diamond.travelCallback(percentComplete)
+            sapphire.travelCallback(percentComplete)
           },
           completedCallback: (percentComplete) => {
-            diamond.completedCallback(percentComplete)
+            sapphire.completedCallback(percentComplete)
           }
         }
       },
@@ -5602,8 +5652,8 @@
       window.appConfig.sprites.forEach(sprite => {
         sprite.activeCallback()
       })
-      window.appConfig.diamonds.forEach(diamond => {
-        diamond.activeCallback()
+      window.appConfig.sapphires.forEach(sapphire => {
+        sapphire.activeCallback()
       })
 
 
