@@ -119,9 +119,9 @@
         bumperGroup: 0,
         prize: 0
       },
-      currentStage: hasPerformanceReport ? 'STAGE1' : 'STAGE5',
+      currentStage: hasPerformanceReport ? 'STAGE2' : 'STAGE5',
       stagesArray: ['STAGE0', 'STAGE1', 'STAGE2', 'STAGE3', 'STAGE4', 'STAGE5'],
-      currentStageIndex: hasPerformanceReport ? 1 : 5,
+      currentStageIndex: hasPerformanceReport ? 2 : 5,
       musicTurnedOn: true,
       sfxTurnedOn: true,
       howlSounds: {
@@ -3396,8 +3396,36 @@
             createBackgroundAnimation()
           },
           init: () => {
+            const createSwitchBeamWall = window.appConfig.stages.components.createSwitchBeamWall
+            const createRemoteSwitch = window.appConfig.stages.components.createRemoteSwitch
+
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
+
+            createRemoteSwitch({
+              transmitter: {
+                p: { x: -100, y: 100, z: 0 }
+              },
+              receiver: {
+                p: { x: -55, y: -20, z: 0 },
+                name: 'STAGE2RECEIVER_A'
+              }
+            })
+
+            createSwitchBeamWall({ s: 6.75, dir: 'x', p: { x: -121.5, y: 0, z: 0 }, receiver: { name: 'STAGE2RECEIVER_A' }, switchBeamAdj: .25 })
+
+            createRemoteSwitch({
+              transmitter: {
+                p: { x: -100, y: 100, z: 0 }
+              },
+              receiver: {
+                p: { x: -55, y: -20, z: 0 },
+                name: 'STAGE2RECEIVER_B'
+              }
+            })
+
+            createSwitchBeamWall({ s: 6.7, dir: 'x', p: { x: 77, y: 0, z: 0 }, receiver: { name: 'STAGE2RECEIVER_B' }, switchBeamAdj: .25 })
+
 
             const stage2MainBeamStructure = createStage0MainBeamStructure(
               5,
@@ -3408,12 +3436,25 @@
             scene.add(stage2MainBeamStructure);
 
             const stage2MainBeamStructure2 = createStage0MainBeamStructure(
-              8,
+              6.85,
               0,
-              "STAGE2MAINSTRUCTURE",
+              "STAGE2MAINSTRUCTURE0",
               { x: 0, y: 0 }
             );
+            stage2MainBeamStructure2.rotation.z = .25 * Math.PI
             scene.add(stage2MainBeamStructure2);
+
+            const stage2MainBeamStructure3 = createStage0MainBeamStructure(
+              8,
+              -.7,
+              "STAGE2MAINSTRUCTURE_3",
+              { x: 0, y: 0 },
+              [1, 0, 0, 0]
+              // [bottom, left, right, top]
+
+            );
+            scene.add(stage2MainBeamStructure3)
+
 
             const stage2MainBeamStructure1 = window.appConfig.stages.components.createStage0MainBeamStructure(
               12,
