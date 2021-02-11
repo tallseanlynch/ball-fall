@@ -1737,12 +1737,29 @@
 
       window.appConfig.sapphires = []
       const createSapphire = (p = { x: 0, y: 0, z: 0 }) => {
-        const sapphireGeo = new THREE.TetrahedronGeometry(1, 1)
+        const sapphireShape = new THREE.Shape()
+        sapphireShape.moveTo(0, .5)
+        sapphireShape.lineTo(.5, 0)
+        sapphireShape.lineTo(0, -.5)
+        sapphireShape.lineTo(-.5, 0)
+        sapphireShape.lineTo(0, .5)
+        const sapphireGeo = new THREE.ExtrudeGeometry(sapphireShape, {
+          steps: 1,
+          depth: .5,
+          bevelEnabled: true,
+          bevelThickness: .5,
+          bevelSize: .5,
+          bevelSegments: 1,
+          bevelOffset: 0,
+        })
         const sapphireColor = new THREE.Color(0xffffff)
         const material = new THREE.MeshPhongMaterial({
           color: sapphireColor,
         })
         const sapphire = new THREE.Mesh(sapphireGeo, material)
+        sapphire.scale.x = 2
+        sapphire.scale.y = 2
+        sapphire.scale.z = 2
         sapphire.material.color = window.appConfig.superBallMaterial.color
         sapphire.hasTarget = false
         sapphire.travelData = {}
@@ -1775,7 +1792,7 @@
 
             if (sapphire.hasTarget === true) {
               const point = sapphire.travelData.curve.getPoint(percentComplete)
-              sapphire.position.set(point.x, point.y, lfo(747) * 5)
+              // sapphire.position.set(point.x, point.y, lfo(747) * 5)
             }
           }
         }
@@ -1792,7 +1809,7 @@
         sapphire.position.set(p.x, p.y, p.z)
 
         sapphire.name = window.appConfig.currentStage + "SAPPHIRE" + Math.floor(Math.random() * 10000)
-        sapphire.rotation.x = Math.PI / 2
+        // sapphire.rotation.x = Math.PI / 2
         sapphire.__dirtyPosition = true
         sapphire.__dirtyRotation = true
         sapphire.coinValue = 2500
@@ -2193,10 +2210,10 @@
           },
           createRemoteSwitch: (config = {
             transmitter: {
-              p: {x: 0, y: 0, z: 0}
+              p: { x: 0, y: 0, z: 0 }
             },
             receiver: {
-              p: {x: 0, y: 0, z: 0}
+              p: { x: 0, y: 0, z: 0 }
             }
           }) => {
             let transmitterGroup = new THREE.Group()
@@ -2306,9 +2323,9 @@
               const endPosition = end3d.position
               const points = generate10PointsBetweenTwo3dObjects(start3d.children[1], end3d.children[1])
               points.forEach((p, pi) => {
-                if(pi > 0 && pi < points.length) {
-                  transmitterGroup.add(transmitterSphere({p: p}))
-                }  
+                if (pi > 0 && pi < points.length) {
+                  transmitterGroup.add(transmitterSphere({ p: p }))
+                }
               })
               transmitterGroup.transmitter = start3d
               transmitterGroup.receiver = end3d
@@ -2444,7 +2461,7 @@
             window.appConfig.stages.components.createBumper("STAGE0BUMPER11", 1, { x: 97.5, y: 60, z: 0 }, 3, 1)
             window.appConfig.stages.components.createBumper("STAGE0BUMPER6", 1, { x: 87.5, y: 70, z: 0 }, 3, 1)
 
-            window.appConfig.stages.components.createSapphire({ x: 0, y: -50, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: 0, y: -10, z: 0 })
             window.appConfig.stages.components.createRuby({ x: 0, y: -25, z: 0 })
             window.appConfig.stages.components.createRuby({ x: 0, y: 25, z: 0 })
             window.appConfig.stages.components.createEmerald({ x: 25, y: 0, z: 0 })
@@ -2464,45 +2481,45 @@
             createCrystalCircle('STAGE0', 3.5, { x: 87.5, y: 0 }, 1, 8)
             createCrystalCircle('STAGE0', 3, { x: 87.5, y: 0 }, 2, 8)
 
-            window.appConfig.createSphere({ 
-              bounce: 1, 
-              name: window.appConfig.currentStage + '_SPHERECOINA', 
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINA',
               position: {
-                  x: -55, 
-                  y: 0,
-                  z: 0
+                x: -55,
+                y: 0,
+                z: 0
               },
-              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINA') 
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINA')
             })
-            window.appConfig.createSphere({ 
-              bounce: 1, 
-              name: window.appConfig.currentStage + '_SPHERECOINB', 
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINB',
               position: {
-                  x: -55, 
-                  y: 0,
-                  z: 0
+                x: -55,
+                y: 0,
+                z: 0
               },
-              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINB') 
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINB')
             })
-            window.appConfig.createSphere({ 
-              bounce: 1, 
-              name: window.appConfig.currentStage + '_SPHERECOINC', 
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINC',
               position: {
-                  x: -55, 
-                  y: 0,
-                  z: 0
+                x: -55,
+                y: 0,
+                z: 0
               },
-              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINC') 
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINC')
             })
-            window.appConfig.createSphere({ 
-              bounce: 1, 
-              name: window.appConfig.currentStage + '_SPHERECOIND', 
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOIND',
               position: {
-                  x: -55, 
-                  y: 0,
-                  z: 0
+                x: -55,
+                y: 0,
+                z: 0
               },
-              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIND') 
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIND')
             })
 
             // createCrystalCircle('STAGE0', 4.5, { x: -50, y: 50 }, 1, 4)
