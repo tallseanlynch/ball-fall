@@ -1368,6 +1368,7 @@
         }
         window.appConfig.coins.push(coin);
         coin.size = size
+        coin.spriteCapturable = true
         return coin;
       };
 
@@ -3113,7 +3114,7 @@
             scene.add(stage1MinorBeamStructure3B);
 
             // prize(1, 0, { x: 50, y: 50, z: 0 })
-            // prize(1, 1, { x: 50, y: -50, z: 0 })
+            prize(1, 1, { x: 100, y: 100, z: 0 })
             prize(1, 2, { x: -50, y: -50, z: 0 })
             
             //top left quad
@@ -4905,6 +4906,7 @@
             (coin, coinIndex) => {
               if (coinIndex % (window.appConfig.coinFrameCheckNumber % 10)) {
                 if (
+                  coin.spriteCapturable === true &&
                   Math.abs(coin.position.x - x) < coin.scale.x * xMod &&
                   Math.abs(coin.position.y - y) < coin.scale.x * yMod &&
                   !coin.spriteFetching &&
