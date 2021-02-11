@@ -1764,7 +1764,7 @@
         sapphire.scale.x = 2
         sapphire.scale.y = 2
         sapphire.scale.z = 2
-        sapphire.material.color = window.appConfig.superBallMaterial.color
+        // sapphire.material.color = window.appConfig.superBallMaterial.color
         sapphire.hasTarget = false
         sapphire.travelData = {}
         sapphire.activeCallback = () => {
@@ -1796,7 +1796,7 @@
 
             if (sapphire.hasTarget === true) {
               const point = sapphire.travelData.curve.getPoint(percentComplete)
-              // sapphire.position.set(point.x, point.y, lfo(747) * 5)
+              sapphire.position.set(point.x, point.y, lfo(747) * 5)
             }
           }
         }
@@ -1822,10 +1822,35 @@
         window.appConfig.coins.push(sapphire)
       }
 
-      const rubyGeo = new THREE.OctahedronGeometry(2, 1)
-      rubyGeo.scale.y = .5
+      // const rubyGeo = new THREE.OctahedronGeometry(2, 1)
+      // rubyGeo.scale.y = .5
 
       const createRuby = (p = { x: 0, y: 0, z: 0 }) => {
+        const rubyShape = new THREE.Shape()
+        rubyShape.moveTo(0, 0)
+        rubyShape.lineTo(.5, 0)
+        rubyShape.lineTo(1, .5)
+        rubyShape.lineTo(1, 1.5)
+        rubyShape.lineTo(.5, 2)
+        rubyShape.lineTo(0, 2)
+        rubyShape.lineTo(-.5, 1.5)
+        rubyShape.lineTo(-.5, .5)
+        rubyShape.lineTo(0, 0)
+
+        // rubyShape.lineTo(.5, 0)
+        // rubyShape.lineTo(0, -.5)
+        // rubyShape.lineTo(-.5, 0)
+        // rubyShape.lineTo(0, .5)
+        const rubyGeo = new THREE.ExtrudeGeometry(rubyShape, {
+          steps: 1,
+          depth: .5,
+          bevelEnabled: true,
+          bevelThickness: .5,
+          bevelSize: .5,
+          bevelSegments: 1,
+          bevelOffset: 0,
+        })
+
         const ruby = new THREE.Mesh(rubyGeo, new THREE.MeshPhongMaterial({
           color: 0xff0000,
           specular: 0x050505,
@@ -1835,6 +1860,9 @@
         })
         )
         ruby.position.set(p.x, p.y, p.z)
+        ruby.scale.x = 1.5
+        ruby.scale.y = 1.5
+        ruby.scale.z = 1.5
         ruby.name = window.appConfig.currentStage + "RUBY" + Math.floor(Math.random() * 10000)
         ruby.coinValue = 5000
         scene.add(ruby)
@@ -1842,12 +1870,39 @@
       }
 
       const createEmerald = (p = { x: 0, y: 0, z: 0 }) => {
-        const emerald = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial({
-          color: 0x00ff00,
-          specular: 0x050505,
-          shininess: 100
+        const emeraldShape = new THREE.Shape()
+        emeraldShape.moveTo(0, 0)
+        emeraldShape.lineTo(1, 0)
+        emeraldShape.lineTo(1.5, 1)
+        emeraldShape.lineTo(1, 2)
+        emeraldShape.lineTo(0, 2)
+        emeraldShape.lineTo(-.5, 1)
+        emeraldShape.lineTo(0, 0)
+
+        // rubyShape.lineTo(.5, 0)
+        // rubyShape.lineTo(0, -.5)
+        // rubyShape.lineTo(-.5, 0)
+        // rubyShape.lineTo(0, .5)
+        const emeraldGeo = new THREE.ExtrudeGeometry(emeraldShape, {
+          steps: 1,
+          depth: .5,
+          bevelEnabled: true,
+          bevelThickness: .5,
+          bevelSize: .5,
+          bevelSegments: 1,
+          bevelOffset: 0,
         })
+
+        const emerald = new THREE.Mesh(emeraldGeo, new THREE.MeshPhongMaterial({
+            color: 0xb3ffb3,
+            specular: 0x050505,
+            shininess: 200,
+            transparent: true,
+            opacity: .95
+          })
         )
+        emerald.scale.y = 1.5
+        emerald.scale.x = 1.25
         emerald.position.set(p.x, p.y, p.z)
         emerald.name = window.appConfig.currentStage + "EMERALD" + Math.floor(Math.random() * 10000)
         emerald.coinValue = 10000
@@ -1889,6 +1944,7 @@
         diamond.scale.x = 2
         diamond.scale.y = 2
         diamond.scale.z = 2
+        diamond.rotation.y = .25 * Math.PI
         // diamond.scale.set(2, 2, 2)
         diamond.name = window.appConfig.currentStage + "DIAMOND" + Math.floor(Math.random() * 10000)
         diamond.coinValue = 25000
@@ -2476,16 +2532,20 @@
             window.appConfig.stages.components.createBumper("STAGE0BUMPER6", 1, { x: 87.5, y: 70, z: 0 }, 3, 1)
 
             window.appConfig.stages.components.createSapphire({ x: 0, y: -10, z: 0 })
-            window.appConfig.stages.components.createRuby({ x: 0, y: -25, z: 0 })
-            window.appConfig.stages.components.createRuby({ x: 0, y: 25, z: 0 })
-            window.appConfig.stages.components.createEmerald({ x: 25, y: 0, z: 0 })
-            window.appConfig.stages.components.createEmerald({ x: -25, y: 0, z: 0 })
+            // window.appConfig.stages.components.createRuby({ x: 0, y: -25, z: 0 })
+            window.appConfig.stages.components.createRuby({ x: 87, y: -1.25, z: 0 })
+            window.appConfig.stages.components.createEmerald({ x: -97.5, y: -1.25, z: 0 })
+            // window.appConfig.stages.components.createEmerald({ x: -25, y: 0, z: 0 })
             // window.appConfig.stages.components.createDiamond({ x: 25, y: 25, z: 0 })
-            window.appConfig.stages.components.createDiamond({ x: -25, y: 25, z: 0 })
+            window.appConfig.stages.components.createDiamond({ x: -57, y: -1.25, z: 0 })
 
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createSwitchBeamWall = window.appConfig.stages.components.createSwitchBeamWall
             const createRemoteSwitch = window.appConfig.stages.components.createRemoteSwitch
+
+            createCrystalCircle('STAGE0', 3.5, { x: -97, y: 0 }, 0, 16)
+            createCrystalCircle('STAGE0', 3.25, { x: -97, y: 0 }, 1, 8)
+            createCrystalCircle('STAGE0', 2.75, { x: -97, y: 0 }, 2, 8)
 
             createCrystalCircle('STAGE0', 3.75, { x: -57, y: 0 }, 0, 16)
             createCrystalCircle('STAGE0', 3.5, { x: -57, y: 0 }, 1, 8)
@@ -2684,9 +2744,13 @@
             createCrystalLine('STAGE0', 5, { x: -22.5, y: 40 }, 0, 10, "x");
             createCrystalLine('STAGE0', 5, { x: -22.5, y: 54.5 }, 0, 10, "x");
 
-            createCrystalLine('STAGE0--0', 8, { x: -90.5, y: -75 }, 0, 20, "y");
-            createCrystalLine('STAGE0--1', 8, { x: -97.5, y: -75 }, 1, 20, "y");
-            createCrystalLine('STAGE0--2', 8, { x: -104.5, y: -75 }, 2, 20, "y");
+            createCrystalLine('STAGE0--00', 8, { x: -90.5, y: -75 }, 0, 8, "y");
+            createCrystalLine('STAGE0--01', 8, { x: -97.5, y: -75 }, 1, 8, "y");
+            createCrystalLine('STAGE0--02', 8, { x: -104.5, y: -75 }, 2, 8, "y");
+
+            createCrystalLine('STAGE0--0', 8, { x: -90.5, y: 20 }, 0, 8, "y");
+            createCrystalLine('STAGE0--1', 8, { x: -97.5, y: 20 }, 1, 8, "y");
+            createCrystalLine('STAGE0--2', 8, { x: -104.5, y: 20 }, 2, 8, "y");
 
             createCrystalLine('STAGE0--3', 8, { y: -90.5, x: -75 }, 0, 20, "x");
             createCrystalLine('STAGE0--4', 8, { y: -97.5, x: -75 }, 1, 20, "x");
