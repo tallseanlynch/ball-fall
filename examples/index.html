@@ -2910,6 +2910,50 @@
             window.appConfig.stages.components.createSapphire({ x: -30, y: -30, z: 0 })
 
 
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINA',
+              position: {
+                x: 55,
+                y: 55,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINA')
+            })
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINB',
+              position: {
+                x: 58,
+                y: 58,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINB')
+            })
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINC',
+              position: {
+                x: 61,
+                y: 61,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINC')
+            })
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOIND',
+              position: {
+                x: 64,
+                y: 64,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIND')
+            })
+
+
+
+
             //main outside wall
             const stage1MainBeamStructure1 = window.appConfig.stages.components.createStage0MainBeamStructure(
               14,
