@@ -5810,7 +5810,7 @@
               window.appConfig.score.coins.toLocaleString('en-US').replace(',', comma())
           }
           const currentTime = window.appConfig.timer.getTimeValues()
-          const newTimer = new easytimer.Timer({ countdown: true, startValues: { seconds: currentTime.seconds + 10, secondTenths: currentTime.secondTenths }, precision: "secondTenths" });
+          const newTimer = new easytimer.Timer({ countdown: true, startValues: { minutes: currentTime.minutes, seconds: currentTime.seconds + 10, secondTenths: currentTime.secondTenths }, precision: "secondTenths" });
           window.appConfig.stageTotalTimePlayed += 10
           window.appConfig.timer.stop()
           window.appConfig.timer.removeEventListener("secondTenthsUpdated", function (e) {
