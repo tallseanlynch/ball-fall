@@ -1752,9 +1752,13 @@
           bevelSegments: 1,
           bevelOffset: 0,
         })
-        const sapphireColor = new THREE.Color(0xffffff)
+        const sapphireColor = new THREE.Color('#0F52BA')
         const material = new THREE.MeshPhongMaterial({
           color: sapphireColor,
+          // specular: 0x050505,
+          shininess: 100,
+          transparent: true,
+          opacity: .9
         })
         const sapphire = new THREE.Mesh(sapphireGeo, material)
         sapphire.scale.x = 2
@@ -1826,7 +1830,7 @@
           color: 0xff0000,
           specular: 0x050505,
           shininess: 200,
-          opacity: .75,
+          opacity: .95,
           transparent: true
         })
         )
@@ -1851,40 +1855,41 @@
         window.appConfig.coins.push(emerald)
       }
 
-      const diamondMaterial = new THREE.MeshPhongMaterial({
-        color: 0x000ff,
-        specular: 0x050505,
-        shininess: 100
-      })
-
-      window.appConfig.crystalMaterials.push({
-        standard: diamondMaterial,
-        pulsing: diamondMaterial
-      })
-
-      const diamondGeoGroup = new THREE.Group()
-      const diamondGeoBottom = new THREE.CylinderGeometry(
-        2, 0, 2, 6
-      )
-      // const diamondBottomMesh = new THREE.Mesh(
-      //   diamondGeoBottom, diamondMaterial
-      // )
-      const diamondGeoTop = new THREE.CylinderGeometry(
-        1, 2, 1, 6
-      )
-      const diamondTopMesh = new THREE.Mesh(
-        diamondGeoTop, diamondMaterial
-      )
-
-      // diamondGeoGroup.add(diamondGeoBottom)
-      // diamondGeoGroup.add(diamondGeoTop)
-      const diamond = new THREE.Mesh(diamondGeoBottom, diamondMaterial )
-      diamond.size = 4
-      diamond.add(diamondTopMesh)
-      diamondTopMesh.position.y = 1.5
-      // diamondBottomMesh.position.y = -1.5
       const createDiamond = (p = { x: 0, y: 0, z: 0 }) => {
+        const diamondMaterial = new THREE.MeshPhongMaterial({
+          color: 0x000ff,
+          specular: 0x050505,
+          transparent: true,
+          opacity: .95,
+          shininess: 100
+        })
+
+        window.appConfig.crystalMaterials.push({
+          standard: diamondMaterial,
+          pulsing: diamondMaterial
+        })
+
+        const diamondGeoGroup = new THREE.Group()
+        const diamondGeoBottom = new THREE.CylinderGeometry(
+          2, 0, 2, 6
+        )
+        const diamondGeoTop = new THREE.CylinderGeometry(
+          1, 2, 1, 6
+        )
+        const diamondTopMesh = new THREE.Mesh(
+          diamondGeoTop, diamondMaterial
+        )
+
+        const diamond = new THREE.Mesh(diamondGeoBottom, diamondMaterial )
+        diamond.size = 4
+        diamond.add(diamondTopMesh)
+        diamondTopMesh.position.y = 1.5
+
         diamond.position.set(p.x, p.y, p.z)
+        diamond.scale.x = 2
+        diamond.scale.y = 2
+        diamond.scale.z = 2
+        // diamond.scale.set(2, 2, 2)
         diamond.name = window.appConfig.currentStage + "DIAMOND" + Math.floor(Math.random() * 10000)
         diamond.coinValue = 25000
         scene.add(diamond)
@@ -1892,24 +1897,6 @@
       }
       window.appConfig.stages = {
         components: {
-          // createSwitch: (options) => {
-          //   // const theOptions = {
-          //   //   name,
-          //   //   geo,
-          //   //   material,
-          //   //   position,
-          //   //   roation,
-          //   //   scale,
-          //   //   timer,
-          //   //   data,
-          //   //   target,
-          //   //   type
-          //   // }
-          //   const switchGeo = new THREE.SphereGeometry(3, 24, 24)
-          //   const switchMaterial = new THREE.MeshPhongMaterial({
-          //     transparent: true, opacity: .5
-          //   })
-          // },
           stageInit: () => {
             window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
             document.body.style.background = window.appConfig.stages.components.background(
@@ -2493,7 +2480,7 @@
             window.appConfig.stages.components.createRuby({ x: 0, y: 25, z: 0 })
             window.appConfig.stages.components.createEmerald({ x: 25, y: 0, z: 0 })
             window.appConfig.stages.components.createEmerald({ x: -25, y: 0, z: 0 })
-            window.appConfig.stages.components.createDiamond({ x: 25, y: 25, z: 0 })
+            // window.appConfig.stages.components.createDiamond({ x: 25, y: 25, z: 0 })
             window.appConfig.stages.components.createDiamond({ x: -25, y: 25, z: 0 })
 
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
