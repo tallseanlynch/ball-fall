@@ -1833,13 +1833,40 @@
         scene.add(emerald)
         window.appConfig.coins.push(emerald)
       }
+
+      const diamondMaterial = new THREE.MeshPhongMaterial({
+        color: 0x000ff,
+        specular: 0x050505,
+        shininess: 100
+      })
+
+      window.appConfig.crystalMaterials.push({
+        standard: diamondMaterial,
+        pulsing: diamondMaterial
+      })
+
+      const diamondGeoGroup = new THREE.Group()
+      const diamondGeoBottom = new THREE.CylinderGeometry(
+        2, 0, 2, 6
+      )
+      // const diamondBottomMesh = new THREE.Mesh(
+      //   diamondGeoBottom, diamondMaterial
+      // )
+      const diamondGeoTop = new THREE.CylinderGeometry(
+        1, 2, 1, 6
+      )
+      const diamondTopMesh = new THREE.Mesh(
+        diamondGeoTop, diamondMaterial
+      )
+
+      // diamondGeoGroup.add(diamondGeoBottom)
+      // diamondGeoGroup.add(diamondGeoTop)
+      const diamond = new THREE.Mesh(diamondGeoBottom, diamondMaterial )
+      diamond.size = 4
+      diamond.add(diamondTopMesh)
+      diamondTopMesh.position.y = 1.5
+      // diamondBottomMesh.position.y = -1.5
       const createDiamond = (p = { x: 0, y: 0, z: 0 }) => {
-        const diamond = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial({
-          color: 0x000ff,
-          specular: 0x050505,
-          shininess: 100
-        })
-        )
         diamond.position.set(p.x, p.y, p.z)
         diamond.name = window.appConfig.currentStage + "DIAMOND" + Math.floor(Math.random() * 10000)
         diamond.coinValue = 25000
