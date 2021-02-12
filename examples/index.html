@@ -119,9 +119,9 @@
         bumperGroup: 0,
         prize: 0
       },
-      currentStage: hasPerformanceReport ? 'STAGE2' : 'STAGE5',
+      currentStage: hasPerformanceReport ? 'STAGE4' : 'STAGE5',
       stagesArray: ['STAGE0', 'STAGE1', 'STAGE2', 'STAGE3', 'STAGE4', 'STAGE5'],
-      currentStageIndex: hasPerformanceReport ? 2 : 5,
+      currentStageIndex: hasPerformanceReport ? 4 : 5,
       musicTurnedOn: true,
       sfxTurnedOn: true,
       howlSounds: {
@@ -2245,12 +2245,13 @@
           createSwitchBeamWall: (config) => {
             const performanceAdj = window.appConfig.performanceLevel === 0 ? .25 : 0
             const switchBeamAdj = config.switchBeamAdj ? config.switchBeamAdj : 0
+            const rotateGroup = new THREE.Group()
 
-            scene.add(createBeam({
+            const beamOne = createBeam({
               p: [0 + config.p.x, 0 + config.p.y, 0 + config.p.z],
               r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
               s: (config.s * 2.5) * .1 + performanceAdj + switchBeamAdj
-            }))
+            })
 
             const normalSwitchBeamConfig = {
               switchIndicators: 3,
@@ -2267,18 +2268,26 @@
               }
             }
 
-            scene.add(createBeam({
+            const switchBeamTwo = createBeam({
               p: config.dir === 'x' ? [(config.s * 3.3) + config.p.x, 0 + config.p.y, 0 + config.p.z] : [0 + config.p.x, (config.s * 3.3) + config.p.y, 0 + config.p.z],
               r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
               s: (config.s * 2.5) * .1 + performanceAdj + switchBeamAdj,
               switchBeam: config.receiver ? remoteSwitchBeamConfig() : normalSwitchBeamConfig
-            }))
+            })
 
-            scene.add(createBeam({
+            const beamThree = createBeam({
               p: config.dir === 'x' ? [(config.s * 6.6) + config.p.x, 0 + config.p.y, 0 + config.p.z] : [0 + config.p.x, (config.s * 6.6) + config.p.y, 0 + config.p.z],
               r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
               s: (config.s * 2.5) * .1 + performanceAdj + switchBeamAdj
-            }))
+            })
+
+            scene.add(beamOne)
+            scene.add(switchBeamTwo)
+            scene.add(beamThree)
+
+            // rotateGroup.add(beamOne)
+            // rotateGroup.add(switchBeamTwo)
+            // rotateGroup.add(beamThree)
           },
           createRemoteSwitch: (config = {
             transmitter: {
@@ -4266,6 +4275,9 @@
             const createStage3CrossBeamStructure = window.appConfig.stages.components.createStage3CrossBeamStructure
             const createStage4PlinkoStructure = window.appConfig.stages.components.createStage4PlinkoStructure
 
+            const createSwitchBeamWall = window.appConfig.stages.components.createSwitchBeamWall
+            const createRemoteSwitch = window.appConfig.stages.components.createRemoteSwitch
+
             const stage4MainBeamStructure1 = createStage0MainBeamStructure(
               1.25,
               -0.5,
@@ -4543,17 +4555,157 @@
 
 
             const stage4MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure(
-              12,
-              0.56,
+              13,
+              -.3,
               "STAGE4MAINSTRUCTURE"
             );
             stage4MainBeamStructure.rotation.z = .25 * Math.PI
             scene.add(stage4MainBeamStructure);
 
-            prize(4, 0, { x: 75, y: 0, z: 0 })
-            prize(4, 1, { x: 0, y: 75, z: 0 })
-            prize(4, 2, { x: -75, y: 0, z: 0 })
-            prize(4, 3, { x: 0, y: -75, z: 0 })
+            const stage4MainBeamStructure_1 = window.appConfig.stages.components.createStage0MainBeamStructure(
+              16,
+              0.57,
+              "STAGE4MAINSTRUCTURE_1"
+            );
+            // stage4MainBeamStructure_1.rotation.z = .25 * Math.PI
+            scene.add(stage4MainBeamStructure_1);
+
+
+            const stage4MainBeamStructure_2 = window.appConfig.stages.components.createStage0MainBeamStructure(
+              6.3,
+              0,
+              "STAGE4MAINSTRUCTURE_2",
+              {x: -58.5, y: 73.5},
+              [1, 0, 1, 1]
+              // [bottom, left, right, top]
+
+            );
+            // stage4MainBeamStructure.rotation.z = .25 * Math.PI
+            scene.add(stage4MainBeamStructure_2);
+
+
+            createRemoteSwitch({
+              transmitter: {
+                p: { x: 0, y: 76, z: 0 }
+              },
+              receiver: {
+                p: { x: -55, y: -20, z: 0 },
+                name: 'STAGE4RECEIVER_A'
+              }
+            })
+
+            createSwitchBeamWall({ s: 6.75, dir: 'x', p: { x: -97.5, y: 108, z: 0 }, receiver: { name: 'STAGE4RECEIVER_A' }, switchBeamAdj: .25 })
+
+
+
+            const stage4MainBeamStructure_3 = window.appConfig.stages.components.createStage0MainBeamStructure(
+              6.3,
+              0,
+              "STAGE4MAINSTRUCTURE_3",
+              {x: 75, y: 58.5},
+              [1, 1, 1, 0]
+              // [bottom, left, right, top]
+
+            );
+            // stage4MainBeamStructure.rotation.z = .25 * Math.PI
+            scene.add(stage4MainBeamStructure_3);
+
+
+            createRemoteSwitch({
+              transmitter: {
+                p: { x: 76, y: 0, z: 0 }
+              },
+              receiver: {
+                p: { x: -55, y: -20, z: 0 },
+                name: 'STAGE4RECEIVER_B'
+              }
+            })
+
+            createSwitchBeamWall({ s: 6.75, dir: 'y', p: { x: 108.5, y: 52, z: 0 }, receiver: { name: 'STAGE4RECEIVER_B' }, switchBeamAdj: .25 })
+
+
+
+
+            const stage4MainBeamStructure_4 = window.appConfig.stages.components.createStage0MainBeamStructure(
+              6.3,
+              0,
+              "STAGE4MAINSTRUCTURE_4",
+              {x: 58.5, y: -73.5},
+              [1, 1, 0, 1]
+              // [bottom, left, right, top]
+
+            );
+            // stage4MainBeamStructure.rotation.z = .25 * Math.PI
+            scene.add(stage4MainBeamStructure_4);
+
+
+            createRemoteSwitch({
+              transmitter: {
+                p: { x: 0, y: -76, z: 0 }
+              },
+              receiver: {
+                p: { x: -55, y: -20, z: 0 },
+                name: 'STAGE4RECEIVER_C'
+              }
+            })
+
+            createSwitchBeamWall({ s: 6.75, dir: 'x', p: { x: 53, y: -108.5, z: 0 }, receiver: { name: 'STAGE4RECEIVER_C' }, switchBeamAdj: .25 })
+            // createSwitchBeamWall({ s: 3, dir: 'x', p: { x: -130.5, y: -40, z: 0 } })
+            // createBeam({
+            //   p: config.dir === 'x' ? [(config.s) + config.p.x, 0 + config.p.y, 0 + config.p.z] : [0 + config.p.x, (config.s) + config.p.y, 0 + config.p.z],
+            //   r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
+            //   s: (config.s * 2.5) * .1 + performanceAdj + switchBeamAdj,
+            //   switchBeam: config.receiver ? remoteSwitchBeamConfig() : normalSwitchBeamConfig
+            // })
+            
+            const createSingleSwitchBeam = (config) => {
+              const performanceAdj = window.appConfig.performanceLevel === 0 ? .25 : 0
+              const switchBeamAdj = config.switchBeamAdj ? config.switchBeamAdj : 0
+
+              const normalSwitchBeamConfig = {
+                switchIndicators: 3,
+                color: window.appConfig.stages[window.appConfig.currentStage].backgroundColors[3]
+              }
+
+              const remoteSwitchBeamConfig = () => {
+                // debugger
+                // #2 add the name using the config
+                return {
+                  switchIndicators: 1,
+                  color: window.appConfig.stages[window.appConfig.currentStage].backgroundColors[3],
+                  receiver: { name: config.receiver.name }
+                }
+              }
+
+              return createBeam({
+                p: config.dir === 'x' ? [(config.s) + config.p.x, 0 + config.p.y, 0 + config.p.z] : [0 + config.p.x, (config.s) + config.p.y, 0 + config.p.z],
+                r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
+                s: (config.s * 2.5) * .1 + performanceAdj + switchBeamAdj,
+                switchBeam: config.receiver ? remoteSwitchBeamConfig() : normalSwitchBeamConfig
+              })
+
+            }
+            const bottomLeftDoorTop = createSingleSwitchBeam({ s: 5.5, dir: 'x', p: { x: -122.5, y: -41.25, z: 0 }, switchBeamAdj: .25 })
+            const bottomLeftDoorBottom = createSingleSwitchBeam({ s: 5.5, dir: 'y', p: { x: -41.25, y: -122.5, z: 0 }, switchBeamAdj: .25 })
+            // console.log(theBeam)
+            scene.add(bottomLeftDoorTop)
+            scene.add(bottomLeftDoorBottom)
+
+            // createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: 20, z: 0 } })
+
+
+
+            prize(4, 0, { x: 75, y: 45, z: 0 })
+            prize(4, 0, { x: 75, y: -45, z: 0 })
+
+            prize(4, 1, { x: -45, y: 75, z: 0 })
+            prize(4, 6, { x: 45, y: 75, z: 0 })
+
+            prize(4, 2, { x: -75, y: -45, z: 0 })
+            prize(4, 5, { x: -75, y: 45, z: 0 })
+
+            prize(4, 3, { x: -45, y: -75, z: 0 })
+            prize(4, 7, { x: 45, y: -75, z: 0 })
 
             createCrystalCircle('STAGE4', 4, { x: 0, y: 75 }, 0, 8)
             createCrystalCircle('STAGE4', 4.5, { x: 0, y: 75 }, 1, 8)
