@@ -4777,7 +4777,7 @@
               6.3,
               0,
               "STAGE4MAINSTRUCTURE_2",
-              {x: -58.5, y: 73.5},
+              { x: -58.5, y: 73.5 },
               [1, 0, 1, 1]
               // [bottom, left, right, top]
 
@@ -4804,7 +4804,7 @@
               6.3,
               0,
               "STAGE4MAINSTRUCTURE_3",
-              {x: 75, y: 58.5},
+              { x: 75, y: 58.5 },
               [1, 1, 1, 0]
               // [bottom, left, right, top]
 
@@ -4844,7 +4844,7 @@
               6.3,
               0,
               "STAGE4MAINSTRUCTURE_4",
-              {x: 58.5, y: -73.5},
+              { x: 58.5, y: -73.5 },
               [1, 1, 0, 1]
               // [bottom, left, right, top]
 
@@ -4871,7 +4871,7 @@
             //   s: (config.s * 2.5) * .1 + performanceAdj + switchBeamAdj,
             //   switchBeam: config.receiver ? remoteSwitchBeamConfig() : normalSwitchBeamConfig
             // })
-            
+
             const createSingleSwitchBeam = (config) => {
               const performanceAdj = window.appConfig.performanceLevel === 0 ? .25 : 0
               const switchBeamAdj = config.switchBeamAdj ? config.switchBeamAdj : 0
@@ -5102,7 +5102,7 @@
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIND')
             })
 
-            
+
 
 
 
@@ -5235,7 +5235,13 @@
             })
 
 
-            
+            window.appConfig.stages.components.createSapphire({ x: 0, y: -100, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: 0, y: 100, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: -100, y: 0, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: 100, y: 0, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: 100, y: 100, z: 0 })
+
+
             window.appConfig.stages.STAGE4.STAGE4PRIZE0 = scene.children.find((obj) => obj.name === "STAGE4PRIZE0")
             window.appConfig.stages.STAGE4.STAGE4PRIZE1 = scene.children.find((obj) => obj.name === "STAGE4PRIZE1")
             window.appConfig.stages.STAGE4.STAGE4PRIZE2 = scene.children.find((obj) => obj.name === "STAGE4PRIZE2")
