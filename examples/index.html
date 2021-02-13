@@ -4691,6 +4691,48 @@
             scene.add(bottomLeftDoorTop)
             scene.add(bottomLeftDoorBottom)
 
+            window.appConfig.stages.components.createBumper("STAGE4BUMPER0", 1, { x: -115, y: 25, z: 0 }, 6)
+            window.appConfig.stages.components.createBumper("STAGE4BUMPER1", 1, { x: -115, y: -25, z: 0 }, 6)
+            window.appConfig.stages.components.createBumper("STAGE4BUMPER2", 1, { x: 115, y: 25, z: 0 }, 6)
+            window.appConfig.stages.components.createBumper("STAGE4BUMPER3", 1, { x: 115, y: -25, z: 0 }, 6)
+            window.appConfig.stages.components.createBumper("STAGE4BUMPER4", 1, { x: 25, y: 115, z: 0 }, 6)
+            window.appConfig.stages.components.createBumper("STAGE4BUMPER5", 1, { x: 25, y: -115, z: 0 }, 6)
+            window.appConfig.stages.components.createBumper("STAGE4BUMPER6", 1, { x: -25, y: -115, z: 0 }, 6)
+            window.appConfig.stages.components.createBumper("STAGE4BUMPER7", 1, { x: -25, y: 115, z: 0 }, 6)
+            // window.appConfig.stages.components.createBumper("STAGE4BUMPER2", 1, { x: 0, y: 100, z: 0 }, 6)
+            // window.appConfig.stages.components.createBumper("STAGE4BUMPER3", 1, { x: 0, y: -25, z: 0 }, 6)
+            // window.appConfig.stages.components.createBumper("STAGE4BUMPER4", 1, { x: 0, y: -75, z: 0 }, 6)
+            // window.appConfig.stages.components.createBumper("STAGE4BUMPER5", 1, { x: 0, y: -100, z: 0 }, 6)
+
+            createCrystalCircle('STAGE4', 4.5, { x: -95, y: -95 }, 0, 16)
+            createCrystalCircle('STAGE4', 4.25, { x: -95, y: -95 }, 1, 16)
+            createCrystalCircle('STAGE4', 4, { x: -95, y: -95 }, 2, 16)
+            createCrystalCircle('STAGE4', 3.625, { x: -95, y: -95 }, 1, 16)
+            createCrystalCircle('STAGE4', 3.5, { x: -95, y: -95 }, 0, 16)
+            createCrystalCircle('STAGE4', 3.125, { x: -95, y: -95 }, 1, 8)
+            createCrystalCircle('STAGE4', 2.625, { x: -95, y: -95 }, 2, 8)
+
+
+            window.appConfig.stages.components.createRuby({ x: -87.75, y: 86, z: 0 })
+
+            createCrystalCircle('STAGE4', 2.75, { x: -87.5, y: 87.5 }, 0, 16)
+            createCrystalCircle('STAGE4', 3.25, { x: -87.5, y: 87.5 }, 1, 16)
+            createCrystalCircle('STAGE4', 3.75, { x: -87.5, y: 87.5 }, 2, 16)
+
+
+            window.appConfig.stages.components.createEmerald({ x: 87, y: 86, z: 0 })
+
+            createCrystalCircle('STAGE4', 2.75, { x: 87.5, y: 87.5 }, 0, 16)
+            createCrystalCircle('STAGE4', 3.25, { x: 87.5, y: 87.5 }, 1, 16)
+            createCrystalCircle('STAGE4', 3.75, { x: 87.5, y: 87.5 }, 2, 16)
+
+            window.appConfig.stages.components.createDiamond({ x: 87, y: -89.5, z: 0 })
+
+            createCrystalCircle('STAGE4', 2.75, { x: 87.5, y: -87.5 }, 0, 16)
+            createCrystalCircle('STAGE4', 3.25, { x: 87.5, y: -87.5 }, 1, 16)
+            createCrystalCircle('STAGE4', 3.75, { x: 87.5, y: -87.5 }, 2, 16)
+
+
             // createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: 20, z: 0 } })
 
 
@@ -4704,8 +4746,64 @@
             prize(4, 2, { x: -75, y: -45, z: 0 })
             prize(4, 5, { x: -75, y: 45, z: 0 })
 
+            prize(4, 18, { x: -75, y: 0, z: 0 })
+
             prize(4, 3, { x: -45, y: -75, z: 0 })
             prize(4, 7, { x: 45, y: -75, z: 0 })
+
+            prize(4, 8, { x: 117.5, y: 115, z: 0 })
+            prize(4, 9, { x: 117.5, y: -115, z: 0 })
+            prize(4, 10, { x: -117.5, y: -115, z: 0 })
+            prize(4, 11, { x: -117.5, y: 115, z: 0 })
+
+            prize(4, 12, { x: -117.5, y: -77.5, z: 0 })
+            prize(4, 13, { x: -77.5, y: -117.5, z: 0 })
+
+            prize(4, 14, { x: 0, y: -117.5, z: 0 })
+            prize(4, 15, { x: 0, y: 117.5, z: 0 })
+            prize(4, 16, { x: -117.5, y: 0, z: 0 })
+            prize(4, 17, { x: 117.5, y: 0, z: 0 })
+
+
+            createCrystalCross('STAGE4', 3, { x: 45, y: 117.75 }, 0);
+            createCrystalCross('STAGE4', 3, { x: 60, y: 117.75 }, 1);
+            createCrystalCross('STAGE4', 3, { x: 75, y: 117.75 }, 2);
+            createCrystalCross('STAGE4', 3, { x: 90, y: 117.75 }, 1);
+            createCrystalCross('STAGE4', 3, { x: 105, y: 117.75 }, 0);
+
+            createCrystalCross('STAGE4', 3, { x: -45, y: 117.75 }, 0);
+            createCrystalCross('STAGE4', 3, { x: -60, y: 117.75 }, 1);
+            createCrystalCross('STAGE4', 3, { x: -75, y: 117.75 }, 2);
+            createCrystalCross('STAGE4', 3, { x: -90, y: 117.75 }, 1);
+            createCrystalCross('STAGE4', 3, { x: -105, y: 117.75 }, 0);
+
+            createCrystalCross('STAGE4', 3, { x: 117.75, y: -45 }, 0);
+            createCrystalCross('STAGE4', 3, { x: 117.75, y: -60 }, 1);
+            createCrystalCross('STAGE4', 3, { x: 117.75, y: -75 }, 2);
+            createCrystalCross('STAGE4', 3, { x: 117.75, y: -90 }, 1);
+            createCrystalCross('STAGE4', 3, { x: 117.75, y: -105 }, 0);
+
+            createCrystalCross('STAGE4', 3, { x: 117.75, y: 45 }, 0);
+            createCrystalCross('STAGE4', 3, { x: 117.75, y: 60 }, 1);
+            createCrystalCross('STAGE4', 3, { x: 117.75, y: 75 }, 2);
+            createCrystalCross('STAGE4', 3, { x: 117.75, y: 90 }, 1);
+            createCrystalCross('STAGE4', 3, { x: 117.75, y: 105 }, 0);
+
+            createCrystalCross('STAGE4', 3, { x: -117.75, y: 45 }, 0);
+            createCrystalCross('STAGE4', 3, { x: -117.75, y: 60 }, 1);
+            createCrystalCross('STAGE4', 3, { x: -117.75, y: 75 }, 2);
+            createCrystalCross('STAGE4', 3, { x: -117.75, y: 90 }, 1);
+            createCrystalCross('STAGE4', 3, { x: -117.75, y: 105 }, 0);
+
+
+
+            createCrystalCross('STAGE4', 3, { x: 45, y: -117.75 }, 0);
+            createCrystalCross('STAGE4', 3, { x: 60, y: -117.75 }, 1);
+            createCrystalCross('STAGE4', 3, { x: 75, y: -117.75 }, 2);
+            createCrystalCross('STAGE4', 3, { x: 90, y: -117.75 }, 1);
+            createCrystalCross('STAGE4', 3, { x: 105, y: -117.75 }, 0);
+
+
 
             createCrystalCircle('STAGE4', 4, { x: 0, y: 75 }, 0, 8)
             createCrystalCircle('STAGE4', 4.5, { x: 0, y: 75 }, 1, 8)
@@ -4725,6 +4823,14 @@
             createCrystalCircle('STAGE4', 5.5, { x: -75, y: 0 }, 1, 8)
             createCrystalCircle('STAGE4', 6, { x: -75, y: 0 }, 0, 8)
 
+            createCrystalCircle('STAGE4', 2, { x: -110, y: -62.5 }, 0, 8)
+            createCrystalCircle('STAGE4', 2.5, { x: -110, y: -62.5 }, 1, 8)
+            createCrystalCircle('STAGE4', 3, { x: -110, y: -62.5 }, 2, 8)
+            createCrystalCircle('STAGE4', 2, { x: -62.5, y: -110 }, 0, 8)
+            createCrystalCircle('STAGE4', 2.5, { x: -62.5, y: -110 }, 1, 8)
+            createCrystalCircle('STAGE4', 3, { x: -62.5, y: -110 }, 2, 8)
+
+
             createCrystalCircle('STAGE4', 4, { x: 75, y: 0 }, 0, 8)
             createCrystalCircle('STAGE4', 4.5, { x: 75, y: 0 }, 1, 8)
             createCrystalCircle('STAGE4', 5, { x: 75, y: 0 }, 2, 8)
@@ -4741,6 +4847,181 @@
             createCrystalCross('STAGE4', 3, { x: 17.5, y: -17.5 }, 2);
 
 
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINA',
+              position: {
+                x: 100,
+                y: 100,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINA')
+            })
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINB',
+              position: {
+                x: 102,
+                y: 102,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINB')
+            })
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINC',
+              position: {
+                x: 101,
+                y: 101,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINC')
+            })
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOIND',
+              position: {
+                x: 104,
+                y: 104,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIND')
+            })
+
+            
+
+
+
+
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINE',
+              position: {
+                x: 100,
+                y: -100,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINE')
+            })
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINF',
+              position: {
+                x: 102,
+                y: -102,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINF')
+            })
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOING',
+              position: {
+                x: 101,
+                y: -101,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOING')
+            })
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINH',
+              position: {
+                x: 104,
+                y: -104,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINH')
+            })
+
+
+
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINI',
+              position: {
+                x: -100,
+                y: -100,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINI')
+            })
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINJ',
+              position: {
+                x: -102,
+                y: -102,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINJ')
+            })
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINK',
+              position: {
+                x: -101,
+                y: -101,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINK')
+            })
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINL',
+              position: {
+                x: -104,
+                y: -104,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINL')
+            })
+
+
+
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINM',
+              position: {
+                x: -100,
+                y: 100,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINM')
+            })
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINN',
+              position: {
+                x: -102,
+                y: 102,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINN')
+            })
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINO',
+              position: {
+                x: -101,
+                y: 101,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINO')
+            })
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINP',
+              position: {
+                x: -104,
+                y: 104,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINP')
+            })
+
+
+            
             window.appConfig.stages.STAGE4.STAGE4PRIZE0 = scene.children.find((obj) => obj.name === "STAGE4PRIZE0")
             window.appConfig.stages.STAGE4.STAGE4PRIZE1 = scene.children.find((obj) => obj.name === "STAGE4PRIZE1")
             window.appConfig.stages.STAGE4.STAGE4PRIZE2 = scene.children.find((obj) => obj.name === "STAGE4PRIZE2")
