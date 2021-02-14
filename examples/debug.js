@@ -7,6 +7,7 @@ setTimeout(() => {
     gridHelper.rotation.x = .5 * Math.PI
 
     window.appConfig.debug = {
+        toggleGravity: false,
         menuVisible: false,
         stage: 0,
         debugKeyCodes: {
@@ -17,7 +18,8 @@ setTimeout(() => {
             leftBracket: 188,
             rightBracket: 190,
             tilde: 192,
-            q: 81
+            q: 81,
+            w: 87
         },
         currentDebugMeshIndex: 4,
         setCurrentMesh: false
@@ -154,6 +156,21 @@ setTimeout(() => {
             }
         }
 
+        const toggleDebugBallGravity = () => {
+            console.log('toggle gravity lol...')
+            // if(window.appConfig.debug.toggleGravity === false) {
+            //     // scene.setGravity(new THREE.Vector3(0, 0, 0));
+            //     // window.appConfig.sphere._physijs.mass = 0
+            //     window.appConfig.debug.toggleGravity = true
+            //     console.log('finished toggleGravity to 0')
+            // } else {
+            //     window.appConfig.sphere._physijs.mass = window.appConfig.defaultSphereMass
+            //     // scene.setGravity(new THREE.Vector3(0, -10, 0));
+            //     window.appConfig.debug.toggleGravity = false                    
+            //     console.log('finished toggleGravity to -10')
+            // }
+        }
+
         const keydownFunctions = {
         37: (e) => translateObject(e),
         39: (e) => translateObject(e),
@@ -162,7 +179,8 @@ setTimeout(() => {
         188: decrementDebugObject,
         190: incrementDebugObject,
         192: showDebugMenu,
-        81: (e) => toggleDebugCamera(e)
+        81: () => toggleDebugCamera(),
+        87: () => toggleDebugBallGravity()
         }
     
         const keycodesArray = Object.values(window.appConfig.debug.debugKeyCodes)
