@@ -119,9 +119,9 @@
         bumperGroup: 0,
         prize: 0
       },
-      currentStage: hasPerformanceReport ? 'STAGE0' : 'STAGE5',
+      currentStage: hasPerformanceReport ? 'STAGE3' : 'STAGE5',
       stagesArray: ['STAGE0', 'STAGE1', 'STAGE2', 'STAGE3', 'STAGE4', 'STAGE5'],
-      currentStageIndex: hasPerformanceReport ? 0 : 5,
+      currentStageIndex: hasPerformanceReport ? 0 : 3,
       musicTurnedOn: true,
       sfxTurnedOn: true,
       howlSounds: {
@@ -1438,6 +1438,9 @@
         size = 0,
         n = 4
       ) => {
+        if(window.appConfig.performanceLevel === 0 && n/2 !== 2) {
+          n = n/2
+        }
         const crystalCircle = new THREE.Group()
         crystalCircle.debugTypeIndex = window.appConfig.itemAmounts.crystalCircle
         crystalCircle.debugType = 'CRYSTALCIRCLE'
@@ -3986,13 +3989,56 @@
 
             const stage3MainBeamStructure1A = window.appConfig.stages.components.createStage0MainBeamStructure(
               12,
-              0.56,
+              0,
               "STAGE3MAINSTRUCTURE1A",
-              { x: 0, y: 0 },
+              { x: 0, y: 23 },
               [0, 0, 1, 1]
             );
             stage3MainBeamStructure1A.rotation.z = .25 * Math.PI
             scene.add(stage3MainBeamStructure1A);
+
+            const stage3MainBeamStructure1A_0 = window.appConfig.stages.components.createStage0MainBeamStructure(
+              14,
+              0.1,
+              "STAGE3MAINSTRUCTURE1A_0",
+              { x: 0, y: 23 },
+              [0, 0, 1, 1]
+            );
+            stage3MainBeamStructure1A_0.rotation.z = .25 * Math.PI
+            scene.add(stage3MainBeamStructure1A_0);
+
+            const stage3MainBeamStructure1A_1 = window.appConfig.stages.components.createStage0MainBeamStructure(
+              14,
+              0.1,
+              "STAGE3MAINSTRUCTURE1A_1",
+              { x: 0, y: 50 },
+              [1, 1, 0, 0]
+            );
+            stage3MainBeamStructure1A_1.rotation.z = .25 * Math.PI
+            scene.add(stage3MainBeamStructure1A_1);
+
+
+            const stage3MainBeamStructureCircle0 = window.appConfig.stages.components.createStage0MainBeamStructure(
+              20,
+              -.3525,
+              "STAGE3MAINSTRUCTURECIRCLE0",
+              { x: 0, y: 25 }
+              // [0, 0, 1, 1]
+            );
+            scene.add(stage3MainBeamStructureCircle0)
+
+            const stage3MainBeamStructureCircle1 = window.appConfig.stages.components.createStage0MainBeamStructure(
+              20,
+              -.3525,
+              "STAGE3MAINSTRUCTURECIRCLE1",
+              { x: 0, y: 25 }
+              // [0, 0, 1, 1]
+            );
+            stage3MainBeamStructureCircle1.rotation.z = .25 * Math.PI
+            scene.add(stage3MainBeamStructureCircle1)
+
+            // stage3MainBeamStructureCircle0.rotation.z = .25 * Math.PI
+
 
             window.appConfig.stages.components.createRemoteSwitch({
               transmitter: {
@@ -4089,39 +4135,12 @@
             window.appConfig.stages.components.createSapphire({ x: 100, y: 100, z: 0 })
             window.appConfig.stages.components.createRuby({ x: -110, y: 23.75, z: 0 })
             window.appConfig.stages.components.createEmerald({ x: 109.5, y: 23.75, z: 0 })
-            window.appConfig.stages.components.createDiamond({ x: 0, y: 150, z: 0 })
 
-            // const stage3CrossBeamStructure = createStage3CrossBeamStructure(
-            //   .5,
-            //   .75,
-            //   "STAGE3CROSSBEAMSTRUCTURE",
-            //   { x: 0, y: 115 }
-            // );
-            // scene.add(stage3CrossBeamStructure);
+            createCrystalCircle('STAGE3', 2.75, { x: 0, y: 140 }, 0, 8)
+            createCrystalCircle('STAGE3', 3.125, { x: 0, y: 140 }, 1, 8)
+            createCrystalCircle('STAGE3', 3.5, { x: 0, y: 140 }, 2, 8)
 
-            // const stage3CrossBeamStructureA = createStage3CrossBeamStructure(
-            //   .5,
-            //   .75,
-            //   "STAGE3CROSSBEAMSTRUCTUREA",
-            //   { x: 15, y: 100 }
-            // );
-            // scene.add(stage3CrossBeamStructureA);
-
-            // const stage3CrossBeamStructureB = createStage3CrossBeamStructure(
-            //   .5,
-            //   .75,
-            //   "STAGE3CROSSBEAMSTRUCTUREB",
-            //   { x: -15, y: 100 }
-            // );
-            // scene.add(stage3CrossBeamStructureB);
-
-            // const stage3CrossBeamStructureC = createStage3CrossBeamStructure(
-            //   .5,
-            //   .75,
-            //   "STAGE3CROSSBEAMSTRUCTUREC",
-            //   { x: 0, y: 85 }
-            // );
-            // scene.add(stage3CrossBeamStructureC);
+            window.appConfig.stages.components.createDiamond({ x: 0, y: 139, z: 0 })
 
             const stage3CrossBeamStructure1 = createStage3CrossBeamStructure(
               .5,
@@ -4155,80 +4174,135 @@
             );
             scene.add(stage3CrossBeamStructure1C);
 
-            // const stage3CrossBeamStructure2 = createStage3CrossBeamStructure(
-            //   .5,
-            //   .75,
-            //   "STAGE3CROSSBEAMSTRUCTURE2",
-            //   { x: -115, y: 0 }
-            // );
-            // scene.add(stage3CrossBeamStructure2);
 
-            // const stage3CrossBeamStructure2A = createStage3CrossBeamStructure(
-            //   .5,
-            //   .75,
-            //   "STAGE3CROSSBEAMSTRUCTURE2A",
-            //   { x: -100, y: 15 }
-            // );
-            // scene.add(stage3CrossBeamStructure2A);
+            window.appConfig.stages.components.createBumper("STAGE3BUMPER0", 1, { x: -147.5, y: 25, z: 0 }, 6)
+            window.appConfig.stages.components.createBumper("STAGE3BUMPER1", 1, { x: -147.5, y: -5, z: 0 }, 6)
+            window.appConfig.stages.components.createBumper("STAGE3BUMPER_0", 1, { x: -147.5, y: 55, z: 0 }, 6)
 
-            // const stage3CrossBeamStructure2B = createStage3CrossBeamStructure(
-            //   .5,
-            //   .75,
-            //   "STAGE3CROSSBEAMSTRUCTURE2B",
-            //   { x: -100, y: -15 }
-            // );
-            // scene.add(stage3CrossBeamStructure2B);
+            window.appConfig.stages.components.createBumper("STAGE3BUMPER0_0", 1, { x: 147.5, y: 25, z: 0 }, 6)
+            window.appConfig.stages.components.createBumper("STAGE3BUMPER1_0", 1, { x: 147.5, y: -5, z: 0 }, 6)
+            window.appConfig.stages.components.createBumper("STAGE3BUMPER_0_0", 1, { x: 147.5, y: 55, z: 0 }, 6)
 
-            // const stage3CrossBeamStructure2C = createStage3CrossBeamStructure(
-            //   .5,
-            //   .75,
-            //   "STAGE3CROSSBEAMSTRUCTURE2C",
-            //   { x: -85, y: 0 }
-            // );
-            // scene.add(stage3CrossBeamStructure2C);
+            window.appConfig.stages.components.createBumper("STAGE3BUMPER0_1", 1, { x: 45, y: 147.5, z: 0 }, 6)
+            window.appConfig.stages.components.createBumper("STAGE3BUMPER_0_1", 1, { x: -45, y: 147.5, z: 0 }, 6)
+
+            createCrystalCircle('STAGE3', 1.5, { x: 85, y: 85 }, 2, 2)
+            createCrystalCircle('STAGE3', 2.5, { x: 85, y: 85 }, 1, 8)
+            createCrystalCircle('STAGE3', 3, { x: 85, y: 85 }, 2, 8)
+            createCrystalCircle('STAGE3', 3.5, { x: 85, y: 85 }, 1, 8)
+            createCrystalCircle('STAGE3', 4, { x: 85, y: 85 }, 0, 8)
+
+            createCrystalCircle('STAGE3', 1.5, { x: 85, y: -85 }, 2, 2)
+            createCrystalCircle('STAGE3', 2.5, { x: 85, y: -85 }, 1, 8)
+            createCrystalCircle('STAGE3', 3, { x: 85, y: -85 }, 2, 8)
+            createCrystalCircle('STAGE3', 3.5, { x: 85, y: -85 }, 1, 8)
+            createCrystalCircle('STAGE3', 4, { x: 85, y: -85 }, 0, 8)
+
+            createCrystalCircle('STAGE3', 1.5, { x: -85, y: 85 }, 2, 2)
+            createCrystalCircle('STAGE3', 2.5, { x: -85, y: 85 }, 1, 8)
+            createCrystalCircle('STAGE3', 3, { x: -85, y: 85 }, 2, 8)
+            createCrystalCircle('STAGE3', 3.5, { x: -85, y: 85 }, 1, 8)
+            createCrystalCircle('STAGE3', 4, { x: -85, y: 85 }, 0, 8)
+
+            createCrystalCircle('STAGE3', 1.5, { x: -85, y: -85 }, 2, 2)
+            createCrystalCircle('STAGE3', 2.5, { x: -85, y: -85 }, 1, 8)
+            createCrystalCircle('STAGE3', 3, { x: -85, y: -85 }, 2, 8)
+            createCrystalCircle('STAGE3', 3.5, { x: -85, y: -85 }, 1, 8)
+            createCrystalCircle('STAGE3', 4, { x: -85, y: -85 }, 0, 8)
 
 
+            const makeCrystalCirclePatterns = (aX, aY, remove = [0, 0, 0, 0]) => {
+              let currentCircleStage = window.appConfig.currentStage
+              
+              if(remove[0] === 0) {
+                createCrystalCircle(currentCircleStage, 1.5, { x: aX, y: aY }, 2, 2)
+                createCrystalCircle(currentCircleStage, 2.5, { x: aX, y: aY }, 1, 8)
+                createCrystalCircle(currentCircleStage, 3, { x: aX, y: aY }, 2, 8)
+                createCrystalCircle(currentCircleStage, 3.5, { x: aX, y: aY }, 1, 8)
+                createCrystalCircle(currentCircleStage, 4, { x: aX, y: aY }, 0, 8)
+              }
 
-            // const stage3CrossBeamStructure3 = createStage3CrossBeamStructure(
-            //   .5,
-            //   .75,
-            //   "STAGE3CROSSBEAMSTRUCTURE3",
-            //   { x: 115, y: 0 }
-            // );
-            // scene.add(stage3CrossBeamStructure3);
+              if(remove[1] === 0) {
+                createCrystalCircle(currentCircleStage, 1.5, { x: aX, y: -aY }, 2, 2)
+                createCrystalCircle(currentCircleStage, 2.5, { x: aX, y: -aY }, 1, 8)
+                createCrystalCircle(currentCircleStage, 3, { x: aX, y: -aY }, 2, 8)
+                createCrystalCircle(currentCircleStage, 3.5, { x: aX, y: -aY }, 1, 8)
+                createCrystalCircle(currentCircleStage, 4, { x: aX, y: -aY }, 0, 8)
+              }
 
-            // const stage3CrossBeamStructure3A = createStage3CrossBeamStructure(
-            //   .5,
-            //   .75,
-            //   "STAGE3CROSSBEAMSTRUCTURE3A",
-            //   { x: 100, y: 15 }
-            // );
-            // scene.add(stage3CrossBeamStructure3A);
+              if(remove[2] === 0) {
+                createCrystalCircle(currentCircleStage, 1.5, { x: -aX, y: aY }, 2, 2)
+                createCrystalCircle(currentCircleStage, 2.5, { x: -aX, y: aY }, 1, 8)
+                createCrystalCircle(currentCircleStage, 3, { x: -aX, y: aY }, 2, 8)
+                createCrystalCircle(currentCircleStage, 3.5, { x: -aX, y: aY }, 1, 8)
+                createCrystalCircle(currentCircleStage, 4, { x: -aX, y: aY }, 0, 8)
+              }
 
-            // const stage3CrossBeamStructure3B = createStage3CrossBeamStructure(
-            //   .5,
-            //   .75,
-            //   "STAGE3CROSSBEAMSTRUCTURE3B",
-            //   { x: 100, y: -15 }
-            // );
-            // scene.add(stage3CrossBeamStructure3B);
+              if(remove[3] === 0) {
+                createCrystalCircle(currentCircleStage, 1.5, { x: -aX, y: -aY }, 2, 2)
+                createCrystalCircle(currentCircleStage, 2.5, { x: -aX, y: -aY }, 1, 8)
+                createCrystalCircle(currentCircleStage, 3, { x: -aX, y: -aY }, 2, 8)
+                createCrystalCircle(currentCircleStage, 3.5, { x: -aX, y: -aY }, 1, 8)
+                createCrystalCircle(currentCircleStage, 4, { x: -aX, y: -aY }, 0, 8)
+              }
+            }
 
-            // const stage3CrossBeamStructure3C = createStage3CrossBeamStructure(
-            //   .5,
-            //   .75,
-            //   "STAGE3CROSSBEAMSTRUCTURE3C",
-            //   { x: 85, y: 0 }
-            // );
-            // scene.add(stage3CrossBeamStructure3C);
+            makeCrystalCirclePatterns(55, 112.5)
+            makeCrystalCirclePatterns(112.5, 55, [1, 0, 1, 0])
+
+            prize(3, 2900, { x: -135, y: -30, z: 0 })
+            prize(3, 2900, { x: -100, y: -25, z: 0 })
+            prize(3, 2901, { x: -75, y: -50, z: 0 })
+            prize(3, 2902, { x: -50, y: -75, z: 0 })
+
+            prize(3, 903, { x: 135, y: -30, z: 0 })
+            prize(3, 900, { x: 100, y: -25, z: 0 })
+            prize(3, 901, { x: 75, y: -50, z: 0 })
+            prize(3, 902, { x: 50, y: -75, z: 0 })
+
+            prize(3, 9001, { x: -115, y: 70, z: 0 })
+            prize(3, 9001, { x: 115, y: 70, z: 0 })
 
             prize(3, 0, { x: 0, y: -100, z: 0 })
             prize(3, 1, { x: -128, y: 43, z: 0 })
             prize(3, 2, { x: -128, y: 7, z: 0 })
             prize(3, 3, { x: -92, y: 7, z: 0 })
             prize(3, 4, { x: -92, y: 43, z: 0 })
+
+            prize(3, 3, { x: -30, y: 160, z: 0 })
+            prize(3, 4, { x: 30, y: 160, z: 0 })
+
+            createCrystalCircle('STAGE3', 2, { x: -70, y: 160 }, 0, 8)
+            createCrystalCircle('STAGE3', 2.5, { x: -70, y: 160 }, 1, 8)
+            createCrystalCircle('STAGE3', 3, { x: -70, y: 160 }, 2, 8)
+            
+            createCrystalCircle('STAGE3', 2, { x: -100, y: 130 }, 0, 8)
+            createCrystalCircle('STAGE3', 2.5, { x: -100, y: 130 }, 1, 8)
+            createCrystalCircle('STAGE3', 3, { x: -100, y: 130 }, 2, 8)
+
+            createCrystalCircle('STAGE3', 2, { x: -130, y: 100 }, 0, 8)
+            createCrystalCircle('STAGE3', 2.5, { x: -130, y: 100 }, 1, 8)
+            createCrystalCircle('STAGE3', 3, { x: -130, y: 100 }, 2, 8)
+
+
+            createCrystalCircle('STAGE3', 2, { x: 70, y: 160 }, 0, 8)
+            createCrystalCircle('STAGE3', 2.5, { x: 70, y: 160 }, 1, 8)
+            createCrystalCircle('STAGE3', 3, { x: 70, y: 160 }, 2, 8)
+            
+            createCrystalCircle('STAGE3', 2, { x: 100, y: 130 }, 0, 8)
+            createCrystalCircle('STAGE3', 2.5, { x: 100, y: 130 }, 1, 8)
+            createCrystalCircle('STAGE3', 3, { x: 100, y: 130 }, 2, 8)
+
+            createCrystalCircle('STAGE3', 2, { x: 130, y: 100 }, 0, 8)
+            createCrystalCircle('STAGE3', 2.5, { x: 130, y: 100 }, 1, 8)
+            createCrystalCircle('STAGE3', 3, { x: 130, y: 100 }, 2, 8)
+
+
+
             createCrystalCircle('STAGE3', 3, { x: -110, y: 25 }, 0, 8)
             createCrystalCircle('STAGE3', 3.75, { x: -110, y: 25 }, 1, 8)
             createCrystalCircle('STAGE3', 4.5, { x: -110, y: 25 }, 2, 8)
+
             window.appConfig.createSphere({
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOINA',
@@ -4250,6 +4324,7 @@
             createCrystalCircle('STAGE3', 3, { x: 110, y: 25 }, 0, 8)
             createCrystalCircle('STAGE3', 3.75, { x: 110, y: 25 }, 1, 8)
             createCrystalCircle('STAGE3', 4.5, { x: 110, y: 25 }, 2, 8)
+
             window.appConfig.createSphere({
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOINB',
@@ -4305,6 +4380,62 @@
 
 
 
+
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOIN_A',
+              position: {
+                x: 95,
+                y: 20,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN_A')
+            })
+
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOIN_B',
+              position: {
+                x: 98,
+                y: 20,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN_B')
+            })
+
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOIN_C',
+              position: {
+                x: -104,
+                y: 20,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN_C')
+            })
+
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOIN_D',
+              position: {
+                x: -100,
+                y: 20,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN_D')
+            })
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOIN_E',
+              position: {
+                x: -105,
+                y: 20,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN_E')
+            })
+
+
             window.appConfig.stages.components.createBumper("STAGE3BUMPER0", 1, { x: 70, y: 50, z: 0 }, 3, 1)
             window.appConfig.stages.components.createBumper("STAGE3BUMPER1", 1, { x: -70, y: 50, z: 0 }, 3, 1)
             window.appConfig.stages.components.createBumper("STAGE3BUMPER0", 1, { x: 60, y: 60, z: 0 }, 3, 1)
@@ -4317,24 +4448,15 @@
             window.appConfig.stages.components.createBumper("STAGE3BUMPER1", 1, { x: -30, y: 90, z: 0 }, 3, 1)
 
 
-            // createCrystalCross('STAGE3', 5, { x: -30, y: 85 }, 2);
-            // createCrystalCross('STAGE3', 5, { x: 30, y: 85 }, 2);
-            // createCrystalCross('STAGE3', 5, { x: -30, y: -85 }, 2);
-            // createCrystalCross('STAGE3', 5, { x: 30, y: -85 }, 2);
-
-            // createCrystalCross('STAGE3', 5, { x: 85, y: -30 }, 2);
-            // createCrystalCross('STAGE3', 5, { x: 85, y: 30 }, 2);
-            // createCrystalCross('STAGE3', 5, { x: -85, y: -30 }, 2);
-            // createCrystalCross('STAGE3', 5, { x: -85, y: 30 }, 2);
 
             createCrystalCircle('STAGE3', 4, { x: 0, y: 0 }, 0, 8)
             createCrystalCircle('STAGE3', 4.5, { x: 0, y: 0 }, 1, 8)
-            createCrystalCircle('STAGE3', 5, { x: 0, y: 0 }, 2, 8)
-            createCrystalCircle('STAGE3', 5.5, { x: 0, y: 0 }, 1, 8)
-            createCrystalCircle('STAGE3', 6, { x: 0, y: 0 }, 0, 8)
+            createCrystalCircle('STAGE3', 5, { x: 0, y: 0 }, 2, 16)
+            createCrystalCircle('STAGE3', 5.5, { x: 0, y: 0 }, 1, 16)
+            createCrystalCircle('STAGE3', 6, { x: 0, y: 0 }, 0, 32)
             createCrystalCircle('STAGE3', 7.375, { x: 0, y: 0 }, 0, 32)
-            createCrystalCircle('STAGE3', 8.125, { x: 0, y: 0 }, 1, 32)
-            createCrystalCircle('STAGE3', 8.75, { x: 0, y: 0 }, 0, 32)
+            createCrystalCircle('STAGE3', 8.125, { x: 0, y: 0 }, 1, 48)
+            createCrystalCircle('STAGE3', 8.75, { x: 0, y: 0 }, 0, 48)
 
             window.appConfig.stages.STAGE3.STAGE3PRIZE0 = scene.children.find((obj) => obj.name === "STAGE3PRIZE0")
             window.appConfig.stages.STAGE3.STAGE3PRIZE1 = scene.children.find((obj) => obj.name === "STAGE3PRIZE1")
@@ -4504,6 +4626,7 @@
 
             const createSwitchBeamWall = window.appConfig.stages.components.createSwitchBeamWall
             const createRemoteSwitch = window.appConfig.stages.components.createRemoteSwitch
+            const createSingleSwitchBeam = window.appConfig.stages.components.createSingleSwitchBeam
 
             const stage4MainBeamStructure1 = createStage0MainBeamStructure(
               1.25,
@@ -4807,21 +4930,8 @@
               // [bottom, left, right, top]
 
             );
-            // stage4MainBeamStructure.rotation.z = .25 * Math.PI
+
             scene.add(stage4MainBeamStructure_2);
-
-
-            // createRemoteSwitch({
-            //   transmitter: {
-            //     p: { x: 0, y: 76, z: 0 }
-            //   },
-            //   receiver: {
-            //     p: { x: -55, y: -20, z: 0 },
-            //     name: 'STAGE4RECEIVER_A'
-            //   }
-            // })
-
-            // createSwitchBeamWall({ s: 6.75, dir: 'x', p: { x: -97.5, y: 108, z: 0 }, receiver: { name: 'STAGE4RECEIVER_A' }, switchBeamAdj: .25 })
 
 
 
@@ -4834,7 +4944,7 @@
               // [bottom, left, right, top]
 
             );
-            // stage4MainBeamStructure.rotation.z = .25 * Math.PI
+
             scene.add(stage4MainBeamStructure_3);
 
 
@@ -4889,14 +4999,7 @@
             })
 
             createSwitchBeamWall({ s: 6.75, dir: 'x', p: { x: 53, y: -108.5, z: 0 }, receiver: { name: 'STAGE4RECEIVER_C' }, switchBeamAdj: .25 })
-            // createSwitchBeamWall({ s: 3, dir: 'x', p: { x: -130.5, y: -40, z: 0 } })
-            // createBeam({
-            //   p: config.dir === 'x' ? [(config.s) + config.p.x, 0 + config.p.y, 0 + config.p.z] : [0 + config.p.x, (config.s) + config.p.y, 0 + config.p.z],
-            //   r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
-            //   s: (config.s * 2.5) * .1 + performanceAdj + switchBeamAdj,
-            //   switchBeam: config.receiver ? remoteSwitchBeamConfig() : normalSwitchBeamConfig
-            // })
-            
+
             const bottomLeftDoorTop = createSingleSwitchBeam({ s: 5.5, dir: 'x', p: { x: -122.5, y: -41.25, z: 0 }, switchBeamAdj: .25 })
             const bottomLeftDoorBottom = createSingleSwitchBeam({ s: 5.5, dir: 'y', p: { x: -41.25, y: -122.5, z: 0 }, switchBeamAdj: .25 })
             // console.log(theBeam)
@@ -4911,10 +5014,6 @@
             window.appConfig.stages.components.createBumper("STAGE4BUMPER5", 1, { x: 25, y: -115, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE4BUMPER6", 1, { x: -25, y: -115, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE4BUMPER7", 1, { x: -25, y: 115, z: 0 }, 6)
-            // window.appConfig.stages.components.createBumper("STAGE4BUMPER2", 1, { x: 0, y: 100, z: 0 }, 6)
-            // window.appConfig.stages.components.createBumper("STAGE4BUMPER3", 1, { x: 0, y: -25, z: 0 }, 6)
-            // window.appConfig.stages.components.createBumper("STAGE4BUMPER4", 1, { x: 0, y: -75, z: 0 }, 6)
-            // window.appConfig.stages.components.createBumper("STAGE4BUMPER5", 1, { x: 0, y: -100, z: 0 }, 6)
 
             createCrystalCircle('STAGE4', 4.5, { x: -95, y: -95 }, 0, 16)
             createCrystalCircle('STAGE4', 4.25, { x: -95, y: -95 }, 1, 16)
@@ -4945,7 +5044,7 @@
             createCrystalCircle('STAGE4', 3.75, { x: 87.5, y: -87.5 }, 2, 16)
 
 
-            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: 20, z: 0 } })
+            // createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: 20, z: 0 } })
 
 
 
