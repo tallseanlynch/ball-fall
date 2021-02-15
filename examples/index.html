@@ -7776,16 +7776,23 @@
       // debugger
     }
     const togglePerformanceButton = () => {
+      console.log(window.appConfig.performanceLevel)
       switch (window.appConfig.performanceLevel) {
         case 0:
+          console.log("case 0", window.appConfig.performanceLevel)
           window.appConfig.performanceLevel = 1
           window.localStorage.setItem('performanceLevel', JSON.stringify({ performanceLevel: 1 }))
+          break
         case 1:
+          console.log("case 1", window.appConfig.performanceLevel)
           window.appConfig.performanceLevel = 2
           window.localStorage.setItem('performanceLevel', JSON.stringify({ performanceLevel: 2 }))
+          break
         case 2:
+          console.log("case 2", window.appConfig.performanceLevel)
           window.appConfig.performanceLevel = 0
           window.localStorage.setItem('performanceLevel', JSON.stringify({ performanceLevel: 0 }))
+          break
 
       }
       document.querySelector("#performance-toggle-button").textContent = window.appConfig.performanceLevel
