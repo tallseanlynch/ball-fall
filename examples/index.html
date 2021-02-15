@@ -106,12 +106,6 @@
       pause: false,
       defaultSphereMass: 4.188790683884756,
       defaultSceneGravity: -10,
-      controlTypes: [
-        "mouse",
-        "touch",
-        "click"
-      ],
-      controlTypeIndex: 0,
       itemAmounts: {
         crystalCross: 0,
         crystalLine: 0,
@@ -119,9 +113,9 @@
         bumperGroup: 0,
         prize: 0
       },
-      currentStage: hasPerformanceReport ? 'STAGE3' : 'STAGE5',
+      currentStage: hasPerformanceReport ? 'STAGE0' : 'STAGE5',
       stagesArray: ['STAGE0', 'STAGE1', 'STAGE2', 'STAGE3', 'STAGE4', 'STAGE5'],
-      currentStageIndex: hasPerformanceReport ? 0 : 3,
+      currentStageIndex: hasPerformanceReport ? 0 : 5,
       musicTurnedOn: true,
       sfxTurnedOn: true,
       howlSounds: {
@@ -453,6 +447,11 @@
           <td class="sound-menu-button sound-menu-left-td font-a">Controls</td>
           <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="controls-toggle-button"
               onClick="toggleControlsButton()"></button></td>
+        </tr>
+        <tr>
+          <td class="sound-menu-button sound-menu-left-td font-a">Performance</td>
+          <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="performance-toggle-button"
+              onClick="togglePerformanceButton()"></button></td>
         </tr>
       </table>
     </div>
@@ -1438,8 +1437,8 @@
         size = 0,
         n = 4
       ) => {
-        if(window.appConfig.performanceLevel === 0 && n/2 !== 2) {
-          n = n/2
+        if (window.appConfig.performanceLevel === 0 && n / 2 !== 2) {
+          n = n / 2
         }
         const crystalCircle = new THREE.Group()
         crystalCircle.debugTypeIndex = window.appConfig.itemAmounts.crystalCircle
@@ -2440,31 +2439,31 @@
             })
           },
           createSingleSwitchBeam: (config) => {
-              const performanceAdj = window.appConfig.performanceLevel === 0 ? .25 : 0
-              const switchBeamAdj = config.switchBeamAdj ? config.switchBeamAdj : 0
+            const performanceAdj = window.appConfig.performanceLevel === 0 ? .25 : 0
+            const switchBeamAdj = config.switchBeamAdj ? config.switchBeamAdj : 0
 
-              const normalSwitchBeamConfig = {
-                switchIndicators: 3,
-                color: window.appConfig.stages[window.appConfig.currentStage].backgroundColors[3]
-              }
-
-              const remoteSwitchBeamConfig = () => {
-                // debugger
-                // #2 add the name using the config
-                return {
-                  switchIndicators: 1,
-                  color: window.appConfig.stages[window.appConfig.currentStage].backgroundColors[3],
-                  receiver: { name: config.receiver.name }
-                }
-              }
-
-              return createBeam({
-                p: config.dir === 'x' ? [(config.s) + config.p.x, 0 + config.p.y, 0 + config.p.z] : [0 + config.p.x, (config.s) + config.p.y, 0 + config.p.z],
-                r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
-                s: (config.s * 2.5) * .1 + performanceAdj + switchBeamAdj,
-                switchBeam: config.receiver ? remoteSwitchBeamConfig() : normalSwitchBeamConfig
-              })
+            const normalSwitchBeamConfig = {
+              switchIndicators: 3,
+              color: window.appConfig.stages[window.appConfig.currentStage].backgroundColors[3]
             }
+
+            const remoteSwitchBeamConfig = () => {
+              // debugger
+              // #2 add the name using the config
+              return {
+                switchIndicators: 1,
+                color: window.appConfig.stages[window.appConfig.currentStage].backgroundColors[3],
+                receiver: { name: config.receiver.name }
+              }
+            }
+
+            return createBeam({
+              p: config.dir === 'x' ? [(config.s) + config.p.x, 0 + config.p.y, 0 + config.p.z] : [0 + config.p.x, (config.s) + config.p.y, 0 + config.p.z],
+              r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
+              s: (config.s * 2.5) * .1 + performanceAdj + switchBeamAdj,
+              switchBeam: config.receiver ? remoteSwitchBeamConfig() : normalSwitchBeamConfig
+            })
+          }
         },
         STAGE0: {
           data: {
@@ -4213,8 +4212,8 @@
 
             const makeCrystalCirclePatterns = (aX, aY, remove = [0, 0, 0, 0]) => {
               let currentCircleStage = window.appConfig.currentStage
-              
-              if(remove[0] === 0) {
+
+              if (remove[0] === 0) {
                 createCrystalCircle(currentCircleStage, 1.5, { x: aX, y: aY }, 2, 2)
                 createCrystalCircle(currentCircleStage, 2.5, { x: aX, y: aY }, 1, 8)
                 createCrystalCircle(currentCircleStage, 3, { x: aX, y: aY }, 2, 8)
@@ -4222,7 +4221,7 @@
                 createCrystalCircle(currentCircleStage, 4, { x: aX, y: aY }, 0, 8)
               }
 
-              if(remove[1] === 0) {
+              if (remove[1] === 0) {
                 createCrystalCircle(currentCircleStage, 1.5, { x: aX, y: -aY }, 2, 2)
                 createCrystalCircle(currentCircleStage, 2.5, { x: aX, y: -aY }, 1, 8)
                 createCrystalCircle(currentCircleStage, 3, { x: aX, y: -aY }, 2, 8)
@@ -4230,7 +4229,7 @@
                 createCrystalCircle(currentCircleStage, 4, { x: aX, y: -aY }, 0, 8)
               }
 
-              if(remove[2] === 0) {
+              if (remove[2] === 0) {
                 createCrystalCircle(currentCircleStage, 1.5, { x: -aX, y: aY }, 2, 2)
                 createCrystalCircle(currentCircleStage, 2.5, { x: -aX, y: aY }, 1, 8)
                 createCrystalCircle(currentCircleStage, 3, { x: -aX, y: aY }, 2, 8)
@@ -4238,7 +4237,7 @@
                 createCrystalCircle(currentCircleStage, 4, { x: -aX, y: aY }, 0, 8)
               }
 
-              if(remove[3] === 0) {
+              if (remove[3] === 0) {
                 createCrystalCircle(currentCircleStage, 1.5, { x: -aX, y: -aY }, 2, 2)
                 createCrystalCircle(currentCircleStage, 2.5, { x: -aX, y: -aY }, 1, 8)
                 createCrystalCircle(currentCircleStage, 3, { x: -aX, y: -aY }, 2, 8)
@@ -4275,7 +4274,7 @@
             createCrystalCircle('STAGE3', 2, { x: -70, y: 160 }, 0, 8)
             createCrystalCircle('STAGE3', 2.5, { x: -70, y: 160 }, 1, 8)
             createCrystalCircle('STAGE3', 3, { x: -70, y: 160 }, 2, 8)
-            
+
             createCrystalCircle('STAGE3', 2, { x: -100, y: 130 }, 0, 8)
             createCrystalCircle('STAGE3', 2.5, { x: -100, y: 130 }, 1, 8)
             createCrystalCircle('STAGE3', 3, { x: -100, y: 130 }, 2, 8)
@@ -4288,7 +4287,7 @@
             createCrystalCircle('STAGE3', 2, { x: 70, y: 160 }, 0, 8)
             createCrystalCircle('STAGE3', 2.5, { x: 70, y: 160 }, 1, 8)
             createCrystalCircle('STAGE3', 3, { x: 70, y: 160 }, 2, 8)
-            
+
             createCrystalCircle('STAGE3', 2, { x: 100, y: 130 }, 0, 8)
             createCrystalCircle('STAGE3', 2.5, { x: 100, y: 130 }, 1, 8)
             createCrystalCircle('STAGE3', 3, { x: 100, y: 130 }, 2, 8)
@@ -4925,7 +4924,7 @@
               6.3,
               0,
               "STAGE4MAINSTRUCTURE_2",
-              {x: -58.5, y: 73.5},
+              { x: -58.5, y: 73.5 },
               [1, 0, 1, 1]
               // [bottom, left, right, top]
 
@@ -4939,7 +4938,7 @@
               6.3,
               0,
               "STAGE4MAINSTRUCTURE_3",
-              {x: 75, y: 58.5},
+              { x: 75, y: 58.5 },
               [1, 1, 1, 0]
               // [bottom, left, right, top]
 
@@ -4979,7 +4978,7 @@
               6.3,
               0,
               "STAGE4MAINSTRUCTURE_4",
-              {x: 58.5, y: -73.5},
+              { x: 58.5, y: -73.5 },
               [1, 1, 0, 1]
               // [bottom, left, right, top]
 
@@ -5199,7 +5198,7 @@
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIND')
             })
 
-            
+
 
 
 
@@ -5332,7 +5331,7 @@
             })
 
 
-            
+
             window.appConfig.stages.STAGE4.STAGE4PRIZE0 = scene.children.find((obj) => obj.name === "STAGE4PRIZE0")
             window.appConfig.stages.STAGE4.STAGE4PRIZE1 = scene.children.find((obj) => obj.name === "STAGE4PRIZE1")
             window.appConfig.stages.STAGE4.STAGE4PRIZE2 = scene.children.find((obj) => obj.name === "STAGE4PRIZE2")
@@ -5651,7 +5650,7 @@
               12,
               -0.56,
               "STAGE5MAINSTRUCTURE",
-              {x: 0, y: 0}
+              { x: 0, y: 0 }
               // [0, 0, 0, 1]
               // [bottom, left, right, top]
             );
@@ -5662,7 +5661,7 @@
               15,
               -0.35,
               "STAGE5MAINSTRUCTURE_0",
-              {x: 0, y: 0}
+              { x: 0, y: 0 }
               // [0, 0, 0, 1]
             );
             stage5MainBeamStructure_0.rotation.z = .25 * Math.PI
@@ -5951,8 +5950,8 @@
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOINA',
               position: {
-                x: 100/2,
-                y: 100/2,
+                x: 100 / 2,
+                y: 100 / 2,
                 z: 0
               },
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINA')
@@ -5961,8 +5960,8 @@
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOINB',
               position: {
-                x: 102/2,
-                y: 102/2,
+                x: 102 / 2,
+                y: 102 / 2,
                 z: 0
               },
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINB')
@@ -5971,8 +5970,8 @@
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOINC',
               position: {
-                x: 101/2,
-                y: 101/2,
+                x: 101 / 2,
+                y: 101 / 2,
                 z: 0
               },
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINC')
@@ -5981,14 +5980,14 @@
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOIND',
               position: {
-                x: 104/2,
-                y: 104/2,
+                x: 104 / 2,
+                y: 104 / 2,
                 z: 0
               },
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIND')
             })
 
-            
+
 
 
 
@@ -5997,8 +5996,8 @@
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOINE',
               position: {
-                x: 100/2,
-                y: -100/2,
+                x: 100 / 2,
+                y: -100 / 2,
                 z: 0
               },
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINE')
@@ -6007,8 +6006,8 @@
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOINF',
               position: {
-                x: 102/2,
-                y: -102/2,
+                x: 102 / 2,
+                y: -102 / 2,
                 z: 0
               },
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINF')
@@ -6017,8 +6016,8 @@
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOING',
               position: {
-                x: 101/2,
-                y: -101/2,
+                x: 101 / 2,
+                y: -101 / 2,
                 z: 0
               },
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOING')
@@ -6027,8 +6026,8 @@
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOINH',
               position: {
-                x: 104/2,
-                y: -104/2,
+                x: 104 / 2,
+                y: -104 / 2,
                 z: 0
               },
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINH')
@@ -6040,8 +6039,8 @@
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOINI',
               position: {
-                x: -100/2,
-                y: -100/2,
+                x: -100 / 2,
+                y: -100 / 2,
                 z: 0
               },
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINI')
@@ -6050,8 +6049,8 @@
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOINJ',
               position: {
-                x: -102/2,
-                y: -102/2,
+                x: -102 / 2,
+                y: -102 / 2,
                 z: 0
               },
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINJ')
@@ -6060,8 +6059,8 @@
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOINK',
               position: {
-                x: -101/2,
-                y: -101/2,
+                x: -101 / 2,
+                y: -101 / 2,
                 z: 0
               },
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINK')
@@ -6070,8 +6069,8 @@
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOINL',
               position: {
-                x: -104/2,
-                y: -104/2,
+                x: -104 / 2,
+                y: -104 / 2,
                 z: 0
               },
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINL')
@@ -6083,8 +6082,8 @@
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOINM',
               position: {
-                x: -100/2,
-                y: 100/2,
+                x: -100 / 2,
+                y: 100 / 2,
                 z: 0
               },
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINM')
@@ -6093,8 +6092,8 @@
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOINN',
               position: {
-                x: -102/2,
-                y: 102/2,
+                x: -102 / 2,
+                y: 102 / 2,
                 z: 0
               },
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINN')
@@ -6103,8 +6102,8 @@
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOINO',
               position: {
-                x: -101/2,
-                y: 101/2,
+                x: -101 / 2,
+                y: 101 / 2,
                 z: 0
               },
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINO')
@@ -6113,8 +6112,8 @@
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOINP',
               position: {
-                x: -104/2,
-                y: 104/2,
+                x: -104 / 2,
+                y: 104 / 2,
                 z: 0
               },
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINP')
@@ -7230,7 +7229,7 @@
           .setLinearVelocity(new THREE.Vector3(0, 0, 0));
         sphere
           .setAngularVelocity(new THREE.Vector3(0, 0, 0));
-          scene.setGravity(new THREE.Vector3(0,0,0))   
+        scene.setGravity(new THREE.Vector3(0, 0, 0))
         // sphere
         //   .setLinearVelocity(new THREE.Vector3(0, 0, 0));
       } else {
@@ -7692,6 +7691,9 @@
       showHTMLElements(["level-select", "tinted-overlay"]);
     };
     const showSounds = () => {
+      document.querySelector("#controls-toggle-button").textContent = window.appConfig.events.primaryInput === "click" ? "CLICK" : "SWIPE"
+      document.querySelector("#performance-toggle-button").textContent = window.appConfig.performanceLevel
+
       showHTMLElements(["sounds", "tinted-overlay"]);
     };
     const showCredits = () => {
@@ -7765,15 +7767,30 @@
         musicButton.textContent = "OFF"
       }
     }
+
+
     const toggleControlsButton = () => {
-      // window.appConfig.musicTurnedOn = !window.appConfig.musicTurnedOn
-      // const musicButton =
-      //   document.querySelector('#music-toggle-button')
-      // if (window.appConfig.musicTurnedOn) {
-      //   musicButton.textContent = "ON"
-      // } else {
-      //   musicButton.textContent = "OFF"
-      // }
+      window.appConfig.events.primaryInput = window.appConfig.events.primaryInput === "click" ? "mouse" : "click"
+
+      document.querySelector("#controls-toggle-button").textContent = window.appConfig.events.primaryInput === 'click' ? "CLICK" : "SWIPE"
+      // debugger
+    }
+    const togglePerformanceButton = () => {
+      switch (window.appConfig.performanceLevel) {
+        case 0:
+          window.appConfig.performanceLevel = 1
+          window.localStorage.setItem('performanceLevel', JSON.stringify({ performanceLevel: 1 }))
+        case 1:
+          window.appConfig.performanceLevel = 2
+          window.localStorage.setItem('performanceLevel', JSON.stringify({ performanceLevel: 2 }))
+        case 2:
+          window.appConfig.performanceLevel = 0
+          window.localStorage.setItem('performanceLevel', JSON.stringify({ performanceLevel: 0 }))
+
+      }
+      document.querySelector("#performance-toggle-button").textContent = window.appConfig.performanceLevel
+
+      reset({ action: 'levelSelect', level: window.appConfig.currentStageIndex, autoStart: false })
     }
     window.onload = initScene;
   </script>
