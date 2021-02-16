@@ -2617,7 +2617,7 @@
           init: () => {
 
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({x: 10, y: -20, z: -5}, 'STAGE_END_0')
+              window.appConfig.timers.addPortalToStage({ x: 10, y: -20, z: -5 }, 'STAGE_END_0')
             )
 
             window.appConfig.stages.components.createBumper("STAGE0BUMPER0", 1, { x: -70, y: -72.5, z: 0 }, 5)
@@ -6375,7 +6375,7 @@
         let theSpritePoints = []
         theMesh.geometry.vertices.forEach((p, pi) => {
           // if(pi % 3 === 0){
-            theSpritePoints.push(p)
+          theSpritePoints.push(p)
           // }
         })
         theSpritePoints.forEach((sp, spi) => {
@@ -6878,22 +6878,22 @@
           },
           activeCallback: (thePercentComplete) => {
             let percentComplete = thePercentComplete
-            if(thePercentComplete < .51) {
+            if (thePercentComplete < .51) {
               percentComplete = thePercentComplete * 2
-              if(percentComplete > 1) {
+              if (percentComplete > 1) {
                 percentComplete = 1
               }
               thePortalMeshSpaceSphere.material.opacity = percentComplete
-              thePortalMeshSpaceSphere.scale.x = percentComplete * 6         
-              thePortalMeshSpaceSphere.scale.y = percentComplete * 6         
+              thePortalMeshSpaceSphere.scale.x = percentComplete * 6
+              thePortalMeshSpaceSphere.scale.y = percentComplete * 6
               thePortalMeshSpaceSphere.scale.z = percentComplete * 6
               thePortalMeshSpaceSphere.position.z = ((1 - percentComplete) * -5) + (5 * percentComplete)
               let theNewPositionX = (thePortalMesh.position.x * percentComplete) + (theSphere.position.x * (1 - percentComplete))
               let theNewPositionY = (thePortalMesh.position.y * percentComplete) + (theSphere.position.y * (1 - percentComplete))
-              window.appConfig.positionBall({x: theNewPositionX, y: theNewPositionY, z: 0})      
+              window.appConfig.positionBall({ x: theNewPositionX, y: theNewPositionY, z: 0 })
             }
-            if(thePercentComplete > .5) {
-              window.appConfig.positionBall({x: thePortalMesh.position.x, y: thePortalMesh.position.y, z: 0})
+            if (thePercentComplete > .5) {
+              window.appConfig.positionBall({ x: thePortalMesh.position.x, y: thePortalMesh.position.y, z: 0 })
               let teardownPercentComplete = (thePercentComplete - .5) * 2
               console.log(teardownPercentComplete)
               theGradientCurtain.style.opacity = (thePercentComplete - .5) * 2
@@ -6937,7 +6937,7 @@
             // debugger
             let timersCopy = []
             window.appConfig.timers.activeTimers.forEach(at => {
-              if(at.name.indexOf('SAPPHIRE') === -1) {
+              if (at.name.indexOf('SAPPHIRE') === -1) {
                 timersCopy.push(at)
               }
             })
@@ -7563,24 +7563,24 @@
         }
       }
 
-      if(window.appConfig.stages[window.appConfig.currentStage].data.portals.length > 0 && window.appConfig.pause === false) {
-        window.appConfig.stages[window.appConfig.currentStage].data.portals.forEach( p => {
+      if (window.appConfig.stages[window.appConfig.currentStage].data.portals && window.appConfig.stages[window.appConfig.currentStage].data.portals.length > 0 && window.appConfig.pause === false) {
+        window.appConfig.stages[window.appConfig.currentStage].data.portals.forEach(p => {
           // if(currentTime % 2 === 0) {
-            p.rotation.z += .01
-            p.children.forEach((pc, pci) => {
-              if(pc.oPosition) {
-                pc.position.x = pc.oPosition.x * lfo(500 + (pci + 1) * 125) * 2
-                pc.position.y = pc.oPosition.y * lfo(500 + (pci + 1) * 100) * 2
-                pc.position.z = pc.oPosition.z * lfo(500 + (pci + 1) * 75) * 2
-                pc.rotation.x = lfo(500 + (pci + 1) * 125) * 1.125
-                pc.rotation.y = lfo(500 + (pci + 1) * 100) * 1.125
-                pc.rotation.z = lfo(500 + (pci + 1) * 75) * 1.125
-              }
-            })
+          p.rotation.z += .01
+          p.children.forEach((pc, pci) => {
+            if (pc.oPosition) {
+              pc.position.x = pc.oPosition.x * lfo(500 + (pci + 1) * 125) * 2
+              pc.position.y = pc.oPosition.y * lfo(500 + (pci + 1) * 100) * 2
+              pc.position.z = pc.oPosition.z * lfo(500 + (pci + 1) * 75) * 2
+              pc.rotation.x = lfo(500 + (pci + 1) * 125) * 1.125
+              pc.rotation.y = lfo(500 + (pci + 1) * 100) * 1.125
+              pc.rotation.z = lfo(500 + (pci + 1) * 75) * 1.125
+            }
+          })
           // }
           p.material.color = window.appConfig.superBallMaterial.color
           // console.log(sphere.position.distanceTo(p.position))
-          if(sphere.position.distanceTo(p.position) < 7.5 && p.activated === false) {
+          if (sphere.position.distanceTo(p.position) < 7.5 && p.activated === false) {
             p.activated = true
             window.appConfig.timers.activeTimers.push(
               window.appConfig.timers.activatePortalToStage(p)
