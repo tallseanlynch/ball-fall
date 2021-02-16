@@ -6220,7 +6220,7 @@
 
       requestAnimationFrame(render);
       scene.simulate();
-      window.appConfig.easyTimerLength = 60
+      window.appConfig.easyTimerLength = 6
       const timer = new easytimer.Timer({ countdown: true, startValues: { seconds: window.appConfig.easyTimerLength }, precision: "secondTenths" });
       window.appConfig.timer = timer
       timer.addEventListener("secondTenthsUpdated", function (e) {
@@ -6975,6 +6975,10 @@
             window.appConfig.timers.data.stageResultsBallZoom.percentComplete = percentComplete
           },
           startedCallback: (percentComplete) => {
+          },
+          completedCallback: () => {
+            showReport()
+
           }
         }
       },
@@ -7634,7 +7638,6 @@
         hs3Row.classList.add("hide")
       }
 
-      showReport()
       document.querySelector("#pause-button").disabled = true;
 
     }
