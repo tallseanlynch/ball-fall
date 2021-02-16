@@ -431,29 +431,91 @@
   </div>
   <div id="sounds" class="hide menu-container">
     <div id="sounds-title" class="menu-title-text margin-bottom-3 font-e">Settings</div>
-    <div class="scrolling-section margin-bottom-2">
-      <table id="sound-menu" class="margin-bottom-3 table-margin-1">
-        <tr>
-          <td class="sound-menu-button sound-menu-left-td font-a">SFX</td>
-          <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="sfx-toggle-button"
-              onClick="toggleSFXButton()"></button></td>
-        </tr>
-        <tr>
-          <td class="sound-menu-button sound-menu-left-td font-a">Music</td>
-          <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="music-toggle-button"
-              onClick="toggleMusicButton()"></button></td>
-        </tr>
-        <tr>
-          <td class="sound-menu-button sound-menu-left-td font-a">Controls</td>
-          <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="controls-toggle-button"
-              onClick="toggleControlsButton()"></button></td>
-        </tr>
-        <tr>
-          <td class="sound-menu-button sound-menu-left-td font-a">Performance</td>
-          <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="performance-toggle-button"
-              onClick="togglePerformanceButton()"></button></td>
-        </tr>
-      </table>
+    <div id="sound-scrolling-section" class="scrolling-section margin-bottom-2">
+      <div id="sound-left">
+        <div class="margin-bottom-2">
+          <div class="sound-menu-key font-a">Controls</div>
+          <div class="sound-menu-values-container">
+            <div class="sound-menu-value-half font-b">
+              <button class="sound-menu-button font-b" id="controls-toggle-button-click"
+                onClick="toggleControlsButton({value:'click'})">CLICK</button>
+            </div>
+            <div class="sound-menu-value-half font-b">
+              <button class="sound-menu-button font-b" id="controls-toggle-button-swipe"
+                onClick="toggleControlsButton({value: 'swipe'})">SWIPE</button>
+            </div>
+          </div>
+        </div>
+        <div class="margin-bottom-2">
+          <div class="sound-menu-key font-a">Performance</div>
+          <div class="sound-menu-values-container">
+            <div class="sound-menu-value-third font-b">
+              <button class="sound-menu-button font-b" id="performance-toggle-button-low"
+                onClick="togglePerformanceButton({value:0})">LOW</button>
+            </div>
+            <div class="sound-menu-value-third font-b">
+              <button class="sound-menu-button font-b" id="performance-toggle-button-med"
+                onClick="togglePerformanceButton({value:1})">MED</button>
+            </div>
+            <div class="sound-menu-value-third font-b">
+              <button class="sound-menu-button font-b" id="performance-toggle-button-high"
+                onClick="togglePerformanceButton({value:2})">HIGH</button>
+            </div>
+          </div>
+        </div>
+        <!-- <table>
+          <tr>
+            <td class="sound-menu-button sound-menu-left-td font-a">Controls</td>
+            <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="controls-toggle-button"
+                onClick="toggleControlsButton()"></button></td>
+          </tr>
+          <tr>
+            <td class="sound-menu-button sound-menu-left-td font-a">Performance</td>
+            <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="performance-toggle-button"
+                onClick="togglePerformanceButton()"></button></td>
+          </tr>
+        </table> -->
+      </div>
+      <div id="sound-right">
+        <div class="margin-bottom-2">
+          <div class="sound-menu-key font-a">SFX</div>
+          <div class="sound-menu-values-container">
+            <div class="sound-menu-value-half font-b">
+              <button class="sound-menu-button font-b" id="sfx-toggle-button-on"
+                onClick="toggleSFXButton({value:'on'})">ON</button>
+            </div>
+            <div class="sound-menu-value-half font-b">
+              <button class="sound-menu-button font-b" id="sfx-toggle-button-off"
+                onClick="toggleSFXButton({value:'off'})">OFF</button>
+            </div>
+          </div>
+        </div>
+        <div class="margin-bottom-2">
+          <div class="sound-menu-key font-a">MUSIC</div>
+          <div class="sound-menu-values-container">
+            <div class="sound-menu-value-half font-b">
+              <button class="sound-menu-button font-b" id="music-toggle-button-on"
+                onClick="toggleMusicButton({value:'on'})">ON</button>
+            </div>
+            <div class="sound-menu-value-half font-b">
+              <button class="sound-menu-button font-b" id="music-toggle-button-off"
+                onClick="toggleMusicButton({value:'off'})">OFF</button>
+            </div>
+          </div>
+        </div>
+        <!-- <table id="sound-menu" class="margin-bottom-3 table-margin-1">
+          <tr>
+            <td class="sound-menu-button sound-menu-left-td font-a">SFX</td>
+            <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="sfx-toggle-button"
+                onClick="toggleSFXButton()"></button></td>
+          </tr>
+          <tr>
+            <td class="sound-menu-button sound-menu-left-td font-a">Music</td>
+            <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="music-toggle-button"
+                onClick="toggleMusicButton()"></button></td>
+          </tr>
+        </table> -->
+      </div>
     </div>
     <div id="back-button" class="margin-top-2 font-b">
       <button class="start-menu-button font-b" onClick="goBack()">Back</button>
@@ -972,21 +1034,21 @@
       }
 
       scene.add(window.appConfig.lighting.hemisphereLight);
-      const sfxButton =
-        document.querySelector('#sfx-toggle-button')
-      if (window.appConfig.sfxTurnedOn) {
-        sfxButton.textContent = "ON"
-      } else {
-        sfxButton.textContent = "OFF"
-      }
+      // const sfxButton =
+      //   document.querySelector('#sfx-toggle-button')
+      // if (window.appConfig.sfxTurnedOn) {
+      //   sfxButton.textContent = "ON"
+      // } else {
+      //   sfxButton.textContent = "OFF"
+      // }
 
-      const musicButton =
-        document.querySelector('#music-toggle-button')
-      if (window.appConfig.musicTurnedOn) {
-        musicButton.textContent = "ON"
-      } else {
-        musicButton.textContent = "OFF"
-      }
+      // const musicButton =
+      //   document.querySelector('#music-toggle-button')
+      // if (window.appConfig.musicTurnedOn) {
+      //   musicButton.textContent = "ON"
+      // } else {
+      //   musicButton.textContent = "OFF"
+      // }
 
 
       camera = new THREE.PerspectiveCamera(
@@ -7691,8 +7753,12 @@
       showHTMLElements(["level-select", "tinted-overlay"]);
     };
     const showSounds = () => {
-      document.querySelector("#controls-toggle-button").textContent = window.appConfig.events.primaryInput === "click" ? "CLICK" : "SWIPE"
-      document.querySelector("#performance-toggle-button").textContent = window.appConfig.performanceLevel
+      toggleSFXButton({ value: window.appConfig.sfxTurnedOn === true ? "on" : "off" })
+      toggleMusicButton({ value: window.appConfig.musicTurnedOn === true ? "on" : "off" })
+      togglePerformanceButton({ value: window.appConfig.performanceLevel, onlyHTML: true })
+      toggleControlsButton({ value: window.appConfig.events.primaryInput === "mouse" ? "swipe" : "click", onlyHTML: true })
+      // document.querySelector("#controls-toggle-button").textContent = window.appConfig.events.primaryInput === "click" ? "CLICK" : "SWIPE"
+      // document.querySelector("#performance-toggle-button").textContent = window.appConfig.performanceLevel
 
       showHTMLElements(["sounds", "tinted-overlay"]);
     };
@@ -7747,57 +7813,102 @@
     const setLevel = (level) => {
       window.appConfig.level = level;
     };
-    const toggleSFXButton = () => {
-      window.appConfig.sfxTurnedOn = !window.appConfig.sfxTurnedOn
-      const sfxButton =
-        document.querySelector('#sfx-toggle-button')
-      if (window.appConfig.sfxTurnedOn) {
-        sfxButton.textContent = "ON"
-      } else {
-        sfxButton.textContent = "OFF"
+    const toggleSFXButton = (config) => {
+      if (config && config.value !== undefined) {
+        switch (config.value) {
+          case "on":
+            window.appConfig.sfxTurnedOn = true
+            document.querySelector("#sfx-toggle-button-on").classList.remove("gray")
+            document.querySelector("#sfx-toggle-button-off").classList.add("gray")
+            break
+          case "off":
+            window.appConfig.sfxTurnedOn = false
+            document.querySelector("#sfx-toggle-button-on").classList.add("gray")
+            document.querySelector("#sfx-toggle-button-off").classList.remove("gray")
+            break
+        }
       }
     }
-    const toggleMusicButton = () => {
-      window.appConfig.musicTurnedOn = !window.appConfig.musicTurnedOn
-      const musicButton =
-        document.querySelector('#music-toggle-button')
-      if (window.appConfig.musicTurnedOn) {
-        musicButton.textContent = "ON"
-      } else {
-        musicButton.textContent = "OFF"
+    const toggleMusicButton = (config) => {
+      if (config && config.value !== undefined) {
+        switch (config.value) {
+          case "on":
+            window.appConfig.musicTurnedOn = true
+            document.querySelector("#music-toggle-button-on").classList.remove("gray")
+            document.querySelector("#music-toggle-button-off").classList.add("gray")
+            break
+          case "off":
+            window.appConfig.musicTurnedOn = false
+            document.querySelector("#music-toggle-button-on").classList.add("gray")
+            document.querySelector("#music-toggle-button-off").classList.remove("gray")
+            break
+        }
       }
     }
 
 
-    const toggleControlsButton = () => {
-      window.appConfig.events.primaryInput = window.appConfig.events.primaryInput === "click" ? "mouse" : "click"
+    const toggleControlsButton = (config) => {
+      if (config) {
+        let onlyHTML = false
+        if (config.onlyHTML && config.onlyHTML === true) {
+          onlyHTML = true
+        }
+        if (config.value !== undefined) {
+          switch (config.value) {
+            case "click":
+              if (onlyHTML === false) {
+                window.appConfig.events.primaryInput = "click"
 
-      document.querySelector("#controls-toggle-button").textContent = window.appConfig.events.primaryInput === 'click' ? "CLICK" : "SWIPE"
-      // debugger
-    }
-    const togglePerformanceButton = () => {
-      console.log(window.appConfig.performanceLevel)
-      switch (window.appConfig.performanceLevel) {
-        case 0:
-          console.log("case 0", window.appConfig.performanceLevel)
-          window.appConfig.performanceLevel = 1
-          window.localStorage.setItem('performanceLevel', JSON.stringify({ performanceLevel: 1 }))
-          break
-        case 1:
-          console.log("case 1", window.appConfig.performanceLevel)
-          window.appConfig.performanceLevel = 2
-          window.localStorage.setItem('performanceLevel', JSON.stringify({ performanceLevel: 2 }))
-          break
-        case 2:
-          console.log("case 2", window.appConfig.performanceLevel)
-          window.appConfig.performanceLevel = 0
-          window.localStorage.setItem('performanceLevel', JSON.stringify({ performanceLevel: 0 }))
-          break
+              }
+              document.querySelector("#controls-toggle-button-click").classList.remove("gray")
+              document.querySelector("#controls-toggle-button-swipe").classList.add("gray")
+              break
+            case "swipe":
+              if (onlyHTML === false) {
+                window.appConfig.events.primaryInput = "mouse"
 
+              }
+              document.querySelector("#controls-toggle-button-click").classList.add("gray")
+              document.querySelector("#controls-toggle-button-swipe").classList.remove("gray")
+          }
+        }
       }
-      document.querySelector("#performance-toggle-button").textContent = window.appConfig.performanceLevel
-
-      reset({ action: 'levelSelect', level: window.appConfig.currentStageIndex, autoStart: false })
+    }
+    const togglePerformanceButton = (config) => {
+      console.log(config)
+      if (config) {
+        let onlyHTML = false
+        if (config.onlyHTML && config.onlyHTML === true) {
+          onlyHTML = true
+        }
+        if (config.value !== undefined) {
+          switch (config.value) {
+            case 0:
+              console.log("case 0", window.appConfig.performanceLevel)
+              document.querySelector("#performance-toggle-button-low").classList.remove("gray")
+              document.querySelector("#performance-toggle-button-med").classList.add("gray")
+              document.querySelector("#performance-toggle-button-high").classList.add("gray")
+              break
+            case 1:
+              console.log("case 1", window.appConfig.performanceLevel)
+              document.querySelector("#performance-toggle-button-low").classList.add("gray")
+              document.querySelector("#performance-toggle-button-med").classList.remove("gray")
+              document.querySelector("#performance-toggle-button-high").classList.add("gray")
+              break
+            case 2:
+              console.log("case 2", window.appConfig.performanceLevel)
+              document.querySelector("#performance-toggle-button-low").classList.add("gray")
+              document.querySelector("#performance-toggle-button-med").classList.add("gray")
+              document.querySelector("#performance-toggle-button-high").classList.remove("gray")
+              break
+          }
+        }
+        if (onlyHTML === false) {
+          window.appConfig.performanceLevel = config.value
+          window.localStorage.setItem('performanceLevel', JSON.stringify({ performanceLevel: config.value }))
+          reset({ action: 'levelSelect', level: window.appConfig.currentStageIndex, autoStart: false })
+        }
+      }
     }
     window.onload = initScene;
   </script>

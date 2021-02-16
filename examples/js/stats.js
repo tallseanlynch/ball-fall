@@ -89,7 +89,7 @@ var Stats = function () {
 						if(window.appConfig.healthCheck.averageFPS < 45) {//0
 							window.appConfig.performanceLevel = 0
 							window.appConfig.events.primaryInput = 'click'
-							document.querySelector('#controls-toggle-button').textContent = "CLICK"
+							// document.querySelector('#controls-toggle-button').textContent = "CLICK"
 							window.localStorage.setItem('performanceLevel', JSON.stringify({performanceLevel: 0}))
 							reset({action:'levelSelectHealthCheck', level: 0, autoStart: false})
 							setTimeout(() => {
@@ -99,7 +99,7 @@ var Stats = function () {
 						}
 						if(window.appConfig.healthCheck.averageFPS < 50 && window.appConfig.healthCheck.averageFPS > 45) {//1
 							window.appConfig.performanceLevel = 1
-							document.querySelector('#controls-toggle-button').textContent = "SWIPE"
+							// document.querySelector('#controls-toggle-button').textContent = "SWIPE"
 							window.localStorage.setItem('performanceLevel', JSON.stringify({performanceLevel: 1}))
 
 							reset({action:'levelSelectHealthCheck', level: 0, autoStart: false})
@@ -109,7 +109,7 @@ var Stats = function () {
 							}, 2000)
 						}
 						if(window.appConfig.performanceLevel === 2) {//2
-							document.querySelector('#controls-toggle-button').textContent = "SWIPE"
+							// document.querySelector('#controls-toggle-button').textContent = "SWIPE"
 							window.localStorage.setItem('performanceLevel', JSON.stringify({performanceLevel: 2}))
 							reset({action:'levelSelectHealthCheck', level: 0, autoStart: false})
 							setTimeout(() => {
