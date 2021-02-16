@@ -119,9 +119,9 @@
         bumperGroup: 0,
         prize: 0
       },
-      currentStage: hasPerformanceReport ? 'STAGE3' : 'STAGE5',
+      currentStage: hasPerformanceReport ? 'STAGE0' : 'STAGE5',
       stagesArray: ['STAGE0', 'STAGE1', 'STAGE2', 'STAGE3', 'STAGE4', 'STAGE5'],
-      currentStageIndex: hasPerformanceReport ? 0 : 3,
+      currentStageIndex: hasPerformanceReport ? 0 : 5,
       musicTurnedOn: true,
       sfxTurnedOn: true,
       howlSounds: {
@@ -1073,8 +1073,10 @@
       const coins = [];
       window.appConfig.coins = coins;
 
-      const beamMaterial = new THREE.MeshPhongMaterial({
+      window.appConfig.beamMaterial = new THREE.MeshPhongMaterial({
         color: 0xffffff,
+        transparent: true,
+        opacity: 1
       })
 
       const beamCapGeometry = new THREE.BoxGeometry(1.45, 2, 1.45)
@@ -1087,7 +1089,7 @@
         let beam0 = new Physijs.BoxMesh(
           beamBox,
           Physijs.createMaterial(
-            beamMaterial,
+            window.appConfig.beamMaterial,
             0.6,
             0.1
           ),
@@ -1098,7 +1100,7 @@
           const beam0cap0 = new Physijs.BoxMesh(
             beamCapGeometry,
             Physijs.createMaterial(
-              beamMaterial,
+              window.appConfig.beamMaterial,
               0.6,
               0.1
             ),
@@ -1108,7 +1110,7 @@
           const beam0cap1 = new Physijs.BoxMesh(
             beamCapGeometry,
             Physijs.createMaterial(
-              beamMaterial,
+              window.appConfig.beamMaterial,
               0.6,
               0.1
             ),
@@ -1959,6 +1961,8 @@
         components: {
           stageInit: () => {
             window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
+            window.appConfig.stages[window.appConfig.currentStage].data.portals = []
+
             document.body.style.background = window.appConfig.stages.components.background(
               .5,
               window.appConfig.stages[window.appConfig.currentStage].backgroundColors
@@ -2550,6 +2554,11 @@
             createBackgroundAnimation()
           },
           init: () => {
+
+            window.appConfig.timers.activeTimers.push(
+              window.appConfig.timers.addPortalToStage({x: 10, y: -20, z: -5}, 'STAGE_END_0')
+            )
+
             window.appConfig.stages.components.createBumper("STAGE0BUMPER0", 1, { x: -70, y: -72.5, z: 0 }, 5)
             window.appConfig.stages.components.createBumper("STAGE0BUMPER1", 1, { x: 70, y: -72.5, z: 0 }, 5)
             window.appConfig.stages.components.createBumper("STAGE0BUMPER2", 1, { x: -70, y: 72.5, z: 0 }, 5)
@@ -2706,7 +2715,7 @@
             const stage0MainBeamStructure4 = createStage0MainBeamStructure(
               14,
               0.575,
-              "STAGE0MAINSTRUCTURE4"
+              "STAGE0MAINSTRUCTURE4_ZONE-WALL"
             );
             scene.add(stage0MainBeamStructure4);
 
@@ -6250,8 +6259,8 @@
         color: 0xffffff,
         reflectivity: 100,
         transparent: true,
-        opacity: 0.5,
-        specular: 0x050505,
+        opacity: 1,
+        specular: 0xffffff,
         shininess: 200
       })
       window.appConfig.superBallMaterial = superBallMaterial
@@ -6264,6 +6273,68 @@
           sphereTeleportationGeometry,
           superBallMaterial
         )
+      }
+
+      const portalGeometry = new THREE.TorusGeometry(
+        4, 1.1, 5, 8
+      )
+
+      const portalMeshSpaceMaterial = new THREE.MeshPhongMaterial(
+        {
+          color: new THREE.Color(0x000000),
+          reflectivity: 100,
+          specular: 0xffffff,
+          shininess: 200
+        }
+      )
+      new THREE.Color(0x000000)
+
+      window.appConfig.portalMesh = () => {
+        let theMesh = new THREE.Mesh(
+          portalGeometry,
+          new THREE.MeshPhongMaterial(
+            {
+              transparent: true,
+              opacity: 0,
+              color: new THREE.Color(0x000000)
+            }
+          )
+        )
+        theMesh.name = window.appConfig.currentStage + "_" + Math.round(Math.random() * 10000)
+        let theSpaceSphere = new THREE.Mesh(
+          new THREE.DodecahedronGeometry(1, 2),
+          portalMeshSpaceMaterial
+        )
+        theSpaceSphere.scale.x = 0
+        theSpaceSphere.scale.y = 0
+        theSpaceSphere.scale.z = 0
+        theSpaceSphere.name = 'THE_SPACE_SPHERE'
+
+        theMesh.add(theSpaceSphere)
+        let theSpritePoints = []
+        theMesh.geometry.vertices.forEach((p, pi) => {
+          // if(pi % 3 === 0){
+            theSpritePoints.push(p)
+          // }
+        })
+        theSpritePoints.forEach((sp, spi) => {
+          let theSprite = new THREE.Mesh(
+            new THREE.PlaneGeometry(.5, .5, 1, 1),
+            spi % 2 === 0 ? window.appConfig.superBallMaterial : portalMeshSpaceMaterial
+          )
+          theSprite.oPosition = {}
+          theSprite.oPosition.x = sp.x
+          theSprite.oPosition.y = sp.y
+          theSprite.oPosition.z = sp.z
+          theSprite.position.x = sp.x
+          theSprite.position.y = sp.y
+          theSprite.position.z = sp.z
+          theMesh.add(theSprite)
+        })
+        theMesh.activated = false
+        console.log(theSpritePoints)
+        // debugger
+        return theMesh
       }
 
       window.appConfig.superBallHandleCollision = function (other_object, the_object) {
@@ -6696,6 +6767,128 @@
           }
         }
       },
+      addPortalToStage: (thePortal, name = '') => {
+        let portalMesh = window.appConfig.portalMesh()
+        return {
+          started: 0,
+          ended: 0,
+          percentComplete: 0,
+          time: 2000,
+          timeLeft: 0,
+          currentTime: 0,
+          name: 'PORTAL_' + name + String(Math.round(Math.random() * 1000)),
+          id: Math.round(Math.random() * 10000),
+          startedCallback: (percentComplete) => {
+            portalMesh.position.x = thePortal.x
+            portalMesh.position.y = thePortal.y
+            portalMesh.position.z = thePortal.z
+            scene.add(portalMesh)
+            portalMesh.name = window.appConfig.currentStage + '_PORTAL_MESH__' + name
+            window.appConfig.stages[window.appConfig.currentStage].data.portals.push(portalMesh)
+          },
+          activeCallback: (percentComplete) => {
+            portalMesh.material.opacity = percentComplete * .85
+          },
+          completedCallback: () => {
+            console.log('portal completed')
+          }
+        }
+      },
+      activatePortalToStage: (thePortalMesh) => {
+        let thePortalMeshSpaceSphere = thePortalMesh.children.find(c => c.name === 'THE_SPACE_SPHERE')
+        let theSphere = scene.children.find((obj) => obj.name === 'SPHERE0')
+        let theGradientCurtain = document.querySelector('#gradient-curtain')
+        return {
+          started: 0,
+          ended: 0,
+          percentComplete: 0,
+          time: 4000,
+          timeLeft: 0,
+          currentTime: 0,
+          name: 'PORTAL_' + name + String(Math.round(Math.random() * 1000)),
+          id: Math.round(Math.random() * 10000),
+          startedCallback: (percentComplete) => {
+            // // portalMesh.position.x = thePortal.x
+            // // portalMesh.position.y = thePortal.y
+            // // portalMesh.position.z = thePortal.z
+            // // scene.add(portalMesh)
+            // portalMesh.name = window.appConfig.currentStage + '_PORTAL_MESH__' + name
+            // window.appConfig.stages[window.appConfig.currentStage].data.portals.push(portalMesh)
+          },
+          activeCallback: (thePercentComplete) => {
+            let percentComplete = thePercentComplete
+            if(thePercentComplete < .51) {
+              percentComplete = thePercentComplete * 2
+              if(percentComplete > 1) {
+                percentComplete = 1
+              }
+              thePortalMeshSpaceSphere.material.opacity = percentComplete
+              thePortalMeshSpaceSphere.scale.x = percentComplete * 6         
+              thePortalMeshSpaceSphere.scale.y = percentComplete * 6         
+              thePortalMeshSpaceSphere.scale.z = percentComplete * 6
+              thePortalMeshSpaceSphere.position.z = ((1 - percentComplete) * -5) + (5 * percentComplete)
+              let theNewPositionX = (thePortalMesh.position.x * percentComplete) + (theSphere.position.x * (1 - percentComplete))
+              let theNewPositionY = (thePortalMesh.position.y * percentComplete) + (theSphere.position.y * (1 - percentComplete))
+              window.appConfig.positionBall({x: theNewPositionX, y: theNewPositionY, z: 0})      
+            }
+            if(thePercentComplete > .5) {
+              window.appConfig.positionBall({x: thePortalMesh.position.x, y: thePortalMesh.position.y, z: 0})
+              let teardownPercentComplete = (thePercentComplete - .5) * 2
+              console.log(teardownPercentComplete)
+              theGradientCurtain.style.opacity = (thePercentComplete - .5) * 2
+            }
+          },
+          completedCallback: () => {
+            let removalArray = []
+            window.appConfig.activeTransforms = []
+            // scene.children.forEach(c => {
+            //   if(c.name && c.material && c.name.indexOf(window.appConfig.currentStage) > -1 && c.name.indexOf('BGGROUP') === -1) {
+            //     // // console.log(c)
+            //     // console.log(c.material, c.material.opacity)
+            //     // c.material.opacity = 1 - teardownPercentComplete                  
+            //     removalArray.push(c.uuid)
+            //   }
+            // })
+            // scene.children.forEach(c => {
+            //   if ((c.name.indexOf(window.appConfig.currentStage) > -1) || (c.featureType && c.featureType === "COIN")) {
+            //     removalArray.push(c.uuidsToRemove)
+            //   }
+            // })
+
+            // removalArray.forEach(uuid => {
+            //   let foundRemovalItem = scene.children.find(r => (r.uuid === uuid && r.uuid !== undefined))
+            //   // scene.remove(scene.children.find(r => r.uuid === uuid))
+            // })
+            let stage = window.appConfig.currentStage
+            window.appConfig.coins = []
+            const uuidsToRemove = []
+            scene.children.forEach(c => {
+              if (((c.name.indexOf(stage) > -1) || (c.featureType && c.featureType === "COIN")) && c.name.indexOf('BGGROUP') === -1 && c.name.indexOf('ZONE-WALL') === -1) {
+                uuidsToRemove.push(c.uuid)
+              }
+            })
+            uuidsToRemove.forEach(uuid => {
+              const foundIt = scene.children.find(c => c.uuid === uuid)
+              scene.remove(foundIt)
+            })
+
+            // console.log(removalArray)
+            // debugger
+            let timersCopy = []
+            window.appConfig.timers.activeTimers.forEach(at => {
+              if(at.name.indexOf('SAPPHIRE') === -1) {
+                timersCopy.push(at)
+              }
+            })
+            window.appConfig.timers.activeTimers = timersCopy
+
+            window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName())
+
+            console.log(removalArray)
+            console.log('portal completed')
+          }
+        }
+      },
       initialBallZoom: () => {
         return {
           started: 0,
@@ -6711,7 +6904,7 @@
           }
         }
       },
-      countdownName: (action) => {
+      countdownName: () => {
         return {
           started: 0,
           ended: 0,
@@ -7172,14 +7365,14 @@
       if (appTimers.activeTimers.length > 0) {
         let removeTimersArray = []
         appTimers.activeTimers.forEach((t, ti) => {
-          if (appTimers.activeTimers[ti].started === 0) {
+          if (appTimers.activeTimers[ti] && appTimers.activeTimers[ti].started === 0) {
             appTimers.activeTimers[ti].started = currentTime
             appTimers.activeTimers[ti].currentTime = currentTime
             if (appTimers.activeTimers[ti].startedCallback) {
               appTimers.activeTimers[ti].startedCallback(appTimers.activeTimers[ti].percentComplete)
             }
           }
-          if (appTimers.activeTimers[ti].started !== 0 && appTimers.activeTimers[ti].ended === 0) {
+          if (appTimers.activeTimers[ti] && appTimers.activeTimers[ti].started !== 0 && appTimers.activeTimers[ti].ended === 0) {
             appTimers.activeTimers[ti].currentTime = currentTime
             appTimers.activeTimers[ti].percentComplete = (currentTime - appTimers.activeTimers[ti].started) / appTimers.activeTimers[ti].time;
             appTimers.activeTimers[ti].timeLeft = (currentTime - appTimers.activeTimers[ti].started)
@@ -7303,6 +7496,33 @@
             }
           })
         }
+      }
+
+      if(window.appConfig.stages[window.appConfig.currentStage].data.portals.length > 0 && window.appConfig.pause === false) {
+        window.appConfig.stages[window.appConfig.currentStage].data.portals.forEach( p => {
+          // if(currentTime % 2 === 0) {
+            p.rotation.z += .01
+            p.children.forEach((pc, pci) => {
+              if(pc.oPosition) {
+                pc.position.x = pc.oPosition.x * lfo(500 + (pci + 1) * 125) * 2
+                pc.position.y = pc.oPosition.y * lfo(500 + (pci + 1) * 100) * 2
+                pc.position.z = pc.oPosition.z * lfo(500 + (pci + 1) * 75) * 2
+                pc.rotation.x = lfo(500 + (pci + 1) * 125) * 1.125
+                pc.rotation.y = lfo(500 + (pci + 1) * 100) * 1.125
+                pc.rotation.z = lfo(500 + (pci + 1) * 75) * 1.125
+              }
+            })
+          // }
+          p.material.color = window.appConfig.superBallMaterial.color
+          // console.log(sphere.position.distanceTo(p.position))
+          if(sphere.position.distanceTo(p.position) < 7.5 && p.activated === false) {
+            p.activated = true
+            window.appConfig.timers.activeTimers.push(
+              window.appConfig.timers.activatePortalToStage(p)
+            )
+            console.log('PORTAL ACTIVATE!')
+          }
+        })
       }
 
       if (window.appConfig.performanceLevel > 0 && currentTime % 5 < 1) {
