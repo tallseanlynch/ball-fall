@@ -164,7 +164,17 @@
         ["#f49ac1", "#f06eaa", "#ec008c", "#9e005d", "#7b0046"],//14 magenta
         ["#f5989d", "#f26d7d", "#ed145b", "#9e0039", "#7a0026"]//15 cool red
       ],
-      performanceLevel: 2
+      performanceLevel: 2,
+      blueIslandPoints: [
+        { position: { x: 0, y: 325, z: 0 } },
+        { position: { x: 0, y: 275, z: 0 } },
+        { position: { x: 25, y: 300, z: 0 } },
+        { position: { x: -25, y: 300, z: 0 } },
+        { position: { x: 0, y: 345, z: 0 } },
+        { position: { x: 0, y: 255, z: 0 } },
+        { position: { x: 45, y: 300, z: 0 } },
+        { position: { x: -45, y: 300, z: 0 } },
+      ]
     };
 
     const localStorageData = {
@@ -1292,6 +1302,12 @@
       const tripleHex = 0x159294;
       const doubleHex = 0xffa6bb;
       const singleHex = 0xffd5c9;
+      const blueTripleHex = 0x0b3d8b;
+      const blueDoubleHex = 0x0f52ba;
+      const blueSingleHex = 0x2875ee;
+      // const blueTripleHex = 0x159294;
+      // const blueDoubleHex = 0xffa6bb;
+      // const blueSingleHex = 0xffd5c9;
       const tripleScale = 2;
       const doubleScale = 1.5;
       const singleScale = 1;
@@ -1299,7 +1315,7 @@
       const yScaleMod = 1;
       const zScaleMod = 0.5;
       const crystalMaterialOptions = {
-        color: 0x000000,
+        // color: 0x000000,
         specular: 0x050505,
         shininess: 100
       };
@@ -1321,24 +1337,67 @@
           pulsing: new THREE.MeshPhongMaterial()
         }
       ]
-      const crystal = (size = 0, p = { x: 0, y: 0, z: 0 }) => {
+      window.appConfig.blueCrystalMaterials = [
+        {
+          standard: new THREE.MeshPhongMaterial({ ...crystalMaterialOptions, color: blueSingleHex }),
+          pulsing: new THREE.MeshPhongMaterial({ ...crystalMaterialOptions, color: blueSingleHex })
+        },
+        {
+          standard: new THREE.MeshPhongMaterial({ ...crystalMaterialOptions, color: blueDoubleHex }),
+          pulsing: new THREE.MeshPhongMaterial({ ...crystalMaterialOptions, color: blueDoubleHex })
+        },
+        {
+          standard: new THREE.MeshPhongMaterial({ ...crystalMaterialOptions, color: blueTripleHex }),
+          pulsing: new THREE.MeshPhongMaterial({ ...crystalMaterialOptions, color: blueTripleHex })
+        },
+        {
+          standard: new THREE.MeshPhongMaterial(),
+          pulsing: new THREE.MeshPhongMaterial()
+        }
+      ]
+      const crystal = (size = 0, p = { x: 0, y: 0, z: 0 }, isBlueIsland = false) => {
         let coin
         if (window.appConfig.performanceLevel > 0) {
           coin = new THREE.Mesh();
-          const crystalTop = new THREE.Mesh(
-            crystalTopGeometry,
-            window.appConfig.crystalMaterials[size].standard
-          );
-          crystalTop.translateY(0.75);
-          const crystalMiddle = new THREE.Mesh(
-            crystalMiddleGeometry,
-            window.appConfig.crystalMaterials[size].standard
-          );
+          let crystalTop, crystalMiddle, crystalBottom, coinMaterial
+          if (isBlueIsland === false) {
+            coinMaterial = window.appConfig.crystalMaterials[size].standard
 
-          const crystalBottom = new THREE.Mesh(
-            crystalBottomGeometry,
-            window.appConfig.crystalMaterials[size].standard
-          );
+            crystalTop = new THREE.Mesh(
+              crystalTopGeometry,
+              coinMaterial
+            );
+            crystalTop.translateY(0.75);
+            crystalMiddle = new THREE.Mesh(
+              crystalMiddleGeometry,
+              coinMaterial
+            );
+
+            crystalBottom = new THREE.Mesh(
+              crystalBottomGeometry,
+              coinMaterial
+            );
+          }
+          if (isBlueIsland === true) {
+            console.log("size", size)
+            coinMaterial = window.appConfig.blueCrystalMaterials[size].standard
+
+            crystalTop = new THREE.Mesh(
+              crystalTopGeometry,
+              coinMaterial
+            );
+            crystalTop.translateY(0.75);
+            crystalMiddle = new THREE.Mesh(
+              crystalMiddleGeometry,
+              coinMaterial
+            );
+
+            crystalBottom = new THREE.Mesh(
+              crystalBottomGeometry,
+              coinMaterial
+            );
+
+          }
           crystalBottom.translateY(-0.75);
           coin.add(crystalTop);
           coin.add(crystalMiddle);
@@ -1432,6 +1491,9 @@
         window.appConfig.coins.push(coin);
         coin.size = size
         coin.spriteCapturable = true
+        if (isBlueIsland) {
+          coin.isBlueIsland = true
+        }
         return coin;
       };
 
@@ -1803,7 +1865,7 @@
       }
 
       window.appConfig.sapphires = []
-      const createSapphire = (p = { x: 0, y: 0, z: 0 }) => {
+      const createSapphire = (p = { x: 0, y: 0, z: 0 }, isBlueIsland = false) => {
         const sapphireShape = new THREE.Shape()
         sapphireShape.moveTo(0, .5)
         sapphireShape.lineTo(.5, 0)
@@ -1831,14 +1893,17 @@
         sapphire.scale.x = 2
         sapphire.scale.y = 2
         sapphire.scale.z = 2
-        // sapphire.material.color = window.appConfig.superBallMaterial.color
         sapphire.hasTarget = false
         sapphire.travelData = {}
         sapphire.activeCallback = () => {
           if (window.appConfig.start === true && window.appConfig.pause === false && window.appConfig.userHasEnded === false) {
             if (sapphire.hasTarget === false) {
-              const randomNum = Math.floor(Math.random() * window.appConfig.coins.length)
-              const targetCoin = window.appConfig.coins[randomNum]
+              let lengthVal = isBlueIsland ? window.appConfig.blueIslandPoints.length : window.appConfig.coins.length
+              const randomNum = Math.floor(Math.random() * lengthVal)
+              const targetCoin = isBlueIsland ? window.appConfig.blueIslandPoints[randomNum] : window.appConfig.coins[randomNum]
+              console.log("target coin", targetCoin)
+              // console.log("targetPosition", targetPosition)
+
               const v0 = new THREE.Vector2(sapphire.position.x, sapphire.position.y)
               const v1 = new THREE.Vector2()
               const v2 = new THREE.Vector2()
@@ -1874,12 +1939,23 @@
             sapphire.travelData = {}
           }
         }
-        sapphire.capturedCallback = () => {
-
+        if (isBlueIsland) {
+          sapphire.capturedCallback = () => {
+            const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
+            let superSounds
+            for (superSounds = 0; superSounds < 20; superSounds++) {
+              setTimeout(() => {
+                coinSounds[Math.round(Math.random() * (coinSounds.length - 1))].play()
+                const blueCoin = window.appConfig.stages.components.crystal(superSounds % 3, { x: sapphire.position.x + ((Math.random() * 25) - 12.5), y: sapphire.position.y + ((Math.random() * 20) - 10), z: 0 }, true)
+                scene.add(blueCoin)
+                console.log(blueCoin)
+              }, superSounds * 50)
+            }
+          }
         }
         sapphire.position.set(p.x, p.y, p.z)
 
-        sapphire.name = window.appConfig.currentStage + "SAPPHIRE" + Math.floor(Math.random() * 10000)
+        sapphire.name = window.appConfig.currentStage + "SAPPHIRE" + Math.floor(Math.random() * 10000) + isBlueIsland ? "_BLUEISLAND" : ""
         // sapphire.rotation.x = Math.PI / 2
         sapphire.__dirtyPosition = true
         sapphire.__dirtyRotation = true
@@ -2529,6 +2605,23 @@
               s: (config.s * 2.5) * .1 + performanceAdj + switchBeamAdj,
               switchBeam: config.receiver ? remoteSwitchBeamConfig() : normalSwitchBeamConfig
             })
+          },
+          createBlueIsland: (config) => {
+            const borders = window.appConfig.stages.components.createStage0MainBeamStructure(
+              4,
+              .5,
+              "BLUEISLAND",
+              { x: 0, y: 300 }
+            )
+            borders.rotation.z = Math.PI * .25
+            scene.add(borders)
+            window.appConfig.stages.components.createRuby({ x: 0, y: 325, z: 0 })
+            window.appConfig.stages.components.createRuby({ x: 0, y: 275, z: 0 })
+            window.appConfig.stages.components.createRuby({ x: 25, y: 300, z: 0 })
+            window.appConfig.stages.components.createRuby({ x: -25, y: 300, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: -25, y: 300, z: 0 }, true)
+            window.appConfig.stages.components.createSapphire({ x: -25, y: 300, z: 0 }, true)
+            window.appConfig.stages.components.createSapphire({ x: -25, y: 300, z: 0 }, true)
           }
         },
         STAGE0: {
@@ -2655,7 +2748,7 @@
             // window.appConfig.stages.components.createEmerald({ x: -25, y: 0, z: 0 })
             // window.appConfig.stages.components.createDiamond({ x: 25, y: 25, z: 0 })
             window.appConfig.stages.components.createDiamond({ x: -57, y: -1.25, z: 0 })
-
+            window.appConfig.stages.components.createBlueIsland()
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createSwitchBeamWall = window.appConfig.stages.components.createSwitchBeamWall
             const createRemoteSwitch = window.appConfig.stages.components.createRemoteSwitch
@@ -6544,9 +6637,8 @@
                 theCoin.spriteFetching = sprite0
               }
             } else if (sprite0.isFetchingCoin && window.appConfig.start && !window.appConfig.pause) {
-
               sprite0.fetchData.target.children.forEach(child => {
-                child.material = window.appConfig.crystalMaterials[sprite0.fetchData.target.size].pulsing
+                child.material = sprite0.fetchData.target.isBlueIsland === true ? window.appConfig.blueCrystalMaterials[sprite0.fetchData.target.size].pulsing : window.appConfig.crystalMaterials[sprite0.fetchData.target.size].pulsing
               })
               let percentComplete = window.appConfig.timers.data[`spriteFetch${sprite0.num}`].percentComplete
               if (percentComplete < .5) {
@@ -7480,10 +7572,10 @@
         window.appConfig.start === false &&
         window.appConfig.pause === false //|| window.appConfig.toggleGravity === true
       ) {
-        // if (window.appConfig.start === false) {
-        //   // sphere.position.set(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition); //initial sphere position
-        //   // sphere.position.set(0, 110, 0); //initial sphere position
-        // }
+        if (window.appConfig.start === false) {
+          // sphere.position.set(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition); //initial sphere position
+          sphere.position.set(0, 300, 0); //initial sphere position
+        }
         sphere
           .setLinearVelocity(new THREE.Vector3(0, 0, 0));
         sphere
@@ -7652,6 +7744,12 @@
         cm.pulsing.color.setHSL(newHsl.h, newHsl.s, newHsl.l)
       })
 
+      window.appConfig.blueCrystalMaterials.forEach(cm => {
+
+        const newHsl = colorLightnessLfo(cm.pulsing.color, 268)
+        cm.pulsing.color.setHSL(newHsl.h, newHsl.s, newHsl.l)
+      })
+
 
       const sphereLinearVelocityLength = sphere.getLinearVelocity().length()
       const xCoinMod = 2 + sphereLinearVelocityLength * .03
@@ -7677,7 +7775,7 @@
         }
       }
 
-      if (potentiallyGrabbedCoin) {
+      if (potentiallyGrabbedCoin !== undefined) {
         const coinValue = potentiallyGrabbedCoin.coinValue
         const prizeValue = potentiallyGrabbedCoin.prizeValue
         if (potentiallyGrabbedCoin.spriteFetching) {
@@ -7752,6 +7850,10 @@
           newTimer.addEventListener("targetAchieved", function (e) {
             startStageEnd()
           })
+        }
+
+        if (potentiallyGrabbedCoin.capturedCallback) {
+          potentiallyGrabbedCoin.capturedCallback()
         }
       }
 
