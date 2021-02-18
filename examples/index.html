@@ -1885,6 +1885,13 @@
         sapphire.__dirtyRotation = true
         sapphire.coinValue = 2500
         scene.add(sapphire)
+
+        // wireframe
+        let sapphireGeoLine = new THREE.EdgesGeometry(sapphire.geometry)
+        let mat = new THREE.LineBasicMaterial({color: sapphireColor, linewidth: 1})
+        let wireframe = new THREE.LineSegments(sapphireGeoLine, mat)
+        sapphire.add(wireframe)
+
         window.appConfig.sapphires.push(sapphire)
         window.appConfig.coins.push(sapphire)
       }
@@ -1933,6 +1940,13 @@
         ruby.name = window.appConfig.currentStage + "RUBY" + Math.floor(Math.random() * 10000)
         ruby.coinValue = 5000
         scene.add(ruby)
+
+        // wireframe
+        let rubyGeoLine = new THREE.EdgesGeometry(ruby.geometry)
+        let mat = new THREE.LineBasicMaterial({color: 0xff0000, linewidth: 1})
+        let wireframe = new THREE.LineSegments(rubyGeoLine, mat)
+        ruby.add(wireframe)
+
         window.appConfig.coins.push(ruby)
       }
 
@@ -1973,9 +1987,130 @@
         emerald.position.set(p.x, p.y, p.z)
         emerald.name = window.appConfig.currentStage + "EMERALD" + Math.floor(Math.random() * 10000)
         emerald.coinValue = 10000
+
+        // wireframe
+        let emeraldGeoLine = new THREE.EdgesGeometry(emeraldGeo)
+        let mat = new THREE.LineBasicMaterial({color: 0xffffff, linewidth: 1})
+        let wireframe = new THREE.LineSegments(emeraldGeoLine, mat)
         scene.add(emerald)
+        emerald.add(wireframe)
         window.appConfig.coins.push(emerald)
       }
+
+
+
+      const createBlackHole = (config) => {
+        let blackHoleMaterial = new THREE.MeshPhongMaterial(
+          {
+            color: new THREE.Color(0x000000),
+            reflectivity: 100,
+            specular: 0xffffff,
+            shininess: 200
+          }
+        )
+
+        let theBlackHoleGeo = new THREE.SphereGeometry(1, 16, 32)
+        let theBlackHoleMesh = new THREE.Mesh(theBlackHoleGeo, blackHoleMaterial)
+        scene.add(theBlackHoleMesh)
+        theBlackHoleMesh.position.x = config.position.x
+        theBlackHoleMesh.position.y = config.position.y
+        theBlackHoleMesh.position.z = config.position.z
+        theBlackHoleMesh.scale.x = config.scale.x * 2
+        theBlackHoleMesh.scale.y = config.scale.y * 2
+        theBlackHoleMesh.scale.z = config.scale.z * 2
+
+        theBlackHoleMesh.name = window.appConfig.currentStage + "_BLACK_HOLE"
+
+        const createSpriteCircles = (
+          s,
+          n = 4
+        ) => {
+
+          let spriteGroup = new THREE.Group()
+          
+          var ellipse = new THREE.EllipseCurve(0, 0, s, s, 0, 2.0 * Math.PI, false);
+          var ellipsePath = new THREE.CurvePath();
+          ellipsePath.add(ellipse);
+          var ellipseGeometry = ellipsePath.createPointsGeometry(n);
+          
+          let spritePlane = () => new THREE.Mesh(
+            theBlackHoleGeo,
+            blackHoleMaterial          
+          )
+
+          let i = 0;
+          for (i; i < ellipseGeometry.vertices.length - 1; i++) {
+            let id = Math.round(Math.random() * 100000)
+            let theSprite = spritePlane()
+            theSprite.scale.x = config.scale.x * .33
+            theSprite.scale.y = config.scale.y * .33
+            theSprite.scale.z = config.scale.z * .33
+            theSprite.position.x = ellipseGeometry.vertices[i].x * s
+            theSprite.position.y = ellipseGeometry.vertices[i].y * s
+            theSprite.position.z = 0
+            theSprite.name = id
+            spriteGroup.add(theSprite)
+          }
+
+          theBlackHoleMesh.add(spriteGroup)
+          window.appConfig.stages[window.appConfig.currentStage].data.blackHoles.push(theBlackHoleMesh)
+          // window.appConfig.timers.activeTimers.push(
+            // blackHole            
+            // window.appConfig.timers.demateralizeMesh(spriteGroup)
+          // )
+        }
+        createSpriteCircles(.75, 4)
+      }
+
+
+
+
+
+      const demateralizeMesh = (dMesh, scaleAdj = 2) => {
+        let theDSpriteMaterial = new THREE.MeshPhongMaterial({
+          color: new THREE.Color().copy(dMesh.material.color),
+          transparent: true,
+          opacity: 1
+        })
+        const createSpriteCircles = (
+          s,
+          n = 4
+        ) => {
+
+          let spriteGroup = new THREE.Group()
+          
+          var ellipse = new THREE.EllipseCurve(0, 0, s, s, 0, 2.0 * Math.PI, false);
+          var ellipsePath = new THREE.CurvePath();
+          ellipsePath.add(ellipse);
+          var ellipseGeometry = ellipsePath.createPointsGeometry(n);
+          
+          let spritePlane = () => new THREE.Mesh(
+            new THREE.PlaneGeometry(.25, .25, 1, 1),
+            theDSpriteMaterial          
+          )
+
+          let i = 0;
+          for (i; i < ellipseGeometry.vertices.length - 1; i++) {
+            let id = Math.round(Math.random() * 100000)
+            let theSprite = spritePlane()
+            theSprite.scale.x = dMesh.scale.x * scaleAdj
+            theSprite.scale.y = dMesh.scale.y * scaleAdj
+            theSprite.scale.z = dMesh.scale.z * scaleAdj
+            theSprite.position.x = dMesh.position.x + ellipseGeometry.vertices[i].x * s
+            theSprite.position.y = dMesh.position.y + ellipseGeometry.vertices[i].y * s
+            theSprite.position.z = 0
+            theSprite.name = id
+            spriteGroup.add(theSprite)
+          }
+
+          scene.add(spriteGroup)
+          window.appConfig.timers.activeTimers.push(
+            window.appConfig.timers.demateralizeMesh(spriteGroup)
+          )
+        }
+        createSpriteCircles(1, 4)
+      }
+
 
       const createDiamond = (p = { x: 0, y: 0, z: 0 }) => {
         const diamondMaterial = new THREE.MeshPhongMaterial({
@@ -2016,14 +2151,33 @@
         diamond.name = window.appConfig.currentStage + "DIAMOND" + Math.floor(Math.random() * 10000)
         diamond.coinValue = 25000
         scene.add(diamond)
+
+        // wireframe
+        let diamondGeoLine = new THREE.EdgesGeometry(diamond.geometry)
+        let mat = new THREE.LineBasicMaterial({color: 0xffffff, linewidth: 1})
+        let wireframe = new THREE.LineSegments(diamondGeoLine, mat)
+
+
+        // wireframe
+        let diamondGeoLineChild = new THREE.EdgesGeometry(diamond.children[0].geometry)
+        let matChild = new THREE.LineBasicMaterial({color: 0xffffff, linewidth: 1})
+        let wireframeChild = new THREE.LineSegments(diamondGeoLineChild, matChild)
+        wireframeChild.position.y = 1.5
+
+        scene.add(diamond)
+        diamond.add(wireframe)
+        diamond.add(wireframeChild)
         window.appConfig.coins.push(diamond)
       }
       window.appConfig.stages = {
         components: {
+          createBlackHole: createBlackHole,
+          demateralizeMesh: demateralizeMesh,
           stageInit: () => {
             window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
             window.appConfig.stages[window.appConfig.currentStage].data.portals = []
-
+            window.appConfig.stages[window.appConfig.currentStage].data.gemSuperBalls = 0
+            window.appConfig.stages[window.appConfig.currentStage].data.blackHoles = []
             document.body.style.background = window.appConfig.stages.components.background(
               .5,
               window.appConfig.stages[window.appConfig.currentStage].backgroundColors
@@ -2450,8 +2604,7 @@
               return transmitterSphereMesh
             }
 
-            const generate10PointsBetweenTwo3dObjects = (start3d, end3d) => {
-              const nPoints = 10
+            const generatePointsBetweenTwo3dObjects = (start3d, end3d, nPoints = 10) => {
               let iPoint
               let points = []
               const percentRatio = 1 / (nPoints + 2)
@@ -2461,9 +2614,9 @@
               const worldEnd3d = end3d.getWorldPosition(worldEnd3dVector)
               for (iPoint = 0; iPoint < nPoints; iPoint++) {
                 points.push({
-                  x: ((worldStart3d.x * ((nPoints - iPoint) * .1)) + (worldEnd3d.x * ((iPoint) * .1))),
-                  y: ((worldStart3d.y * ((nPoints - iPoint) * .1)) + (worldEnd3d.y * ((iPoint) * .1))),
-                  z: ((worldStart3d.z * ((nPoints - iPoint) * .1)) + (worldEnd3d.z * ((iPoint) * .1)))
+                  x: (worldStart3d.x * (1 - (iPoint/nPoints))) + (worldEnd3d.x * (iPoint/nPoints)),
+                  y: (worldStart3d.y * (1 - (iPoint/nPoints))) + (worldEnd3d.y * (iPoint/nPoints)),
+                  z: (worldStart3d.z * (1 - (iPoint/nPoints))) + (worldEnd3d.z * (iPoint/nPoints))
                 })
               }
               // console.log(points)
@@ -2474,7 +2627,7 @@
               const transmitterGroup = new THREE.Group()
               const startPosition = start3d.position
               const endPosition = end3d.position
-              const points = generate10PointsBetweenTwo3dObjects(start3d.children[1], end3d.children[1])
+              const points = generatePointsBetweenTwo3dObjects(start3d.children[1], end3d.children[1], 20)
               points.forEach((p, pi) => {
                 if (pi > 0 && pi < points.length) {
                   transmitterGroup.add(transmitterSphere({ p: p }))
@@ -2483,7 +2636,7 @@
               transmitterGroup.transmitter = start3d
               transmitterGroup.receiver = end3d
               transmitterGroup.updatePoints = () => {
-                const newPoints = generate10PointsBetweenTwo3dObjects(start3d.children[1], end3d.children[1])
+                const newPoints = generatePointsBetweenTwo3dObjects(start3d.children[1], end3d.children[1], 20)
                 transmitterGroup.children.forEach((c, ci) => {
                   c.position.x = newPoints[ci + 1].x
                   c.position.y = newPoints[ci + 1].y
@@ -2617,8 +2770,10 @@
           init: () => {
 
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 10, y: -20, z: -5 }, 'STAGE_END_0')
+              window.appConfig.timers.addPortalToStage({ x: 10, y: -20, z: -5 }, 'STAGE_END_0', { x: 0, y: 0, z: 0 })
             )
+
+            window.appConfig.stages.components.createBlackHole({position: {x: 0, y: 30, z: 0}, scale: {x: 2, y: 2, z: 2}})
 
             window.appConfig.stages.components.createBumper("STAGE0BUMPER0", 1, { x: -70, y: -72.5, z: 0 }, 5)
             window.appConfig.stages.components.createBumper("STAGE0BUMPER1", 1, { x: 70, y: -72.5, z: 0 }, 5)
@@ -6400,6 +6555,13 @@
 
       window.appConfig.superBallHandleCollision = function (other_object, the_object) {
         if (other_object.name === 'SPHERE0') {
+          if(window.appConfig.stages[window.appConfig.currentStage].data.gemSuperBalls < 8) {
+            window.appConfig.stages[window.appConfig.currentStage].data.gemSuperBalls++
+            console.log('GEM SUPERBALLS - ' + window.appConfig.stages[window.appConfig.currentStage].data.gemSuperBalls)
+            if(window.appConfig.stages[window.appConfig.currentStage].data.gemSuperBalls === 8) {
+              console.log('ALL GEM SUPERBALLS COLLECTED!')
+            }
+          }
           window.appConfig.timers.activeTimers.push(window.appConfig.timers.superBallTeleport(the_object))
           const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
           let superSounds
@@ -6632,7 +6794,92 @@
       window.appConfig.debugger = !window.appConfig.debugger
     }
 
+    window.appConfig.handleBlackHole = (bh) => {
+      let theSphere = scene.children.find((obj) => obj.name === 'SPHERE0')
+      let bhSprites = bh.children[0].children
+      bhSprites.forEach((bhSprite, bhi) => {
+        bhSprite.position.x = lfo(2500 + (bhi * 100)) * .4
+        bhSprite.position.y = lfo(1500 + (bhi * 100)) * .4
+      })
+      // debugger
+      let distMod = .1
+      // bh.position.x = lfo(10750) * 100
+      // bh.position.y = lfo(8125) * 100
+      if(typeof theSphere.position.x === "number") {
+        bh.position.lerp(theSphere.position, .001)
+        bh.scale.x += .005
+        bh.scale.y += .005
+        bh.scale.z += .005
+        // let distX = bh.position.x - theSphere.position.x * -1
+        // let distY = bh.position.y - theSphere.position.y * -1
+        // bh.position.x += distX * distMod
+        // bh.position.y += distY * distMod
+        let distanceToSphere = bh.position.distanceTo(theSphere.position)
+        let currentTimeAdj = new Date().getTime()
+        if(distanceToSphere < (25 + (bh.scale.x * .1)) && currentTimeAdj % 5 === 0) {
+          let sphereLinearVelocity = theSphere._physijs.linearVelocity 
+          let velocityRise = bh.position.y - theSphere.position.y
+          let velocityRun = bh.position.x - theSphere.position.x
+          let velocityAdj = new THREE.Vector3(velocityRun, velocityRise, 0).normalize().multiplyScalar(distanceToSphere/2)
+          let newVelocity = sphereLinearVelocity.add(velocityAdj)
+          theSphere.setLinearVelocity(newVelocity)
+        }
+        if(currentTimeAdj % 10 === 0) {
+          // window.appConfig.timers.activeTimers.push(
+            window.appConfig.stages.components.demateralizeMesh(bh, Math.random() * .5)
+          // )
+        }
+        bh.material.opacity = .98 + (lfo(500) * .2)
+      }
+
+      // let theNewPositionX = ((bh.position.x * .99) + (theSphere.position.x * .01))/2
+      // let theNewPositionY = ((bh.position.y * .99) + (theSphere.position.y * .01))/2
+      // bh.position.x = theNewPositionX
+      // bh.position.y = theNewPositionY
+      // window.appConfig.positionBall({ x: theNewPositionX, y: theNewPositionY, z: 0 })
+    }
+
     const timers = {
+      demateralizeMesh: (dMesh) => {
+        const name = dMesh.name + Math.round(Math.random() * 10000)
+        const dMeshLfoAdj = Math.round(Math.random() * 1000)
+        return {
+          started: 0,
+          ended: 0,
+          percentComplete: 0,
+          time: 2500,
+          timeLeft: 0,
+          currentTime: 0,
+          name: name,
+          id: Math.round(Math.random() * 10000),
+          // startedCallback: () => {
+          //   // debugger
+          //   window.appConfig.stages.components.demateralizeMesh(dMesh)
+          // },
+          activeCallback: (percentComplete) => {
+            dMesh.children.forEach((pc, pci) => {
+                pc.position.x += lfo(500 + dMeshLfoAdj + (pci + 1)) / 10
+                pc.position.y += lfo(750 + dMeshLfoAdj + (pci + 1)) / 10
+                pc.position.z += lfo(1000 + (pci + 1)) / 10
+
+                pc.rotation.x = lfo(500 + (pci + 1)) * 1.125
+                pc.rotation.y = lfo(500 + (pci + 1)) * 1.125
+                pc.rotation.z = lfo(500 + (pci + 1)) * 1.125
+
+                if(percentComplete < .25) {
+                  pc.material.opacity = percentComplete * 4
+                }
+                if(percentComplete > .75) {
+                  pc.material.opacity = 1 - ((percentComplete -.75) * 2)
+                }              
+            })
+          },
+          completedCallback: () => {
+            // console.log('REMOVED dMesh: ', dMesh)
+            scene.remove(dMesh)
+          }
+        }
+      },
       sapphireTravel: (sapphire, ms) => {
         const name = sapphire.name + Math.round(Math.random() * 10000)
         return {
@@ -6778,7 +7025,8 @@
           }
         }
       },
-      superBallTeleport: (superball, name = String(Math.round(Math.random() * 1000))) => {
+      superBallTeleport: (superball, name = String(Math.round(Math.random() * 1000)), zombie = false) => {
+        const theSuperBall = scene.children.find((obj) => obj.name === superball)
         return {
           started: 0,
           ended: 0,
@@ -6793,7 +7041,6 @@
             // teleport the ball
             let teleportationMesh = window.appConfig.sphereTeleportationMesh()
             teleportationMesh.name = window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball
-            const theSuperBall = scene.children.find((obj) => obj.name === superball)
             teleportationMesh.position.x = theSuperBall.position.x
             teleportationMesh.position.y = theSuperBall.position.y
             teleportationMesh.position.z = theSuperBall.position.z
@@ -6801,10 +7048,14 @@
             teleportationMesh.scale.y = .5
             teleportationMesh.scale.z = .5
             scene.add(teleportationMesh)
-            theSuperBall.position.x = Math.random() * 75
-            theSuperBall.position.y = Math.random() * 75
-            theSuperBall.position.z = 0
-            theSuperBall.__dirtyPosition = true
+            if(zombie === true) {
+              theSuperBall.position.x = Math.random() * 75
+              theSuperBall.position.y = Math.random() * 75
+              theSuperBall.position.z = 0
+              theSuperBall.__dirtyPosition = true
+            } else {
+              scene.remove(theSuperBall)
+            }
           },
           activeCallback: (percentComplete) => {
             if (scene.children.find((obj) => obj.name === window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball)) {
@@ -6821,15 +7072,16 @@
             }
           },
           completedCallback: () => {
-            const theName = window.appConfig.currentStage + '_SPHERECOIN_' + Math.round(Math.random() * 1000)
-            const superBallPositionScale = window.appConfig.stages[window.appConfig.currentStage].data.superBallPositionScale ? window.appConfig.stages[window.appConfig.currentStage].data.superBallPositionScale : 50
+            // const theName = window.appConfig.currentStage + '_SPHERECOIN_' + Math.round(Math.random() * 1000)
+            // const superBallPositionScale = window.appConfig.stages[window.appConfig.currentStage].data.superBallPositionScale ? window.appConfig.stages[window.appConfig.currentStage].data.superBallPositionScale : 50
             // window.appConfig.createSphere({ bounce: 1, name: theName, position: { x: (Math.random() * superBallPositionScale * 2) - superBallPositionScale, y: (Math.random() * superBallPositionScale * 2) - superBallPositionScale, z: 0 }, handleCollision: (c) => window.appConfig.superBallHandleCollision(c, theName) })
             scene.remove(scene.children.find((obj) => obj.name === window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball))
           }
         }
       },
-      addPortalToStage: (thePortal, name = '') => {
+      addPortalToStage: (thePortal, name = '', target = {x: 0, y: 0, z: 0}) => {
         let portalMesh = window.appConfig.portalMesh()
+        portalMesh.portalTarget = target
         return {
           started: 0,
           ended: 0,
@@ -6855,7 +7107,8 @@
           }
         }
       },
-      activatePortalToStage: (thePortalMesh) => {
+      activatePortalToGemStage: (thePortalMesh) => {
+        window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
         let thePortalMeshSpaceSphere = thePortalMesh.children.find(c => c.name === 'THE_SPACE_SPHERE')
         let theSphere = scene.children.find((obj) => obj.name === 'SPHERE0')
         let theGradientCurtain = document.querySelector('#gradient-curtain')
@@ -6869,12 +7122,6 @@
           name: 'PORTAL_' + name + String(Math.round(Math.random() * 1000)),
           id: Math.round(Math.random() * 10000),
           startedCallback: (percentComplete) => {
-            // // portalMesh.position.x = thePortal.x
-            // // portalMesh.position.y = thePortal.y
-            // // portalMesh.position.z = thePortal.z
-            // // scene.add(portalMesh)
-            // portalMesh.name = window.appConfig.currentStage + '_PORTAL_MESH__' + name
-            // window.appConfig.stages[window.appConfig.currentStage].data.portals.push(portalMesh)
           },
           activeCallback: (thePercentComplete) => {
             let percentComplete = thePercentComplete
@@ -6900,31 +7147,17 @@
             }
           },
           completedCallback: () => {
+            window.appConfig.positionBall(thePortalMesh.portalTarget)
             let removalArray = []
             window.appConfig.activeTransforms = []
-            // scene.children.forEach(c => {
-            //   if(c.name && c.material && c.name.indexOf(window.appConfig.currentStage) > -1 && c.name.indexOf('BGGROUP') === -1) {
-            //     // // console.log(c)
-            //     // console.log(c.material, c.material.opacity)
-            //     // c.material.opacity = 1 - teardownPercentComplete                  
-            //     removalArray.push(c.uuid)
-            //   }
-            // })
-            // scene.children.forEach(c => {
-            //   if ((c.name.indexOf(window.appConfig.currentStage) > -1) || (c.featureType && c.featureType === "COIN")) {
-            //     removalArray.push(c.uuidsToRemove)
-            //   }
-            // })
+            window.appConfig.stages[window.appConfig.currentStage].data.blackHoles.forEach(bh => scene.remove(bh))
+            window.appConfig.stages[window.appConfig.currentStage].data.blackHoles = []
 
-            // removalArray.forEach(uuid => {
-            //   let foundRemovalItem = scene.children.find(r => (r.uuid === uuid && r.uuid !== undefined))
-            //   // scene.remove(scene.children.find(r => r.uuid === uuid))
-            // })
             let stage = window.appConfig.currentStage
             window.appConfig.coins = []
             const uuidsToRemove = []
             scene.children.forEach(c => {
-              if (((c.name.indexOf(stage) > -1) || (c.featureType && c.featureType === "COIN")) && c.name.indexOf('BGGROUP') === -1 && c.name.indexOf('ZONE-WALL') === -1) {
+              if (((c.name.indexOf(stage) > -1) || (c.featureType && c.featureType === "COIN")) && c.name.indexOf('BGGROUP') === -1 && c.name.indexOf('PORTAL') === -1) {
                 uuidsToRemove.push(c.uuid)
               }
             })
@@ -6933,8 +7166,6 @@
               scene.remove(foundIt)
             })
 
-            // console.log(removalArray)
-            // debugger
             let timersCopy = []
             window.appConfig.timers.activeTimers.forEach(at => {
               if (at.name.indexOf('SAPPHIRE') === -1) {
@@ -6943,10 +7174,159 @@
             })
             window.appConfig.timers.activeTimers = timersCopy
 
-            window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName())
-
+            window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName({
+              updateName: 'GEM ZONE',
+              ballPosition: new THREE.Vector3(thePortalMesh.position.x, thePortalMesh.position.y, 0)
+            }))
+            window.appConfig.timers.activeTimers.push(window.appConfig.timers.removePortal(thePortalMesh))
+            window.appConfig.timers.activeTimers.push(window.appConfig.timers.backgroundToPhysi())
+            
             console.log(removalArray)
             console.log('portal completed')
+          }
+        }
+      },
+      removePortal: (thePortalMesh) => {
+        window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
+        let thePortalMeshSpaceSphere = thePortalMesh.children.find(c => c.name === 'THE_SPACE_SPHERE')
+        let theSphere = scene.children.find((obj) => obj.name === 'SPHERE0')
+        return {
+          started: 0,
+          ended: 0,
+          percentComplete: 0,
+          time: 4000,
+          timeLeft: 0,
+          currentTime: 0,
+          name: 'PORTAL_REMOVAL_' + name + String(Math.round(Math.random() * 1000)),
+          id: Math.round(Math.random() * 10000),
+          startedCallback: (percentComplete) => {
+          },
+          activeCallback: (thePercentComplete) => {
+            let percentComplete = 1 - thePercentComplete
+            thePortalMeshSpaceSphere.material.opacity = percentComplete
+            thePortalMeshSpaceSphere.scale.x = percentComplete * 6
+            thePortalMeshSpaceSphere.scale.y = percentComplete * 6
+            thePortalMeshSpaceSphere.scale.z = percentComplete * 6
+            thePortalMeshSpaceSphere.position.z = ((1 - percentComplete) * -5) + (5 * percentComplete)
+            let theNewPositionX = (thePortalMesh.position.x * percentComplete) + (theSphere.position.x * (1 - percentComplete))
+            let theNewPositionY = (thePortalMesh.position.y * percentComplete) + (theSphere.position.y * (1 - percentComplete))
+            window.appConfig.positionBall({ x: theNewPositionX, y: theNewPositionY, z: 0 })
+
+            thePortalMesh.scale.x = percentComplete
+            thePortalMesh.scale.y = percentComplete
+            thePortalMesh.scale.z = percentComplete
+          },
+          completedCallback: () => {
+            setTimeout(() => {
+              let portalsCopy = []
+              window.appConfig.stages[window.appConfig.currentStage].data.portals.forEach(p => {
+                if(p.name !== thePortalMesh.name) {
+                  portalsCopy.push(p)
+                }
+              })
+              window.appConfig.stages[window.appConfig.currentStage].data.portals = portalsCopy
+              scene.remove(thePortalMesh)
+            }, 100)
+          }
+        }
+      },
+      backgroundToPhysi: () => {
+        // window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
+        // let thePortalMeshSpaceSphere = thePortalMesh.children.find(c => c.name === 'THE_SPACE_SPHERE')
+        let theBg = scene.children.find((obj) => obj.name.indexOf('BGGROUP') > -1 )
+
+        return {
+          started: 0,
+          ended: 0,
+          percentComplete: 0,
+          time: 2000,
+          timeLeft: 0,
+          currentTime: 0,
+          name: 'BACKGROUNDTOPHYSI_' + Math.round(Math.random() * 10000),
+          id: Math.round(Math.random() * 10000),
+          // startedCallback: () => {
+            
+          // },
+          activeCallback: (percentComplete) => {
+            theBg.position.z = (1 - percentComplete) * -5
+          },
+          completedCallback: () => {
+            console.log('completed')
+            let theBgObjects = []
+            theBg.children.forEach(bgObj => {
+              let newPhysiObj = new Physijs.ConvexMesh(
+                new THREE.IcosahedronGeometry((Math.abs(bgObj.scale.x) + Math.abs(bgObj.scale.y) + Math.abs(bgObj.scale.z)) / 3, 0),
+                Physijs.createMaterial(
+                  bgObj.material.clone(),
+                  0.6, // medium friction
+                  0.6 // low restitution
+                ),
+                0 // mass
+              )
+              newPhysiObj.name = window.appConfig.currentStage + '_BGPHYSI'
+              newPhysiObj.position.x = bgObj.position.x
+              newPhysiObj.position.y = bgObj.position.y
+              newPhysiObj.position.z = 1.5
+              newPhysiObj.rotation.x = bgObj.rotation.x
+              newPhysiObj.rotation.y = bgObj.rotation.y
+              newPhysiObj.rotation.z = bgObj.rotation.z
+              newPhysiObj.material.opacity = 1
+              theBgObjects.push(
+                newPhysiObj
+              )
+            })
+            scene.remove(theBg)
+            console.log(theBgObjects)
+            const gemStageWalls = window.appConfig.stages.components.createStage0MainBeamStructure(
+              8,
+              0.525,
+              window.appConfig.currentStage + "_GEM_STAGE_WALLS"
+            );
+            scene.add(gemStageWalls);
+            const originCoor = new THREE.Vector3(0,0,0)
+            theBgObjects.forEach(bgO => {
+              if(bgO.position.distanceTo(originCoor) < 25) {
+                bgO.position.x = bgO.position.x * 2
+                bgO.position.y = bgO.position.y * 2
+              }
+              if(bgO.position.distanceTo(originCoor) > 75) {
+                bgO.position.x = bgO.position.x * (.4 + Math.random() * .25)
+                bgO.position.y = bgO.position.y * (.4 + Math.random() * .25)
+              }
+              if(bgO.position.distanceTo(originCoor) < 25) {
+                bgO.position.x = 25 + Math.random() * 10
+                bgO.position.y = 25 + Math.random() * 10
+              }
+              scene.add(bgO)
+            })
+            const createGemSuperballs = (
+                s,
+                n = 4
+              ) => {
+                var ellipse = new THREE.EllipseCurve(0, 0, s, s, 0, 2.0 * Math.PI, false);
+                var ellipsePath = new THREE.CurvePath();
+                ellipsePath.add(ellipse);
+                var ellipseGeometry = ellipsePath.createPointsGeometry(n);
+
+                let i = 0;
+                for (i; i < ellipseGeometry.vertices.length - 1; i++) {
+                  let id = Math.round(Math.random() * 100000)
+                  window.appConfig.createSphere({
+                    bounce: 1,
+                    name: window.appConfig.currentStage + '_SPHERECOIN_GEM' + id,
+                    position: {
+                      x: ellipseGeometry.vertices[i].x,
+                      y: ellipseGeometry.vertices[i].y,
+                      z: 0
+                    },
+                    handleCollision: (c) => {
+                      window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN_GEM' + id)
+                    }
+                  })
+
+                }
+              }
+            createGemSuperballs(3, 4)
           }
         }
       },
@@ -6965,7 +7345,8 @@
           }
         }
       },
-      countdownName: () => {
+      countdownName: (config) => {
+        let countdownSphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
         return {
           started: 0,
           ended: 0,
@@ -6976,8 +7357,18 @@
           name: 'COUNTDOWNNAME',
           id: Math.round(Math.random() * 10000),
           startedCallback: (percentComplete) => {
+            if(config && config.updateName) {
+              document.querySelector("#stage-name-title").innerText = config.updateName
+            }
+
             showStageCountDownName()
-            window.appConfig.positionBall(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition)
+
+            if(config && config.ballPosition) {
+              window.appConfig.positionBall(config.ballPosition)
+            } else {
+              window.appConfig.positionBall(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition)
+            }
+
             document.querySelector('#stage-name-title').style.opacity = 1
             document.querySelector('#stage-number').style.opacity = 1
           },
@@ -6998,15 +7389,30 @@
               document.querySelector('#stage-name-title').style.opacity = 1 - (percentComplete - .9) * 10
               document.querySelector('#stage-number').style.opacity = 1 - (percentComplete - .9) * 10
             }
+
+            if(config && config.ballPosition) {
+              window.appConfig.positionBall(config.ballPosition)
+
+              countdownSphere
+                .setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                countdownSphere
+                .setAngularVelocity(new THREE.Vector3(0, 0, 0));
+              scene.setGravity(new THREE.Vector3(0, 0, 0))
+
+            } else {
+              window.appConfig.positionBall(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition)
+            }
+
           },
           completedCallback: (percentComplete) => {
             showStageCountDown3()
-            window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdown2())
-            window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdown1())
+            window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdown2(config))
+            window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdown1(config))
           }
         }
       },
-      countdown2: (action) => {
+      countdown2: (config) => {
+        let countdownSphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
         return {
           started: 0,
           ended: 0,
@@ -7021,6 +7427,19 @@
               window.appConfig.howlSounds.count2.play()
             }
           },
+          activeCallback: () => {
+            if(config && config.ballPosition) {
+              window.appConfig.positionBall(config.ballPosition)
+              countdownSphere
+                .setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                countdownSphere
+                .setAngularVelocity(new THREE.Vector3(0, 0, 0));
+              scene.setGravity(new THREE.Vector3(0, 0, 0))
+
+            } else {
+              window.appConfig.positionBall(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition)
+            }
+          },
           completedCallback: (percentComplete) => {
             showStageCountDown2()
             if (window.appConfig.sfxTurnedOn) {
@@ -7029,7 +7448,8 @@
           }
         }
       },
-      countdown1: (action) => {
+      countdown1: (config) => {
+        let countdownSphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
         return {
           started: 0,
           ended: 0,
@@ -7045,6 +7465,19 @@
             }
             showStageCountDown1()
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownStart())
+          },
+          activeCallback: () => {
+            if(config && config.ballPosition) {
+              window.appConfig.positionBall(config.ballPosition)
+              countdownSphere
+                .setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                countdownSphere
+                .setAngularVelocity(new THREE.Vector3(0, 0, 0));
+              scene.setGravity(new THREE.Vector3(0, 0, 0))
+
+            } else {
+              window.appConfig.positionBall(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition)
+            }
           }
         }
       },
@@ -7583,7 +8016,7 @@
           if (sphere.position.distanceTo(p.position) < 7.5 && p.activated === false) {
             p.activated = true
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.activatePortalToStage(p)
+              window.appConfig.timers.activatePortalToGemStage(p)
             )
             console.log('PORTAL ACTIVATE!')
           }
@@ -7697,6 +8130,18 @@
         }
         if (coinValue > 0) {
           window.appConfig.score.coins += potentiallyGrabbedCoin.coinValue;
+          // debugger
+          // const gemNames = ['EMERALD', 'RUBY', 'DIAMOND', 'SAPPHIRE']
+          // gemNames.forEach(gN => {
+          //   if(window.appConfig.coins[coinIndexToRemove].name.indexOf(gn) > -1 ) {
+            // let theClone = potentiallyGrabbedCoin.clone()
+            // theClone.material = potentiallyGrabbedCoin.material.clone()
+            // theClone.name = 'DMESH'
+            // console.log('POTENTIALLY GRABBED COIN', potentiallyGrabbedCoin)
+            window.appConfig.stages.components.demateralizeMesh(potentiallyGrabbedCoin)
+              // debugger
+          //   }
+          // })
           potentiallyGrabbedCoin.visible = false
           window.appConfig.coins.splice(coinIndexToRemove, 1);
           document.querySelector("#score").innerHTML =
@@ -7762,6 +8207,13 @@
         sapphire.activeCallback()
       })
 
+      if(window.appConfig.pause === false && window.appConfig.userHasEnded === false && window.appConfig.stages[window.appConfig.currentStage].data.blackHoles.length > 0) {
+        window.appConfig.stages[window.appConfig.currentStage].data.blackHoles.forEach(
+          (bhc, bhci) => {
+            window.appConfig.handleBlackHole(bhc)
+          } 
+        )
+      }
 
       window.appConfig.coinFrameCheckNumber++
       requestAnimationFrame(render);
@@ -7769,6 +8221,10 @@
       if (window.appConfig.healthCheck.healthChecked === false) {
         render_stats.update();
       }
+      // console.log(sphere.position.x)
+      // if(isNaN(sphere.position.x)) {
+      //   console.error(sphere.position.x)
+      // }
     };
 
     window.appConfig.positionBall = (p) => {
