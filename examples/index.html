@@ -7828,6 +7828,7 @@
     }
 
     window.appConfig.timers = timers
+    window.appConfig.timers.pauseTimers = false
     const appTimers = window.appConfig.timers
     window.appConfig.coinFrameCheckNumber = 0
 
@@ -7862,41 +7863,78 @@
 
       if (appTimers.activeTimers.length > 0) {
         let removeTimersArray = []
-        appTimers.activeTimers.forEach((t, ti) => {
-          if (appTimers.activeTimers[ti] && appTimers.activeTimers[ti].started === 0) {
-            appTimers.activeTimers[ti].started = currentTime
-            appTimers.activeTimers[ti].currentTime = currentTime
-            if (appTimers.activeTimers[ti].startedCallback) {
-              appTimers.activeTimers[ti].startedCallback(appTimers.activeTimers[ti].percentComplete)
-            }
-          }
-          if (appTimers.activeTimers[ti] && appTimers.activeTimers[ti].started !== 0 && appTimers.activeTimers[ti].ended === 0) {
-            appTimers.activeTimers[ti].currentTime = currentTime
-            appTimers.activeTimers[ti].percentComplete = (currentTime - appTimers.activeTimers[ti].started) / appTimers.activeTimers[ti].time;
-            appTimers.activeTimers[ti].timeLeft = (currentTime - appTimers.activeTimers[ti].started)
-            if (appTimers.activeTimers[ti].activeCallback) {
-              appTimers.activeTimers[ti].activeCallback(appTimers.activeTimers[ti].percentComplete)
-            }
-            if (appTimers.activeTimers[ti].timeLeft > appTimers.activeTimers[ti].time) {
-              appTimers.activeTimers[ti].ended = currentTime
-              removeTimersArray.push(appTimers.activeTimers[ti].name)
-              if (appTimers.activeTimers[ti].completedCallback) {
-                appTimers.activeTimers[ti].completedCallback(appTimers.activeTimers[ti].percentComplete)
+        if(window.appConfig.timers.pauseTimers === false) {
+
+          appTimers.activeTimers.forEach((t, ti) => {
+            if (appTimers.activeTimers[ti] && appTimers.activeTimers[ti].started === 0) {
+              appTimers.activeTimers[ti].pauseTimes = []
+              // appTimers.activeTimers[ti].startedPauseTime = 0
+              appTimers.activeTimers[ti].isPaused = false
+              appTimers.activeTimers[ti].started = currentTime
+              appTimers.activeTimers[ti].currentTime = currentTime
+              if (appTimers.activeTimers[ti].startedCallback) {
+                appTimers.activeTimers[ti].startedCallback(appTimers.activeTimers[ti].percentComplete)
               }
             }
-          }
-        })
-        if (removeTimersArray.length > 0) {
-          removeTimersArray.forEach(rt => {
-            appTimers.activeTimers.forEach((at, ati) => {
-              if (at.name === rt) {
-                appTimers.activeTimers.splice(ati, 1)
+            if(appTimers.activeTimers[ti].pauseTimes.length > 0 && appTimers.activeTimers[ti].pauseTimes[appTimers.activeTimers[ti].pauseTimes.length - 1].completedTime === 0) {
+              appTimers.activeTimers[ti].pauseTimes[appTimers.activeTimers[ti].pauseTimes.length - 1].completedTime = currentTime
+              appTimers.activeTimers[ti].pauseTimes[appTimers.activeTimers[ti].pauseTimes.length - 1].completedLength = appTimers.activeTimers[ti].pauseTimes[appTimers.activeTimers[ti].pauseTimes.length - 1].completedTime - appTimers.activeTimers[ti].pauseTimes[appTimers.activeTimers[ti].pauseTimes.length - 1].startTime
+            }
+            if (appTimers.activeTimers[ti] && appTimers.activeTimers[ti].started !== 0 && appTimers.activeTimers[ti].ended === 0) {
+              let totalPauseTime = 0
+              appTimers.activeTimers[ti].pauseTimes.forEach(pt => {
+                totalPauseTime += pt.completedLength
+              })
+              appTimers.activeTimers[ti].currentTime = currentTime
+              appTimers.activeTimers[ti].percentComplete = (currentTime - appTimers.activeTimers[ti].started - totalPauseTime) / appTimers.activeTimers[ti].time;
+              appTimers.activeTimers[ti].timeLeft = (currentTime - appTimers.activeTimers[ti].started - totalPauseTime)
+              if (appTimers.activeTimers[ti].activeCallback) {
+                appTimers.activeTimers[ti].activeCallback(appTimers.activeTimers[ti].percentComplete)
               }
-            })
+              if (appTimers.activeTimers[ti].timeLeft > appTimers.activeTimers[ti].time) {
+                appTimers.activeTimers[ti].ended = currentTime
+                removeTimersArray.push(appTimers.activeTimers[ti].name)
+                if (appTimers.activeTimers[ti].completedCallback) {
+                  appTimers.activeTimers[ti].completedCallback(appTimers.activeTimers[ti].percentComplete)
+                }
+              }
+            }
           })
-        }
-        if (window.appConfig.debug && window.appConfig.debug.menuVisible === true) {
-          window.appConfig.debug.populateActiveTimersList()
+          if (removeTimersArray.length > 0) {
+            removeTimersArray.forEach(rt => {
+              appTimers.activeTimers.forEach((at, ati) => {
+                if (at.name === rt) {
+                  appTimers.activeTimers.splice(ati, 1)
+                }
+              })
+            })
+          }
+          if (window.appConfig.debug && window.appConfig.debug.menuVisible === true) {
+            window.appConfig.debug.populateActiveTimersList()
+          }
+        } else if (window.appConfig.timers.pauseTimers === true) {
+          appTimers.activeTimers.forEach((t, ti) => {
+            if(appTimers.activeTimers[ti].pauseTimes === undefined) {
+              appTimers.activeTimers[ti].pauseTimes = []
+            }
+            if(appTimers.activeTimers[ti].pauseTimes.length === 0 || appTimers.activeTimers[ti].pauseTimes[appTimers.activeTimers[ti].pauseTimes.length - 1].completedTime !== 0) {
+              appTimers.activeTimers[ti].pauseTimes.push({
+                startTime: currentTime,
+                currentPauseTime: currentTime,
+                completedTime: 0
+              })
+            }
+            if(appTimers.activeTimers[ti].pauseTimes.length > 0 && appTimers.activeTimers[ti].pauseTimes[appTimers.activeTimers[ti].pauseTimes.length - 1].completedTime === 0) {
+              appTimers.activeTimers[ti].pauseTimes[appTimers.activeTimers[ti].pauseTimes.length - 1].currentPauseTime = currentTime
+            }
+
+            // if(appTimers.activeTimers[ti].startedPauseTime === 0) {
+            //   appTimers.activeTimers[ti].startedPauseTime = currentTime
+            // }
+            // if(appTimers.activeTimers[ti].startedPauseTime !== 0) {
+            //   appTimers.activeTimers[ti].pauseTime = currentTime - appTimers.activeTimers[ti].startedPauseTime
+            // }
+          })
         }
       }
 
@@ -8358,6 +8396,7 @@
         window.appConfig.howlSounds.backgroundMusic.pause()
       }
       window.appConfig.pause = !window.appConfig.pause;
+      window.appConfig.timers.pauseTimers = !window.appConfig.timers.pauseTimers
       if (window.appConfig.pause) {
         window.appConfig.timer.pause();
         scene.setGravity(new THREE.Vector3(0, 0, 0));
