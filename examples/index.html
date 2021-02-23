@@ -7866,7 +7866,7 @@
         if(window.appConfig.timers.pauseTimers === false) {
 
           appTimers.activeTimers.forEach((t, ti) => {
-            if (appTimers.activeTimers[ti] && appTimers.activeTimers[ti].started === 0) {
+            if (appTimers.activeTimers[ti] && appTimers.activeTimers[ti] && appTimers.activeTimers[ti].started === 0) {
               appTimers.activeTimers[ti].pauseTimes = []
               // appTimers.activeTimers[ti].startedPauseTime = 0
               appTimers.activeTimers[ti].isPaused = false
@@ -7876,11 +7876,11 @@
                 appTimers.activeTimers[ti].startedCallback(appTimers.activeTimers[ti].percentComplete)
               }
             }
-            if(appTimers.activeTimers[ti].pauseTimes.length > 0 && appTimers.activeTimers[ti].pauseTimes[appTimers.activeTimers[ti].pauseTimes.length - 1].completedTime === 0) {
+            if(appTimers.activeTimers[ti] && appTimers.activeTimers[ti].pauseTimes.length > 0 && appTimers.activeTimers[ti].pauseTimes[appTimers.activeTimers[ti].pauseTimes.length - 1].completedTime === 0) {
               appTimers.activeTimers[ti].pauseTimes[appTimers.activeTimers[ti].pauseTimes.length - 1].completedTime = currentTime
               appTimers.activeTimers[ti].pauseTimes[appTimers.activeTimers[ti].pauseTimes.length - 1].completedLength = appTimers.activeTimers[ti].pauseTimes[appTimers.activeTimers[ti].pauseTimes.length - 1].completedTime - appTimers.activeTimers[ti].pauseTimes[appTimers.activeTimers[ti].pauseTimes.length - 1].startTime
             }
-            if (appTimers.activeTimers[ti] && appTimers.activeTimers[ti].started !== 0 && appTimers.activeTimers[ti].ended === 0) {
+            if (appTimers.activeTimers[ti] && appTimers.activeTimers[ti] && appTimers.activeTimers[ti].started !== 0 && appTimers.activeTimers[ti].ended === 0) {
               let totalPauseTime = 0
               appTimers.activeTimers[ti].pauseTimes.forEach(pt => {
                 totalPauseTime += pt.completedLength
