@@ -2768,11 +2768,90 @@
             createBackgroundAnimation()
           },
           init: () => {
+            const portalConfig0 = {
+              startedCallback: (thePortalMesh, config, percentComplete) => {
+                // console.log('startedCallback')
+                // console.log(thePortalMesh, config, percentComplete)
+              },
+              activeCallback: (thePortalMesh, config, percentComplete) => {
+                // console.log('activeCallback')
+                // console.log(thePortalMesh, config, percentComplete)
+              },
+              completedCallback: (thePortalMesh, config) => {
+                let removalArray = []
+                window.appConfig.activeTransforms = []
+                window.appConfig.stages[window.appConfig.currentStage].data.blackHoles.forEach(bh => scene.remove(bh))
+                window.appConfig.stages[window.appConfig.currentStage].data.blackHoles = []
 
+                let stage = window.appConfig.currentStage
+                window.appConfig.coins = []
+                const uuidsToRemove = []
+                scene.children.forEach(c => {
+                  if (((c.name.indexOf(stage) > -1) || (c.featureType && c.featureType === "COIN")) && c.name.indexOf('BGGROUP') === -1 && c.name.indexOf('PORTAL') === -1) {
+                    uuidsToRemove.push(c.uuid)
+                  }
+                })
+                uuidsToRemove.forEach(uuid => {
+                  const foundIt = scene.children.find(c => c.uuid === uuid)
+                  scene.remove(foundIt)
+                })
+
+                let timersCopy = []
+                window.appConfig.timers.activeTimers.forEach(at => {
+                  if (at.name.indexOf('SAPPHIRE') === -1) {
+                    timersCopy.push(at)
+                  }
+                })
+                window.appConfig.timers.activeTimers = timersCopy
+
+                window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName({
+                  updateName: 'GEM ZONE',
+                  ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0)
+                }))
+                window.appConfig.timers.activeTimers.push(window.appConfig.timers.backgroundToPhysi())
+                console.log(removalArray)
+
+                // console.log('completedCallback')
+                // console.log(thePortalMesh, config)
+              },
+              portalConfig: {
+                sapphire: false
+              }
+            }
+
+            // Sapphire portal config
+            const portalConfig1 = {
+              startedCallback: (thePortalMesh, config, percentComplete) => {
+                // console.log('startedCallback')
+                // console.log(thePortalMesh, config, percentComplete)
+              },
+              activeCallback: (thePortalMesh, config, percentComplete) => {
+                // console.log('activeCallback')
+                // console.log(thePortalMesh, config, percentComplete)
+              },
+              completedCallback: (thePortalMesh, config) => {
+              window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName({
+                updateName: 'SAPPHIRE ISLAND',
+                ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0)
+              }))
+                // console.log('completedCallback')
+                // console.log(thePortalMesh, config)
+              },
+              portalConfig: {
+                sapphire: true
+              }
+            }
+
+
+            // portal
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 10, y: -20, z: -5 }, 'STAGE_END_0', { x: 0, y: 0, z: 0 })
+              window.appConfig.timers.addPortalToStage({ x: 10, y: -20, z: -5 }, 'STAGE_END_00', { x: 0, y: 0, z: 0 }, portalConfig0)
+            )
+            window.appConfig.timers.activeTimers.push(
+              window.appConfig.timers.addPortalToStage({ x: -10, y: 20, z: -5 }, 'STAGE_END_01', { x: 50, y: 50, z: 0 }, portalConfig1)
             )
 
+            // blackhole
             window.appConfig.stages.components.createBlackHole({position: {x: 0, y: 30, z: 0}, scale: {x: 2, y: 2, z: 2}})
 
             window.appConfig.stages.components.createBumper("STAGE0BUMPER0", 1, { x: -70, y: -72.5, z: 0 }, 5)
@@ -5426,9 +5505,6 @@
 
 
 
-
-
-
             window.appConfig.createSphere({
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOINE',
@@ -6503,12 +6579,21 @@
           shininess: 200
         }
       )
-      new THREE.Color(0x000000)
+      
+      window.appConfig.portalMesh = (sapphire) => {        
+        const sapphireColor = new THREE.Color('#0F52BA')
 
-      window.appConfig.portalMesh = () => {
+        const sapphireMaterial = new THREE.MeshPhongMaterial({
+          color: sapphireColor,
+          // specular: 0x050505,
+          shininess: 100,
+          transparent: true,
+          opacity: .9
+        })
+
         let theMesh = new THREE.Mesh(
           portalGeometry,
-          new THREE.MeshPhongMaterial(
+          sapphire ? sapphireMaterial : new THREE.MeshPhongMaterial(
             {
               transparent: true,
               opacity: 0,
@@ -6516,6 +6601,7 @@
             }
           )
         )
+
         theMesh.name = window.appConfig.currentStage + "_" + Math.round(Math.random() * 10000)
         let theSpaceSphere = new THREE.Mesh(
           new THREE.DodecahedronGeometry(1, 2),
@@ -6536,7 +6622,7 @@
         theSpritePoints.forEach((sp, spi) => {
           let theSprite = new THREE.Mesh(
             new THREE.PlaneGeometry(.5, .5, 1, 1),
-            spi % 2 === 0 ? window.appConfig.superBallMaterial : portalMeshSpaceMaterial
+            spi % 2 === 0 ? window.appConfig.superBallMaterial : sapphire ? sapphireMaterial : portalMeshSpaceMaterial 
           )
           theSprite.oPosition = {}
           theSprite.oPosition.x = sp.x
@@ -7079,9 +7165,21 @@
           }
         }
       },
-      addPortalToStage: (thePortal, name = '', target = {x: 0, y: 0, z: 0}) => {
-        let portalMesh = window.appConfig.portalMesh()
+      addPortalToStage: (thePortal, name = '', target = {x: 0, y: 0, z: 0}, config = {
+        startedCallback: () => {},
+        activeCallback: () => {},
+        completedCallback: () => {},
+        portalConfig: {
+          sapphire: false
+        }
+      }) => {
+        
+        let portalMesh = window.appConfig.portalMesh(config.portalConfig.sapphire)
         portalMesh.portalTarget = target
+        portalMesh.startedCallback = config.startedCallback
+        portalMesh.activeCallback = config.activeCallback
+        portalMesh.completedCallback = config.completedCallback
+        portalMesh.portalConfig = config.portalConfig
         return {
           started: 0,
           ended: 0,
@@ -7107,7 +7205,7 @@
           }
         }
       },
-      activatePortalToGemStage: (thePortalMesh) => {
+      activatePortal: (thePortalMesh) => {
         window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
         let thePortalMeshSpaceSphere = thePortalMesh.children.find(c => c.name === 'THE_SPACE_SPHERE')
         let theSphere = scene.children.find((obj) => obj.name === 'SPHERE0')
@@ -7122,6 +7220,7 @@
           name: 'PORTAL_' + name + String(Math.round(Math.random() * 1000)),
           id: Math.round(Math.random() * 10000),
           startedCallback: (percentComplete) => {
+            thePortalMesh.startedCallback(thePortalMesh, thePortalMesh.config, percentComplete)
           },
           activeCallback: (thePercentComplete) => {
             let percentComplete = thePercentComplete
@@ -7145,43 +7244,14 @@
               console.log(teardownPercentComplete)
               theGradientCurtain.style.opacity = (thePercentComplete - .5) * 2
             }
+            thePortalMesh.activeCallback(thePortalMesh, thePortalMesh.config, percentComplete)
           },
           completedCallback: () => {
             window.appConfig.positionBall(thePortalMesh.portalTarget)
-            let removalArray = []
-            window.appConfig.activeTransforms = []
-            window.appConfig.stages[window.appConfig.currentStage].data.blackHoles.forEach(bh => scene.remove(bh))
-            window.appConfig.stages[window.appConfig.currentStage].data.blackHoles = []
-
-            let stage = window.appConfig.currentStage
-            window.appConfig.coins = []
-            const uuidsToRemove = []
-            scene.children.forEach(c => {
-              if (((c.name.indexOf(stage) > -1) || (c.featureType && c.featureType === "COIN")) && c.name.indexOf('BGGROUP') === -1 && c.name.indexOf('PORTAL') === -1) {
-                uuidsToRemove.push(c.uuid)
-              }
-            })
-            uuidsToRemove.forEach(uuid => {
-              const foundIt = scene.children.find(c => c.uuid === uuid)
-              scene.remove(foundIt)
-            })
-
-            let timersCopy = []
-            window.appConfig.timers.activeTimers.forEach(at => {
-              if (at.name.indexOf('SAPPHIRE') === -1) {
-                timersCopy.push(at)
-              }
-            })
-            window.appConfig.timers.activeTimers = timersCopy
-
-            window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName({
-              updateName: 'GEM ZONE',
-              ballPosition: new THREE.Vector3(thePortalMesh.position.x, thePortalMesh.position.y, 0)
-            }))
+            thePortalMesh.completedCallback(thePortalMesh, thePortalMesh.config)
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.removePortal(thePortalMesh))
-            window.appConfig.timers.activeTimers.push(window.appConfig.timers.backgroundToPhysi())
-            
-            console.log(removalArray)
+
+
             console.log('portal completed')
           }
         }
@@ -7200,6 +7270,8 @@
           name: 'PORTAL_REMOVAL_' + name + String(Math.round(Math.random() * 1000)),
           id: Math.round(Math.random() * 10000),
           startedCallback: (percentComplete) => {
+            thePortalMesh.position.x = thePortalMesh.portalTarget.x
+            thePortalMesh.position.y = thePortalMesh.portalTarget.y
           },
           activeCallback: (thePercentComplete) => {
             let percentComplete = 1 - thePercentComplete
@@ -7208,9 +7280,9 @@
             thePortalMeshSpaceSphere.scale.y = percentComplete * 6
             thePortalMeshSpaceSphere.scale.z = percentComplete * 6
             thePortalMeshSpaceSphere.position.z = ((1 - percentComplete) * -5) + (5 * percentComplete)
-            let theNewPositionX = (thePortalMesh.position.x * percentComplete) + (theSphere.position.x * (1 - percentComplete))
-            let theNewPositionY = (thePortalMesh.position.y * percentComplete) + (theSphere.position.y * (1 - percentComplete))
-            window.appConfig.positionBall({ x: theNewPositionX, y: theNewPositionY, z: 0 })
+            // let theNewPositionX = (thePortalMesh.portalTarget.x * percentComplete) + (theSphere.position.x * (1 - percentComplete))
+            // let theNewPositionY = (thePortalMesh.portalTarget.y * percentComplete) + (theSphere.position.y * (1 - percentComplete))
+            window.appConfig.positionBall({ x: thePortalMesh.portalTarget.x, y: thePortalMesh.portalTarget.y, z: 0 })
 
             thePortalMesh.scale.x = percentComplete
             thePortalMesh.scale.y = percentComplete
@@ -7326,7 +7398,7 @@
 
                 }
               }
-            createGemSuperballs(3, 4)
+            createGemSuperballs(5, 4)
           }
         }
       },
@@ -7493,6 +7565,7 @@
           id: Math.round(Math.random() * 10000),
           completedCallback: (percentComplete) => {
             showStageCountDownStart()
+            window.appConfig.userIsOnMainMenu = false
             if (window.appConfig.sfxTurnedOn) {
               window.appConfig.howlSounds.start.play()
             }
@@ -7550,6 +7623,7 @@
             window.appConfig.start = false
             window.appConfig.userHasEnded = false
             if (action && action.action === 'levelSelect') {
+              window.appConfig.userIsOnMainMenu = true
               window.appConfig.currentStageIndex = action.level
               window.appConfig.currentStage = window.appConfig.stagesArray[window.appConfig.currentStageIndex]
             }
@@ -8049,12 +8123,14 @@
             }
           })
           // }
-          p.material.color = window.appConfig.superBallMaterial.color
+          if(p.portalConfig && !p.portalConfig.sapphire || p.portalConfig.sapphire === false) {
+            p.material.color = window.appConfig.superBallMaterial.color
+          }
           // console.log(sphere.position.distanceTo(p.position))
           if (sphere.position.distanceTo(p.position) < 7.5 && p.activated === false) {
             p.activated = true
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.activatePortalToGemStage(p)
+              window.appConfig.timers.activatePortal(p)
             )
             console.log('PORTAL ACTIVATE!')
           }
@@ -8118,7 +8194,6 @@
           .setAngularVelocity(new THREE.Vector3(0, 0, 0));
       }
       window.appConfig.crystalMaterials.forEach(cm => {
-
         const newHsl = colorLightnessLfo(cm.pulsing.color, 268)
         cm.pulsing.color.setHSL(newHsl.h, newHsl.s, newHsl.l)
       })
@@ -8245,7 +8320,7 @@
         sapphire.activeCallback()
       })
 
-      if(window.appConfig.pause === false && window.appConfig.userHasEnded === false && window.appConfig.stages[window.appConfig.currentStage].data.blackHoles.length > 0) {
+      if(window.appConfig.userIsOnMainMenu === false && window.appConfig.pause === false && window.appConfig.userHasEnded === false && window.appConfig.stages[window.appConfig.currentStage].data.blackHoles && window.appConfig.stages[window.appConfig.currentStage].data.blackHoles.length > 0) {
         window.appConfig.stages[window.appConfig.currentStage].data.blackHoles.forEach(
           (bhc, bhci) => {
             window.appConfig.handleBlackHole(bhc)
@@ -8271,6 +8346,7 @@
       sphere.position.y = p.y
       sphere.position.z = p.z
       sphere.__dirtyPosition = true
+      console.log(sphere.position)
     }
 
     window.appConfig.positionCamera = (p) => {
@@ -8411,6 +8487,9 @@
     };
 
     const reset = (action) => {
+      if(window.appConfig.timers.pauseTimers === true) {
+        window.appConfig.timers.pauseTimers = false
+      }
       window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageReset(action))
       window.appConfig.results = {}
       window.appConfig.score.coins = 0
