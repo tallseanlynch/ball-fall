@@ -76,6 +76,8 @@
     };
 
     window.appConfig = {
+      isPortalStart: false,
+      pauseSuperballs: false,
       healthCheck: {
         fpsArray: [],
         averageFPS: undefined,
@@ -7257,6 +7259,13 @@
         }
       },
       removePortal: (thePortalMesh) => {
+        
+        // setTimeout(() => {
+        //   window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageResultsBallZoom(true))
+        // }, 6000)
+        // // window.appConfig.timers.activeTimers.push(window.appConfig.timers.initialBallZoom())
+        // window.appConfig.timers.data.stageResultsBallZoom.percentComplete = 1
+        // window.appConfig.timers.data.stageReset.percentComplete = 1;
         window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
         let thePortalMeshSpaceSphere = thePortalMesh.children.find(c => c.name === 'THE_SPACE_SPHERE')
         let theSphere = scene.children.find((obj) => obj.name === 'SPHERE0')
@@ -7270,6 +7279,7 @@
           name: 'PORTAL_REMOVAL_' + name + String(Math.round(Math.random() * 1000)),
           id: Math.round(Math.random() * 10000),
           startedCallback: (percentComplete) => {
+            window.appConfig.isPortalStart = true
             thePortalMesh.position.x = thePortalMesh.portalTarget.x
             thePortalMesh.position.y = thePortalMesh.portalTarget.y
           },
@@ -7418,6 +7428,7 @@
         }
       },
       countdownName: (config) => {
+        window.appConfig.pauseSuperballs = true
         let countdownSphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
         return {
           started: 0,
@@ -7569,7 +7580,8 @@
             if (window.appConfig.sfxTurnedOn) {
               window.appConfig.howlSounds.start.play()
             }
-            window.appConfig.gameModeFunctions.start()
+            const noInitialBallZoom = true
+            window.appConfig.gameModeFunctions.start(noInitialBallZoom)
             // scene.children.find((obj) => obj.name === 'SPHERE0').position.setY(0);
             // scene.children.find((obj) => obj.name === 'SPHERE0').__dirtyPosition = true;
             window.appConfig.stageTotalTimePlayed = window.appConfig.easyTimerLength
@@ -7585,6 +7597,7 @@
         }
       },
       countdownStartFlash: (action) => {
+        window.appConfig.pauseSuperballs = false
         return {
           started: 0,
           ended: 0,
@@ -7601,6 +7614,9 @@
             if (percentComplete > .5) {
               document.querySelector('#gradient-curtain').style.opacity = (1 - ((percentComplete - .5) * 2)) < 0 ? 0 : (1 - ((percentComplete - .5) * 2))
             }
+          },
+          completedCallback: () => {
+            window.appConfig.isPortalStart = false
           }
         }
       },
@@ -7661,7 +7677,7 @@
           }
         }
       },
-      stageResultsBallZoom: () => {
+      stageResultsBallZoom: (hideReport = false) => {
         return {
           started: 0,
           ended: 0,
@@ -7677,8 +7693,9 @@
           startedCallback: (percentComplete) => {
           },
           completedCallback: () => {
-            showReport()
-
+            if(hideReport === false) {
+              showReport()
+            }
           }
         }
       },
@@ -8084,7 +8101,7 @@
         10
       );
 
-      if (window.appConfig.pause === false && window.appConfig.userHasEnded === false && currentTime % 15 < 1) {
+      if (window.appConfig.pauseSuperballs === false && window.appConfig.pause === false && window.appConfig.userHasEnded === false && currentTime % 15 < 1) {
         let sphereCoins = []
         scene.children.forEach(c => {
           if (c.name && c.name.indexOf('SPHERECOIN') > -1) {
@@ -8449,7 +8466,10 @@
         window.appConfig.howlSounds.backgroundMusic.play()
       }
       setTimeout(() => showHTMLElements(["pause-button", "game-scoreboard"]), 1000)
-      window.appConfig.timers.activeTimers.push(timers.initialBallZoom())
+      // get this argument in somewhere
+      if(window.appConfig.isPortalStart === false) {
+        window.appConfig.timers.activeTimers.push(timers.initialBallZoom())
+      }
       window.appConfig.timer.start();
       scene.setGravity(new THREE.Vector3(0, -10, 0));
       window.appConfig.sphere._physijs.mass = window.appConfig.defaultSphereMass
