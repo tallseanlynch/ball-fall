@@ -1480,6 +1480,7 @@
         window.appConfig.coins.push(prize0Group);
 
       }
+      window.appConfig.prize = prize
 
       const createCrystalCross = (name = "NO_NAME", s, t = { x: 0, y: 0 }, size = 0) => {
         const crystalCross = new THREE.Group()
@@ -2813,6 +2814,8 @@
                 window.appConfig.timers.activeTimers.push(window.appConfig.timers.backgroundToPhysi())
                 console.log(removalArray)
 
+
+
                 // console.log('completedCallback')
                 // console.log(thePortalMesh, config)
               },
@@ -2847,14 +2850,11 @@
 
             // portal
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 10, y: -20, z: -5 }, 'STAGE_END_00', { x: 0, y: 0, z: 0 }, portalConfig0)
+              window.appConfig.timers.addPortalToStage({ x: 10, y: -20, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, portalConfig0)
             )
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: -10, y: 20, z: -5 }, 'STAGE_END_01', { x: 50, y: 50, z: 0 }, portalConfig1)
+              window.appConfig.timers.addPortalToStage({ x: -10, y: 20, z: -5 }, window.appConfig.currentStage + '_STAGE_END_01', { x: 50, y: 50, z: 0 }, portalConfig1)
             )
-
-            // blackhole
-            window.appConfig.stages.components.createBlackHole({position: {x: 0, y: 30, z: 0}, scale: {x: 2, y: 2, z: 2}})
 
             window.appConfig.stages.components.createBumper("STAGE0BUMPER0", 1, { x: -70, y: -72.5, z: 0 }, 5)
             window.appConfig.stages.components.createBumper("STAGE0BUMPER1", 1, { x: 70, y: -72.5, z: 0 }, 5)
@@ -6652,8 +6652,7 @@
           }
           window.appConfig.timers.activeTimers.push(window.appConfig.timers.superBallTeleport(the_object))
           const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
-          let superSounds
-          for (superSounds = 0; superSounds < 20; superSounds++) {
+          for (let superSounds = 0; superSounds < 10; superSounds++) {
             setTimeout(() => {
               coinSounds[Math.round(Math.random() * (coinSounds.length - 1))].play()
               scene.add(window.appConfig.stages.components.crystal(superSounds % 3, { x: other_object.position.x + ((Math.random() * 25) - 12.5), y: other_object.position.y + ((Math.random() * 20) - 10), z: 0 }))
@@ -6894,10 +6893,10 @@
       // bh.position.x = lfo(10750) * 100
       // bh.position.y = lfo(8125) * 100
       if(typeof theSphere.position.x === "number") {
-        bh.position.lerp(theSphere.position, .001)
-        bh.scale.x += .005
-        bh.scale.y += .005
-        bh.scale.z += .005
+        bh.position.lerp(theSphere.position, .001 * Math.random() * 2)
+        bh.scale.x += .001
+        bh.scale.y += .001
+        bh.scale.z += .001
         // let distX = bh.position.x - theSphere.position.x * -1
         // let distY = bh.position.y - theSphere.position.y * -1
         // bh.position.x += distX * distMod
@@ -7208,6 +7207,7 @@
         }
       },
       activatePortal: (thePortalMesh) => {
+        window.appConfig.timer.pause()
         window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
         let thePortalMeshSpaceSphere = thePortalMesh.children.find(c => c.name === 'THE_SPACE_SPHERE')
         let theSphere = scene.children.find((obj) => obj.name === 'SPHERE0')
@@ -7251,6 +7251,18 @@
           completedCallback: () => {
             window.appConfig.positionBall(thePortalMesh.portalTarget)
             thePortalMesh.completedCallback(thePortalMesh, thePortalMesh.config)
+            let removePortals = []
+            window.appConfig.stages[window.appConfig.currentStage].data.portals.forEach((p, pi) => {
+              if(p.name !== thePortalMesh.name && p.name.indexOf('GEM') === -1) {
+                removePortals.push(pi)
+              }
+            })
+            if(removePortals.length > 0) {
+              removePortals.reverse().forEach(rp => {
+                scene.remove(window.appConfig.stages[window.appConfig.currentStage].data.portals[rp])
+                window.appConfig.stages[window.appConfig.currentStage].data.portals.splice(rp, 1)
+              })
+            }
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.removePortal(thePortalMesh))
 
 
@@ -7326,9 +7338,12 @@
           currentTime: 0,
           name: 'BACKGROUNDTOPHYSI_' + Math.round(Math.random() * 10000),
           id: Math.round(Math.random() * 10000),
-          // startedCallback: () => {
-            
-          // },
+          startedCallback: () => {
+            // blackhole
+            window.appConfig.stages.components.createBlackHole({position: {x: 0, y: 30, z: 0}, scale: {x: 2, y: 2, z: 2}})
+            window.appConfig.stages.components.createBlackHole({position: {x: -30, y: -30, z: 0}, scale: {x: 2, y: 2, z: 2}})
+            window.appConfig.stages.components.createBlackHole({position: {x: 30, y: -30, z: 0}, scale: {x: 2, y: 2, z: 2}})
+          },
           activeCallback: (percentComplete) => {
             theBg.position.z = (1 - percentComplete) * -5
           },
@@ -7345,7 +7360,7 @@
                 ),
                 0 // mass
               )
-              newPhysiObj.name = window.appConfig.currentStage + '_BGPHYSI'
+              newPhysiObj.name = window.appConfig.currentStage + '_BGPHYSI_' + Math.round(Math.random() * 1000)
               newPhysiObj.position.x = bgObj.position.x
               newPhysiObj.position.y = bgObj.position.y
               newPhysiObj.position.z = 1.5
@@ -7356,12 +7371,76 @@
               theBgObjects.push(
                 newPhysiObj
               )
+              newPhysiObj.addEventListener( 'collision', function( other_object ) {
+                if(other_object.name === 'SPHERE0') {
+
+
+                                  // window.appConfig.timers.activeTimers.push(window.appConfig.timers.demateralizeMesh(newPhysiObj))
+                window.appConfig.stages.components.demateralizeMesh(newPhysiObj, 5)
+                // setTimeout(() => {
+
+                  let divisions = 2// Math.round(Math.random() * ((bgObj.scale.x + bgObj.scale.y + bgObj.scale.z) / 6))
+                  let bgObjectScale = Math.ceil((bgObj.scale.x + bgObj.scale.y + bgObj.scale.z) / 3)
+                  console.log(bgObjectScale)
+                  for(let div=0;div<divisions;div++) {
+                    let newPhysiObjCol = new Physijs.ConvexMesh(
+                      new THREE.TetrahedronGeometry(.5 + Math.random() * 1.25, 0),
+                      Physijs.createMaterial(
+                        bgObj.material.clone(),
+                        0.6, // medium friction
+                        0.6 // low restitution
+                      ),
+                      1
+                      // bgObjectScale < 2.25 ? 1 : 0 // mass
+                    )
+                    newPhysiObjCol.name = window.appConfig.currentStage + '_BGPHYSI_COL' + Math.round(Math.random() * 1000)
+                    newPhysiObjCol.position.x = newPhysiObj.position.x + ((Math.random() * 5) - 2.5)
+                    newPhysiObjCol.position.y = newPhysiObj.position.y + ((Math.random() * 5) - 2.5)
+                    newPhysiObjCol.position.z = 1.5
+                    newPhysiObjCol.rotation.x = Math.random() * Math.PI
+                    newPhysiObjCol.rotation.y = Math.random() * Math.PI
+                    newPhysiObjCol.rotation.z = Math.random() * Math.PI
+                    newPhysiObjCol.material.opacity = 1
+                    window.appConfig.stages.components.demateralizeMesh(newPhysiObjCol, bgObjectScale)
+                    scene.add(newPhysiObjCol)
+                    // newPhysiObjCol.addEventListener( 'collision', function( other_object ) {
+                    //   // window.appConfig.timers.activeTimers.push(window.appConfig.timers.demateralizeMesh(newPhysiObj))
+                    //   window.appConfig.stages.components.demateralizeMesh(newPhysiObj, bgObjectScale)
+                    // })
+                    if(Math.random() < .1) {
+                      window.appConfig.prize(Math.round(Math.random() * 10000), 0, { x: newPhysiObj.position.x, y: newPhysiObj.position.y, z: 0 })
+                    }
+                    for (let superSounds = 0; superSounds < 4; superSounds++) {
+                      const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
+
+                      setTimeout(() => {
+                        coinSounds[Math.round(Math.random() * (coinSounds.length - 1))].play()
+                        scene.add(window.appConfig.stages.components.crystal(superSounds % 3, { x: other_object.position.x + ((Math.random() * 25) - 12.5), y: other_object.position.y + ((Math.random() * 20) - 10), z: 0 }))
+                      }, superSounds * 50)
+                    }
+
+                    bgObjectScale < 2.25 && newPhysiObjCol.setLinearVelocity( new THREE.Vector3().clone(other_object._physijs.linearVelocity))
+                  }
+
+                  // setTimeout(() => {
+                  if(newPhysiObj) {
+                    newPhysiObj && scene.remove(newPhysiObj)
+                  }
+                  // }, 250)
+                  
+                // }, 125)
+
+
+
+
+                }
+              });
             })
             scene.remove(theBg)
             console.log(theBgObjects)
             const gemStageWalls = window.appConfig.stages.components.createStage0MainBeamStructure(
               8,
-              0.525,
+              0.5275,
               window.appConfig.currentStage + "_GEM_STAGE_WALLS"
             );
             scene.add(gemStageWalls);
@@ -7597,6 +7676,9 @@
         }
       },
       countdownStartFlash: (action) => {
+        if(window.appConfig.timer.isPaused() === true) {
+          window.appConfig.timer.start()
+        }
         window.appConfig.pauseSuperballs = false
         return {
           started: 0,
@@ -8363,7 +8445,7 @@
       sphere.position.y = p.y
       sphere.position.z = p.z
       sphere.__dirtyPosition = true
-      console.log(sphere.position)
+      // console.log(sphere.position)
     }
 
     window.appConfig.positionCamera = (p) => {
