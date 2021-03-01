@@ -1928,7 +1928,7 @@
       // const rubyGeo = new THREE.OctahedronGeometry(2, 1)
       // rubyGeo.scale.y = .5
 
-      const createRuby = (p = { x: 0, y: 0, z: 0 }) => {
+      const createRuby = (p = { x: 0, y: 0, z: 0 }, isCoin = true) => {
         const rubyShape = new THREE.Shape()
         rubyShape.moveTo(0, 0)
         rubyShape.lineTo(.5, 0)
@@ -1955,28 +1955,30 @@
         })
 
         const ruby = new THREE.Mesh(rubyGeo, new THREE.MeshPhongMaterial({
-          color: 0xff0000,
+          color: isCoin === false ? 0xffffff : 0xff0000,
           specular: 0x050505,
           shininess: 200,
-          opacity: .95,
+          opacity: isCoin === false ? .25 : .95,
           transparent: true
         })
         )
         ruby.position.set(p.x, p.y, p.z)
-        ruby.scale.x = 1.5
-        ruby.scale.y = 1.5
-        ruby.scale.z = 1.5
-        ruby.name = window.appConfig.currentStage + "RUBY" + Math.floor(Math.random() * 10000)
+        ruby.scale.x = isCoin === false ? 1 : 1.5
+        ruby.scale.y = isCoin === false ? 1 : 1.5
+        ruby.scale.z = isCoin === false ? 1 : 1.5
+        let rubyNameAdjustment = isCoin === false ? 'RUBY_INDICATOR' : 'RUBY'
+        ruby.name = window.appConfig.currentStage + '_' + rubyNameAdjustment + Math.floor(Math.random() * 10000)
         ruby.coinValue = 5000
         scene.add(ruby)
 
         // wireframe
         let rubyGeoLine = new THREE.EdgesGeometry(ruby.geometry)
-        let mat = new THREE.LineBasicMaterial({color: 0xff0000, linewidth: 1})
+        let mat = new THREE.LineBasicMaterial({color: isCoin === false ? 0xffffff : 0xff0000, linewidth: 1})
         let wireframe = new THREE.LineSegments(rubyGeoLine, mat)
         ruby.add(wireframe)
-
-        window.appConfig.coins.push(ruby)
+        if(isCoin === true) {
+          window.appConfig.coins.push(ruby)          
+        }
       }
 
       const createEmerald = (p = { x: 0, y: 0, z: 0 }) => {
@@ -2921,7 +2923,8 @@
                 window.appConfig.timers.activeTimers.push(window.appConfig.timers.backgroundToPhysi())
               },
               portalConfig: {
-                sapphire: false
+                sapphire: false,
+                active: false
               }
             }
 
@@ -2938,7 +2941,7 @@
               }))
               },
               portalConfig: {
-                sapphire: true
+                sapphire: true,
               }
             }
 
@@ -2946,6 +2949,8 @@
             window.appConfig.timers.activeTimers.push(
               window.appConfig.timers.addPortalToStage({ x: 10, y: -20, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, portalConfig0)
             )
+            window.appConfig.stages.components.createRuby({ x: 10, y: -17.5, z: -5 }, false)
+
             // window.appConfig.timers.activeTimers.push(
             //   window.appConfig.timers.addPortalToStage({ x: -10, y: 20, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 50, y: 50, z: 0 }, portalConfig1)
             // )
@@ -8373,9 +8378,28 @@
 
       if (window.appConfig.stages[window.appConfig.currentStage].data.portals && window.appConfig.stages[window.appConfig.currentStage].data.portals.length > 0 && window.appConfig.pause === false) {
         window.appConfig.stages[window.appConfig.currentStage].data.portals.forEach(p => {
-          p.rotation.z += .01
+          if(p.portalConfig && !p.portalConfig.sapphire || p.portalConfig.sapphire === false) {
+            p.material.color = window.appConfig.superBallMaterial.color
+          }
+          if((p.portalConfig && p.portalConfig.active === true) || !p.portalConfig) {
+            if (sphere.position.distanceTo(p.position) < 7.5 && p.activated === false) {
+              p.activated = true
+              window.appConfig.timers.activeTimers.push(
+                window.appConfig.timers.activatePortal(p)
+              )
+            }
+            p.rotation.z += .01
+          }
+          if(p.portalConfig && p.portalConfig.active === false) {
+            p.material.color = 0x000000
+            p.material.opacity = .25
+          }
           p.children.forEach((pc, pci) => {
             if (pc.oPosition) {
+              if(p.portalConfig && p.portalConfig.active === false) {
+                pc.material.color = 0x000000
+                pc.material.opacity = .25
+              }
               pc.position.x = pc.oPosition.x * lfo(500 + (pci + 1) * 125) * 2
               pc.position.y = pc.oPosition.y * lfo(500 + (pci + 1) * 100) * 2
               pc.position.z = pc.oPosition.z * lfo(500 + (pci + 1) * 75) * 2
@@ -8384,15 +8408,6 @@
               pc.rotation.z = lfo(500 + (pci + 1) * 75) * 1.125
             }
           })
-          if(p.portalConfig && !p.portalConfig.sapphire || p.portalConfig.sapphire === false) {
-            p.material.color = window.appConfig.superBallMaterial.color
-          }
-          if (sphere.position.distanceTo(p.position) < 7.5 && p.activated === false) {
-            p.activated = true
-            window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.activatePortal(p)
-            )
-          }
         })
       }
 
@@ -8523,6 +8538,10 @@
           }
           if (potentiallyGrabbedCoin.coinType === 'triple' && window.appConfig.sfxTurnedOn) {
             window.appConfig.howlSounds.coins.lCoin[Math.floor(Math.random() * 2.99)].play()
+          }
+
+          if(potentiallyGrabbedCoin.name.indexOf('RUBY' > -1)) {
+
           }
 
         } else if (prizeValue > 0) {
