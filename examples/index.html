@@ -1929,7 +1929,10 @@
             if (sapphire.hasTarget === false) {
               let lengthVal = isBlueIsland ? window.appConfig.blueIslandPoints.length : window.appConfig.coins.length
               const randomNum = Math.floor(Math.random() * lengthVal)
-              const targetCoin = isBlueIsland ? window.appConfig.blueIslandPoints[randomNum] : window.appConfig.coins[randomNum]
+              let targetCoin = isBlueIsland ? window.appConfig.blueIslandPoints[randomNum] : window.appConfig.coins[randomNum]
+              if (targetCoin === undefined) {
+                targetCoin = { position: { x: 100, y: 100 } }
+              }
               console.log("target coin", targetCoin)
               // console.log("targetPosition", targetPosition)
 
