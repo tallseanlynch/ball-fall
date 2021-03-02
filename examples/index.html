@@ -1928,7 +1928,7 @@
       // const rubyGeo = new THREE.OctahedronGeometry(2, 1)
       // rubyGeo.scale.y = .5
 
-      const createRuby = (p = { x: 0, y: 0, z: 0 }, isCoin = true) => {
+      const createRuby = (p = { x: 0, y: 0, z: 0 }, isCoin = true, portalParent = false) => {
         const rubyShape = new THREE.Shape()
         rubyShape.moveTo(0, 0)
         rubyShape.lineTo(.5, 0)
@@ -1954,23 +1954,36 @@
           bevelOffset: 0,
         })
 
-        const ruby = new THREE.Mesh(rubyGeo, new THREE.MeshPhongMaterial({
+        const rubyMaterial = new THREE.MeshPhongMaterial({
           color: isCoin === false ? 0xffffff : 0xff0000,
           specular: 0x050505,
           shininess: 200,
           opacity: isCoin === false ? .25 : .95,
           transparent: true
         })
+
+        const ruby = new THREE.Mesh(rubyGeo, rubyMaterial
         )
-        ruby.position.set(p.x, p.y, p.z)
+        if(portalParent !== false) {
+          let portalParentMesh = scene.children.find(c => c.name.indexOf(portalParent) > -1)
+          ruby.position.x = portalParentMesh.position.x - 3.5
+          ruby.position.y = portalParentMesh.position.y - 3
+          ruby.position.z = -2.5
+        } else {
+          ruby.position.set(p.x, p.y, p.z)
+        }
         ruby.scale.x = isCoin === false ? 1 : 1.5
         ruby.scale.y = isCoin === false ? 1 : 1.5
         ruby.scale.z = isCoin === false ? 1 : 1.5
-        let rubyNameAdjustment = isCoin === false ? 'RUBY_INDICATOR' : 'RUBY'
+        let rubyNameAdjustment = isCoin === false ? 'R_INDICATOR' : 'RUBY'
         ruby.name = window.appConfig.currentStage + '_' + rubyNameAdjustment + Math.floor(Math.random() * 10000)
         ruby.coinValue = 5000
         scene.add(ruby)
 
+        if(isCoin === false) {
+          ruby.originalMaterialColor = new THREE.Color(0xff0000)
+        }
+        
         // wireframe
         let rubyGeoLine = new THREE.EdgesGeometry(ruby.geometry)
         let mat = new THREE.LineBasicMaterial({color: isCoin === false ? 0xffffff : 0xff0000, linewidth: 1})
@@ -1981,7 +1994,7 @@
         }
       }
 
-      const createEmerald = (p = { x: 0, y: 0, z: 0 }) => {
+      const createEmerald = (p = { x: 0, y: 0, z: 0 }, isCoin = true, portalParent = false) => {
         const emeraldShape = new THREE.Shape()
         emeraldShape.moveTo(0, 0)
         emeraldShape.lineTo(1, 0)
@@ -2005,29 +2018,124 @@
           bevelOffset: 0,
         })
 
-        const emerald = new THREE.Mesh(emeraldGeo, new THREE.MeshPhongMaterial({
+        const emeraldMaterial = new THREE.MeshPhongMaterial({
           color: 0xb3ffb3,
           specular: 0x050505,
           shininess: 200,
           transparent: true,
-          opacity: .95
+          opacity: isCoin === false ? .25 : .95
         })
-        )
-        emerald.scale.y = 1.5
-        emerald.scale.x = 1.25
-        emerald.position.set(p.x, p.y, p.z)
-        emerald.name = window.appConfig.currentStage + "EMERALD" + Math.floor(Math.random() * 10000)
+
+        const emerald = new THREE.Mesh(emeraldGeo, emeraldMaterial)
+        emerald.scale.y = isCoin === false ? 1 : 1.5
+        emerald.scale.x = isCoin === false ? 1 : 1.25
+        emerald.scale.z = isCoin === false ? 1 : 1.25      
+        // emerald.position.set(p.x, p.y, p.z)
+
+        if(portalParent !== false) {
+          let portalParentMesh = scene.children.find(c => c.name.indexOf(portalParent) > -1)
+          emerald.position.x = portalParentMesh.position.x + 3
+          emerald.position.y = portalParentMesh.position.y - 3
+          emerald.position.z = -2.5
+        } else {
+          emerald.position.set(p.x, p.y, p.z)
+        }
+
+        let emeraldNameAdjustment = isCoin === false ? 'E_INDICATOR' : 'EMERALD'
+        emerald.name = window.appConfig.currentStage + '_' + emeraldNameAdjustment + Math.floor(Math.random() * 10000)
         emerald.coinValue = 10000
+
+        if(isCoin === false) {
+          emerald.originalMaterialColor = new THREE.Color(0xb3ffb3)
+        }
 
         // wireframe
         let emeraldGeoLine = new THREE.EdgesGeometry(emeraldGeo)
-        let mat = new THREE.LineBasicMaterial({color: 0xffffff, linewidth: 1})
+        let mat = new THREE.LineBasicMaterial({color: isCoin === false ? 0xffffff : 0xb3ffb3, linewidth: 1})
         let wireframe = new THREE.LineSegments(emeraldGeoLine, mat)
         scene.add(emerald)
         emerald.add(wireframe)
-        window.appConfig.coins.push(emerald)
+        if(isCoin === true) {
+          window.appConfig.coins.push(emerald)
+        }
       }
 
+
+      const createDiamond = (p = { x: 0, y: 0, z: 0 }, isCoin = true, portalParent = false) => {
+        const diamondMaterial = new THREE.MeshPhongMaterial({
+          color: isCoin === false ? 0xffffff : 0x000ff,
+          specular: 0x050505,
+          transparent: true,
+          opacity: isCoin === false ? .25 : .95,
+          shininess: 100
+        })
+
+        window.appConfig.crystalMaterials.push({
+          standard: diamondMaterial,
+          pulsing: diamondMaterial
+        })
+
+        const diamondGeoGroup = new THREE.Group()
+        const diamondGeoBottom = new THREE.CylinderGeometry(
+          2, 0, 2, 6
+        )
+        const diamondGeoTop = new THREE.CylinderGeometry(
+          1, 2, 1, 6
+        )
+        const diamondTopMesh = new THREE.Mesh(
+          diamondGeoTop, diamondMaterial
+        )
+
+        const diamond = new THREE.Mesh(diamondGeoBottom, diamondMaterial)
+        diamond.size = 4
+        diamond.add(diamondTopMesh)
+        diamondTopMesh.position.y = 1.5
+
+        // diamond.position.set(p.x, p.y, p.z)
+
+        if(portalParent !== false) {
+          let portalParentMesh = scene.children.find(c => c.name.indexOf(portalParent) > -1)
+          diamond.position.x = portalParentMesh.position.x + .125
+          diamond.position.y = portalParentMesh.position.y + 3
+          diamond.position.z = -2.5
+        } else {
+          diamond.position.set(p.x, p.y, p.z)
+        }
+
+        diamond.scale.x = isCoin === false ? 1 : 2
+        diamond.scale.y = isCoin === false ? 1 : 2
+        diamond.scale.z = isCoin === false ? 1 : 2
+        diamond.rotation.y = .25 * Math.PI
+        // diamond.scale.set(2, 2, 2)
+        let diamondNameAdjustment = isCoin === false ? 'D_INDICATOR' : 'DIAMOND'
+        diamond.name = window.appConfig.currentStage + '_' + diamondNameAdjustment + Math.floor(Math.random() * 10000)
+
+        diamond.coinValue = 25000
+        scene.add(diamond)
+
+        // wireframe
+        let diamondGeoLine = new THREE.EdgesGeometry(diamond.geometry)
+        let mat = new THREE.LineBasicMaterial({color: isCoin === false ? 0xffffff : 0xffffff, linewidth: 1})
+        let wireframe = new THREE.LineSegments(diamondGeoLine, mat)
+
+        // wireframe for child
+        let diamondGeoLineChild = new THREE.EdgesGeometry(diamond.children[0].geometry)
+        let matChild = new THREE.LineBasicMaterial({color: isCoin === false ? 0xffffff : 0xffffff, linewidth: 1})
+        let wireframeChild = new THREE.LineSegments(diamondGeoLineChild, matChild)
+        wireframeChild.position.y = 1.5
+
+        if(isCoin === false) {
+          diamond.originalMaterialColor = new THREE.Color(0xffffff)
+        }
+
+        scene.add(diamond)
+        diamond.add(wireframe)
+        diamond.add(wireframeChild)
+
+        if(isCoin === true) {
+          window.appConfig.coins.push(diamond)
+        }
+      }
 
 
       const createBlackHole = (config) => {
@@ -2145,63 +2253,7 @@
       }
 
 
-      const createDiamond = (p = { x: 0, y: 0, z: 0 }) => {
-        const diamondMaterial = new THREE.MeshPhongMaterial({
-          color: 0x000ff,
-          specular: 0x050505,
-          transparent: true,
-          opacity: .95,
-          shininess: 100
-        })
 
-        window.appConfig.crystalMaterials.push({
-          standard: diamondMaterial,
-          pulsing: diamondMaterial
-        })
-
-        const diamondGeoGroup = new THREE.Group()
-        const diamondGeoBottom = new THREE.CylinderGeometry(
-          2, 0, 2, 6
-        )
-        const diamondGeoTop = new THREE.CylinderGeometry(
-          1, 2, 1, 6
-        )
-        const diamondTopMesh = new THREE.Mesh(
-          diamondGeoTop, diamondMaterial
-        )
-
-        const diamond = new THREE.Mesh(diamondGeoBottom, diamondMaterial)
-        diamond.size = 4
-        diamond.add(diamondTopMesh)
-        diamondTopMesh.position.y = 1.5
-
-        diamond.position.set(p.x, p.y, p.z)
-        diamond.scale.x = 2
-        diamond.scale.y = 2
-        diamond.scale.z = 2
-        diamond.rotation.y = .25 * Math.PI
-        // diamond.scale.set(2, 2, 2)
-        diamond.name = window.appConfig.currentStage + "DIAMOND" + Math.floor(Math.random() * 10000)
-        diamond.coinValue = 25000
-        scene.add(diamond)
-
-        // wireframe
-        let diamondGeoLine = new THREE.EdgesGeometry(diamond.geometry)
-        let mat = new THREE.LineBasicMaterial({color: 0xffffff, linewidth: 1})
-        let wireframe = new THREE.LineSegments(diamondGeoLine, mat)
-
-
-        // wireframe
-        let diamondGeoLineChild = new THREE.EdgesGeometry(diamond.children[0].geometry)
-        let matChild = new THREE.LineBasicMaterial({color: 0xffffff, linewidth: 1})
-        let wireframeChild = new THREE.LineSegments(diamondGeoLineChild, matChild)
-        wireframeChild.position.y = 1.5
-
-        scene.add(diamond)
-        diamond.add(wireframe)
-        diamond.add(wireframeChild)
-        window.appConfig.coins.push(diamond)
-      }
       window.appConfig.stages = {
         components: {
           createBlackHole: createBlackHole,
@@ -2758,7 +2810,7 @@
                 if(bumper.coinThrottle === false) {
                   bumper.coinThrottle = true
                   if(Math.random() < .05) {
-                      window.appConfig.prize(Math.round(Math.random() * 10000), 0, { x: otherObject.position.x, y: otherObject.position.y, z: 0 })
+                      window.appConfig.prize(window.appConfig.currentStageIndex, Math.round(Math.random() * 10000), { x: otherObject.position.x, y: otherObject.position.y, z: 0 })
                   }
                   const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
                   for (let superSounds = 0; superSounds < 10; superSounds++) {
@@ -2924,7 +2976,8 @@
               },
               portalConfig: {
                 sapphire: false,
-                active: false
+                active: false,
+                indicators: 3
               }
             }
 
@@ -2942,18 +2995,25 @@
               },
               portalConfig: {
                 sapphire: true,
+                active: true
               }
             }
 
             // portal
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 10, y: -20, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, portalConfig0)
+              // window.appConfig.timers.addPortalToStage({ x: 95, y: -95, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, portalConfig0)
+              window.appConfig.timers.addPortalToStage({ x: -20, y: -20, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, portalConfig0)
             )
-            window.appConfig.stages.components.createRuby({ x: 10, y: -17.5, z: -5 }, false)
+            // window.appConfig.stages.components.createRuby({ x: 10, y: -17.5, z: -5 }, false)
+            setTimeout(() => {
+              window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
+              window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
+              window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
+            }, 100)
 
-            // window.appConfig.timers.activeTimers.push(
-            //   window.appConfig.timers.addPortalToStage({ x: -10, y: 20, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 50, y: 50, z: 0 }, portalConfig1)
-            // )
+            window.appConfig.timers.activeTimers.push(
+              window.appConfig.timers.addPortalToStage({ x: -10, y: 20, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 50, y: 50, z: 0 }, portalConfig1)
+            )
 
             window.appConfig.stages.components.createBumper("STAGE0BUMPER0", 1, { x: -70, y: -72.5, z: 0 }, 5)
             window.appConfig.stages.components.createBumper("STAGE0BUMPER1", 1, { x: 70, y: -72.5, z: 0 }, 5)
@@ -2984,12 +3044,14 @@
             window.appConfig.stages.components.createSapphire({ x: -20, y: -10, z: 0 })
             window.appConfig.stages.components.createSapphire({ x: -10, y: 20, z: 0 })
             window.appConfig.stages.components.createSapphire({ x: -30, y: -30, z: 0 })
-            // window.appConfig.stages.components.createRuby({ x: 0, y: -25, z: 0 })
-            window.appConfig.stages.components.createRuby({ x: 87, y: -1.25, z: 0 })
-            window.appConfig.stages.components.createEmerald({ x: -97.5, y: -1.25, z: 0 })
-            // window.appConfig.stages.components.createEmerald({ x: -25, y: 0, z: 0 })
-            // window.appConfig.stages.components.createDiamond({ x: 25, y: 25, z: 0 })
-            window.appConfig.stages.components.createDiamond({ x: -57, y: -1.25, z: 0 })
+
+            // window.appConfig.stages.components.createRuby({ x: 87, y: -1.25, z: 0 })
+            // window.appConfig.stages.components.createEmerald({ x: -97.5, y: -1.25, z: 0 })
+            // window.appConfig.stages.components.createDiamond({ x: -57, y: -1.25, z: 0 })
+
+            window.appConfig.stages.components.createRuby({ x: 20, y: 15, z: 0 })
+            window.appConfig.stages.components.createEmerald({ x: 20, y: 0, z: 0 })
+            window.appConfig.stages.components.createDiamond({ x: 20, y: -15, z: 0 })
 
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createSwitchBeamWall = window.appConfig.stages.components.createSwitchBeamWall
@@ -3160,7 +3222,7 @@
             prize(0, 11, { x: 105, y: -15, z: 0 })
 
             prize(0, 12, { x: 95, y: 90, z: 0 })
-            prize(0, 13, { x: 95, y: -90, z: 0 })
+            prize(0, 13, { x: 95, y: -80, z: 0 })
             // prize(0, 14, { x: -105, y: -105, z: 0 })
             // prize(0, 15, { x: -105, y: 105, z: 0 })
 
@@ -3650,43 +3712,6 @@
 
 
 
-            // createCrystalCross('STAGE1', 5, { x: 20, y: 19 }, 1);
-            // createCrystalCross('STAGE1', 5, { x: -20, y: 19 }, 1);
-            // createCrystalCross('STAGE1', 5, { x: -20, y: -19 }, 1);
-            // createCrystalCross('STAGE1', 5, { x: 20, y: -19 }, 1);
-
-            // createCrystalCross('STAGE1', 5, { x: 85, y: 84 }, 2);
-            // createCrystalCross('STAGE1', 5, { x: 85, y: -84 }, 2);
-            // createCrystalCross('STAGE1', 5, { x: -85, y: -84 }, 2);
-            // createCrystalCross('STAGE1', 5, { x: -85, y: 84 }, 2);
-
-            // createCrystalLine('STAGE1', 5, { x: 89.5, y: -35 }, 0, 15, "y");
-            // createCrystalLine('STAGE1', 5, { x: 75.5, y: -10 }, 0, 5, "y");
-            // createCrystalLine('STAGE1', 10, { x: 82.5, y: -20 }, 2, 5, "y");
-            // createCrystalLine('STAGE1', 4, { x: 58, y: 0 }, 1, 4, "x");
-
-            // createCrystalLine('STAGE1', 5, { x: -89.5, y: -35 }, 0, 15, "y");
-            // createCrystalLine('STAGE1', 5, { x: -75.5, y: -10 }, 0, 5, "y");
-            // createCrystalLine('STAGE1', 10, { x: -82.5, y: -20 }, 2, 5, "y");
-            // createCrystalLine('STAGE1', 4, { x: -70, y: 0 }, 1, 4, "x");
-
-            // createCrystalLine('STAGE1', 5, { x: -35, y: -89.5 }, 0, 15, "x");
-            // createCrystalLine('STAGE1', 5, { x: -10, y: -75.5 }, 0, 5, "x");
-            // createCrystalLine('STAGE1', 10, { x: -20, y: -82.5 }, 2, 5, "x");
-            // createCrystalLine('STAGE1', 4, { x: 0, y: -70 }, 1, 4, "y");
-
-            // createCrystalLine('STAGE1', 5, { x: -35, y: 89.5 }, 0, 15, "x");
-            // createCrystalLine('STAGE1', 5, { x: -10, y: 75.5 }, 0, 5, "x");
-            // createCrystalLine('STAGE1', 10, { x: -20, y: 82.5 }, 2, 5, "x");
-            // createCrystalLine('STAGE1', 4, { x: 0, y: 57.5 }, 1, 4, "y");
-
-            // createCrystalLine('STAGE1', 5, { x: 0, y: 15 }, 0, 8, "y");
-
-            // createCrystalLine('STAGE1', 5, { x: 0, y: -50 }, 0, 8, "y");
-
-            // createCrystalLine('STAGE1', 5, { x: 15, y: 0 }, 0, 8, "x");
-            // createCrystalLine('STAGE1', 5, { x: -50, y: 0 }, 0, 8, "x");
-
             createCrystalCircle('STAGE1AA', 4.5, { x: -50, y: -50 }, 2, 12)
             createCrystalCircle('STAGE1BB', 5, { x: -50, y: -50 }, 1, 16)
             createCrystalCircle('STAGE1CC', 5.25, { x: -50, y: -50 }, 0, 16)
@@ -3852,10 +3877,6 @@
             window.appConfig.stages.components.createSapphire({ x: -130, y: 100, z: 0 })
             window.appConfig.stages.components.createSapphire({ x: -140, y: 100, z: 0 })
 
-            // window.appConfig.stages.components.createBumper("STAGE2BUMPER0", 1, { x: 0, y: 25, z: 0 }, 6)
-            // window.appConfig.stages.components.createBumper("STAGE2BUMPER1", 1, { x: 0, y: 75, z: 0 }, 6)
-            // window.appConfig.stages.components.createBumper("STAGE2BUMPER2", 1, { x: 0, y: 100, z: 0 }, 6)
-            // window.appConfig.stages.components.createBumper("STAGE2BUMPER3", 1, { x: 0, y: -25, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE2BUMPER4", 1, { x: 0, y: -70, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE2BUMPER4", 1, { x: 30, y: -65, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE2BUMPER4", 1, { x: -30, y: -65, z: 0 }, 6)
@@ -3863,7 +3884,6 @@
             window.appConfig.stages.components.createBumper("STAGE2BUMPER4", 1, { x: -30, y: -115, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE2BUMPER4", 1, { x: 15, y: 75, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE2BUMPER4", 1, { x: -15, y: 75, z: 0 }, 6)
-            // window.appConfig.stages.components.createBumper("STAGE22BUMPER5", 1, { x: 0, y: -100, z: 0 }, 6)
 
 
             window.appConfig.createSphere({
@@ -4140,17 +4160,6 @@
             createCrystalCross('STAGE2', 5, { x: 10, y: -130 }, 1);
             createCrystalCross('STAGE2', 5, { x: -10, y: -130 }, 1);
 
-            // createCrystalCross('STAGE2', 5, { x: 0, y: 100 }, 0);
-            // createCrystalCross('STAGE2', 5, { x: 0, y: 120 }, 2);
-            // createCrystalCross('STAGE2', 5, { x: 10, y: 110 }, 1);
-            // createCrystalCross('STAGE2', 5, { x: -10, y: 110 }, 1);
-
-            // createCrystalLine('STAGE2', 5, { x: -35, y: 90.5 }, 0, 15, "x");
-            // createCrystalLine('STAGE2', 10, { x: -20, y: 97.5 }, 2, 5, "x");
-            // createCrystalLine('STAGE2', 5, { x: -35, y: 77.5 }, 0, 15, "x");
-            // createCrystalLine('STAGE2', 10, { x: -20, y: 70.5 }, 1, 5, "x");
-            // createCrystalLine('STAGE2', 10, { x: -35, y: 84.5 }, 2, 8, "x");
-
             createCrystalLine('STAGE2', 5, { x: -35, y: -100.5 }, 0, 15, "x");
             createCrystalLine('STAGE2', 10, { x: -20, y: -107.5 }, 2, 5, "x");
             createCrystalLine('STAGE2', 5, { x: -35, y: -87.5 }, 0, 15, "x");
@@ -4178,9 +4187,6 @@
 
             createCrystalLine('STAGE2', 5, { x: 70.5, y: -70 }, 0, 10, "y");
             createCrystalLine('STAGE2', 10, { x: 77.5, y: -60 }, 2, 5, "y");
-
-            // createCrystalLine('STAGE2', 5, { x: 57.5, y: -10 }, 0, 5, "y");
-            // createCrystalLine('STAGE2', 10, { x: 50.5, y: -20 }, 1, 5, "y");
 
             createCrystalCircle('STAGE2', 4.5, { x: 0, y: 0 }, 1, 4)
 
@@ -6082,7 +6088,6 @@
               -.65,
               "STAGE5MAINSTRUCTURE_2",
             );
-            // stage5MainBeamStructure_2.rotation.z = .25 * Math.PI
             scene.add(stage5MainBeamStructure_2);
 
 
@@ -6718,9 +6723,7 @@
         theMesh.add(theSpaceSphere)
         let theSpritePoints = []
         theMesh.geometry.vertices.forEach((p, pi) => {
-          // if(pi % 3 === 0){
           theSpritePoints.push(p)
-          // }
         })
         theSpritePoints.forEach((sp, spi) => {
           let theSprite = new THREE.Mesh(
@@ -6847,11 +6850,6 @@
           const thetaMod = Math.random()
           const phiMod = Math.random()
           const sprite0Mesh = new THREE.Mesh(spriteGeometry, spriteMaterial)
-          // const spriteLight = new THREE.PointLight(getRandomColor(), 1)
-          // spriteLight.power = 25;
-          // spriteLight.decay = 1;
-          // spriteLight.distance = 25;
-          // sprite0Mesh.add(spriteLight)
           scene.add(sprite0Mesh)
           let sprite0 = {
             mesh: sprite0Mesh,
@@ -7006,24 +7004,14 @@
         bhSprite.position.x = lfo(2500 + (bhi * 75)) * (.4 + lfo(bhi * 1000))
         bhSprite.position.y = lfo(1777 + (bhi * 75)) * (.4 + lfo(bhi * 1000))
       })
-      // debugger
       let distMod = .1
-      // bh.position.x = lfo(10750) * 100
-      // bh.position.y = lfo(8125) * 100
       if(typeof theSphere.position.x === "number") {
         bh.position.lerp(theSphere.position, .001 * Math.random() * 2)
         bh.position.x += lfo(3000 * (bhIndex + 1)) / ((bhIndex + 1) * 15)
         bh.position.y += lfo(3000 * (bhIndex + 1)) / ((bhIndex + 1) * 15)
-        // bh.position.lerp(new THREE.Vector3(bh.position.x + lfo(5000 * bhIndex) * (2.5 * bhIndex), bh.position.y + lfo(5000 * bhIndex) * (2.5 * bhIndex), 0), .05 * Math.random())
-        // bh.position.x += (bhIndex * lfo(15000))/10
-        // bh.position.y += (bhIndex * lfo(7500))/10
         bh.scale.x += .001
         bh.scale.y += .001
         bh.scale.z += .001
-        // let distX = bh.position.x - theSphere.position.x * -1
-        // let distY = bh.position.y - theSphere.position.y * -1
-        // bh.position.x += distX * distMod
-        // bh.position.y += distY * distMod
         let distanceToSphere = bh.position.distanceTo(theSphere.position)
         let currentTimeAdj = new Date().getTime()
         if(distanceToSphere < (25 + (bh.scale.x * .1)) && currentTimeAdj % 5 === 0) {
@@ -7035,18 +7023,10 @@
           theSphere.setLinearVelocity(newVelocity)
         }
         if(currentTimeAdj % 10 === 0) {
-          // window.appConfig.timers.activeTimers.push(
-            window.appConfig.stages.components.demateralizeMesh(bh, Math.random() * .5)
-          // )
+          window.appConfig.stages.components.demateralizeMesh(bh, Math.random() * .5)
         }
         bh.material.opacity = .98 + (lfo(500) * .2)
       }
-
-      // let theNewPositionX = ((bh.position.x * .99) + (theSphere.position.x * .01))/2
-      // let theNewPositionY = ((bh.position.y * .99) + (theSphere.position.y * .01))/2
-      // bh.position.x = theNewPositionX
-      // bh.position.y = theNewPositionY
-      // window.appConfig.positionBall({ x: theNewPositionX, y: theNewPositionY, z: 0 })
     }
 
     const timers = {
@@ -7062,10 +7042,6 @@
           currentTime: 0,
           name: name,
           id: Math.round(Math.random() * 10000),
-          // startedCallback: () => {
-          //   // debugger
-          //   window.appConfig.stages.components.demateralizeMesh(dMesh)
-          // },
           activeCallback: (percentComplete) => {
             dMesh.children.forEach((pc, pci) => {
                 pc.position.x += lfo(500 + dMeshLfoAdj + (pci + 1)) / 10
@@ -7166,7 +7142,6 @@
         }
 
         const completedCallback = () => {
-          //  debugger
           let theReceiverBeam = scene.children.find((rec) => rec.name.indexOf(remoteSwitch.receiver.switchName + '_SWITCHBEAM_RECEIVER_') > -1)
           theReceiverBeam.rotate()
         }
@@ -7182,15 +7157,6 @@
           id: Math.round(Math.random() * 10000),
           activeCallback,
           completedCallback
-          // activeCallback: (percentComplete) => {
-          //            remoteTransmitter.material.color = 0xffffff
-          // remoteTransmitter.material.color = remoteTransmitter.material.color.lerp(
-          //   window.appConfig.stages[window.appConfig.currentStage].backgroundColors[2],
-          //   percentComplete > 1 ? 1 : percentComplete
-          // )
-          // remoteSwitch.transmitter.material
-          // switchIndicator.material.opacity = .15 + (percentComplete * .85)
-          // }
         }
       },
       switchIndicatorActivate: (switchIndicator) => {
@@ -7291,7 +7257,8 @@
         activeCallback: () => {},
         completedCallback: () => {},
         portalConfig: {
-          sapphire: false
+          sapphire: false,
+          active: true
         }
       }) => {
         
@@ -7301,6 +7268,15 @@
         portalMesh.activeCallback = config.activeCallback
         portalMesh.completedCallback = config.completedCallback
         portalMesh.portalConfig = config.portalConfig
+        portalMesh.portalIndicatorCount = 0
+        portalMesh.incrementIndicator = () => {
+          portalMesh.portalIndicatorCount++
+          if(portalMesh.portalIndicatorCount === portalMesh.portalConfig.indicators) {
+            // enablePortal()
+            console.log('ALL GEMS ENABLED')
+            portalMesh.portalConfig.active = true
+          }
+        }
         return {
           started: 0,
           ended: 0,
@@ -7386,13 +7362,6 @@
         }
       },
       removePortal: (thePortalMesh) => {
-        
-        // setTimeout(() => {
-        //   window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageResultsBallZoom(true))
-        // }, 6000)
-        // // window.appConfig.timers.activeTimers.push(window.appConfig.timers.initialBallZoom())
-        // window.appConfig.timers.data.stageResultsBallZoom.percentComplete = 1
-        // window.appConfig.timers.data.stageReset.percentComplete = 1;
         window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
         let thePortalMeshSpaceSphere = thePortalMesh.children.find(c => c.name === 'THE_SPACE_SPHERE')
         let theSphere = scene.children.find((obj) => obj.name === 'SPHERE0')
@@ -7417,8 +7386,6 @@
             thePortalMeshSpaceSphere.scale.y = percentComplete * 6
             thePortalMeshSpaceSphere.scale.z = percentComplete * 6
             thePortalMeshSpaceSphere.position.z = ((1 - percentComplete) * -5) + (5 * percentComplete)
-            // let theNewPositionX = (thePortalMesh.portalTarget.x * percentComplete) + (theSphere.position.x * (1 - percentComplete))
-            // let theNewPositionY = (thePortalMesh.portalTarget.y * percentComplete) + (theSphere.position.y * (1 - percentComplete))
             window.appConfig.positionBall({ x: thePortalMesh.portalTarget.x, y: thePortalMesh.portalTarget.y, z: 0 })
 
             thePortalMesh.scale.x = percentComplete
@@ -7440,8 +7407,6 @@
         }
       },
       backgroundToPhysi: () => {
-        // window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
-        // let thePortalMeshSpaceSphere = thePortalMesh.children.find(c => c.name === 'THE_SPACE_SPHERE')
         let theBg = scene.children.find((obj) => obj.name.indexOf('BGGROUP') > -1 )
 
         return {
@@ -7454,7 +7419,6 @@
           name: 'BACKGROUNDTOPHYSI_' + Math.round(Math.random() * 10000),
           id: Math.round(Math.random() * 10000),
           startedCallback: () => {
-            // blackhole
             window.appConfig.stages.components.createBlackHole({position: {x: 0, y: 40, z: 0}, scale: {x: 2, y: 2, z: 2}})
             window.appConfig.stages.components.createBlackHole({position: {x: -40, y: -40, z: 0}, scale: {x: 2, y: 2, z: 2}})
             window.appConfig.stages.components.createBlackHole({position: {x: 40, y: -40, z: 0}, scale: {x: 2, y: 2, z: 2}})
@@ -7518,7 +7482,7 @@
                     //   scene.remove(newPhysiObjCol)
                     // })
                     if(Math.random() < .05) {
-                      window.appConfig.prize(Math.round(Math.random() * 10000), 0, { x: newPhysiObj.position.x, y: newPhysiObj.position.y, z: 0 })
+                      window.appConfig.prize(window.appConfig.currentStageIndex, Math.round(Math.random() * 10000), { x: newPhysiObj.position.x, y: newPhysiObj.position.y, z: 0 })
                     }
                     for (let superSounds = 0; superSounds < 4; superSounds++) {
                       const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
@@ -7592,7 +7556,8 @@
                     // window.appConfig.timers.activeTimers.push(window.appConfig.timers.backgroundToPhysi())
                   },
                   portalConfig: {
-                    sapphire: false
+                    sapphire: false,
+                    active: true
                   }
                 }
 
@@ -7669,6 +7634,27 @@
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
             window.appConfig.timers.data.initialBallZoom.percentComplete = percentComplete
+          }
+        }
+      },
+      activatePortalIndicator: (indicator) => {
+        return {
+          started: 0,
+          ended: 0,
+          percentComplete: 0,
+          time: 2000,
+          timeLeft: 0,
+          currentTime: 0,
+          name: 'ACTIVATE_PORTAL_INDICATOR' + Math.round(Math.random() * 10000),
+          id: Math.round(Math.random() * 10000),
+          startedCallback: () => {
+            let thePortal = scene.children.find(c => c.name.indexOf('GEM_STAGE_END') > -1)
+            thePortal.incrementIndicator()
+            indicator.material.color = indicator.originalMaterialColor
+          },
+          activeCallback: (percentComplete) => {
+            indicator.material.opacity = .25 + (percentComplete * .75)
+            console.log(percentComplete, indicator, indicator.material.opacity, indicator.material.color)
           }
         }
       },
@@ -7827,16 +7813,8 @@
             }
             const noInitialBallZoom = true
             window.appConfig.gameModeFunctions.start(noInitialBallZoom)
-            // scene.children.find((obj) => obj.name === 'SPHERE0').position.setY(0);
-            // scene.children.find((obj) => obj.name === 'SPHERE0').__dirtyPosition = true;
             window.appConfig.stageTotalTimePlayed = window.appConfig.easyTimerLength
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownStartFlash())
-            // window.appConfig.positionBall({x: 0, y: 0, z: 0})
-            // window.appConfig.gameModeFunctions.pause()
-            // if (window.appConfig.achievements.superBall === true) {
-            // const superBallPositionScale = window.appConfig.stages[window.appConfig.currentStage].data.superBallPositionScale ? window.appConfig.stages[window.appConfig.currentStage].data.superBallPositionScale : 50
-            // window.appConfig.createSphere({ bounce: 1, name: window.appConfig.currentStage + '_SPHERECOIN', position: { x: (Math.random() * superBallPositionScale * 2) - superBallPositionScale, y: (Math.random() * superBallPositionScale * 2) - superBallPositionScale, z: 0 }, handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN') })
-            // }
           },
         }
       },
@@ -8206,7 +8184,6 @@
           appTimers.activeTimers.forEach((t, ti) => {
             if (appTimers.activeTimers[ti] && appTimers.activeTimers[ti] && appTimers.activeTimers[ti].started === 0) {
               appTimers.activeTimers[ti].pauseTimes = []
-              // appTimers.activeTimers[ti].startedPauseTime = 0
               appTimers.activeTimers[ti].isPaused = false
               appTimers.activeTimers[ti].started = currentTime
               appTimers.activeTimers[ti].currentTime = currentTime
@@ -8265,13 +8242,6 @@
             if(appTimers.activeTimers[ti].pauseTimes.length > 0 && appTimers.activeTimers[ti].pauseTimes[appTimers.activeTimers[ti].pauseTimes.length - 1].completedTime === 0) {
               appTimers.activeTimers[ti].pauseTimes[appTimers.activeTimers[ti].pauseTimes.length - 1].currentPauseTime = currentTime
             }
-
-            // if(appTimers.activeTimers[ti].startedPauseTime === 0) {
-            //   appTimers.activeTimers[ti].startedPauseTime = currentTime
-            // }
-            // if(appTimers.activeTimers[ti].startedPauseTime !== 0) {
-            //   appTimers.activeTimers[ti].pauseTime = currentTime - appTimers.activeTimers[ti].startedPauseTime
-            // }
           })
         }
       }
@@ -8359,8 +8329,8 @@
           window.appConfig.superballMaterialIncrement++
           sphereCoins.forEach(sc => {
             if (sc.setLinearVelocity) {
-              if(sc.name.indexOf('FINALSTAGE') === -1 || currentTime % 30 < 2) {
-                sc.setLinearVelocity(new THREE.Vector3(Math.random() * 50 - 25, Math.random() * 50 - 25, 0))
+              if(sc.name.indexOf('FINALSTAGE') === -1 || currentTime % 10 === 0) {
+                sc.setLinearVelocity(new THREE.Vector3(Math.random() * 25 - 12.5, Math.random() * 25 - 12.5, 0).add(sc._physijs.linearVelocity))
               }
               sc.material.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
               sc.children[0].material.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
@@ -8540,8 +8510,25 @@
             window.appConfig.howlSounds.coins.lCoin[Math.floor(Math.random() * 2.99)].play()
           }
 
-          if(potentiallyGrabbedCoin.name.indexOf('RUBY' > -1)) {
+          if(potentiallyGrabbedCoin.name.indexOf('RUBY') > -1) {
+            let rubyIndicator = scene.children.find(c => c.name.indexOf('R_INDICATOR') > -1)
+            window.appConfig.timers.activeTimers.push(
+              window.appConfig.timers.activatePortalIndicator(rubyIndicator)
+            )
+          }
 
+          if(potentiallyGrabbedCoin.name.indexOf('EMERALD') > -1) {
+            let emeraldIndicator = scene.children.find(c => c.name.indexOf('E_INDICATOR') > -1)
+            window.appConfig.timers.activeTimers.push(
+              window.appConfig.timers.activatePortalIndicator(emeraldIndicator)
+            )
+          }
+
+          if(potentiallyGrabbedCoin.name.indexOf('DIAMOND') > -1) {
+            let diamondIndicator = scene.children.find(c => c.name.indexOf('D_INDICATOR') > -1)
+            window.appConfig.timers.activeTimers.push(
+              window.appConfig.timers.activatePortalIndicator(diamondIndicator)
+            )
           }
 
         } else if (prizeValue > 0) {
