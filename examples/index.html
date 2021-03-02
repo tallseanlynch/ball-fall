@@ -1504,13 +1504,15 @@
         crystalCircle.debugType = 'CRYSTALCIRCLE'
         crystalCircle.debugName = 'CRYSTALCIRCLE' + window.appConfig.itemAmounts.crystalCircle
         crystalCircle.name = name + '_' + crystalCircle.debugName
-        var ellipse = new THREE.EllipseCurve(0, 0, s, s, 0, 2.0 * Math.PI, false);
-        var ellipsePath = new THREE.CurvePath();
-        ellipsePath.add(ellipse);
-        var ellipseGeometry = ellipsePath.createPointsGeometry(n);
+        // var ellipse = new THREE.EllipseCurve(0, 0, s, s, 0, 2.0 * Math.PI, false);
+        // var ellipsePath = new THREE.CurvePath();
+        // ellipsePath.add(ellipse);
+        // var ellipseGeometry = ellipsePath.createPointsGeometry(n);
 
-        let i = 0;
-        for (i; i < ellipseGeometry.vertices.length - 1; i++) {
+        var ellipseGeometry = new THREE.CircleGeometry( s, n * 2 )
+
+        let i = 1;
+        for (i; i < ellipseGeometry.vertices.length; i++) {
           crystalCircle.add(crystal(size, { x: ellipseGeometry.vertices[i].x * s + t.x, y: ellipseGeometry.vertices[i].y * s + t.y, z: 0 }));
         }
         scene.add(crystalCircle)
@@ -2169,18 +2171,20 @@
 
           let spriteGroup = new THREE.Group()
           
-          var ellipse = new THREE.EllipseCurve(0, 0, s, s, 0, 2.0 * Math.PI, false);
-          var ellipsePath = new THREE.CurvePath();
-          ellipsePath.add(ellipse);
-          var ellipseGeometry = ellipsePath.createPointsGeometry(n);
-          
+          // var ellipse = new THREE.EllipseCurve(0, 0, s, s, 0, 2.0 * Math.PI, false);
+          // var ellipsePath = new THREE.CurvePath();
+          // ellipsePath.add(ellipse);
+          // var ellipseGeometry = ellipsePath.createPointsGeometry(n);
+
+          var ellipseGeometry = new THREE.CircleGeometry( s, n )
+
           let spritePlane = () => new THREE.Mesh(
             theBlackHoleGeo,
             blackHoleMaterial          
           )
 
-          let i = 0;
-          for (i; i < ellipseGeometry.vertices.length - 1; i++) {
+          let i = 1;
+          for (i; i < ellipseGeometry.vertices.length; i++) {
             let id = Math.round(Math.random() * 100000)
             let theSprite = spritePlane()
             theSprite.scale.x = config.scale.x * .33
@@ -2220,18 +2224,20 @@
 
           let spriteGroup = new THREE.Group()
           
-          var ellipse = new THREE.EllipseCurve(0, 0, s, s, 0, 2.0 * Math.PI, false);
-          var ellipsePath = new THREE.CurvePath();
-          ellipsePath.add(ellipse);
-          var ellipseGeometry = ellipsePath.createPointsGeometry(n);
-          
+          // var ellipse = new THREE.EllipseCurve(0, 0, s, s, 0, 2.0 * Math.PI, false);
+          // var ellipsePath = new THREE.CurvePath();
+          // ellipsePath.add(ellipse);
+          // var ellipseGeometry = ellipsePath.createPointsGeometry(n);
+
+          var ellipseGeometry = new THREE.CircleGeometry( s, n )
+
           let spritePlane = () => new THREE.Mesh(
             new THREE.PlaneGeometry(.25, .25, 1, 1),
             theDSpriteMaterial          
           )
 
-          let i = 0;
-          for (i; i < ellipseGeometry.vertices.length - 1; i++) {
+          let i = 1;
+          for (i; i < ellipseGeometry.vertices.length; i++) {
             let id = Math.round(Math.random() * 100000)
             let theSprite = spritePlane()
             theSprite.scale.x = dMesh.scale.x * scaleAdj
@@ -7595,13 +7601,15 @@
                 s,
                 n = 4
               ) => {
-                var ellipse = new THREE.EllipseCurve(0, 0, s, s, 0, 2.0 * Math.PI, false);
-                var ellipsePath = new THREE.CurvePath();
-                ellipsePath.add(ellipse);
-                var ellipseGeometry = ellipsePath.createPointsGeometry(n);
+                // var ellipse = new THREE.EllipseCurve(0, 0, s, s, 0, 2.0 * Math.PI, false);
+                // var ellipsePath = new THREE.CurvePath();
+                // ellipsePath.add(ellipse);
+                // var ellipseGeometry = ellipsePath.createPointsGeometry(n);
 
-                let i = 0;
-                for (i; i < ellipseGeometry.vertices.length - 1; i++) {
+                var ellipseGeometry = new THREE.CircleGeometry( s, n )
+
+                let i = 1;
+                for (i; i < ellipseGeometry.vertices.length; i++) {
                   let id = Math.round(Math.random() * 100000)
                   window.appConfig.createSphere({
                     bounce: 1,
