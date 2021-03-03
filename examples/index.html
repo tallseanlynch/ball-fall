@@ -3247,7 +3247,7 @@
             }, 100)
 
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: -10, y: 20, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 50, y: 50, z: 0 }, portalConfig1)
+              window.appConfig.timers.addPortalToStage({ x: -10, y: 20, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 }, portalConfig1)
             )
 
             window.appConfig.stages.components.createBumper("STAGE0BUMPER0", 1, { x: -70, y: -72.5, z: 0 }, 5)
@@ -8570,10 +8570,10 @@
         window.appConfig.start === false &&
         window.appConfig.pause === false //|| window.appConfig.toggleGravity === true
       ) {
-        if (window.appConfig.start === false) {
-          // sphere.position.set(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition); //initial sphere position
-          sphere.position.set(0, 300, 0); //initial sphere position
-        }
+        // if (window.appConfig.start === false) {
+        //   sphere.position.set(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition); //initial sphere position
+        //   // sphere.position.set(0, 300, 0); //initial sphere position
+        // }
         sphere
           .setLinearVelocity(new THREE.Vector3(0, 0, 0));
         sphere
