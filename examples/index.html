@@ -1933,7 +1933,7 @@
               if (targetCoin === undefined) {
                 targetCoin = { position: { x: 100, y: 100 } }
               }
-              console.log("target coin", targetCoin)
+              // console.log("target coin", targetCoin)
               // console.log("targetPosition", targetPosition)
 
               const v0 = new THREE.Vector2(sapphire.position.x, sapphire.position.y)
@@ -6882,42 +6882,71 @@
           (config && config.bounce) ? config.bounce : 0.5,
           1
         );
-        sphere = new Physijs.SphereMesh((config && config.name) ? superBallGeo : sphere_geometry, material);
-        sphere.collisions = 0;
-        (config && config.position) ? sphere.position.set(config.position.x, config.position.y, 0) : sphere.position.set(0, 0, 0)
-
-        sphere.rotation.set(
-          Math.random() * Math.PI,
-          Math.random() * Math.PI,
-          Math.random() * Math.PI
-        );
-        sphere.castShadow = true;
-        sphere.addEventListener("collision", (config && config.handleCollision) ? config.handleCollision : handleCollision);
-        sphere.gameName = (config && config.name) ? config.name : "SPHERE0";
-        sphere.name = (config && config.name) ? config.name : "SPHERE0";
-        sphere.setCcdMotionThreshold(.5)
-        sphere.setCcdSweptSphereRadius(1)
-        if (config && config.handleCollision) {
-          const superBallShell = new THREE.Mesh(
-            new THREE.SphereGeometry(3, 32, 32),
+        // debugger
+        if(config && config.isIndicator === true) {
+          // debugger
+          let superBallIndicator = new THREE.Mesh(
+            superBallGeo, 
             new THREE.MeshPhongMaterial({
               color: 0xffffff,
               reflectivity: 100,
               transparent: true,
               opacity: 0.25,
               specular: 0x050505,
-              shininess: 200,
-              // alphaTest: 0.5,
-              side: THREE.DoubleSide,
-              depthWrite: false
+              shininess: 200
             })
           )
-          sphere.add(superBallShell)
+          superBallIndicator.name = window.appConfig.currentStage + '_SB_INDICATOR' + Math.round(Math.random() * 10000)
+          let superBallPortal  = scene.children.find(c => c.name.indexOf(config.indicatorName) > -1)
+          superBallIndicator.position.set(config.position.x + superBallPortal.position.x, config.position.y + superBallPortal.position.y, -2.5)
+          scene.add(superBallIndicator)
+
+          // wireframe
+          let superBallGeoLine = new THREE.EdgesGeometry(superBallIndicator.geometry)
+          let mat = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 1 })
+          let wireframe = new THREE.LineSegments(superBallGeoLine, mat)
+          superBallIndicator.add(wireframe)
+          superBallIndicator.originalMaterialColor = new THREE.Color(0xffffff)
+
+        } else {
+          sphere = new Physijs.SphereMesh((config && config.name) ? superBallGeo : sphere_geometry, material);
+          sphere.collisions = 0;
+          (config && config.position) ? sphere.position.set(config.position.x, config.position.y, 0) : sphere.position.set(0, 0, 0)
+
+          sphere.rotation.set(
+            Math.random() * Math.PI,
+            Math.random() * Math.PI,
+            Math.random() * Math.PI
+          );
+          sphere.castShadow = true;
+          sphere.addEventListener("collision", (config && config.handleCollision) ? config.handleCollision : handleCollision);
+          sphere.gameName = (config && config.name) ? config.name : "SPHERE0";
+          sphere.name = (config && config.name) ? config.name : "SPHERE0";
+          sphere.setCcdMotionThreshold(.5)
+          sphere.setCcdSweptSphereRadius(1)
+          if (config && config.handleCollision) {
+            const superBallShell = new THREE.Mesh(
+              new THREE.SphereGeometry(3, 32, 32),
+              new THREE.MeshPhongMaterial({
+                color: 0xffffff,
+                reflectivity: 100,
+                transparent: true,
+                opacity: 0.25,
+                specular: 0x050505,
+                shininess: 200,
+                // alphaTest: 0.5,
+                side: THREE.DoubleSide,
+                depthWrite: false
+              })
+            )
+            sphere.add(superBallShell)
+          }
+          scene.add(sphere);
+          if (!config) {
+            window.appConfig.sphere = sphere
+          }
         }
-        scene.add(sphere);
-        if (!config) {
-          window.appConfig.sphere = sphere
-        }
+
       };
 
       return () => {
@@ -7395,8 +7424,10 @@
           },
           activeCallback: (percentComplete) => {
             portalMesh.material.opacity = percentComplete * .85
+            config.activeCallback(portalMesh)
           },
           completedCallback: () => {
+            // config.completedCallback(portalMesh)
           }
         }
       },
@@ -7600,72 +7631,6 @@
                   }
                 }
               });
-
-              setTimeout(() => {
-
-                const finalPortalConfig0 = {
-                  startedCallback: (thePortalMesh, config, percentComplete) => {
-                  },
-                  activeCallback: (thePortalMesh, config, percentComplete) => {
-                  },
-                  completedCallback: (thePortalMesh, config) => {
-                    let removalArray = []
-                    window.appConfig.activeTransforms = []
-                    window.appConfig.stages[window.appConfig.currentStage].data.blackHoles.forEach(bh => scene.remove(bh))
-                    window.appConfig.stages[window.appConfig.currentStage].data.blackHoles = []
-
-                    let stage = window.appConfig.currentStage
-                    window.appConfig.coins = []
-                    const uuidsToRemove = []
-                    scene.children.forEach(c => {
-                      if (((c.name.indexOf(stage) > -1) || (c.featureType && c.featureType === "COIN")) && c.name.indexOf('BGGROUP') === -1 && c.name.indexOf('PORTAL') === -1) {
-                        uuidsToRemove.push(c.uuid)
-                      }
-                    })
-                    uuidsToRemove.forEach(uuid => {
-                      const foundIt = scene.children.find(c => c.uuid === uuid)
-                      scene.remove(foundIt)
-                    })
-
-                    let timersCopy = []
-                    window.appConfig.timers.activeTimers.forEach(at => {
-                      if (at.name.indexOf('SAPPHIRE') === -1) {
-                        timersCopy.push(at)
-                      }
-                    })
-                    window.appConfig.timers.activeTimers = timersCopy
-
-                    window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName({
-                      updateName: 'BONUS ZONE',
-                      ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0)
-                    }))
-
-                    window.appConfig.stages.components.createFinalStage()
-
-                    // const finalStageWalls = window.appConfig.stages.components.createStage0MainBeamStructure(
-                    //   4,
-                    //   0.5275,
-                    //   window.appConfig.currentStage + "_FINAL_STAGE_WALLS"
-                    // );
-                    // finalStageWalls.rotation.z = .25 * Math.PI
-                    // scene.add(finalStageWalls);
-
-
-
-                    // window.appConfig.timers.activeTimers.push(window.appConfig.timers.backgroundToPhysi())
-                  },
-                  portalConfig: {
-                    sapphire: false,
-                    active: true
-                  }
-                }
-
-                window.appConfig.timers.activeTimers.push(
-                  window.appConfig.timers.addPortalToStage({ x: 10, y: -20, z: -5 }, 'PORTAL_TO_FINAL_STAGE', { x: 0, y: 0, z: 0 }, finalPortalConfig0)
-                )
-
-              }, 10)
-
             })
             scene.remove(theBg)
             const gemStageWalls = window.appConfig.stages.components.createStage0MainBeamStructure(
@@ -7690,17 +7655,23 @@
               }
               scene.add(bgO)
             })
+
             const createGemSuperballs = (
               s,
-              n = 4
+              n = 4,
+              p = {x: 0, y:0, z:0 },
+              indicator = false,
+              indicatorName = false
             ) => {
               // var ellipse = new THREE.EllipseCurve(0, 0, s, s, 0, 2.0 * Math.PI, false);
               // var ellipsePath = new THREE.CurvePath();
               // ellipsePath.add(ellipse);
               // var ellipseGeometry = ellipsePath.createPointsGeometry(n);
 
-              var ellipseGeometry = new THREE.CircleGeometry(s, n)
-
+              let ellipseGeometry = new THREE.CircleGeometry(s, n * 2)
+              // if(indicator === true) {
+              //   debugger
+              // }
               let i = 1;
               for (i; i < ellipseGeometry.vertices.length; i++) {
                 let id = Math.round(Math.random() * 100000)
@@ -7713,13 +7684,104 @@
                     z: 0
                   },
                   handleCollision: (c) => {
-                    window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN_GEM' + id)
-                  }
+                    if(c.name === 'SPHERE0') {
+                      window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN_GEM' + id)
+                      let theIndicator = scene.children.find(cf => cf.name.indexOf('SB_INDICATOR') > -1 && cf.indicatorActive === undefined)
+                      theIndicator.indicatorActive = true
+                      window.appConfig.timers.activeTimers.push(
+                        // window.appConfig.timers.activatePortalIndicator(rubyIndicator)
+                        window.appConfig.timers.activatePortalIndicator(theIndicator)
+                      )
+                    }
+                    // console.log(scene.children.find(ch => ch.name.indexOf('PORTAL_TO_FINAL_STAGE') > -1).portalIndicatorCount)
+                  },
+                  isIndicator: indicator,
+                  indicatorName: indicatorName
                 })
 
               }
             }
             createGemSuperballs(15, 4)
+
+
+            setTimeout(() => {
+
+              const finalPortalConfig0 = {
+                startedCallback: (thePortalMesh, config, percentComplete) => {
+                },
+                activeCallback: (thePortalMesh, config, percentComplete) => {
+                },
+                completedCallback: (thePortalMesh, config) => {
+                  let removalArray = []
+                  window.appConfig.activeTransforms = []
+                  window.appConfig.stages[window.appConfig.currentStage].data.blackHoles.forEach(bh => scene.remove(bh))
+                  window.appConfig.stages[window.appConfig.currentStage].data.blackHoles = []
+
+                  let stage = window.appConfig.currentStage
+                  window.appConfig.coins = []
+                  const uuidsToRemove = []
+                  scene.children.forEach(c => {
+                    if (((c.name.indexOf(stage) > -1) || (c.featureType && c.featureType === "COIN")) && c.name.indexOf('BGGROUP') === -1 && c.name.indexOf('PORTAL') === -1) {
+                      uuidsToRemove.push(c.uuid)
+                    }
+                  })
+                  uuidsToRemove.forEach(uuid => {
+                    const foundIt = scene.children.find(c => c.uuid === uuid)
+                    scene.remove(foundIt)
+                  })
+
+                  let timersCopy = []
+                  window.appConfig.timers.activeTimers.forEach(at => {
+                    if (at.name.indexOf('SAPPHIRE') === -1) {
+                      timersCopy.push(at)
+                    }
+                  })
+                  window.appConfig.timers.activeTimers = timersCopy
+
+                  window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName({
+                    updateName: 'BONUS ZONE',
+                    ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0)
+                  }))
+
+                  window.appConfig.stages.components.createFinalStage()
+
+                  // const finalStageWalls = window.appConfig.stages.components.createStage0MainBeamStructure(
+                  //   4,
+                  //   0.5275,
+                  //   window.appConfig.currentStage + "_FINAL_STAGE_WALLS"
+                  // );
+                  // finalStageWalls.rotation.z = .25 * Math.PI
+                  // scene.add(finalStageWalls);
+
+
+
+                  // window.appConfig.timers.activeTimers.push(window.appConfig.timers.backgroundToPhysi())
+                },
+                portalConfig: {
+                  sapphire: false,
+                  active: false,
+                  indicators: 8
+                }
+              }
+
+              window.appConfig.timers.activeTimers.push(
+                window.appConfig.timers.addPortalToStage({ x: 10, y: -20, z: -5 }, 'PORTAL_TO_FINAL_STAGE', { x: 0, y: 0, z: 0 }, finalPortalConfig0)
+              )
+
+              // setTimeout(() => {
+              //   window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
+              //   window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
+              //   window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
+              // }, 100)
+
+
+              }, 10)
+
+
+
+            setTimeout(() => {
+              createGemSuperballs(4.5, 4, {x: 0, y:0, z:0 }, true, 'PORTAL_TO_FINAL_STAGE')
+            }, 100)
           }
         }
       },
@@ -7749,13 +7811,18 @@
           name: 'ACTIVATE_PORTAL_INDICATOR' + Math.round(Math.random() * 10000),
           id: Math.round(Math.random() * 10000),
           startedCallback: () => {
-            let thePortal = scene.children.find(c => c.name.indexOf('GEM_STAGE_END') > -1)
+            let thePortal 
+            if(scene.children.find(c => c.name.indexOf('GEM_STAGE_END') > -1)){
+              thePortal = scene.children.find(c => c.name.indexOf('GEM_STAGE_END') > -1)
+            } else {
+              thePortal = scene.children.find(c => c.name.indexOf('PORTAL_TO_FINAL_STAGE') > -1)
+            }
             thePortal.incrementIndicator()
             indicator.material.color = indicator.originalMaterialColor
           },
           activeCallback: (percentComplete) => {
             indicator.material.opacity = .25 + (percentComplete * .75)
-            console.log(percentComplete, indicator, indicator.material.opacity, indicator.material.color)
+            // console.log(percentComplete, indicator, indicator.material.opacity, indicator.material.color)
           }
         }
       },
@@ -8424,6 +8491,9 @@
         scene.children.forEach(c => {
           if (c.name && (c.name.indexOf('SPHERECOIN') > -1 || c.name.indexOf('FINALSTAGE_BUMPER') > -1)) {
             sphereCoins.push(c)
+          }
+          if(c.name.indexOf('SB_INDICATOR') > 1 && window.appConfig.superBallMaterial) {
+            c.material.color = window.appConfig.superBallMaterial.color
           }
         })
         if (sphereCoins.length > 0) {
