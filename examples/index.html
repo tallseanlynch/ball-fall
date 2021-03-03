@@ -1333,65 +1333,74 @@
       ]
       window.appConfig.blueCrystalMaterials = [
         {
-          standard: new THREE.MeshPhongMaterial({ ...crystalMaterialOptions, color: blueSingleHex }),
-          pulsing: new THREE.MeshPhongMaterial({ ...crystalMaterialOptions, color: blueSingleHex })
+          standard: new THREE.MeshPhongMaterial({
+            emissive: new THREE.Color(0x0000FF),
+            specular: 0x050505,
+            shininess: 100
+          }),
+          pulsing: new THREE.MeshPhongMaterial({
+            emissive: new THREE.Color(0x0000FF),
+            specular: 0x050505,
+            shininess: 100
+          })
         },
         {
-          standard: new THREE.MeshPhongMaterial({ ...crystalMaterialOptions, color: blueDoubleHex }),
-          pulsing: new THREE.MeshPhongMaterial({ ...crystalMaterialOptions, color: blueDoubleHex })
+          standard: new THREE.MeshPhongMaterial({
+            emissive: new THREE.Color(0x0000FF),
+            specular: 0x050505,
+            shininess: 100
+          }),
+          pulsing: new THREE.MeshPhongMaterial({
+            emissive: new THREE.Color(0x0000FF),
+            specular: 0x050505,
+            shininess: 100
+          })
         },
         {
-          standard: new THREE.MeshPhongMaterial({ ...crystalMaterialOptions, color: blueTripleHex }),
-          pulsing: new THREE.MeshPhongMaterial({ ...crystalMaterialOptions, color: blueTripleHex })
+          standard: new THREE.MeshPhongMaterial({
+            emissive: blueTripleHex,
+            specular: 0x050505,
+            shininess: 100
+          }),
+          pulsing: new THREE.MeshPhongMaterial({
+            emissive: blueTripleHex,
+            specular: 0x050505,
+            shininess: 100
+          })
         },
         {
           standard: new THREE.MeshPhongMaterial(),
           pulsing: new THREE.MeshPhongMaterial()
         }
       ]
-      const crystal = (size = 0, p = { x: 0, y: 0, z: 0 }, isBlueIsland = false) => {
+      window.appConfig.blueCrystalMaterials[0].standard.name = "blue0standard"
+      window.appConfig.blueCrystalMaterials[0].pulsing.name = "blue0pulsing"
+      window.appConfig.blueCrystalMaterials[1].standard.name = "blue1standard"
+      window.appConfig.blueCrystalMaterials[1].pulsing.name = "blue1pulsing"
+      window.appConfig.blueCrystalMaterials[2].standard.name = "blue2standard"
+      window.appConfig.blueCrystalMaterials[2].pulsing.name = "blue2pulsing"
+      const crystal = (size = 0, p = { x: 0, y: 0, z: 0 }) => {
         let coin
         if (window.appConfig.performanceLevel > 0) {
           coin = new THREE.Mesh();
           let crystalTop, crystalMiddle, crystalBottom, coinMaterial
-          if (isBlueIsland === false) {
-            coinMaterial = window.appConfig.crystalMaterials[size].standard
 
-            crystalTop = new THREE.Mesh(
-              crystalTopGeometry,
-              coinMaterial
-            );
-            crystalTop.translateY(0.75);
-            crystalMiddle = new THREE.Mesh(
-              crystalMiddleGeometry,
-              coinMaterial
-            );
+          coinMaterial = window.appConfig.crystalMaterials[size].standard
 
-            crystalBottom = new THREE.Mesh(
-              crystalBottomGeometry,
-              coinMaterial
-            );
-          }
-          if (isBlueIsland === true) {
-            console.log("size", size)
-            coinMaterial = window.appConfig.blueCrystalMaterials[size].standard
+          crystalTop = new THREE.Mesh(
+            crystalTopGeometry,
+            coinMaterial
+          );
+          crystalTop.translateY(0.75);
+          crystalMiddle = new THREE.Mesh(
+            crystalMiddleGeometry,
+            coinMaterial
+          );
 
-            crystalTop = new THREE.Mesh(
-              crystalTopGeometry,
-              coinMaterial
-            );
-            crystalTop.translateY(0.75);
-            crystalMiddle = new THREE.Mesh(
-              crystalMiddleGeometry,
-              coinMaterial
-            );
-
-            crystalBottom = new THREE.Mesh(
-              crystalBottomGeometry,
-              coinMaterial
-            );
-
-          }
+          crystalBottom = new THREE.Mesh(
+            crystalBottomGeometry,
+            coinMaterial
+          );
           crystalBottom.translateY(-0.75);
           coin.add(crystalTop);
           coin.add(crystalMiddle);
@@ -1485,9 +1494,127 @@
         window.appConfig.coins.push(coin);
         coin.size = size
         coin.spriteCapturable = true
-        if (isBlueIsland) {
-          coin.isBlueIsland = true
+        coin.isBlueIsland = false
+        return coin;
+      };
+      const blueCrystal = (size = 0, p = { x: 0, y: 0, z: 0 }) => {
+        let coin
+        if (window.appConfig.performanceLevel > 0) {
+          coin = new THREE.Mesh();
+          let crystalTop, crystalMiddle, crystalBottom, coinMaterial
+
+          console.log("size", size)
+          // coinMaterial =
+
+          crystalTop = new THREE.Mesh(
+            crystalTopGeometry,
+            window.appConfig.blueCrystalMaterials[size].standard
+          );
+          crystalTop.translateY(0.75);
+          crystalMiddle = new THREE.Mesh(
+            crystalMiddleGeometry,
+            window.appConfig.blueCrystalMaterials[size].standard
+          );
+
+          crystalBottom = new THREE.Mesh(
+            crystalBottomGeometry,
+            window.appConfig.blueCrystalMaterials[size].standard
+          );
+
+          crystalBottom.translateY(-0.75);
+          coin.add(crystalTop);
+          coin.add(crystalMiddle);
+          coin.add(crystalBottom);
+          coin.position.set(p.x, p.y, 0);
+
+        } else {
+          coin = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), window.appConfig.blueCrystalMaterials[size].standard)
+          coin.position.set(p.x, p.y, 0);
         }
+        coin.featureType = "COIN";
+        if (size === 0) {
+          if (window.appConfig.performanceLevel > 0) {
+            coin.scale.set(
+              singleScale * xScaleMod,
+              singleScale * yScaleMod,
+              singleScale * zScaleMod
+            );
+
+          } else {
+            coin.scale.set(
+              singleScale,
+              singleScale,
+              singleScale
+            );
+          }
+          coin.coinType = "single";
+          coin.coinValue = 100;
+          coin.baseColor = singleHex
+          if (window.appConfig.performanceLevel > 0) {
+            coin.children.forEach((child) => {
+              child.material.color.setHex(singleHex);
+            });
+
+          }
+        }
+        if (size === 1) {
+          if (window.appConfig.performanceLevel > 0) {
+            coin.scale.set(
+              doubleScale * xScaleMod,
+              doubleScale * yScaleMod,
+              doubleScale * zScaleMod
+            );
+
+          } else {
+            coin.scale.set(
+              doubleScale,
+              doubleScale,
+              doubleScale
+            );
+          }
+          coin.coinType = "double";
+          coin.coinValue = 200;
+          coin.baseColor = doubleHex
+          if (window.appConfig.performanceLevel > 0) {
+            coin.children.forEach((child) => {
+              child.material.color.setHex(doubleHex);
+            });
+
+          }
+        }
+
+        if (size === 2) {
+          if (window.appConfig.performanceLevel > 0) {
+            coin.scale.set(
+              tripleScale * xScaleMod,
+              tripleScale * yScaleMod,
+              tripleScale * zScaleMod
+            );
+
+          } else {
+            coin.scale.set(
+              tripleScale,
+              tripleScale,
+              tripleScale
+            );
+          }
+          coin.coinType = "triple";
+          coin.coinValue = 300;
+          coin.baseColor = tripleHex
+          if (window.appConfig.performanceLevel > 0) {
+            coin.children.forEach((child) => {
+              child.material.color.setHex(tripleHex);
+            });
+          }
+        }
+        if (window.appConfig.performanceLevel === 0) {
+
+          coin.rotation.z = Math.PI / 4
+        }
+        window.appConfig.coins.push(coin);
+        coin.size = size
+        coin.spriteCapturable = true
+        coin.isBlueIsland = true
         return coin;
       };
 
@@ -1978,7 +2105,7 @@
             for (superSounds = 0; superSounds < 20; superSounds++) {
               setTimeout(() => {
                 coinSounds[Math.round(Math.random() * (coinSounds.length - 1))].play()
-                const blueCoin = window.appConfig.stages.components.crystal(superSounds % 3, { x: sapphire.position.x + ((Math.random() * 25) - 12.5), y: sapphire.position.y + ((Math.random() * 20) - 10), z: 0 }, true)
+                const blueCoin = window.appConfig.stages.components.blueCrystal(superSounds % 3, { x: sapphire.position.x + ((Math.random() * 25) - 12.5), y: sapphire.position.y + ((Math.random() * 20) - 10), z: 0 })
                 scene.add(blueCoin)
                 console.log(blueCoin)
               }, superSounds * 50)
@@ -1986,8 +2113,16 @@
           }
         }
         sapphire.position.set(p.x, p.y, p.z)
-
-        sapphire.name = window.appConfig.currentStage + "SAPPHIRE" + Math.floor(Math.random() * 10000) + isBlueIsland ? "_BLUEISLAND" : ""
+        const nameFront = window.appConfig.currentStage + "SAPPHIRE"
+        const nameNum = Math.floor(Math.random() * 10000)
+        let nameEnd
+        if (isBlueIsland === true) {
+          nameEnd = "_BLUEISLAND"
+        } else {
+          nameEnd = ""
+        }
+        const sapphireName = nameFront + nameNum + nameEnd
+        sapphire.name = sapphireName
         // sapphire.rotation.x = Math.PI / 2
         sapphire.__dirtyPosition = true
         sapphire.__dirtyRotation = true
@@ -2361,6 +2496,7 @@
             }
           },
           crystal: crystal,
+          blueCrystal: blueCrystal,
           createCrystalLine: createCrystalLine,
           createCrystalCircle: createCrystalCircle,
           createCrystalCross: createCrystalCross,
@@ -3138,11 +3274,11 @@
             window.appConfig.stages.components.createBumper("STAGE0BUMPER18", 1, { x: 97.5, y: 60, z: 0 }, 3, 1)
             window.appConfig.stages.components.createBumper("STAGE0BUMPER19", 1, { x: 87.5, y: 70, z: 0 }, 3, 1)
 
-            window.appConfig.stages.components.createSapphire({ x: 0, y: -10, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: 20, y: 30, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -20, y: -10, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -10, y: 20, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -30, y: -30, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: 0, y: -10, z: 0 }, false)
+            window.appConfig.stages.components.createSapphire({ x: 20, y: 30, z: 0 }, false)
+            window.appConfig.stages.components.createSapphire({ x: -20, y: -10, z: 0 }, false)
+            window.appConfig.stages.components.createSapphire({ x: -10, y: 20, z: 0 }, false)
+            window.appConfig.stages.components.createSapphire({ x: -30, y: -30, z: 0 }, false)
 
             // window.appConfig.stages.components.createRuby({ x: 87, y: -1.25, z: 0 })
             // window.appConfig.stages.components.createEmerald({ x: -97.5, y: -1.25, z: 0 })
@@ -7038,9 +7174,16 @@
                 theCoin.spriteFetching = sprite0
               }
             } else if (sprite0.isFetchingCoin && window.appConfig.start && !window.appConfig.pause) {
-              sprite0.fetchData.target.children.forEach(child => {
-                child.material = sprite0.fetchData.target.isBlueIsland === true ? window.appConfig.blueCrystalMaterials[sprite0.fetchData.target.size].pulsing : window.appConfig.crystalMaterials[sprite0.fetchData.target.size].pulsing
-              })
+              if (sprite0.fetchData.target.isBlueIsland === true) {
+                sprite0.fetchData.target.children.forEach(child => {
+                  child.material = window.appConfig.blueCrystalMaterials[sprite0.fetchData.target.size].pulsing
+                })
+              }
+              if (sprite0.fetchData.target.isBlueIsland === false) {
+                sprite0.fetchData.target.children.forEach(child => {
+                  child.material = window.appConfig.crystalMaterials[sprite0.fetchData.target.size].pulsing
+                })
+              }
               let percentComplete = window.appConfig.timers.data[`spriteFetch${sprite0.num}`].percentComplete
               if (percentComplete < .5) {
                 const percentThere = percentComplete / .5
@@ -8429,7 +8572,7 @@
       ) {
         if (window.appConfig.start === false) {
           // sphere.position.set(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition); //initial sphere position
-          // sphere.position.set(0, 300, 0); //initial sphere position
+          sphere.position.set(0, 300, 0); //initial sphere position
         }
         sphere
           .setLinearVelocity(new THREE.Vector3(0, 0, 0));
