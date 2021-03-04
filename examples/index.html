@@ -2170,7 +2170,7 @@
                               },
                               completedCallback: (thePortalMesh, config) => {
                                 window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName({
-                                  updateName: 'SAPPHIRE ISLAND',
+                                  updateName: '',
                                   ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0)
                                   // countdownStartStartedCallback: () => {
                                   //   window.appConfig.isBlueIsland = false
@@ -3222,18 +3222,17 @@
             window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "BLUEISLAND_BUMPER1", 2.5, { x: 0, y: 320, z: 0 }, 6, 1, 0, 1, undefined, 0x0F52BA)
             window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "BLUEISLAND_BUMPER2", 2.5, { x: 20, y: 300, z: 0 }, 6, 1, 0, 1, undefined, 0x0F52BA)
             window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "BLUEISLAND_BUMPER3", 2.5, { x: -20, y: 300, z: 0 }, 6, 1, 0, 1, undefined, 0x0F52BA)
-            const blueLight0 = new THREE.PointLight(0xffffff, .5, 100, 0)
-            blueLight0.position.set(0, 270, 15)
-            const blueLight1 = new THREE.PointLight(0xffffff, .5, 100, 0)
-            blueLight1.position.set(0, 330, 15)
-            const blueLight2 = new THREE.PointLight(0xffffff, .5, 100, 0)
-            blueLight2.position.set(30, 300, 15)
-            const blueLight3 = new THREE.PointLight(0xffffff, .5, 100, 0)
-            blueLight3.position.set(-30, 300, 15)
+            const blueLight0 = new THREE.PointLight(0xffffff, .5, 100, 1)
+            blueLight0.position.set(0, 250, 20)
+            const blueLight1 = new THREE.PointLight(0xffffff, .5, 100, 1)
+            blueLight1.position.set(20, 320, 10)
+
+            blueLight0.gameName = window.appConfig.currentStage + "BLUELIGHT0";
+            blueLight1.gameName = window.appConfig.currentStage + "BLUELIGHT1";
             scene.add(blueLight0)
             scene.add(blueLight1)
-            scene.add(blueLight2)
-            scene.add(blueLight3)
+            // scene.add(blueLight2)
+            // scene.add(blueLight3)
           },
           // portalConfig0: {
           gemPortalConfig: {
@@ -3877,6 +3876,7 @@
               window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
             }, 100)
+            window.appConfig.stages.components.createBlueIsland()
 
             window.appConfig.timers.activeTimers.push(
               window.appConfig.timers.addPortalToStage({ x: 0, y: 100, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
@@ -4367,6 +4367,7 @@
               window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
             }, 100)
+            window.appConfig.stages.components.createBlueIsland()
 
             window.appConfig.timers.activeTimers.push(
               window.appConfig.timers.addPortalToStage({ x: 0, y: 72.5, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
@@ -5034,6 +5035,7 @@
             window.appConfig.stages.components.createSapphire({ x: 100, y: 100, z: 0 })
             window.appConfig.stages.components.createRuby({ x: -110, y: 23.75, z: 0 })
             window.appConfig.stages.components.createEmerald({ x: 109.5, y: 23.75, z: 0 })
+            window.appConfig.stages.components.createBlueIsland()
 
             createCrystalCircle('STAGE3', 2.75, { x: 0, y: 140 }, 0, 8)
             createCrystalCircle('STAGE3', 3.125, { x: 0, y: 140 }, 1, 8)
@@ -5941,7 +5943,12 @@
             createCrystalCircle('STAGE4', 3.25, { x: 87.5, y: -87.5 }, 1, 16)
             createCrystalCircle('STAGE4', 3.75, { x: 87.5, y: -87.5 }, 2, 16)
 
-
+            window.appConfig.stages.components.createSapphire({ x: 0, y: -100, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: 0, y: 100, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: -100, y: 0, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: 100, y: 0, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: 100, y: 100, z: 0 })
+            window.appConfig.stages.components.createBlueIsland()
             // createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: 20, z: 0 } })
 
 
@@ -7019,6 +7026,7 @@
             window.appConfig.stages.components.createSapphire({ x: -20, y: -10, z: 0 })
             window.appConfig.stages.components.createSapphire({ x: -10, y: 20, z: 0 })
             window.appConfig.stages.components.createSapphire({ x: -30, y: -30, z: 0 })
+            window.appConfig.stages.components.createBlueIsland()
 
 
             window.appConfig.stages.STAGE5.STAGE5PRIZE0 = scene.children.find((obj) => obj.name === "STAGE5PRIZE0")
