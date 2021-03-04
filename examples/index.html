@@ -986,6 +986,16 @@
       return basicColors[Math.floor(Math.random() * basicColors.length)];
     };
 
+    const superBallMaterial = new THREE.MeshPhongMaterial({
+      color: 0xffffff,
+      reflectivity: 100,
+      transparent: true,
+      opacity: 1,
+      specular: 0xffffff,
+      shininess: 200
+    })
+    window.appConfig.superBallMaterial = superBallMaterial
+
     var initScene,
       render,
       _boxes = [],
@@ -7177,23 +7187,13 @@
           }
         }
 
-      const superBallMaterial = new THREE.MeshPhongMaterial({
-        color: 0xffffff,
-        reflectivity: 100,
-        transparent: true,
-        opacity: 1,
-        specular: 0xffffff,
-        shininess: 200
-      })
-      window.appConfig.superBallMaterial = superBallMaterial
-
       const sphereTeleportationGroup = new THREE.Group()
       const sphereTeleportationGeometry = new THREE.TetrahedronGeometry(16)
 
       window.appConfig.sphereTeleportationMesh = () => {
         return new THREE.Mesh(
           sphereTeleportationGeometry,
-          superBallMaterial
+          window.appConfig.superBallMaterial
         )
       }
 
@@ -7559,6 +7559,12 @@
     }
 
     window.appConfig.handleBlackHole = (bh, bhIndex) => {
+      const anchors = [
+        new THREE.Vector3(0, 100, 0),
+        new THREE.Vector3(100, 0, 0),
+        new THREE.Vector3(0, -100, 0),
+        new THREE.Vector3(-100, 0, 0)
+      ]
       let theSphere = scene.children.find((obj) => obj.name === 'SPHERE0')
       let bhSprites = bh.children[0].children
       bhSprites.forEach((bhSprite, bhi) => {
@@ -7568,8 +7574,9 @@
       let distMod = .1
       if (typeof theSphere.position.x === "number") {
         bh.position.lerp(theSphere.position, .001 * Math.random() * 2)
-        bh.position.x += lfo(3000 * (bhIndex + 1)) / ((bhIndex + 1) * 15)
-        bh.position.y += lfo(3000 * (bhIndex + 1)) / ((bhIndex + 1) * 15)
+        bh.position.lerp(anchors[bhIndex], .00075)
+        // bh.position.x += lfo(3000 * (bhIndex + 1)) / ((bhIndex + 1) * 15)
+        // bh.position.y += lfo(3000 * (bhIndex + 1)) / ((bhIndex + 1) * 15)
         bh.scale.x += .001
         bh.scale.y += .001
         bh.scale.z += .001
@@ -7579,7 +7586,7 @@
           let sphereLinearVelocity = theSphere._physijs.linearVelocity
           let velocityRise = bh.position.y - theSphere.position.y
           let velocityRun = bh.position.x - theSphere.position.x
-          let velocityAdj = new THREE.Vector3(velocityRun, velocityRise, 0).normalize().multiplyScalar(distanceToSphere / 2)
+          let velocityAdj = new THREE.Vector3(velocityRun, velocityRise, 0).normalize().multiplyScalar(distanceToSphere / 4)
           let newVelocity = sphereLinearVelocity.add(velocityAdj)
           theSphere.setLinearVelocity(newVelocity)
         }
@@ -7589,6 +7596,8 @@
         bh.material.opacity = .98 + (lfo(500) * .2)
       }
     }
+
+    window.appConfig.superBallMaterial.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
 
     const timers = {
       demateralizeMesh: (dMesh) => {
@@ -7665,14 +7674,23 @@
         }
       },
       activateRemoteSwitch: (remoteSwitch) => {
-        // debugger
         let remoteTransmitter = remoteSwitch.transmitter.children[0]
         let remoteTransmitterIco = remoteSwitch.transmitter.children[1]
         let remoteReceiver = remoteSwitch.receiver.children[0]
         let remoteReceiverIco = remoteSwitch.receiver.children[1]
         let remoteLine = remoteSwitch.line
         let remoteSwitchMaterial = new THREE.Color().copy(remoteTransmitter.material.color)
+
+        if(window.appConfig.superBallMaterial.color.set) {
+          window.appConfig.superBallMaterial.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
+        } else {
+          window.appConfig.superBallMaterial.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
+        }
+        console.log('start', window.appConfig.superBallMaterial.color, remoteSwitchMaterial)
         const activeCallback = (percentComplete) => {
+          window.appConfig.superBallMaterial.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
+          // console.log(window.appConfig.superBallMaterial.color, remoteSwitchMaterial)
+          // console.log(getSuperBallMaterial())
           remoteLine.children.forEach((rlc, rlci) => {
             rlc.material.color = remoteSwitchMaterial.lerp(
               window.appConfig.superBallMaterial.color,
@@ -8920,7 +8938,7 @@
                 // }
                 sc.material.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
                 sc.children[0].material.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
-                window.appConfig.superBallMaterial.color = sc.material.color
+                // window.appConfig.superBallMaterial.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
 
                 // if(window.appConfig.stages[window.appConfig.currentStage].data.remotes.length > 0) {
                 //   window.appConfig.stages[window.appConfig.currentStage].data.remotes.forEach(
@@ -8934,7 +8952,7 @@
           console.log('SUPERBALL ERROR - ', error)
         }
       }
-
+      // console.log(window.appConfig.superBallMaterial.color)
       if (window.appConfig.stages[window.appConfig.currentStage].data.portals && window.appConfig.stages[window.appConfig.currentStage].data.portals.length > 0 && window.appConfig.pause === false) {
         window.appConfig.stages[window.appConfig.currentStage].data.portals.forEach(p => {
           if (p.portalConfig && !p.portalConfig.sapphire || p.portalConfig.sapphire === false) {
