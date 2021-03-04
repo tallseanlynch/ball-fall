@@ -2173,14 +2173,14 @@
                           window.appConfig.isBlueIsland = false
                           window.appConfig.timer.start()
                           window.appConfig.timers.activeTimers.push(
-                            window.appConfig.timers.addPortalToStage({ x: 0, y: 300, z: -5 }, 'PORTAL_BACK_TO_STAGE', { x: 0, y: 0, z: 0 }, {
+                            window.appConfig.timers.addPortalToStage({ x: 0, y: 300, z: -5 }, 'PORTAL_BACK_TO_STAGE_SAPPHIRE', { x: 0, y: 0, z: 0 }, {
                               startedCallback: (thePortalMesh, config, percentComplete) => {
                               },
                               activeCallback: (thePortalMesh, config, percentComplete) => {
                               },
                               completedCallback: (thePortalMesh, config) => {
                                 window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName({
-                                  updateName: '',
+                                  updateName: window.appConfig.currentStage,
                                   ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0)
                                   // countdownStartStartedCallback: () => {
                                   //   window.appConfig.isBlueIsland = false
@@ -7273,8 +7273,8 @@
             }
           )
         )
-
-        theMesh.name = window.appConfig.currentStage + "_" + Math.round(Math.random() * 10000)
+        let sapphireAdj = sapphire === true ? 'SAPPHIRE' : ''
+        theMesh.name = window.appConfig.currentStage + "_" + sapphireAdj + Math.round(Math.random() * 10000)
         let theSpaceSphere = new THREE.Mesh(
           new THREE.DodecahedronGeometry(1, 2),
           portalMeshSpaceMaterial
@@ -7882,6 +7882,7 @@
 
         let portalMesh = window.appConfig.portalMesh(config.portalConfig.sapphire)
         portalMesh.portalTarget = target
+        portalMesh.name = window.appConfig.currentStage + '_PORTAL_MESH__' + name
         portalMesh.startedCallback = config.startedCallback
         portalMesh.activeCallback = config.activeCallback
         portalMesh.completedCallback = config.completedCallback
@@ -7909,7 +7910,6 @@
             portalMesh.position.y = thePortal.y
             portalMesh.position.z = thePortal.z
             scene.add(portalMesh)
-            portalMesh.name = window.appConfig.currentStage + '_PORTAL_MESH__' + name
             window.appConfig.stages[window.appConfig.currentStage].data.portals.push(portalMesh)
           },
           activeCallback: (percentComplete) => {
@@ -7922,13 +7922,15 @@
         }
       },
       activatePortal: (thePortalMesh) => {
+        if(thePortalMesh.name.indexOf('SAPPHIRE') === -1) {
+          window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
+        }
         if (window.appConfig.isBlueIsland === true) {
           window.appConfig.blueIslandTimer.pause()
         }
         if (window.appConfig.isBlueIsland === false) {
           window.appConfig.timer.pause()
         }
-        window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
         let thePortalMeshSpaceSphere = thePortalMesh.children.find(c => c.name === 'THE_SPACE_SPHERE')
         let theSphere = scene.children.find((obj) => obj.name === 'SPHERE0')
         let theGradientCurtain = document.querySelector('#gradient-curtain')
@@ -7987,7 +7989,9 @@
         }
       },
       removePortal: (thePortalMesh) => {
-        window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
+        if (thePortalMesh.name.indexOf('SAPPHIRE') === -1) {
+          window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
+        }
         let thePortalMeshSpaceSphere = thePortalMesh.children.find(c => c.name === 'THE_SPACE_SPHERE')
         let theSphere = scene.children.find((obj) => obj.name === 'SPHERE0')
         return {
