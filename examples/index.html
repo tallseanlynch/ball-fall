@@ -168,6 +168,7 @@
         ["#f5989d", "#f26d7d", "#ed145b", "#9e0039", "#7a0026"]//15 cool red
       ],
       performanceLevel: 2,
+      isBlueIsland: false,
       blueIslandPoints: [
         { position: { x: 0, y: 325, z: 0 } },
         { position: { x: 0, y: 275, z: 0 } },
@@ -1504,9 +1505,6 @@
           coin = new THREE.Mesh();
           let crystalTop, crystalMiddle, crystalBottom, coinMaterial
 
-          console.log("size", size)
-          // coinMaterial =
-
           crystalTop = new THREE.Mesh(
             crystalTopGeometry,
             window.appConfig.blueCrystalMaterials[size].standard
@@ -2102,14 +2100,87 @@
         if (isBlueIsland) {
           sapphire.capturedCallback = () => {
             const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
-            let superSounds
-            for (superSounds = 0; superSounds < 20; superSounds++) {
+            for (let biSounds = 0; biSounds < 10; biSounds++) {
               setTimeout(() => {
                 coinSounds[Math.round(Math.random() * (coinSounds.length - 1))].play()
-                const blueCoin = window.appConfig.stages.components.blueCrystal(superSounds % 3, { x: sapphire.position.x + ((Math.random() * 25) - 12.5), y: sapphire.position.y + ((Math.random() * 20) - 10), z: 0 })
+                const blueCoin = window.appConfig.stages.components.blueCrystal(biSounds % 3, { x: sapphire.position.x + ((Math.random() * 25) - 12.5), y: sapphire.position.y + ((Math.random() * 20) - 10), z: 0 })
                 scene.add(blueCoin)
-                console.log(blueCoin)
-              }, superSounds * 50)
+              }, biSounds * 50)
+            }
+            const biPoint = window.appConfig.blueIslandPoints[Math.floor(Math.random() * window.appConfig.blueIslandPoints.length)]
+            window.appConfig.stages.components.createSapphire({ x: biPoint.position.x, y: biPoint.position.y, z: 0 }, true)
+          }
+        } else {
+          sapphire.capturedCallback = () => {
+            window.appConfig.stages[window.appConfig.currentStage].data.sapphires++
+            console.log("sapphire number: ", window.appConfig.stages[window.appConfig.currentStage].data.sapphires)
+            if (window.appConfig.stages[window.appConfig.currentStage].data.sapphires === 1) {
+              console.error('adding portal')
+              window.appConfig.timers.activeTimers.push(
+                window.appConfig.timers.addPortalToStage({ x: -10, y: 20, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 }, {
+                  startedCallback: (thePortalMesh, config, percentComplete) => {
+                  },
+                  activeCallback: (thePortalMesh, config, percentComplete) => {
+                  },
+                  completedCallback: (thePortalMesh, config) => {
+                    window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName({
+                      updateName: 'SAPPHIRE ISLAND',
+                      ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0),
+                      countdownStartCompletedCallback: () => {
+
+                        const biPoint0 = window.appConfig.blueIslandPoints[Math.floor(Math.random() * window.appConfig.blueIslandPoints.length)]
+                        window.appConfig.stages.components.createSapphire({ x: biPoint0.position.x, y: biPoint0.position.y, z: 0 }, true)
+                        const biPoint1 = window.appConfig.blueIslandPoints[Math.floor(Math.random() * window.appConfig.blueIslandPoints.length)]
+                        window.appConfig.stages.components.createSapphire({ x: biPoint1.position.x, y: biPoint1.position.y, z: 0 }, true)
+                        const biPoint2 = window.appConfig.blueIslandPoints[Math.floor(Math.random() * window.appConfig.blueIslandPoints.length)]
+                        window.appConfig.stages.components.createSapphire({ x: biPoint2.position.x, y: biPoint2.position.y, z: 0 }, true)
+                        window.appConfig.timer.pause()
+                        window.appConfig.isBlueIsland = true
+                        const blueIslandTimer = new easytimer.Timer({ countdown: true, startValues: { seconds: 30 }, precision: "secondTenths" });
+                        blueIslandTimer.addEventListener("secondTenthsUpdated", function (e) {
+                          document.querySelector(
+                            "#timer"
+                          ).innerText = `${blueIslandTimer
+                            .getTimeValues()
+                            .toString(["minutes", "seconds", "secondTenths"])}`;
+                        });
+                        blueIslandTimer.addEventListener("targetAchieved", function (e) {
+
+                          window.appConfig.isBlueIsland = false
+                          window.appConfig.timer.start()
+                          window.appConfig.timers.activeTimers.push(
+                            window.appConfig.timers.addPortalToStage({ x: 0, y: 300, z: -5 }, 'PORTAL_BACK_TO_STAGE', { x: 0, y: 0, z: 0 }, {
+                              startedCallback: (thePortalMesh, config, percentComplete) => {
+                              },
+                              activeCallback: (thePortalMesh, config, percentComplete) => {
+                              },
+                              completedCallback: (thePortalMesh, config) => {
+                                window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName({
+                                  updateName: 'SAPPHIRE ISLAND',
+                                  ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0)
+                                  // countdownStartStartedCallback: () => {
+                                  //   window.appConfig.isBlueIsland = false
+                                  // }
+                                }))
+                              },
+                              portalConfig: {
+                                sapphire: true,
+                                active: true
+                              }
+                            })
+                          )
+                        })
+                        window.appConfig.blueIslandTimer = blueIslandTimer
+                        blueIslandTimer.start()
+                      }
+                    }))
+                  },
+                  portalConfig: {
+                    sapphire: true,
+                    active: true
+                  }
+                })
+              )
             }
           }
         }
@@ -2481,6 +2552,8 @@
             window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
             window.appConfig.stages[window.appConfig.currentStage].data.portals = []
             window.appConfig.stages[window.appConfig.currentStage].data.gemSuperBalls = 0
+            window.appConfig.isBlueIsland = false
+            window.appConfig.stages[window.appConfig.currentStage].data.sapphires = 0
             window.appConfig.stages[window.appConfig.currentStage].data.blackHoles = []
             document.body.style.background = window.appConfig.stages.components.background(
               .5,
@@ -3355,10 +3428,10 @@
               window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
             }, 100)
 
-            window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 95, y: 95, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 }, 
-              window.appConfig.stages.components.sapphirePortalConfig)
-            )
+            // window.appConfig.timers.activeTimers.push(
+            //   window.appConfig.timers.addPortalToStage({ x: 95, y: 95, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 }, 
+            //   window.appConfig.stages.components.sapphirePortalConfig)
+            // )
 
             window.appConfig.stages.components.createBumper("STAGE0BUMPER0", 1, { x: -70, y: -72.5, z: 0 }, 5)
             window.appConfig.stages.components.createBumper("STAGE0BUMPER1", 1, { x: 70, y: -72.5, z: 0 }, 5)
@@ -7167,10 +7240,10 @@
           1
         );
         // debugger
-        if(config && config.isIndicator === true) {
+        if (config && config.isIndicator === true) {
           // debugger
           let superBallIndicator = new THREE.Mesh(
-            superBallGeo, 
+            superBallGeo,
             new THREE.MeshPhongMaterial({
               color: 0xffffff,
               reflectivity: 100,
@@ -7181,7 +7254,7 @@
             })
           )
           superBallIndicator.name = window.appConfig.currentStage + '_SB_INDICATOR' + Math.round(Math.random() * 10000)
-          let superBallPortal  = scene.children.find(c => c.name.indexOf(config.indicatorName) > -1)
+          let superBallPortal = scene.children.find(c => c.name.indexOf(config.indicatorName) > -1)
           superBallIndicator.position.set(config.position.x + superBallPortal.position.x, config.position.y + superBallPortal.position.y, -2.5)
           scene.add(superBallIndicator)
 
@@ -7352,6 +7425,7 @@
               }
             }
           }
+
           window.appConfig.sprites.push(sprite0)
 
         }
@@ -7723,7 +7797,12 @@
         }
       },
       activatePortal: (thePortalMesh) => {
-        window.appConfig.timer.pause()
+        if (window.appConfig.isBlueIsland === true) {
+          window.appConfig.blueIslandTimer.pause()
+        }
+        if (window.appConfig.isBlueIsland === false) {
+          window.appConfig.timer.pause()
+        }
         window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
         let thePortalMeshSpaceSphere = thePortalMesh.children.find(c => c.name === 'THE_SPACE_SPHERE')
         let theSphere = scene.children.find((obj) => obj.name === 'SPHERE0')
@@ -7950,7 +8029,7 @@
             const createGemSuperballs = (
               s,
               n = 4,
-              p = {x: 0, y:0, z:0 },
+              p = { x: 0, y: 0, z: 0 },
               indicator = false,
               indicatorName = false
             ) => {
@@ -7975,7 +8054,7 @@
                     z: 0
                   },
                   handleCollision: (c) => {
-                    if(c.name === 'SPHERE0') {
+                    if (c.name === 'SPHERE0') {
                       window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN_GEM' + id)
                       let theIndicator = scene.children.find(cf => cf.name.indexOf('SB_INDICATOR') > -1 && cf.indicatorActive === undefined)
                       theIndicator.indicatorActive = true
@@ -8011,12 +8090,12 @@
               // }, 100)
 
 
-              }, 10)
+            }, 10)
 
 
 
             setTimeout(() => {
-              createGemSuperballs(4.5, 4, {x: 0, y:0, z:0 }, true, 'PORTAL_TO_FINAL_STAGE')
+              createGemSuperballs(4.5, 4, { x: 0, y: 0, z: 0 }, true, 'PORTAL_TO_FINAL_STAGE')
             }, 100)
           }
         }
@@ -8047,8 +8126,8 @@
           name: 'ACTIVATE_PORTAL_INDICATOR' + Math.round(Math.random() * 10000),
           id: Math.round(Math.random() * 10000),
           startedCallback: () => {
-            let thePortal 
-            if(scene.children.find(c => c.name.indexOf('GEM_STAGE_END') > -1)){
+            let thePortal
+            if (scene.children.find(c => c.name.indexOf('GEM_STAGE_END') > -1)) {
               thePortal = scene.children.find(c => c.name.indexOf('GEM_STAGE_END') > -1)
             } else {
               thePortal = scene.children.find(c => c.name.indexOf('PORTAL_TO_FINAL_STAGE') > -1)
@@ -8182,7 +8261,7 @@
               window.appConfig.howlSounds.count1.play()
             }
             showStageCountDown1()
-            window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownStart())
+            window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownStart(config))
           },
           activeCallback: () => {
             if (config && config.ballPosition) {
@@ -8209,6 +8288,11 @@
           currentTime: 0,
           name: 'COUNTDOWNSTART',
           id: Math.round(Math.random() * 10000),
+          startedCallback: (percentComplete) => {
+            if (action && action.countdownStartStartedCallback) {
+              action.countdownStartStartedCallback()
+            }
+          },
           completedCallback: (percentComplete) => {
             showStageCountDownStart()
             window.appConfig.userIsOnMainMenu = false
@@ -8219,12 +8303,18 @@
             window.appConfig.gameModeFunctions.start(noInitialBallZoom)
             window.appConfig.stageTotalTimePlayed = window.appConfig.easyTimerLength
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownStartFlash())
+            if (action && action.countdownStartCompletedCallback) {
+              action.countdownStartCompletedCallback()
+            }
           },
         }
       },
       countdownStartFlash: (action) => {
-        if (window.appConfig.timer.isPaused() === true) {
+        if (window.appConfig.timer.isPaused() === true && window.appConfig.isBlueIsland === false) {
           window.appConfig.timer.start()
+        }
+        if (window.appConfig.timer.isPaused() === true && window.appConfig.isBlueIsland === true) {
+          window.appConfig.blueIslandTimer.start()
         }
         window.appConfig.pauseSuperballs = false
         return {
@@ -8340,6 +8430,9 @@
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
             window.appConfig.timers.data.spriteFetch0.percentComplete = percentComplete
+          },
+          completedCallback: () => {
+            sprite.reset()
           }
         }
       },
@@ -8355,6 +8448,9 @@
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
             window.appConfig.timers.data.spriteFetch1.percentComplete = percentComplete
+          },
+          completedCallback: () => {
+            sprite.reset()
           }
         }
       },
@@ -8370,6 +8466,9 @@
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
             window.appConfig.timers.data.spriteFetch2.percentComplete = percentComplete
+          },
+          completedCallback: () => {
+            sprite.reset()
           }
         }
       },
@@ -8385,6 +8484,9 @@
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
             window.appConfig.timers.data.spriteFetch3.percentComplete = percentComplete
+          },
+          completedCallback: () => {
+            sprite.reset()
           }
         }
       },
@@ -8400,6 +8502,9 @@
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
             window.appConfig.timers.data.spriteFetch4.percentComplete = percentComplete
+          },
+          completedCallback: () => {
+            sprite.reset()
           }
         }
       },
@@ -9136,7 +9241,12 @@
       if (window.appConfig.isPortalStart === false) {
         window.appConfig.timers.activeTimers.push(timers.initialBallZoom())
       }
-      window.appConfig.timer.start();
+      if (window.appConfig.isBlueIsland === false) {
+        window.appConfig.timer.start();
+      }
+      if (window.appConfig.isBlueIsland === true) {
+        window.appConfig.blueIslandTimer.start();
+      }
       scene.setGravity(new THREE.Vector3(0, -10, 0));
       window.appConfig.sphere._physijs.mass = window.appConfig.defaultSphereMass
       document.querySelector("#pause-button").disabled = false;
@@ -9162,14 +9272,25 @@
       window.appConfig.pause = !window.appConfig.pause;
       window.appConfig.timers.pauseTimers = !window.appConfig.timers.pauseTimers
       if (window.appConfig.pause) {
-        window.appConfig.timer.pause();
+        if (window.appConfig.isBlueIsland === true) {
+          window.appConfig.blueIslandTimer.pause()
+        }
+        if (window.appConfig.isBlueIsland === false) {
+          window.appConfig.timer.pause();
+        }
         scene.setGravity(new THREE.Vector3(0, 0, 0));
         window.appConfig.sphere._physijs.mass = 0
         showPauseMenu();
       } else {
         scene.setGravity(new THREE.Vector3(0, window.appConfig.defaultSceneGravity, 0));
         window.appConfig.sphere._physijs.mass = window.appConfig.defaultSphereMass
-        window.appConfig.timer.start();
+
+        if (window.appConfig.isBlueIsland === false) {
+          window.appConfig.timer.start();
+        }
+        if (window.appConfig.isBlueIsland === true) {
+          window.appConfig.blueIslandTimer.start();
+        }
         showGameMode();
       }
     };
