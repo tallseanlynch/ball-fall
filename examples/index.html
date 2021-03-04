@@ -1171,10 +1171,21 @@
         const lengthMod = window.appConfig.performanceLevel > 0 ? 10 : 10.15
         const beamBox = new THREE.BoxGeometry((lengthMod * config.s), 2, 3)
         const finalStageBounce = .75
+        let beamMaterial
+        if (config && config.color) {
+          beamMaterial = new THREE.MeshPhongMaterial({
+            color: config.color,
+            // emissive: config.color,
+            transparent: true,
+            opacity: 1
+          })
+        } else {
+          beamMaterial = window.appConfig.beamMaterial
+        }
         let beam0 = new Physijs.BoxMesh(
           beamBox,
           Physijs.createMaterial(
-            window.appConfig.beamMaterial,
+            beamMaterial,
             0.6,
             isFinalStage === false ? 0.1 : finalStageBounce
           ),
@@ -1185,7 +1196,7 @@
           const beam0cap0 = new Physijs.BoxMesh(
             beamCapGeometry,
             Physijs.createMaterial(
-              window.appConfig.beamMaterial,
+              beamMaterial,
               0.6,
               isFinalStage === false ? 0.1 : finalStageBounce
             ),
@@ -1195,7 +1206,7 @@
           const beam0cap1 = new Physijs.BoxMesh(
             beamCapGeometry,
             Physijs.createMaterial(
-              window.appConfig.beamMaterial,
+              beamMaterial,
               0.6,
               isFinalStage === false ? 0.1 : finalStageBounce
             ),
@@ -1346,24 +1357,24 @@
       window.appConfig.blueCrystalMaterials = [
         {
           standard: new THREE.MeshPhongMaterial({
-            emissive: new THREE.Color(0x0000FF),
+            emissive: blueSingleHex,
             specular: 0x050505,
             shininess: 100
           }),
           pulsing: new THREE.MeshPhongMaterial({
-            emissive: new THREE.Color(0x0000FF),
+            emissive: blueSingleHex,
             specular: 0x050505,
             shininess: 100
           })
         },
         {
           standard: new THREE.MeshPhongMaterial({
-            emissive: new THREE.Color(0x0000FF),
+            emissive: blueDoubleHex,
             specular: 0x050505,
             shininess: 100
           }),
           pulsing: new THREE.MeshPhongMaterial({
-            emissive: new THREE.Color(0x0000FF),
+            emissive: blueDoubleHex,
             specular: 0x050505,
             shininess: 100
           })
@@ -1972,10 +1983,15 @@
         }
       ]
 
-      const createBumper = (name = "NO_NAME", size = 0, p = { x: 0, y: 0, z: 0 }, sides = 5, bounce = 2, weight = 0, scale = 1, collisionCallback = () => { }) => {
+      const createBumper = (name = "NO_NAME", size = 0, p = { x: 0, y: 0, z: 0 }, sides = 5, bounce = 2, weight = 0, scale = 1, collisionCallback = () => { }, color) => {
         const bumperGeo = new THREE.CylinderGeometry((2 + size) * (2 / 3), 3 + size, 1, sides)
         // const bumperColor = window.appConfig.bumperMaterials[0].standard.color.clone()
-        const bumperColor = new THREE.Color(0xffffff)
+        let bumperColor
+        if (color !== undefined) {
+          bumperColor = new THREE.Color(color)
+        } else {
+          bumperColor = new THREE.Color(0xffffff)
+        }
         const material = Physijs.createMaterial(
           new THREE.MeshPhongMaterial({
             color: bumperColor,
@@ -2069,9 +2085,6 @@
               if (targetCoin === undefined) {
                 targetCoin = { position: { x: 100, y: 100 } }
               }
-              // console.log("target coin", targetCoin)
-              // console.log("targetPosition", targetPosition)
-
               const v0 = new THREE.Vector2(sapphire.position.x, sapphire.position.y)
               const v1 = new THREE.Vector2()
               const v2 = new THREE.Vector2()
@@ -2117,15 +2130,16 @@
                 scene.add(blueCoin)
               }, biSounds * 50)
             }
-            const biPoint = window.appConfig.blueIslandPoints[Math.floor(Math.random() * window.appConfig.blueIslandPoints.length)]
-            window.appConfig.stages.components.createSapphire({ x: biPoint.position.x, y: biPoint.position.y, z: 0 }, true)
+            if (window.appConfig.isBlueIsland === true) {
+              const biPoint = window.appConfig.blueIslandPoints[Math.floor(Math.random() * window.appConfig.blueIslandPoints.length)]
+              window.appConfig.stages.components.createSapphire({ x: biPoint.position.x, y: biPoint.position.y, z: 0 }, true)
+            }
           }
         } else {
           sapphire.capturedCallback = () => {
             window.appConfig.stages[window.appConfig.currentStage].data.sapphires++
             console.log("sapphire number: ", window.appConfig.stages[window.appConfig.currentStage].data.sapphires)
             if (window.appConfig.stages[window.appConfig.currentStage].data.sapphires === 1) {
-              console.error('adding portal')
               window.appConfig.timers.activeTimers.push(
                 window.appConfig.timers.addPortalToStage({ x: -10, y: 20, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 }, {
                   startedCallback: (thePortalMesh, config, percentComplete) => {
@@ -2166,7 +2180,7 @@
                               },
                               completedCallback: (thePortalMesh, config) => {
                                 window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName({
-                                  updateName: 'SAPPHIRE ISLAND',
+                                  updateName: '',
                                   ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0)
                                   // countdownStartStartedCallback: () => {
                                   //   window.appConfig.isBlueIsland = false
@@ -2596,9 +2610,10 @@
             name,
             p = { x: 0, y: 0 },
             skipArray = [0, 0, 0, 0],
-            finalStageBounce = false
+            finalStageBounce = false,
+            color
           ) => {
-            if(finalStageBounce === true) {
+            if (finalStageBounce === true) {
               console.log('finalStageBounce')
             }
             const mainStructure = new Physijs.BoxMesh(
@@ -2617,6 +2632,7 @@
                 p: [0 * scale, -8 * scale, -1],
                 r: [0, 0, 0],
                 s: (1 + scaleAdj) * scale,
+                color: color
               }, finalStageBounce)
             );
             skipArray[1] === 0 && mainStructure.add(
@@ -2624,6 +2640,7 @@
                 p: [-8 * scale, 0 * scale, -1],
                 r: [0, 0, 0.5 * Math.PI],
                 s: (1 + scaleAdj) * scale,
+                color: color
               }, finalStageBounce)
             );
             skipArray[2] === 0 && mainStructure.add(
@@ -2631,6 +2648,7 @@
                 p: [8 * scale, 0 * scale, -1],
                 r: [0, 0, 0.5 * Math.PI],
                 s: (1 + scaleAdj) * scale,
+                color: color
               }, finalStageBounce)
             );
             skipArray[3] === 0 && mainStructure.add(
@@ -2638,6 +2656,7 @@
                 p: [0 * scale, 8 * scale, -1],
                 r: [0, 0, 0],
                 s: (1 + scaleAdj) * scale,
+                color: color
               }, finalStageBounce)
             );
             mainStructure.name = name;
@@ -3077,8 +3096,8 @@
               // 0.5275,
               -.415,
               window.appConfig.currentStage + "_FINAL_STAGE_WALLS_0",
-              {x: 0, y:0, z:0},
-              [0,0,0,0],
+              { x: 0, y: 0, z: 0 },
+              [0, 0, 0, 0],
               true
             );
             finalStageWalls0.rotation.z = .25 * Math.PI
@@ -3089,8 +3108,8 @@
               // 0.5275,
               -.415,
               window.appConfig.currentStage + "_FINAL_STAGE_WALLS_1",
-              {x: 0, y:0, z:0},
-              [0,0,0,0],
+              { x: 0, y: 0, z: 0 },
+              [0, 0, 0, 0],
               true
             );
             // finalStageWalls0.rotation.z = .25 * Math.PI
@@ -3102,8 +3121,8 @@
               // 0.5275,
               -.75,
               window.appConfig.currentStage + "_FINAL_STAGE_WALLS_2",
-              {x: 0, y:0, z:0},
-              [0,0,0,0],
+              { x: 0, y: 0, z: 0 },
+              [0, 0, 0, 0],
               true
             );
             finalStageWalls2.rotation.z = .25 * Math.PI
@@ -3114,8 +3133,8 @@
               // 0.5275,
               -.75,
               window.appConfig.currentStage + "_FINAL_STAGE_WALLS_3",
-              {x: 0, y:0, z:0},
-              [0,0,0,0],
+              { x: 0, y: 0, z: 0 },
+              [0, 0, 0, 0],
               true
             );
             // finalStageWalls0.rotation.z = .25 * Math.PI
@@ -3202,17 +3221,28 @@
               4,
               .5,
               "BLUEISLAND",
-              { x: 0, y: 300 }
+              { x: 0, y: 300 },
+              [0, 0, 0, 0],
+              false,
+              0x0F52BA
             )
             borders.rotation.z = Math.PI * .25
             scene.add(borders)
-            window.appConfig.stages.components.createRuby({ x: 0, y: 325, z: 0 })
-            window.appConfig.stages.components.createRuby({ x: 0, y: 275, z: 0 })
-            window.appConfig.stages.components.createRuby({ x: 25, y: 300, z: 0 })
-            window.appConfig.stages.components.createRuby({ x: -25, y: 300, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -25, y: 300, z: 0 }, true)
-            window.appConfig.stages.components.createSapphire({ x: -25, y: 300, z: 0 }, true)
-            window.appConfig.stages.components.createSapphire({ x: -25, y: 300, z: 0 }, true)
+            window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "BLUEISLAND_BUMPER0", 2.5, { x: 0, y: 280, z: 0 }, 6, 1, 0, 1, undefined, 0x0F52BA)
+            window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "BLUEISLAND_BUMPER1", 2.5, { x: 0, y: 320, z: 0 }, 6, 1, 0, 1, undefined, 0x0F52BA)
+            window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "BLUEISLAND_BUMPER2", 2.5, { x: 20, y: 300, z: 0 }, 6, 1, 0, 1, undefined, 0x0F52BA)
+            window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "BLUEISLAND_BUMPER3", 2.5, { x: -20, y: 300, z: 0 }, 6, 1, 0, 1, undefined, 0x0F52BA)
+            const blueLight0 = new THREE.PointLight(0xffffff, .5, 100, 1)
+            blueLight0.position.set(0, 250, 20)
+            const blueLight1 = new THREE.PointLight(0xffffff, .5, 100, 1)
+            blueLight1.position.set(20, 320, 10)
+
+            blueLight0.gameName = window.appConfig.currentStage + "BLUELIGHT0";
+            blueLight1.gameName = window.appConfig.currentStage + "BLUELIGHT1";
+            scene.add(blueLight0)
+            scene.add(blueLight1)
+            // scene.add(blueLight2)
+            // scene.add(blueLight3)
           },
           // portalConfig0: {
           gemPortalConfig: {
@@ -3426,8 +3456,8 @@
 
             // portal
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 95, y: -95, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, 
-              window.appConfig.stages.components.gemPortalConfig)
+              window.appConfig.timers.addPortalToStage({ x: 95, y: -95, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
+                window.appConfig.stages.components.gemPortalConfig)
               // window.appConfig.timers.addPortalToStage({ x: -20, y: -20, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, 
               // window.appConfig.stages.components.gemPortalConfig)
             )
@@ -3845,8 +3875,8 @@
 
             // portal
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: -50, y: -50, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, 
-              window.appConfig.stages.components.gemPortalConfig)
+              window.appConfig.timers.addPortalToStage({ x: -50, y: -50, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
+                window.appConfig.stages.components.gemPortalConfig)
               // window.appConfig.timers.addPortalToStage({ x: -20, y: -20, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, 
               // window.appConfig.stages.components.gemPortalConfig)
             )
@@ -3856,10 +3886,11 @@
               window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
             }, 100)
+            window.appConfig.stages.components.createBlueIsland()
 
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 0, y: 100, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 }, 
-              window.appConfig.stages.components.sapphirePortalConfig)
+              window.appConfig.timers.addPortalToStage({ x: 0, y: 100, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
+                window.appConfig.stages.components.sapphirePortalConfig)
             )
 
 
@@ -4335,8 +4366,8 @@
 
             // portal
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 0, y: -70, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, 
-              window.appConfig.stages.components.gemPortalConfig)
+              window.appConfig.timers.addPortalToStage({ x: 0, y: -70, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
+                window.appConfig.stages.components.gemPortalConfig)
               // window.appConfig.timers.addPortalToStage({ x: -20, y: -20, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, 
               // window.appConfig.stages.components.gemPortalConfig)
             )
@@ -4346,10 +4377,11 @@
               window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
             }, 100)
+            window.appConfig.stages.components.createBlueIsland()
 
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 0, y: 72.5, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 }, 
-              window.appConfig.stages.components.sapphirePortalConfig)
+              window.appConfig.timers.addPortalToStage({ x: 0, y: 72.5, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
+                window.appConfig.stages.components.sapphirePortalConfig)
             )
 
 
@@ -5049,6 +5081,7 @@
             window.appConfig.stages.components.createSapphire({ x: 100, y: 100, z: 0 })
             window.appConfig.stages.components.createRuby({ x: -110, y: 23.75, z: 0 })
             window.appConfig.stages.components.createEmerald({ x: 109.5, y: 23.75, z: 0 })
+            window.appConfig.stages.components.createBlueIsland()
 
             createCrystalCircle('STAGE3', 2.75, { x: 0, y: 140 }, 0, 8)
             createCrystalCircle('STAGE3', 3.125, { x: 0, y: 140 }, 1, 8)
@@ -5944,7 +5977,12 @@
             createCrystalCircle('STAGE4', 3.25, { x: 87.5, y: -87.5 }, 1, 16)
             createCrystalCircle('STAGE4', 3.75, { x: 87.5, y: -87.5 }, 2, 16)
 
-
+            window.appConfig.stages.components.createSapphire({ x: 0, y: -100, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: 0, y: 100, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: -100, y: 0, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: 100, y: 0, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: 100, y: 100, z: 0 })
+            window.appConfig.stages.components.createBlueIsland()
             // createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: 20, z: 0 } })
 
 
@@ -7066,6 +7104,7 @@
             window.appConfig.stages.components.createSapphire({ x: -20, y: -10, z: 0 })
             window.appConfig.stages.components.createSapphire({ x: -10, y: 20, z: 0 })
             window.appConfig.stages.components.createSapphire({ x: -30, y: -30, z: 0 })
+            window.appConfig.stages.components.createBlueIsland()
 
 
             window.appConfig.stages.STAGE5.STAGE5PRIZE0 = scene.children.find((obj) => obj.name === "STAGE5PRIZE0")
@@ -8165,8 +8204,8 @@
 
 
               window.appConfig.timers.activeTimers.push(
-                window.appConfig.timers.addPortalToStage({ x: 10, y: -20, z: -5 }, 'PORTAL_TO_FINAL_STAGE', { x: 0, y: 0, z: 0 }, 
-                window.appConfig.stages.components.finalPortalConfig)
+                window.appConfig.timers.addPortalToStage({ x: 10, y: -20, z: -5 }, 'PORTAL_TO_FINAL_STAGE', { x: 0, y: 0, z: 0 },
+                  window.appConfig.stages.components.finalPortalConfig)
               )
 
               // setTimeout(() => {
@@ -8920,9 +8959,9 @@
             if (c.name && (c.name.indexOf('SPHERECOIN') > -1 || c.name.indexOf('FINALSTAGE_BUMPER') > -1)) {
               sphereCoins.push(c)
             }
-            if((c.name.indexOf('FINAL_STAGE_WALL') > -1 || c.name.indexOf('SB_INDICATOR') > 1) && window.appConfig.superBallMaterial) {
+            if ((c.name.indexOf('FINAL_STAGE_WALL') > -1 || c.name.indexOf('SB_INDICATOR') > 1) && window.appConfig.superBallMaterial) {
               c.material.color = window.appConfig.superBallMaterial.color
-              if(c.name.indexOf('FINAL_STAGE_WALL') > -1) {
+              if (c.name.indexOf('FINAL_STAGE_WALL') > -1) {
                 c.children.forEach(finC => {
                   finC.material.color = window.appConfig.superBallMaterial.color
                 })
@@ -8934,7 +8973,7 @@
             sphereCoins.forEach(sc => {
               if (sc.setLinearVelocity) {
                 // if (sc.name.indexOf('FINALSTAGE') === -1) {
-                  sc.setLinearVelocity(new THREE.Vector3(Math.random() * 25 - 12.5, Math.random() * 25 - 12.5, 0).add(sc._physijs.linearVelocity))
+                sc.setLinearVelocity(new THREE.Vector3(Math.random() * 25 - 12.5, Math.random() * 25 - 12.5, 0).add(sc._physijs.linearVelocity))
                 // }
                 sc.material.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
                 sc.children[0].material.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
@@ -9338,9 +9377,9 @@
       document.querySelector("#pause-button").disabled = false;
       const theBall = scene.children.find(c => c.gameName === 'SPHERE0')
       theBall.position.set(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition);
-      if(window.appConfig.finalStageActiveTransforms === false) {
+      if (window.appConfig.finalStageActiveTransforms === false) {
         window.appConfig.activeTransforms = window.appConfig.stages[window.appConfig.currentStage].defaultTransforms
-      } 
+      }
       const sphere = scene.children.find(obj => {
         if (obj.gameName === "SPHERE0" && obj.type === "Mesh") {
           return obj
