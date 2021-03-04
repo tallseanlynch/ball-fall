@@ -2,9 +2,9 @@
 
 setTimeout(() => {
 
-    // const gridHelper = new THREE.GridHelper( 200, 40 );
-    // scene.add( gridHelper );
-    // gridHelper.rotation.x = .5 * Math.PI
+    const gridHelper = new THREE.GridHelper( 200, 40 );
+    scene.add( gridHelper );
+    gridHelper.rotation.x = .5 * Math.PI
 
     window.appConfig.debug = {
         toggleGravity: false,
