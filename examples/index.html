@@ -2139,73 +2139,6 @@
           sapphire.capturedCallback = () => {
             window.appConfig.stages[window.appConfig.currentStage].data.sapphires++
             console.log("sapphire number: ", window.appConfig.stages[window.appConfig.currentStage].data.sapphires)
-            if (window.appConfig.stages[window.appConfig.currentStage].data.sapphires === 1) {
-              window.appConfig.timers.activeTimers.push(
-                window.appConfig.timers.addPortalToStage({ x: -10, y: 20, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 }, {
-                  startedCallback: (thePortalMesh, config, percentComplete) => {
-                  },
-                  activeCallback: (thePortalMesh, config, percentComplete) => {
-                  },
-                  completedCallback: (thePortalMesh, config) => {
-                    window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName({
-                      updateName: 'SAPPHIRE ISLAND',
-                      ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0),
-                      countdownStartCompletedCallback: () => {
-
-                        const biPoint0 = window.appConfig.blueIslandPoints[Math.floor(Math.random() * window.appConfig.blueIslandPoints.length)]
-                        window.appConfig.stages.components.createSapphire({ x: biPoint0.position.x, y: biPoint0.position.y, z: 0 }, true)
-                        const biPoint1 = window.appConfig.blueIslandPoints[Math.floor(Math.random() * window.appConfig.blueIslandPoints.length)]
-                        window.appConfig.stages.components.createSapphire({ x: biPoint1.position.x, y: biPoint1.position.y, z: 0 }, true)
-                        const biPoint2 = window.appConfig.blueIslandPoints[Math.floor(Math.random() * window.appConfig.blueIslandPoints.length)]
-                        window.appConfig.stages.components.createSapphire({ x: biPoint2.position.x, y: biPoint2.position.y, z: 0 }, true)
-                        window.appConfig.timer.pause()
-                        window.appConfig.isBlueIsland = true
-                        const blueIslandTimer = new easytimer.Timer({ countdown: true, startValues: { seconds: 30 }, precision: "secondTenths" });
-                        blueIslandTimer.addEventListener("secondTenthsUpdated", function (e) {
-                          document.querySelector(
-                            "#timer"
-                          ).innerText = `${blueIslandTimer
-                            .getTimeValues()
-                            .toString(["minutes", "seconds", "secondTenths"])}`;
-                        });
-                        blueIslandTimer.addEventListener("targetAchieved", function (e) {
-
-                          window.appConfig.isBlueIsland = false
-                          window.appConfig.timer.start()
-                          window.appConfig.timers.activeTimers.push(
-                            window.appConfig.timers.addPortalToStage({ x: 0, y: 300, z: -5 }, 'PORTAL_BACK_TO_STAGE_SAPPHIRE', { x: 0, y: 0, z: 0 }, {
-                              startedCallback: (thePortalMesh, config, percentComplete) => {
-                              },
-                              activeCallback: (thePortalMesh, config, percentComplete) => {
-                              },
-                              completedCallback: (thePortalMesh, config) => {
-                                window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName({
-                                  updateName: window.appConfig.currentStage,
-                                  ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0)
-                                  // countdownStartStartedCallback: () => {
-                                  //   window.appConfig.isBlueIsland = false
-                                  // }
-                                }))
-                              },
-                              portalConfig: {
-                                sapphire: true,
-                                active: true
-                              }
-                            })
-                          )
-                        })
-                        window.appConfig.blueIslandTimer = blueIslandTimer
-                        blueIslandTimer.start()
-                      }
-                    }))
-                  },
-                  portalConfig: {
-                    sapphire: true,
-                    active: true
-                  }
-                })
-              )
-            }
           }
         }
         sapphire.position.set(p.x, p.y, p.z)
@@ -3228,6 +3161,8 @@
             )
             borders.rotation.z = Math.PI * .25
             scene.add(borders)
+            prize(window.appConfig.currentStageIndex, 15, { x: 10, y: 300, z: 0 })
+            prize(window.appConfig.currentStageIndex, 16, { x: -10, y: 300, z: 0 })
             window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "BLUEISLAND_BUMPER0", 2.5, { x: 0, y: 280, z: 0 }, 6, 1, 0, 1, undefined, 0x0F52BA)
             window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "BLUEISLAND_BUMPER1", 2.5, { x: 0, y: 320, z: 0 }, 6, 1, 0, 1, undefined, 0x0F52BA)
             window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "BLUEISLAND_BUMPER2", 2.5, { x: 20, y: 300, z: 0 }, 6, 1, 0, 1, undefined, 0x0F52BA)
@@ -3300,7 +3235,37 @@
             completedCallback: (thePortalMesh, config) => {
               window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName({
                 updateName: 'SAPPHIRE ISLAND',
+                ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0),
+                countdownStartCompletedCallback: () => {
+
+                  const biPoint0 = window.appConfig.blueIslandPoints[Math.floor(Math.random() * window.appConfig.blueIslandPoints.length)]
+                  window.appConfig.stages.components.createSapphire({ x: biPoint0.position.x, y: biPoint0.position.y, z: 0 }, true)
+                  const biPoint1 = window.appConfig.blueIslandPoints[Math.floor(Math.random() * window.appConfig.blueIslandPoints.length)]
+                  window.appConfig.stages.components.createSapphire({ x: biPoint1.position.x, y: biPoint1.position.y, z: 0 }, true)
+                  const biPoint2 = window.appConfig.blueIslandPoints[Math.floor(Math.random() * window.appConfig.blueIslandPoints.length)]
+                  window.appConfig.stages.components.createSapphire({ x: biPoint2.position.x, y: biPoint2.position.y, z: 0 }, true)
+                  window.appConfig.isBlueIsland = true
+                  window.appConfig.timers.activeTimers.push(window.appConfig.timers.blueIslandTimer())
+                }
+              }))
+            },
+            portalConfig: {
+              sapphire: true,
+              active: true
+            }
+          },
+          sapphirePortalReturnConfig: {
+            startedCallback: (thePortalMesh, config, percentComplete) => {
+            },
+            activeCallback: (thePortalMesh, config, percentComplete) => {
+            },
+            completedCallback: (thePortalMesh, config) => {
+              window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName({
+                updateName: window.appConfig.stages[window.appConfig.currentStage].name,
                 ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0)
+                // countdownStartStartedCallback: () => {
+                //   window.appConfig.isBlueIsland = false
+                // }
               }))
             },
             portalConfig: {
@@ -3468,10 +3433,10 @@
               window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
             }, 100)
 
-            // window.appConfig.timers.activeTimers.push(
-            //   window.appConfig.timers.addPortalToStage({ x: 95, y: 95, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 }, 
-            //   window.appConfig.stages.components.sapphirePortalConfig)
-            // )
+            window.appConfig.timers.activeTimers.push(
+              window.appConfig.timers.addPortalToStage({ x: 95, y: 95, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
+                window.appConfig.stages.components.sapphirePortalConfig)
+            )
 
             window.appConfig.stages.components.createBumper("STAGE0BUMPER0", 1, { x: -70, y: -72.5, z: 0 }, 5)
             window.appConfig.stages.components.createBumper("STAGE0BUMPER1", 1, { x: 70, y: -72.5, z: 0 }, 5)
@@ -4829,8 +4794,8 @@
 
             // portal
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: -148.75, y: 25, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, 
-              window.appConfig.stages.components.gemPortalConfig)
+              window.appConfig.timers.addPortalToStage({ x: -148.75, y: 25, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
+                window.appConfig.stages.components.gemPortalConfig)
               // window.appConfig.timers.addPortalToStage({ x: -20, y: -20, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, 
               // window.appConfig.stages.components.gemPortalConfig)
             )
@@ -4844,8 +4809,8 @@
 
 
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 148.75, y: 25, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 }, 
-              window.appConfig.stages.components.sapphirePortalConfig)
+              window.appConfig.timers.addPortalToStage({ x: 148.75, y: 25, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
+                window.appConfig.stages.components.sapphirePortalConfig)
             )
 
 
@@ -6016,8 +5981,8 @@
 
             // portal
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: -120, y: 0, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, 
-              window.appConfig.stages.components.gemPortalConfig)
+              window.appConfig.timers.addPortalToStage({ x: -120, y: 0, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
+                window.appConfig.stages.components.gemPortalConfig)
               // window.appConfig.timers.addPortalToStage({ x: -20, y: -20, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, 
               // window.appConfig.stages.components.gemPortalConfig)
             )
@@ -6031,8 +5996,8 @@
 
 
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 120, y: 0, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 }, 
-              window.appConfig.stages.components.sapphirePortalConfig)
+              window.appConfig.timers.addPortalToStage({ x: 120, y: 0, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
+                window.appConfig.stages.components.sapphirePortalConfig)
             )
 
 
@@ -6435,8 +6400,8 @@
 
             // portal
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 0, y: 137.5, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, 
-              window.appConfig.stages.components.gemPortalConfig)
+              window.appConfig.timers.addPortalToStage({ x: 0, y: 137.5, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
+                window.appConfig.stages.components.gemPortalConfig)
               // window.appConfig.timers.addPortalToStage({ x: -20, y: -20, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, 
               // window.appConfig.stages.components.gemPortalConfig)
             )
@@ -6450,8 +6415,8 @@
 
 
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 0, y: -137.5, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 }, 
-              window.appConfig.stages.components.sapphirePortalConfig)
+              window.appConfig.timers.addPortalToStage({ x: 0, y: -137.5, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
+                window.appConfig.stages.components.sapphirePortalConfig)
             )
 
 
@@ -7720,7 +7685,7 @@
         let remoteLine = remoteSwitch.line
         let remoteSwitchMaterial = new THREE.Color().copy(remoteTransmitter.material.color)
 
-        if(window.appConfig.superBallMaterial.color.set) {
+        if (window.appConfig.superBallMaterial.color.set) {
           window.appConfig.superBallMaterial.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
         } else {
           window.appConfig.superBallMaterial.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
@@ -7922,15 +7887,11 @@
         }
       },
       activatePortal: (thePortalMesh) => {
-        if(thePortalMesh.name.indexOf('SAPPHIRE') === -1) {
+        if (thePortalMesh.name.indexOf('SAPPHIRE') === -1) {
           window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
         }
-        if (window.appConfig.isBlueIsland === true) {
-          window.appConfig.blueIslandTimer.pause()
-        }
-        if (window.appConfig.isBlueIsland === false) {
-          window.appConfig.timer.pause()
-        }
+        window.appConfig.timer.pause()
+
         let thePortalMeshSpaceSphere = thePortalMesh.children.find(c => c.name === 'THE_SPACE_SPHERE')
         let theSphere = scene.children.find((obj) => obj.name === 'SPHERE0')
         let theGradientCurtain = document.querySelector('#gradient-curtain')
@@ -8229,6 +8190,25 @@
           }
         }
       },
+      blueIslandTimer: () => {
+        return {
+          started: 0,
+          ended: 0,
+          percentComplete: 0,
+          time: 30000,
+          timeLeft: 0,
+          currentTime: 0,
+          name: 'BLUEISLANDTIMER',
+          id: Math.round(Math.random() * 10000),
+          completedCallback: (percentComplete) => {
+            window.appConfig.isBlueIsland = false
+            window.appConfig.timer.start()
+            window.appConfig.timers.activeTimers.push(
+              window.appConfig.timers.addPortalToStage({ x: 0, y: 300, z: -5 }, 'PORTAL_BACK_TO_STAGE_SAPPHIRE', { x: 0, y: 0, z: 0 }, window.appConfig.stages.components.sapphirePortalReturnConfig)
+            )
+          }
+        }
+      },
       initialBallZoom: () => {
         return {
           started: 0,
@@ -8439,12 +8419,8 @@
         }
       },
       countdownStartFlash: (action) => {
-        if (window.appConfig.timer.isPaused() === true && window.appConfig.isBlueIsland === false) {
-          window.appConfig.timer.start()
-        }
-        if (window.appConfig.timer.isPaused() === true && window.appConfig.isBlueIsland === true) {
-          window.appConfig.blueIslandTimer.start()
-        }
+        window.appConfig.timer.start()
+
         window.appConfig.pauseSuperballs = false
         return {
           started: 0,
@@ -9204,7 +9180,7 @@
           }
           const currentTime = window.appConfig.timer.getTimeValues()
           const newTimer = new easytimer.Timer({ countdown: true, startValues: { minutes: currentTime.minutes, seconds: currentTime.seconds + 10, secondTenths: currentTime.secondTenths }, precision: "secondTenths" });
-          window.appConfig.stageTotalTimePlayed += 10
+          window.appConfig.stageTotalTimePlayed += 15
           window.appConfig.timer.stop()
           window.appConfig.timer.removeEventListener("secondTenthsUpdated", function (e) {
             document.querySelector(
@@ -9370,12 +9346,8 @@
       if (window.appConfig.isPortalStart === false) {
         window.appConfig.timers.activeTimers.push(timers.initialBallZoom())
       }
-      if (window.appConfig.isBlueIsland === false) {
-        window.appConfig.timer.start();
-      }
-      if (window.appConfig.isBlueIsland === true) {
-        window.appConfig.blueIslandTimer.start();
-      }
+      window.appConfig.timer.start();
+
       scene.setGravity(new THREE.Vector3(0, -10, 0));
       window.appConfig.sphere._physijs.mass = window.appConfig.defaultSphereMass
       document.querySelector("#pause-button").disabled = false;
@@ -9401,12 +9373,8 @@
       window.appConfig.pause = !window.appConfig.pause;
       window.appConfig.timers.pauseTimers = !window.appConfig.timers.pauseTimers
       if (window.appConfig.pause) {
-        if (window.appConfig.isBlueIsland === true) {
-          window.appConfig.blueIslandTimer.pause()
-        }
-        if (window.appConfig.isBlueIsland === false) {
-          window.appConfig.timer.pause();
-        }
+        window.appConfig.timer.pause();
+
         scene.setGravity(new THREE.Vector3(0, 0, 0));
         window.appConfig.sphere._physijs.mass = 0
         showPauseMenu();
@@ -9414,12 +9382,8 @@
         scene.setGravity(new THREE.Vector3(0, window.appConfig.defaultSceneGravity, 0));
         window.appConfig.sphere._physijs.mass = window.appConfig.defaultSphereMass
 
-        if (window.appConfig.isBlueIsland === false) {
-          window.appConfig.timer.start();
-        }
-        if (window.appConfig.isBlueIsland === true) {
-          window.appConfig.blueIslandTimer.start();
-        }
+        window.appConfig.timer.start();
+
         showGameMode();
       }
     };
