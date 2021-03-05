@@ -959,12 +959,13 @@
     }
 
     const loadSound = (options) => {
-      const { src, type } = options;
+      const { src, type, onplay } = options;
       const sound = new Howl({
         src: [src],
         autoPlay: false,
         loop: type === "backgroundMusic" ? true : false,
         volume: type === "backgroundMusic" ? .3 : .1,
+        onplay: onplay !== undefined ? onplay : () => { }
       }).once("load", () => {
         if (type === "backgroundMusic") {
           window.appConfig.howlSounds.backgroundMusic = sound;
@@ -1263,6 +1264,7 @@
             const theSwitchBeam = scene.children.find((obj) => obj.name === beam0.name)
             if (other_object.name === 'SPHERE0' && theSwitchBeam.switchBeam.rotated === false) {
               let theSwitchIndicator = beam0.switchBeam.switchIndicatorsGeos[theSwitchBeam.switchBeam.activeSwitchIndicators]
+              window.appConfig.howlSounds.doors[theSwitchBeam.switchBeam.activeSwitchIndicators].play()
               theSwitchBeam.switchBeam.activeSwitchIndicators++
               theSwitchBeam.switchBeam.switchIndicatorsThrottle = true
               window.appConfig.timers.activeTimers.push(window.appConfig.timers.switchIndicatorActivate(theSwitchIndicator))
@@ -1819,7 +1821,61 @@
 
           howlSounds.backgroundMusic = loadSound({
             src: stageSounds.backgroundMusic,
-            type: "backgroundMusic",
+            type: "backgroundMusic"
+          })
+          howlSounds.circuitLine = loadSound({
+            src: "sounds/Sound FX/sfx-Circuit-Line.mp3",
+            type: 'howlSound',
+            onplay: () => {
+              console.log("playing circuitLine")
+            }
+          })
+          howlSounds.circuitReceiver = loadSound({
+            src: "sounds/Sound FX/sfx-Circuit-Receiver.mp3",
+            type: 'howlSound',
+            onplay: () => {
+              console.log("playing circuitReceiver")
+            }
+          })
+          howlSounds.circuitTransmitter = loadSound({
+            src: "sounds/Sound FX/sfx-Circuit-Transmitter.mp3",
+            type: 'howlSound',
+            onplay: () => {
+              console.log("playing bg circuitTransmitter")
+            }
+          })
+          howlSounds.doors = []
+          howlSounds.doors[0] = loadSound({
+            src: "sounds/Sound FX/sfx-door-1.mp3",
+            type: 'howlSound'
+          })
+          howlSounds.doors[1] = loadSound({
+            src: "sounds/Sound FX/sfx-door-2.mp3",
+            type: 'howlSound'
+          })
+          howlSounds.doors[2] = loadSound({
+            src: "sounds/Sound FX/sfx-door-3.mp3",
+            type: 'howlSound'
+          })
+          howlSounds.superball = loadSound({
+            src: "sounds/Sound FX/sfx-superball.mp3",
+            type: 'howlSound'
+          })
+          howlSounds.diamond = loadSound({
+            src: "sounds/Sound FX/super-gem-Diamond.mp3",
+            type: 'howlSound'
+          })
+          howlSounds.emerald = loadSound({
+            src: "sounds/Sound FX/super-gem-Emerald.mp3",
+            type: 'howlSound'
+          })
+          howlSounds.ruby = loadSound({
+            src: "sounds/Sound FX/super-gem-Ruby.mp3",
+            type: 'howlSound'
+          })
+          howlSounds.sapphire = loadSound({
+            src: "sounds/Sound FX/super-gem-Sapphire.mp3",
+            type: 'howlSound'
           })
 
           window.appConfig.howlSounds.coins.sCoin.push(
@@ -2138,6 +2194,7 @@
           }
           if (isBlueIsland) {
             sapphire.capturedCallback = () => {
+              window.appConfig.howlSounds.sapphire.play()
               const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
               for (let biSounds = 0; biSounds < 10; biSounds++) {
                 setTimeout(() => {
@@ -2154,6 +2211,7 @@
           } else {
             
             sapphire.capturedCallback = () => {
+              window.appConfig.howlSounds.sapphire.play()
               window.appConfig.stages[window.appConfig.currentStage].data.sapphires++
               console.log("sapphire number: ", window.appConfig.stages[window.appConfig.currentStage].data.sapphires)
 
@@ -2253,6 +2311,9 @@
         let rubyNameAdjustment = isCoin === false ? 'R_INDICATOR' : 'RUBY'
         ruby.name = window.appConfig.currentStage + '_' + rubyNameAdjustment + Math.floor(Math.random() * 10000)
         ruby.coinValue = 5000
+        ruby.capturedCallback = () => {
+          window.appConfig.howlSounds.ruby.play()
+        }
         scene.add(ruby)
 
         if (isCoin === false) {
@@ -2328,6 +2389,10 @@
         let emeraldGeoLine = new THREE.EdgesGeometry(emeraldGeo)
         let mat = new THREE.LineBasicMaterial({ color: isCoin === false ? 0xffffff : 0xb3ffb3, linewidth: 1 })
         let wireframe = new THREE.LineSegments(emeraldGeoLine, mat)
+
+        emerald.capturedCallback = () => {
+          window.appConfig.howlSounds.emerald.play()
+        }
         scene.add(emerald)
         emerald.add(wireframe)
         if (isCoin === true) {
@@ -2386,6 +2451,9 @@
         diamond.name = window.appConfig.currentStage + '_' + diamondNameAdjustment + Math.floor(Math.random() * 10000)
 
         diamond.coinValue = 25000
+        diamond.capturedCallback = () => {
+          window.appConfig.howlSounds.diamond.play()
+        }
         scene.add(diamond)
 
         // wireframe
@@ -7334,6 +7402,7 @@
 
       window.appConfig.superBallHandleCollision = function (other_object, the_object) {
         if (other_object.name === 'SPHERE0') {
+          window.appConfig.howlSounds.superball.play()
           if (window.appConfig.stages[window.appConfig.currentStage].data.gemSuperBalls < 8) {
             window.appConfig.stages[window.appConfig.currentStage].data.gemSuperBalls++
             console.log('GEM SUPERBALLS - ' + window.appConfig.stages[window.appConfig.currentStage].data.gemSuperBalls)
@@ -7737,6 +7806,7 @@
         }
       },
       activateRemoteSwitch: (remoteSwitch) => {
+        window.appConfig.howlSounds.circuitTransmitter.play()
         let remoteTransmitter = remoteSwitch.transmitter.children[0]
         let remoteTransmitterIco = remoteSwitch.transmitter.children[1]
         let remoteReceiver = remoteSwitch.receiver.children[0]
@@ -7837,6 +7907,9 @@
               switchBeam.rotation.z += (.5 * Math.PI) / 100
             }
             switchBeam.__dirtyRotation = true
+          },
+          completedCallback: (percentComplete) => {
+            window.appConfig.howlSounds.circuitReceiver.play()
           }
         }
       },
@@ -7965,6 +8038,7 @@
           id: Math.round(Math.random() * 10000),
           startedCallback: (percentComplete) => {
             thePortalMesh.startedCallback(thePortalMesh, thePortalMesh.config, percentComplete)
+            setTimeout(window.appConfig.howlSounds.circuitLine.play(), 750)
           },
           activeCallback: (thePercentComplete) => {
             let percentComplete = thePercentComplete
