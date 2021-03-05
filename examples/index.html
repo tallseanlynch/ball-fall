@@ -704,7 +704,7 @@
         <div class="credits-name font-a">Sean Lynch</div>
       </div>
       <div id="credits-item" class="margin-bottom-2">
-        <div class="credits-role margin-bottom-1 font-d">Programming Design</div>
+        <div class="credits-role margin-bottom-1 font-d">Programming</div>
         <div class="credits-name font-a">Sean Lynch</div>
         <div class="credits-name font-a">Ian Lynch</div>
       </div>
@@ -717,6 +717,14 @@
         <div class="credits-role margin-bottom-1 font-d">Music & Sound Design</div>
         <div class="credits-name font-a">Haley Rheinhart</div>
       </div>
+      <div id="credits-item" class="margin-bottom-2">
+        <div class="credits-role margin-bottom-1 font-d">Dev Ops</div>
+        <div class="credits-name font-a">Mark Scripter</div>
+      </div>
+      <!-- <div id="credits-item" class="margin-bottom-2">
+        <div class="credits-role margin-bottom-1 font-d">Level Design</div>
+        <div class="credits-name font-a">Sean Lynch</div>
+      </div> -->
     </div>
     <div id="back-button" class="margin-top-2 font-b">
       <button class="start-menu-button font-b" onClick="goBack()">Back</button>
@@ -3307,6 +3315,8 @@
                 //   window.appConfig.isBlueIsland = false
                 // }
               }))
+              let theSphere = scene.children.find(c => c.name === 'SPHERE0')
+              window.appConfig.stages.components.demateralizeMesh(theSphere)
             },
             portalConfig: {
               sapphire: true,
