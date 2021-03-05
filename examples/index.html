@@ -2046,7 +2046,7 @@
       }
 
       window.appConfig.sapphires = []
-      const createSapphire = (p = { x: 0, y: 0, z: 0 }, isBlueIsland = false) => {
+      const createSapphire = (p = { x: 0, y: 0, z: 0 }, isBlueIsland = false, isCoin = true, portalParent = false) => {
         const sapphireShape = new THREE.Shape()
         sapphireShape.moveTo(0, .5)
         sapphireShape.lineTo(.5, 0)
@@ -2064,152 +2064,178 @@
         })
         const sapphireColor = new THREE.Color('#0F52BA')
         const material = new THREE.MeshPhongMaterial({
-          color: sapphireColor,
+          color: isCoin === false ? 0xffffff : sapphireColor,
           // specular: 0x050505,
           shininess: 100,
           transparent: true,
-          opacity: .9
+          opacity: isCoin === false ? .25 : .95
         })
         const sapphire = new THREE.Mesh(sapphireGeo, material)
-        sapphire.scale.x = 2
-        sapphire.scale.y = 2
-        sapphire.scale.z = 2
-        sapphire.hasTarget = false
-        sapphire.travelData = {}
-        sapphire.activeCallback = () => {
-          if (window.appConfig.start === true && window.appConfig.pause === false && window.appConfig.userHasEnded === false) {
-            if (sapphire.hasTarget === false) {
-              let lengthVal = isBlueIsland ? window.appConfig.blueIslandPoints.length : window.appConfig.coins.length
-              const randomNum = Math.floor(Math.random() * lengthVal)
-              let targetCoin = isBlueIsland ? window.appConfig.blueIslandPoints[randomNum] : window.appConfig.coins[randomNum]
-              if (targetCoin === undefined) {
-                targetCoin = { position: { x: 100, y: 100 } }
-              }
-              const v0 = new THREE.Vector2(sapphire.position.x, sapphire.position.y)
-              const v1 = new THREE.Vector2()
-              const v2 = new THREE.Vector2()
-              const v3 = new THREE.Vector2(targetCoin.position.x, targetCoin.position.y)
-              v1.lerpVectors(v0, v3, .25)
-              v1.x += 30
-              v1.y += 30
-              v2.lerpVectors(v0, v3, .75)
-              v2.x -= 30
-              v2.y -= 30
-              const curve = new THREE.CubicBezierCurve(v0, v1, v2, v3)
-              sapphire.travelData.curve = curve
-              sapphire.hasTarget = true
-              const ms = Math.ceil(curve.getLength() * 50)
-              window.appConfig.timers.activeTimers.push(window.appConfig.timers.sapphireTravel(sapphire, ms))
+        sapphire.scale.x = isCoin === false ? 1 : 2
+        sapphire.scale.y = isCoin === false ? 1 : 2
+        sapphire.scale.z = isCoin === false ? 1 : 2
 
-            }
-          }
-        }
-        sapphire.travelCallback = (percentComplete) => {
-          if (window.appConfig.start === true && window.appConfig.pause === false && window.appConfig.userHasEnded === false) {
+        if (portalParent !== false) {
+          sapphire.originalMaterialColor = new THREE.Color(0xff0000)
+          let portalParentMesh = scene.children.find(c => c.name.indexOf(portalParent) > -1)
+          sapphire.position.x = portalParentMesh.position.x - 3.5
+          sapphire.position.y = portalParentMesh.position.y - 3
+          sapphire.position.z = -2.5
 
-            if (sapphire.hasTarget === true) {
-              const point = sapphire.travelData.curve.getPoint(percentComplete)
-              sapphire.position.set(point.x, point.y, lfo(747) * 5)
-            }
-          }
-        }
-        sapphire.completedCallback = () => {
-          if (window.appConfig.start === true && window.appConfig.pause === false && window.appConfig.userHasEnded === false) {
 
-            sapphire.hasTarget = false
-            sapphire.travelData = {}
-          }
-        }
-        if (isBlueIsland) {
-          sapphire.capturedCallback = () => {
-            const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
-            for (let biSounds = 0; biSounds < 10; biSounds++) {
-              setTimeout(() => {
-                coinSounds[Math.round(Math.random() * (coinSounds.length - 1))].play()
-                const blueCoin = window.appConfig.stages.components.blueCrystal(biSounds % 3, { x: sapphire.position.x + ((Math.random() * 25) - 12.5), y: sapphire.position.y + ((Math.random() * 20) - 10), z: 0 })
-                scene.add(blueCoin)
-              }, biSounds * 50)
-            }
-            if (window.appConfig.isBlueIsland === true) {
-              const biPoint = window.appConfig.blueIslandPoints[Math.floor(Math.random() * window.appConfig.blueIslandPoints.length)]
-              window.appConfig.stages.components.createSapphire({ x: biPoint.position.x, y: biPoint.position.y, z: 0 }, true)
-            }
-          }
         } else {
-          sapphire.capturedCallback = () => {
-            window.appConfig.stages[window.appConfig.currentStage].data.sapphires++
-            console.log("sapphire number: ", window.appConfig.stages[window.appConfig.currentStage].data.sapphires)
-            if (window.appConfig.stages[window.appConfig.currentStage].data.sapphires === 1) {
-              window.appConfig.timers.activeTimers.push(
-                window.appConfig.timers.addPortalToStage({ x: -10, y: 20, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 }, {
-                  startedCallback: (thePortalMesh, config, percentComplete) => {
-                  },
-                  activeCallback: (thePortalMesh, config, percentComplete) => {
-                  },
-                  completedCallback: (thePortalMesh, config) => {
-                    window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName({
-                      updateName: 'SAPPHIRE ISLAND',
-                      ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0),
-                      countdownStartCompletedCallback: () => {
+        
+        
+        
+        
+        
+          sapphire.hasTarget = false
+          sapphire.travelData = {}
+          sapphire.activeCallback = () => {
+            if (window.appConfig.start === true && window.appConfig.pause === false && window.appConfig.userHasEnded === false) {
+              if (sapphire.hasTarget === false) {
+                let lengthVal = isBlueIsland ? window.appConfig.blueIslandPoints.length : window.appConfig.coins.length
+                const randomNum = Math.floor(Math.random() * lengthVal)
+                let targetCoin = isBlueIsland ? window.appConfig.blueIslandPoints[randomNum] : window.appConfig.coins[randomNum]
+                if (targetCoin === undefined) {
+                  targetCoin = { position: { x: 100, y: 100 } }
+                }
+                const v0 = new THREE.Vector2(sapphire.position.x, sapphire.position.y)
+                const v1 = new THREE.Vector2()
+                const v2 = new THREE.Vector2()
+                const v3 = new THREE.Vector2(targetCoin.position.x, targetCoin.position.y)
+                v1.lerpVectors(v0, v3, .25)
+                v1.x += 30
+                v1.y += 30
+                v2.lerpVectors(v0, v3, .75)
+                v2.x -= 30
+                v2.y -= 30
+                const curve = new THREE.CubicBezierCurve(v0, v1, v2, v3)
+                sapphire.travelData.curve = curve
+                sapphire.hasTarget = true
+                const ms = Math.ceil(curve.getLength() * 50)
+                window.appConfig.timers.activeTimers.push(window.appConfig.timers.sapphireTravel(sapphire, ms))
 
-                        const biPoint0 = window.appConfig.blueIslandPoints[Math.floor(Math.random() * window.appConfig.blueIslandPoints.length)]
-                        window.appConfig.stages.components.createSapphire({ x: biPoint0.position.x, y: biPoint0.position.y, z: 0 }, true)
-                        const biPoint1 = window.appConfig.blueIslandPoints[Math.floor(Math.random() * window.appConfig.blueIslandPoints.length)]
-                        window.appConfig.stages.components.createSapphire({ x: biPoint1.position.x, y: biPoint1.position.y, z: 0 }, true)
-                        const biPoint2 = window.appConfig.blueIslandPoints[Math.floor(Math.random() * window.appConfig.blueIslandPoints.length)]
-                        window.appConfig.stages.components.createSapphire({ x: biPoint2.position.x, y: biPoint2.position.y, z: 0 }, true)
-                        window.appConfig.timer.pause()
-                        window.appConfig.isBlueIsland = true
-                        const blueIslandTimer = new easytimer.Timer({ countdown: true, startValues: { seconds: 30 }, precision: "secondTenths" });
-                        blueIslandTimer.addEventListener("secondTenthsUpdated", function (e) {
-                          document.querySelector(
-                            "#timer"
-                          ).innerText = `${blueIslandTimer
-                            .getTimeValues()
-                            .toString(["minutes", "seconds", "secondTenths"])}`;
-                        });
-                        blueIslandTimer.addEventListener("targetAchieved", function (e) {
-
-                          window.appConfig.isBlueIsland = false
-                          window.appConfig.timer.start()
-                          window.appConfig.timers.activeTimers.push(
-                            window.appConfig.timers.addPortalToStage({ x: 0, y: 300, z: -5 }, 'PORTAL_BACK_TO_STAGE_SAPPHIRE', { x: 0, y: 0, z: 0 }, {
-                              startedCallback: (thePortalMesh, config, percentComplete) => {
-                              },
-                              activeCallback: (thePortalMesh, config, percentComplete) => {
-                              },
-                              completedCallback: (thePortalMesh, config) => {
-                                window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName({
-                                  updateName: window.appConfig.currentStage,
-                                  ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0)
-                                  // countdownStartStartedCallback: () => {
-                                  //   window.appConfig.isBlueIsland = false
-                                  // }
-                                }))
-                              },
-                              portalConfig: {
-                                sapphire: true,
-                                active: true
-                              }
-                            })
-                          )
-                        })
-                        window.appConfig.blueIslandTimer = blueIslandTimer
-                        blueIslandTimer.start()
-                      }
-                    }))
-                  },
-                  portalConfig: {
-                    sapphire: true,
-                    active: true
-                  }
-                })
-              )
+              }
             }
           }
-        }
-        sapphire.position.set(p.x, p.y, p.z)
-        const nameFront = window.appConfig.currentStage + "SAPPHIRE"
+          sapphire.travelCallback = (percentComplete) => {
+            if (window.appConfig.start === true && window.appConfig.pause === false && window.appConfig.userHasEnded === false) {
+
+              if (sapphire.hasTarget === true) {
+                const point = sapphire.travelData.curve.getPoint(percentComplete)
+                sapphire.position.set(point.x, point.y, lfo(747) * 5)
+              }
+            }
+          }
+          sapphire.completedCallback = () => {
+            if (window.appConfig.start === true && window.appConfig.pause === false && window.appConfig.userHasEnded === false) {
+
+              sapphire.hasTarget = false
+              sapphire.travelData = {}
+            }
+          }
+          if (isBlueIsland) {
+            sapphire.capturedCallback = () => {
+              const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
+              for (let biSounds = 0; biSounds < 10; biSounds++) {
+                setTimeout(() => {
+                  coinSounds[Math.round(Math.random() * (coinSounds.length - 1))].play()
+                  const blueCoin = window.appConfig.stages.components.blueCrystal(biSounds % 3, { x: sapphire.position.x + ((Math.random() * 25) - 12.5), y: sapphire.position.y + ((Math.random() * 20) - 10), z: 0 })
+                  scene.add(blueCoin)
+                }, biSounds * 50)
+              }
+              if (window.appConfig.isBlueIsland === true) {
+                const biPoint = window.appConfig.blueIslandPoints[Math.floor(Math.random() * window.appConfig.blueIslandPoints.length)]
+                window.appConfig.stages.components.createSapphire({ x: biPoint.position.x, y: biPoint.position.y, z: 0 }, true)
+              }
+            }
+          } else {
+            sapphire.capturedCallback = () => {
+              window.appConfig.stages[window.appConfig.currentStage].data.sapphires++
+              console.log("sapphire number: ", window.appConfig.stages[window.appConfig.currentStage].data.sapphires)
+              if (window.appConfig.stages[window.appConfig.currentStage].data.sapphires === 1) {
+                window.appConfig.timers.activeTimers.push(
+                  window.appConfig.timers.addPortalToStage({ x: -10, y: 20, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 }, {
+                    startedCallback: (thePortalMesh, config, percentComplete) => {
+                    },
+                    activeCallback: (thePortalMesh, config, percentComplete) => {
+                    },
+                    completedCallback: (thePortalMesh, config) => {
+                      window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName({
+                        updateName: 'SAPPHIRE ISLAND',
+                        ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0),
+                        countdownStartCompletedCallback: () => {
+
+                          const biPoint0 = window.appConfig.blueIslandPoints[Math.floor(Math.random() * window.appConfig.blueIslandPoints.length)]
+                          window.appConfig.stages.components.createSapphire({ x: biPoint0.position.x, y: biPoint0.position.y, z: 0 }, true)
+                          const biPoint1 = window.appConfig.blueIslandPoints[Math.floor(Math.random() * window.appConfig.blueIslandPoints.length)]
+                          window.appConfig.stages.components.createSapphire({ x: biPoint1.position.x, y: biPoint1.position.y, z: 0 }, true)
+                          const biPoint2 = window.appConfig.blueIslandPoints[Math.floor(Math.random() * window.appConfig.blueIslandPoints.length)]
+                          window.appConfig.stages.components.createSapphire({ x: biPoint2.position.x, y: biPoint2.position.y, z: 0 }, true)
+                          window.appConfig.timer.pause()
+                          window.appConfig.isBlueIsland = true
+                          const blueIslandTimer = new easytimer.Timer({ countdown: true, startValues: { seconds: 30 }, precision: "secondTenths" });
+                          blueIslandTimer.addEventListener("secondTenthsUpdated", function (e) {
+                            document.querySelector(
+                              "#timer"
+                            ).innerText = `${blueIslandTimer
+                              .getTimeValues()
+                              .toString(["minutes", "seconds", "secondTenths"])}`;
+                          });
+                          blueIslandTimer.addEventListener("targetAchieved", function (e) {
+
+                            window.appConfig.isBlueIsland = false
+                            window.appConfig.timer.start()
+                            window.appConfig.timers.activeTimers.push(
+                              window.appConfig.timers.addPortalToStage({ x: 0, y: 300, z: -5 }, 'PORTAL_BACK_TO_STAGE_SAPPHIRE', { x: 0, y: 0, z: 0 }, {
+                                startedCallback: (thePortalMesh, config, percentComplete) => {
+                                },
+                                activeCallback: (thePortalMesh, config, percentComplete) => {
+                                },
+                                completedCallback: (thePortalMesh, config) => {
+                                  window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName({
+                                    updateName: window.appConfig.currentStage,
+                                    ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0)
+                                    // countdownStartStartedCallback: () => {
+                                    //   window.appConfig.isBlueIsland = false
+                                    // }
+                                  }))
+                                },
+                                portalConfig: {
+                                  sapphire: true,
+                                  active: true
+                                }
+                              })
+                            )
+                          })
+                          window.appConfig.blueIslandTimer = blueIslandTimer
+                          blueIslandTimer.start()
+                        }
+                      }))
+                    },
+                    portalConfig: {
+                      sapphire: true,
+                      active: true
+                    }
+                  })
+                )
+              }
+            }
+          }
+        
+        
+        
+        
+        
+          sapphire.position.set(p.x, p.y, p.z)
+        } // 
+
+
+
+        let sapphireNameAdjustment = isCoin === false ? 'S_INDICATOR' : 'SAPPHIRE'
+
+        const nameFront = window.appConfig.currentStage + sapphireNameAdjustment
         const nameNum = Math.floor(Math.random() * 10000)
         let nameEnd
         if (isBlueIsland === true) {
@@ -2220,8 +2246,8 @@
         const sapphireName = nameFront + nameNum + nameEnd
         sapphire.name = sapphireName
         // sapphire.rotation.x = Math.PI / 2
-        sapphire.__dirtyPosition = true
-        sapphire.__dirtyRotation = true
+        // sapphire.__dirtyPosition = true
+        // sapphire.__dirtyRotation = true
         sapphire.coinValue = 2500
         scene.add(sapphire)
 
@@ -2231,8 +2257,10 @@
         let wireframe = new THREE.LineSegments(sapphireGeoLine, mat)
         sapphire.add(wireframe)
 
-        window.appConfig.sapphires.push(sapphire)
-        window.appConfig.coins.push(sapphire)
+        if(isCoin === true) {
+          window.appConfig.sapphires.push(sapphire)
+          window.appConfig.coins.push(sapphire)          
+        }
       }
 
       // const rubyGeo = new THREE.OctahedronGeometry(2, 1)
@@ -2282,6 +2310,7 @@
         } else {
           ruby.position.set(p.x, p.y, p.z)
         }
+
         ruby.scale.x = isCoin === false ? 1 : 1.5
         ruby.scale.y = isCoin === false ? 1 : 1.5
         ruby.scale.z = isCoin === false ? 1 : 1.5
@@ -3499,6 +3528,9 @@
             window.appConfig.stages.components.createSapphire({ x: -20, y: -10, z: 0 }, false)
             window.appConfig.stages.components.createSapphire({ x: -10, y: 20, z: 0 }, false)
             window.appConfig.stages.components.createSapphire({ x: -30, y: -30, z: 0 }, false)
+
+            window.appConfig.stages.components.createSapphire({ x: -30, y: -30, z: 0 }, false, false, '')
+
 
             window.appConfig.stages.components.createRuby({ x: 87, y: -1.25, z: 0 })
             window.appConfig.stages.components.createEmerald({ x: -97.5, y: -1.25, z: 0 })
