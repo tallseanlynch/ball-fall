@@ -3446,7 +3446,8 @@
             xAdj: -60,
             vAdj: -70,
             sAdj: 2,
-            startingPosition: new THREE.Vector3(0, 0, 0)
+            startingPosition: new THREE.Vector3(0, 0, 0),
+            sapphirePortalPosition: { x: 95, y: 95, z: -5 }
           },
           name: stageProperties.STAGE0.name,
           backgroundColors: stageProperties.STAGE0.backgroundColors,
@@ -3843,7 +3844,8 @@
             xAdj: -60,
             vAdj: -70,
             sAdj: 2,
-            startingPosition: new THREE.Vector3(0, 0, 0)
+            startingPosition: new THREE.Vector3(0, 0, 0),
+            sapphirePortalPosition: { x: 0, y: 100, z: -5 }
           },
           number: stageProperties.STAGE1.number,
           backgroundColors: stageProperties.STAGE1.backgroundColors,
@@ -4352,7 +4354,8 @@
             xAdj: -60,
             vAdj: -70,
             sAdj: 2,
-            startingPosition: new THREE.Vector3(0, 0, 0)
+            startingPosition: new THREE.Vector3(0, 0, 0),
+            sapphirePortalPosition: { x: 0, y: 72.5, z: -5 }
           },
           backgroundColors: stageProperties.STAGE2.backgroundColors,
           basicColors: stageProperties.STAGE2.basicColors,
@@ -4814,7 +4817,8 @@
             xAdj: -60,
             vAdj: -70,
             sAdj: 2,
-            startingPosition: new THREE.Vector3(0, 0, 0)
+            startingPosition: new THREE.Vector3(0, 0, 0),
+            sapphirePortalPosition: { x: 148.75, y: 25, z: -5 }
           },
           backgroundColors: stageProperties.STAGE3.backgroundColors,
           basicColors: stageProperties.STAGE3.basicColors,
@@ -5539,7 +5543,8 @@
             xAdj: -60,
             vAdj: -70,
             sAdj: 2,
-            startingPosition: new THREE.Vector3(0, 0, 0)
+            startingPosition: new THREE.Vector3(0, 0, 0),
+            sapphirePortalPosition: { x: 120, y: 0, z: -5 }
           },
           number: stageProperties.STAGE4.number,
           backgroundColors: stageProperties.STAGE4.backgroundColors,
@@ -6454,7 +6459,8 @@
             xAdj: -60,
             vAdj: -70,
             sAdj: 2,
-            startingPosition: new THREE.Vector3(0, 0, 0)
+            startingPosition: new THREE.Vector3(0, 0, 0),
+            sapphirePortalPosition: { x: 0, y: -137.5, z: -5 }
           },
           backgroundColors: stageProperties.STAGE5.backgroundColors,
           basicColors: stageProperties.STAGE5.basicColors,
@@ -8007,7 +8013,7 @@
           active: true
         }
       }) => {
-
+        console.error(target)
         let portalMesh = window.appConfig.portalMesh(config.portalConfig.sapphire)
         portalMesh.portalTarget = target
         portalMesh.name = window.appConfig.currentStage + '_PORTAL_MESH__' + name
@@ -8368,7 +8374,7 @@
             window.appConfig.isBlueIsland = false
             window.appConfig.timer.start()
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 0, y: 300, z: -5 }, 'PORTAL_BACK_TO_STAGE_SAPPHIRE', { x: 0, y: 0, z: 0 }, window.appConfig.stages.components.sapphirePortalReturnConfig)
+              window.appConfig.timers.addPortalToStage({ x: 0, y: 300, z: -5 }, 'PORTAL_BACK_TO_STAGE_SAPPHIRE', window.appConfig.stages[window.appConfig.currentStage].data.sapphirePortalPosition, window.appConfig.stages.components.sapphirePortalReturnConfig)
             )
           }
         }
