@@ -2076,10 +2076,10 @@
         sapphire.scale.z = isCoin === false ? 1 : 2
 
         if (portalParent !== false) {
-          sapphire.originalMaterialColor = new THREE.Color(0xff0000)
+          sapphire.originalMaterialColor = sapphireColor
           let portalParentMesh = scene.children.find(c => c.name.indexOf(portalParent) > -1)
-          sapphire.position.x = portalParentMesh.position.x - 3.5
-          sapphire.position.y = portalParentMesh.position.y - 3
+          sapphire.position.x = portalParentMesh.position.x + p.x
+          sapphire.position.y = portalParentMesh.position.y + p.y
           sapphire.position.z = -2.5
 
 
@@ -2091,6 +2091,7 @@
 
           sapphire.hasTarget = false
           sapphire.travelData = {}
+          sapphire.isBlueIsland = isBlueIsland
           sapphire.activeCallback = () => {
             if (window.appConfig.start === true && window.appConfig.pause === false && window.appConfig.userHasEnded === false) {
               if (sapphire.hasTarget === false) {
@@ -2151,6 +2152,7 @@
               }
             }
           } else {
+            
             sapphire.capturedCallback = () => {
               window.appConfig.stages[window.appConfig.currentStage].data.sapphires++
               console.log("sapphire number: ", window.appConfig.stages[window.appConfig.currentStage].data.sapphires)
@@ -2187,7 +2189,7 @@
 
         // wireframe
         let sapphireGeoLine = new THREE.EdgesGeometry(sapphire.geometry)
-        let mat = new THREE.LineBasicMaterial({ color: sapphireColor, linewidth: 1 })
+        let mat = new THREE.LineBasicMaterial({ color: isCoin === false ? 0xffffff : sapphireColor, linewidth: 1 })
         let wireframe = new THREE.LineSegments(sapphireGeoLine, mat)
         sapphire.add(wireframe)
 
@@ -3278,10 +3280,18 @@
                   window.appConfig.timers.activeTimers.push(window.appConfig.timers.blueIslandTimer())
                 }
               }))
+              let deleteArray = []
+              scene.children.forEach(c => {
+                if(c.name.indexOf('S_INDICATOR') > -1) {
+                  deleteArray.push(c)
+                }                
+              })
+              deleteArray.forEach(da => scene.remove(da))
             },
             portalConfig: {
               sapphire: true,
-              active: true
+              active: false,
+              indicators: 5
             }
           },
           sapphirePortalReturnConfig: {
@@ -3457,16 +3467,34 @@
               // window.appConfig.stages.components.gemPortalConfig)
             )
             // window.appConfig.stages.components.createRuby({ x: 10, y: -17.5, z: -5 }, false)
-            setTimeout(() => {
-              window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
-              window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
-              window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
-            }, 100)
 
             window.appConfig.timers.activeTimers.push(
               window.appConfig.timers.addPortalToStage({ x: 95, y: 95, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
                 window.appConfig.stages.components.sapphirePortalConfig)
             )
+
+
+            setTimeout(() => {
+              window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
+              window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
+              window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
+
+              let ellipseGeometry = new THREE.CircleGeometry(4.125, 5)
+              ellipseGeometry.rotateZ((2 * Math.PI)/20)
+
+              let i = 1;
+              for (i; i < ellipseGeometry.vertices.length; i++) {
+                window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
+                // window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
+                // window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
+                // window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
+                // window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
+              }
+
+            }, 100)
+
+
+
 
             window.appConfig.stages.components.createBumper("STAGE0BUMPER0", 1, { x: -70, y: -72.5, z: 0 }, 5)
             window.appConfig.stages.components.createBumper("STAGE0BUMPER1", 1, { x: 70, y: -72.5, z: 0 }, 5)
@@ -3494,8 +3522,6 @@
             window.appConfig.stages.components.createSapphire({ x: -20, y: -10, z: 0 }, false)
             window.appConfig.stages.components.createSapphire({ x: -10, y: 20, z: 0 }, false)
             window.appConfig.stages.components.createSapphire({ x: -30, y: -30, z: 0 }, false)
-
-            window.appConfig.stages.components.createSapphire({ x: -30, y: -30, z: 0 }, false, false, '')
 
 
             window.appConfig.stages.components.createRuby({ x: 87, y: -1.25, z: 0 })
@@ -8202,7 +8228,7 @@
 
 
               window.appConfig.timers.activeTimers.push(
-                window.appConfig.timers.addPortalToStage({ x: 10, y: -20, z: -5 }, 'PORTAL_TO_FINAL_STAGE', { x: 0, y: 0, z: 0 },
+                window.appConfig.timers.addPortalToStage({ x: 0, y: 0, z: -5 }, 'PORTAL_TO_FINAL_STAGE', { x: 0, y: 0, z: 0 },
                   window.appConfig.stages.components.finalPortalConfig)
               )
 
@@ -8271,8 +8297,12 @@
             let thePortal
             if (scene.children.find(c => c.name.indexOf('GEM_STAGE_END') > -1)) {
               thePortal = scene.children.find(c => c.name.indexOf('GEM_STAGE_END') > -1)
-            } else {
+            } 
+            if (scene.children.find(c => c.name.indexOf('PORTAL_TO_FINAL_STAGE') > -1)) {
               thePortal = scene.children.find(c => c.name.indexOf('PORTAL_TO_FINAL_STAGE') > -1)
+            }
+            if (scene.children.find(c => c.name.indexOf('SAPPHIRE_00') > -1)) {
+              thePortal = scene.children.find(c => c.name.indexOf('SAPPHIRE_00') > -1)
             }
             thePortal.incrementIndicator()
             indicator.material.color = indicator.originalMaterialColor
@@ -9195,6 +9225,26 @@
               window.appConfig.timers.activatePortalIndicator(diamondIndicator)
             )
           }
+
+          if (potentiallyGrabbedCoin.name.indexOf('SAPPHIRE') > -1 && (potentiallyGrabbedCoin.isBlueIsland === false || potentiallyGrabbedCoin.isBlueIsland === undefined || !potentiallyGrabbedCoin.isBlueIsland)) {
+            // let sapphireIndicator = scene.children.find(c => c.name.indexOf('S_INDICATOR') > -1 && c.indicatorActive === undefined)
+
+            // window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN_GEM' + id)
+              let theIndicator = scene.children.find(cf => cf.name.indexOf('S_INDICATOR') > -1 && cf.indicatorActive === undefined)
+              theIndicator.indicatorActive = true
+              // debugger
+              window.appConfig.timers.activeTimers.push(
+                // window.appConfig.timers.activatePortalIndicator(rubyIndicator)
+                window.appConfig.timers.activatePortalIndicator(theIndicator)
+              )
+            // }
+
+
+            // window.appConfig.timers.activeTimers.push(
+            //   window.appConfig.timers.activatePortalIndicator(sapphireIndicator)
+            // )
+          }
+
 
         } else if (prizeValue > 0) {
           if (window.appConfig.sfxTurnedOn) {
