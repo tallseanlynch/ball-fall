@@ -1004,6 +1004,7 @@
       shininess: 200
     })
     window.appConfig.superBallMaterial = superBallMaterial
+    console.log('--setColor', window.appConfig.superBallMaterial.color)
 
     var initScene,
       render,
@@ -7777,6 +7778,7 @@
     }
 
     window.appConfig.superBallMaterial.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
+    console.log('--setColor', window.appConfig.superBallMaterial.color)
 
     const timers = {
       demateralizeMesh: (dMesh) => {
@@ -7845,7 +7847,7 @@
           name: name,
           id: Math.round(Math.random() * 10000),
           startedCallback: (percentComplete) => {
-            bumper.material.color = window.appConfig.superBallMaterial.color
+            bumper.material.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
           },
           completedCallback: (percentComplete) => {
             bumper.material.color = bumper.standardColor.clone()
@@ -7862,13 +7864,16 @@
         let remoteSwitchMaterial = new THREE.Color().copy(remoteTransmitter.material.color)
 
         if (window.appConfig.superBallMaterial.color.set) {
-          window.appConfig.superBallMaterial.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
+          window.appConfig.superBallMaterial.color.set(new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]))
+          console.log('--setColor', window.appConfig.superBallMaterial.color)
         } else {
           window.appConfig.superBallMaterial.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
+          console.log('--setColor', window.appConfig.superBallMaterial.color)
         }
         console.log('start', window.appConfig.superBallMaterial.color, remoteSwitchMaterial)
         const activeCallback = (percentComplete) => {
           window.appConfig.superBallMaterial.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
+          console.log('--setColor', window.appConfig.superBallMaterial.color)
           // console.log(window.appConfig.superBallMaterial.color, remoteSwitchMaterial)
           // console.log(getSuperBallMaterial())
           remoteLine.children.forEach((rlc, rlci) => {
@@ -8415,13 +8420,13 @@
           id: Math.round(Math.random() * 10000),
           startedCallback: () => {
             let thePortal
-            if (scene.children.find(c => c.name.indexOf('GEM_STAGE_END') > -1)) {
+            if (indicator.name.indexOf('D_INDICATOR') > -1 || indicator.name.indexOf('R_INDICATOR') > -1 || indicator.name.indexOf('E_INDICATOR') > -1 ) {
               thePortal = scene.children.find(c => c.name.indexOf('GEM_STAGE_END') > -1)
             }
             if (scene.children.find(c => c.name.indexOf('PORTAL_TO_FINAL_STAGE') > -1)) {
               thePortal = scene.children.find(c => c.name.indexOf('PORTAL_TO_FINAL_STAGE') > -1)
             }
-            if (scene.children.find(c => c.name.indexOf('SAPPHIRE_00') > -1)) {
+            if (indicator.name.indexOf('S_INDICATOR') > -1 ) {
               thePortal = scene.children.find(c => c.name.indexOf('SAPPHIRE_00') > -1)
             }
             thePortal.incrementIndicator()
@@ -9123,10 +9128,10 @@
               sphereCoins.push(c)
             }
             if ((c.name.indexOf('FINAL_STAGE_WALL') > -1 || c.name.indexOf('SB_INDICATOR') > 1) && window.appConfig.superBallMaterial) {
-              c.material.color = window.appConfig.superBallMaterial.color
+              c.material.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
               if (c.name.indexOf('FINAL_STAGE_WALL') > -1) {
                 c.children.forEach(finC => {
-                  finC.material.color = window.appConfig.superBallMaterial.color
+                  finC.material.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
                 })
               }
             }
@@ -9137,9 +9142,15 @@
               if (sc.setLinearVelocity) {
                 // if (sc.name.indexOf('FINALSTAGE') === -1) {
                 sc.setLinearVelocity(new THREE.Vector3(Math.random() * 25 - 12.5, Math.random() * 25 - 12.5, 0).add(sc._physijs.linearVelocity))
+                sc.material.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
                 // }
-                sc.material.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
-                sc.children[0].material.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
+                // try{
+                //   sc.material.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
+                // } catch (err) {
+                //   sc.material.color = new THREE.Color(0xffffff)
+                // }
+                
+                sc.children[0].material.color.set(new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]))
                 // window.appConfig.superBallMaterial.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
 
                 // if(window.appConfig.stages[window.appConfig.currentStage].data.remotes.length > 0) {
@@ -9158,7 +9169,7 @@
       if (window.appConfig.stages[window.appConfig.currentStage].data.portals && window.appConfig.stages[window.appConfig.currentStage].data.portals.length > 0 && window.appConfig.pause === false) {
         window.appConfig.stages[window.appConfig.currentStage].data.portals.forEach(p => {
           if (p.portalConfig && !p.portalConfig.sapphire || p.portalConfig.sapphire === false) {
-            p.material.color = window.appConfig.superBallMaterial.color
+            p.material.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
           }
           if ((p.portalConfig && p.portalConfig.active === true) || !p.portalConfig) {
             if (sphere.position.distanceTo(p.position) < 7.5 && p.activated === false) {
