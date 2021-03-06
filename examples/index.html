@@ -1004,7 +1004,6 @@
       shininess: 200
     })
     window.appConfig.superBallMaterial = superBallMaterial
-    console.log('--setColor', window.appConfig.superBallMaterial.color)
 
     var initScene,
       render,
@@ -2646,9 +2645,6 @@
             finalStageBounce = false,
             color
           ) => {
-            if (finalStageBounce === true) {
-              console.log('finalStageBounce')
-            }
             const mainStructure = new Physijs.BoxMesh(
               new THREE.BoxGeometry(0.01, 0.01, 0.01),
               new Physijs.createMaterial(
@@ -7769,7 +7765,6 @@
     }
 
     window.appConfig.superBallMaterial.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
-    console.log('--setColor', window.appConfig.superBallMaterial.color)
 
     const timers = {
       demateralizeMesh: (dMesh) => {
@@ -7856,17 +7851,11 @@
 
         if (window.appConfig.superBallMaterial.color.set) {
           window.appConfig.superBallMaterial.color.set(new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]))
-          console.log('--setColor', window.appConfig.superBallMaterial.color)
         } else {
           window.appConfig.superBallMaterial.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
-          console.log('--setColor', window.appConfig.superBallMaterial.color)
         }
-        console.log('start', window.appConfig.superBallMaterial.color, remoteSwitchMaterial)
         const activeCallback = (percentComplete) => {
           window.appConfig.superBallMaterial.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
-          console.log('--setColor', window.appConfig.superBallMaterial.color)
-          // console.log(window.appConfig.superBallMaterial.color, remoteSwitchMaterial)
-          // console.log(getSuperBallMaterial())
           remoteLine.children.forEach((rlc, rlci) => {
             rlc.material.color = remoteSwitchMaterial.lerp(
               window.appConfig.superBallMaterial.color,
@@ -8172,6 +8161,10 @@
         }
       },
       backgroundToPhysi: () => {
+        if(window.appConfig.performanceLevel === 0) {
+          window.appConfig.stages[window.appConfig.currentStage].initBackground()
+        }
+
         let theBg = scene.children.find((obj) => obj.name.indexOf('BGGROUP') > -1)
 
         return {
