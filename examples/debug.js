@@ -171,6 +171,8 @@ setTimeout(() => {
             // }
         }
 
+        window.appConfig.toggleDebugCamera = toggleDebugCamera
+
         const keydownFunctions = {
         37: (e) => translateObject(e),
         39: (e) => translateObject(e),

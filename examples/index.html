@@ -44,6 +44,7 @@
       left: 50%;
       top: 50%;
     }
+
   </style>
 
   <script>
@@ -140,9 +141,10 @@
         'physijs_worker.js',
         'easytimer.js',
         'howler.js',
-        'features.js',
+        // 'features.js',
         'event-handlers.js',
         'debug.js'
+        // 'VRButton.js'
       ],
       loadedScripts: [],
       events: {
@@ -477,18 +479,6 @@
             </div>
           </div>
         </div>
-        <!-- <table>
-          <tr>
-            <td class="sound-menu-button sound-menu-left-td font-a">Controls</td>
-            <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="controls-toggle-button"
-                onClick="toggleControlsButton()"></button></td>
-          </tr>
-          <tr>
-            <td class="sound-menu-button sound-menu-left-td font-a">Performance</td>
-            <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="performance-toggle-button"
-                onClick="togglePerformanceButton()"></button></td>
-          </tr>
-        </table> -->
       </div>
       <div id="sound-right">
         <div class="margin-bottom-2">
@@ -517,18 +507,6 @@
             </div>
           </div>
         </div>
-        <!-- <table id="sound-menu" class="margin-bottom-3 table-margin-1">
-          <tr>
-            <td class="sound-menu-button sound-menu-left-td font-a">SFX</td>
-            <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="sfx-toggle-button"
-                onClick="toggleSFXButton()"></button></td>
-          </tr>
-          <tr>
-            <td class="sound-menu-button sound-menu-left-td font-a">Music</td>
-            <td class="sound-menu-right-td"><button class="sound-menu-button font-b" id="music-toggle-button"
-                onClick="toggleMusicButton()"></button></td>
-          </tr>
-        </table> -->
       </div>
     </div>
     <div id="back-button" class="margin-top-2 font-b">
@@ -721,10 +699,6 @@
         <div class="credits-role margin-bottom-1 font-d">Dev Ops</div>
         <div class="credits-name font-a">Mark Scripter</div>
       </div>
-      <!-- <div id="credits-item" class="margin-bottom-2">
-        <div class="credits-role margin-bottom-1 font-d">Level Design</div>
-        <div class="credits-name font-a">Sean Lynch</div>
-      </div> -->
     </div>
     <div id="back-button" class="margin-top-2 font-b">
       <button class="start-menu-button font-b" onClick="goBack()">Back</button>
@@ -744,8 +718,9 @@
   <script onLoad="scriptLoaded('physijs_worker.js')" type="text/javascript" src="js/physijs_worker.js"></script>
   <script onLoad="scriptLoaded('easytimer.js')" type="text/javascript" src="js/easytimer.js"></script>
   <script onLoad="scriptLoaded('howler.js')" type="text/javascript" src="js/howler.min.js"></script>
-  <script onLoad="scriptLoaded('features.js')" type="text/javascript" src="./features.js"></script>
+  <!-- <script onLoad="scriptLoaded('features.js')" type="text/javascript" src="./features.js"></script> -->
   <script onLoad="scriptLoaded('event-handlers.js')" type="text/javascript" src="./event-handlers.js"></script>
+  <!-- <script onLoad="scriptLoaded('VRButton.js')" type="text/javascript" src="./VRButton.js"></script> -->
   <script onLoad="scriptLoaded('debug.js')" type="text/javascript" src="./debug.js"></script>
   <script onLoad="scriptLoaded('main')" type="text/javascript">
     "use strict";
@@ -2578,7 +2553,7 @@
 
           let i = 1;
           for (i; i < ellipseGeometry.vertices.length; i++) {
-            let id = Math.round(Math.random() * 100000)
+            let id = window.appConfig.currentStage + '_DMESH_SPRITE_' + Math.round(Math.random() * 100000)
             let theSprite = spritePlane()
             theSprite.scale.x = dMesh.scale.x * scaleAdj
             theSprite.scale.y = dMesh.scale.y * scaleAdj
@@ -3208,24 +3183,6 @@
                 }
               }
 
-              // if(otherObject.name.indexOf('BUMPER') > -1) {
-              //   window.appConfig.stages.components.demateralizeMesh(bumper, 5)
-              //   if(bumper.coinThrottle === false) {
-              //     bumper.coinThrottle = true
-              //     // if(Math.random() < .05) {
-              //     //     window.appConfig.prize(Math.round(Math.random() * 10000), 0, { x: otherObject.position.x, y: otherObject.position.y, z: 0 })
-              //     // }
-              //     const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
-              //     for (let superSounds = 0; superSounds < 3; superSounds++) {
-              //       setTimeout(() => {
-              //         coinSounds[Math.round(Math.random() * (coinSounds.length - 1))].play()
-              //         scene.add(window.appConfig.stages.components.crystal(superSounds % 3, { x: bumper.position.x + ((Math.random() * 25) - 12.5), y: bumper.position.y + ((Math.random() * 20) - 10), z: 0 }))
-              //       }, superSounds * 50)
-              //     }
-              //     setTimeout(() => {bumper.coinThrottle = false}, 500)
-              //   }
-              // }
-
             }
             let bumperBounce = 1
             let bumperWeight = 4.5
@@ -3272,10 +3229,7 @@
             blueLight1.gameName = window.appConfig.currentStage + "BLUELIGHT1";
             scene.add(blueLight0)
             scene.add(blueLight1)
-            // scene.add(blueLight2)
-            // scene.add(blueLight3)
           },
-          // portalConfig0: {
           gemPortalConfig: {
             startedCallback: (thePortalMesh, config, percentComplete) => {
             },
@@ -3322,7 +3276,6 @@
           },
 
           // Sapphire portal config
-          // portalConfig1: {
           sapphirePortalConfig: {
             startedCallback: (thePortalMesh, config, percentComplete) => {
             },
@@ -3367,9 +3320,6 @@
               window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName({
                 updateName: window.appConfig.stages[window.appConfig.currentStage].name,
                 ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0)
-                // countdownStartStartedCallback: () => {
-                //   window.appConfig.isBlueIsland = false
-                // }
               }))
               let theSphere = scene.children.find(c => c.name === 'SPHERE0')
               window.appConfig.stages.components.demateralizeMesh(theSphere)
@@ -3417,18 +3367,6 @@
               }))
 
               window.appConfig.stages.components.createFinalStage()
-
-              // const finalStageWalls = window.appConfig.stages.components.createStage0MainBeamStructure(
-              //   4,
-              //   0.5275,
-              //   window.appConfig.currentStage + "_FINAL_STAGE_WALLS"
-              // );
-              // finalStageWalls.rotation.z = .25 * Math.PI
-              // scene.add(finalStageWalls);
-
-
-
-              // window.appConfig.timers.activeTimers.push(window.appConfig.timers.backgroundToPhysi())
             },
             portalConfig: {
               sapphire: false,
@@ -3530,10 +3468,7 @@
             window.appConfig.timers.activeTimers.push(
               window.appConfig.timers.addPortalToStage({ x: 95, y: -95, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
                 window.appConfig.stages.components.gemPortalConfig)
-              // window.appConfig.timers.addPortalToStage({ x: -20, y: -20, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, 
-              // window.appConfig.stages.components.gemPortalConfig)
             )
-            // window.appConfig.stages.components.createRuby({ x: 10, y: -17.5, z: -5 }, false)
 
             window.appConfig.timers.activeTimers.push(
               window.appConfig.timers.addPortalToStage({ x: 95, y: 95, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
@@ -3590,10 +3525,6 @@
             window.appConfig.stages.components.createRuby({ x: 87, y: -1.25, z: 0 })
             window.appConfig.stages.components.createEmerald({ x: -97.5, y: -1.25, z: 0 })
             window.appConfig.stages.components.createDiamond({ x: -57, y: -1.25, z: 0 })
-
-            // window.appConfig.stages.components.createRuby({ x: 20, y: 15, z: 0 })
-            // window.appConfig.stages.components.createEmerald({ x: 20, y: 0, z: 0 })
-            // window.appConfig.stages.components.createDiamond({ x: 20, y: -15, z: 0 })
 
             window.appConfig.stages.components.createBlueIsland()
 
@@ -3653,8 +3584,6 @@
               },
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIND')
             })
-
-            // createCrystalCircle('STAGE0', 4.5, { x: -50, y: 50 }, 1, 4)
 
             createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: 20, z: 0 } })
             createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: -20, z: 0 } })
@@ -3767,8 +3696,6 @@
 
             prize(0, 12, { x: 95, y: 80, z: 0 })
             prize(0, 13, { x: 95, y: -80, z: 0 })
-            // prize(0, 14, { x: -105, y: -105, z: 0 })
-            // prize(0, 15, { x: -105, y: 105, z: 0 })
 
             createCrystalCross('STAGE0', 5);
             createCrystalCross('STAGE0', 10);
@@ -3852,13 +3779,10 @@
           name: stageProperties.STAGE1.name,
           defaultTransforms: [
             'STAGE1MINORSTRUCTURE',
-            // 'STAGE1MINORSTRUCTUREA',
             'STAGE1MINORSTRUCTUREB',
             'STAGE1MINORSTRUCTURE1',
-            // 'STAGE1MINORSTRUCTURE1A',
             'STAGE1MINORSTRUCTURE1B',
             'STAGE1MINORSTRUCTURE2',
-            // 'STAGE1MINORSTRUCTURE2A',
             'STAGE1MINORSTRUCTURE2B',
             'STAGE1MINORSTRUCTURE3',
             'STAGE1MINORSTRUCTURE3A',
@@ -3941,7 +3865,6 @@
 
             window.appConfig.stages.components.createBumper("STAGE1BUMPER0", 1, { x: 0, y: 25, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE1BUMPER1", 1, { x: 0, y: 75, z: 0 }, 6)
-            // window.appConfig.stages.components.createBumper("STAGE1BUMPER2", 1, { x: 0, y: 100, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE1BUMPER3", 1, { x: 0, y: -25, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE1BUMPER4", 1, { x: 0, y: -75, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE1BUMPER5", 1, { x: 0, y: -100, z: 0 }, 6)
@@ -3965,10 +3888,7 @@
             window.appConfig.timers.activeTimers.push(
               window.appConfig.timers.addPortalToStage({ x: -50, y: -50, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
                 window.appConfig.stages.components.gemPortalConfig)
-              // window.appConfig.timers.addPortalToStage({ x: -20, y: -20, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, 
-              // window.appConfig.stages.components.gemPortalConfig)
             )
-            // window.appConfig.stages.components.createRuby({ x: 10, y: -17.5, z: -5 }, false)
             setTimeout(() => {
               window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
@@ -4041,14 +3961,6 @@
             );
             scene.add(stage1MainBeamStructure1);
 
-            // const stage1MainBeamStructure = createStage1MainBeamStructure(
-            //   2,
-            //   0,
-            //   "STAGE1MAINSTRUCTURE",
-            //   { x: 0, y: 7.5 }
-            // );
-            // scene.add(stage1MainBeamStructure);
-
             createRemoteSwitch({
               transmitter: {
                 p: { x: -100, y: 100, z: 0 }
@@ -4088,16 +4000,6 @@
             stage1MinorBeamStructureB.rotation.z = .25 * Math.PI
             scene.add(stage1MinorBeamStructureB);
 
-
-            // const stage1MinorBeamStructureA = createStage1MinorBeamStructure(
-            //   1.5,
-            //   -.5,
-            //   "STAGE1MINORSTRUCTUREA",
-            //   { x: 50, y: 50 }
-            // );
-            // scene.add(stage1MinorBeamStructureA);
-
-
             // top left spinner 1
             const stage1MinorBeamStructure1 = createStage1MinorBeamStructure(
               .5,
@@ -4116,20 +4018,6 @@
             );
             stage1MinorBeamStructure1B.rotation.z = .25 * Math.PI
             scene.add(stage1MinorBeamStructure1B);
-
-
-            // const stage1MinorBeamStructure1A = createStage1MinorBeamStructure(
-            //   1.5,
-            //   -.5,
-            //   "STAGE1MINORSTRUCTURE1A",
-            //   { x: -50, y: 50 }
-            // );
-            // scene.add(stage1MinorBeamStructure1A);
-
-
-
-
-
 
             createRemoteSwitch({
               transmitter: {
@@ -4179,12 +4067,6 @@
             );
             scene.add(stage1MainBeamStructure3A);
 
-
-
-
-
-
-
             const stage1MinorBeamStructure2 = createStage1MinorBeamStructure(
               .5,
               .5,
@@ -4192,14 +4074,6 @@
               { x: 50, y: -50 }
             );
             scene.add(stage1MinorBeamStructure2);
-
-            // const stage1MinorBeamStructure2A = createStage1MinorBeamStructure(
-            //   1.5,
-            //   -.5,
-            //   "STAGE1MINORSTRUCTURE2A",
-            //   { x: 50, y: -50 }
-            // );
-            // scene.add(stage1MinorBeamStructure2A);
 
             const stage1MinorBeamStructure2B = createStage1MinorBeamStructure(
               .5,
@@ -4209,15 +4083,6 @@
             );
             stage1MinorBeamStructure2B.rotation.z = -.25 * Math.PI
             scene.add(stage1MinorBeamStructure2B);
-
-
-            // const stage1MinorBeamStructure3 = createStage1MinorBeamStructure(
-            //   .5,
-            //   .5,
-            //   "STAGE1MINORSTRUCTURE3",
-            //   { x: -50, y: -50 }
-            // );
-            // scene.add(stage1MinorBeamStructure3);
 
             const stage1MinorBeamStructure3A = createStage1MinorBeamStructure(
               1.5,
@@ -4236,10 +4101,7 @@
             stage1MinorBeamStructure3B.rotation.z = .25 * Math.PI
             scene.add(stage1MinorBeamStructure3B);
 
-            // prize(1, 0, { x: 50, y: 50, z: 0 })
             prize(1, 1, { x: 100, y: 100, z: 0 })
-            // prize(1, 2, { x: -50, y: -50, z: 0 })
-
             //top left quad
             prize(1, 3, { x: -80, y: 80, z: 0 })
             prize(1, 4, { x: -20, y: 80, z: 0 })
@@ -4281,9 +4143,6 @@
             createCrystalCircle('STAGE1', 5, { x: 50, y: 50 }, 0, 16)
             createCrystalCircle('STAGE1', 5.25, { x: 50, y: 50 }, 1, 16)
             createCrystalCircle('STAGE1', 5.5, { x: 50, y: 50 }, 2, 16)
-
-
-
 
             createCrystalCircle('STAGE1AA', 4.5, { x: -50, y: -50 }, 2, 12)
             createCrystalCircle('STAGE1BB', 5, { x: -50, y: -50 }, 1, 16)
@@ -4451,7 +4310,6 @@
             window.appConfig.stages.components.createSapphire({ x: -130, y: 100, z: 0 })
             window.appConfig.stages.components.createSapphire({ x: -140, y: 100, z: 0 })
 
-            // window.appConfig.stages.components.createBumper("STAGE2BUMPER4", 1, { x: 0, y: -70, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE2BUMPER4", 1, { x: 30, y: -65, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE2BUMPER4", 1, { x: -30, y: -65, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE2BUMPER4", 1, { x: 30, y: -115, z: 0 }, 6)
@@ -4464,10 +4322,7 @@
             window.appConfig.timers.activeTimers.push(
               window.appConfig.timers.addPortalToStage({ x: 0, y: -70, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
                 window.appConfig.stages.components.gemPortalConfig)
-              // window.appConfig.timers.addPortalToStage({ x: -20, y: -20, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, 
-              // window.appConfig.stages.components.gemPortalConfig)
             )
-            // window.appConfig.stages.components.createRuby({ x: 10, y: -17.5, z: -5 }, false)
             setTimeout(() => {
               window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
@@ -4935,10 +4790,7 @@
             window.appConfig.timers.activeTimers.push(
               window.appConfig.timers.addPortalToStage({ x: -148.75, y: 25, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
                 window.appConfig.stages.components.gemPortalConfig)
-              // window.appConfig.timers.addPortalToStage({ x: -20, y: -20, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, 
-              // window.appConfig.stages.components.gemPortalConfig)
             )
-            // window.appConfig.stages.components.createRuby({ x: 10, y: -17.5, z: -5 }, false)
             setTimeout(() => {
               window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
@@ -4951,7 +4803,6 @@
                 window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
               }
             }, 100)
-            // window.appConfig.stages.components.createBumper("STAGE3BUMPER1", 1, { x: -147.5, y: -5, z: 0 }, 6)
 
 
             window.appConfig.timers.activeTimers.push(
@@ -4959,13 +4810,10 @@
                 window.appConfig.stages.components.sapphirePortalConfig)
             )
 
-
-            // window.appConfig.stages.components.createBumper("STAGE3BUMPER0", 1, { x: -147.5, y: 25, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE3BUMPER1", 1, { x: -147.5, y: -5, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE3BUMPER1", 1, { x: -10, y: 90, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE3BUMPER_0", 1, { x: -147.5, y: 55, z: 0 }, 6)
 
-            // window.appConfig.stages.components.createBumper("STAGE3BUMPER0_0", 1, { x: 147.5, y: 25, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE3BUMPER1_0", 1, { x: 147.5, y: -5, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE3BUMPER1_0", 1, { x: 10, y: 90, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE3BUMPER_0_0", 1, { x: 147.5, y: 55, z: 0 }, 6)
@@ -5424,9 +5272,6 @@
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINF')
             })
 
-
-
-
             window.appConfig.createSphere({
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOIN_A',
@@ -5492,8 +5337,6 @@
             window.appConfig.stages.components.createBumper("STAGE3BUMPER1", 1, { x: -40, y: 80, z: 0 }, 3, 1)
             window.appConfig.stages.components.createBumper("STAGE3BUMPER0", 1, { x: 30, y: 90, z: 0 }, 3, 1)
             window.appConfig.stages.components.createBumper("STAGE3BUMPER1", 1, { x: -30, y: 90, z: 0 }, 3, 1)
-
-
 
             createCrystalCircle('STAGE3', 4, { x: 0, y: 0 }, 0, 8)
             createCrystalCircle('STAGE3', 4.5, { x: 0, y: 0 }, 1, 8)
@@ -5980,8 +5823,6 @@
 
             scene.add(stage4MainBeamStructure_2);
 
-
-
             const stage4MainBeamStructure_3 = window.appConfig.stages.components.createStage0MainBeamStructure(
               6.3,
               0,
@@ -6095,9 +5936,6 @@
             window.appConfig.stages.components.createSapphire({ x: 100, y: 0, z: 0 })
             window.appConfig.stages.components.createSapphire({ x: 100, y: 100, z: 0 })
             window.appConfig.stages.components.createBlueIsland()
-            // createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: 20, z: 0 } })
-
-
 
             prize(4, 0, { x: 75, y: 45, z: 0 })
             prize(4, 1, { x: 75, y: -45, z: 0 })
@@ -6123,17 +5961,12 @@
 
             prize(4, 15, { x: 0, y: -117.5, z: 0 })
             prize(4, 16, { x: 0, y: 117.5, z: 0 })
-            // prize(4, 17, { x: -117.5, y: 0, z: 0 })
-            // prize(4, 18, { x: 117.5, y: 0, z: 0 })
 
             // portal
             window.appConfig.timers.activeTimers.push(
               window.appConfig.timers.addPortalToStage({ x: -120, y: 0, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
                 window.appConfig.stages.components.gemPortalConfig)
-              // window.appConfig.timers.addPortalToStage({ x: -20, y: -20, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, 
-              // window.appConfig.stages.components.gemPortalConfig)
             )
-            // window.appConfig.stages.components.createRuby({ x: 10, y: -17.5, z: -5 }, false)
             setTimeout(() => {
               window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
@@ -6146,15 +5979,11 @@
                 window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
               }
             }, 100)
-            // window.appConfig.stages.components.createBumper("STAGE3BUMPER1", 1, { x: -147.5, y: -5, z: 0 }, 6)
-
 
             window.appConfig.timers.activeTimers.push(
               window.appConfig.timers.addPortalToStage({ x: 120, y: 0, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
                 window.appConfig.stages.components.sapphirePortalConfig)
             )
-
-
 
             createCrystalCross('STAGE4', 3, { x: 45, y: 117.75 }, 0);
             createCrystalCross('STAGE4', 3, { x: 60, y: 117.75 }, 1);
@@ -6186,15 +6015,11 @@
             createCrystalCross('STAGE4', 3, { x: -117.75, y: 90 }, 1);
             createCrystalCross('STAGE4', 3, { x: -117.75, y: 105 }, 0);
 
-
-
             createCrystalCross('STAGE4', 3, { x: 45, y: -117.75 }, 0);
             createCrystalCross('STAGE4', 3, { x: 60, y: -117.75 }, 1);
             createCrystalCross('STAGE4', 3, { x: 75, y: -117.75 }, 2);
             createCrystalCross('STAGE4', 3, { x: 90, y: -117.75 }, 1);
             createCrystalCross('STAGE4', 3, { x: 105, y: -117.75 }, 0);
-
-
 
             createCrystalCircle('STAGE4', 4, { x: 0, y: 75 }, 0, 8)
             createCrystalCircle('STAGE4', 4.5, { x: 0, y: 75 }, 1, 8)
@@ -6221,7 +6046,6 @@
             createCrystalCircle('STAGE4', 2.5, { x: -62.5, y: -110 }, 1, 8)
             createCrystalCircle('STAGE4', 3, { x: -62.5, y: -110 }, 2, 8)
 
-
             createCrystalCircle('STAGE4', 4, { x: 75, y: 0 }, 0, 8)
             createCrystalCircle('STAGE4', 4.5, { x: 75, y: 0 }, 1, 8)
             createCrystalCircle('STAGE4', 5, { x: 75, y: 0 }, 2, 8)
@@ -6236,7 +6060,6 @@
             createCrystalCross('STAGE4', 3, { x: 17.5, y: 17.5 }, 2);
             createCrystalCross('STAGE4', 3, { x: -17.5, y: -17.5 }, 2);
             createCrystalCross('STAGE4', 3, { x: 17.5, y: -17.5 }, 2);
-
 
             window.appConfig.createSphere({
               bounce: 1,
@@ -6279,8 +6102,6 @@
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIND')
             })
 
-
-
             window.appConfig.createSphere({
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOINE',
@@ -6321,8 +6142,6 @@
               },
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINH')
             })
-
-
 
             window.appConfig.createSphere({
               bounce: 1,
@@ -6408,8 +6227,6 @@
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINP')
             })
 
-
-
             window.appConfig.stages.STAGE4.STAGE4PRIZE0 = scene.children.find((obj) => obj.name === "STAGE4PRIZE0")
             window.appConfig.stages.STAGE4.STAGE4PRIZE1 = scene.children.find((obj) => obj.name === "STAGE4PRIZE1")
             window.appConfig.stages.STAGE4.STAGE4PRIZE2 = scene.children.find((obj) => obj.name === "STAGE4PRIZE2")
@@ -6446,7 +6263,6 @@
             window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE3B = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE3B")
             window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE3C = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE3C")
             window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE3D = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE3D")
-
 
             window.appConfig.stages.STAGE4.data.started = true
           }
@@ -6557,10 +6373,7 @@
             window.appConfig.timers.activeTimers.push(
               window.appConfig.timers.addPortalToStage({ x: 0, y: 137.5, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
                 window.appConfig.stages.components.gemPortalConfig)
-              // window.appConfig.timers.addPortalToStage({ x: -20, y: -20, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 }, 
-              // window.appConfig.stages.components.gemPortalConfig)
             )
-            // window.appConfig.stages.components.createRuby({ x: 10, y: -17.5, z: -5 }, false)
             setTimeout(() => {
               window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
@@ -6573,14 +6386,11 @@
                 window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
               }
             }, 100)
-            // window.appConfig.stages.components.createBumper("STAGE3BUMPER1", 1, { x: -147.5, y: -5, z: 0 }, 6)
-
 
             window.appConfig.timers.activeTimers.push(
               window.appConfig.timers.addPortalToStage({ x: 0, y: -137.5, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
                 window.appConfig.stages.components.sapphirePortalConfig)
             )
-
 
             createCrystalCircle('STAGE5', 1.5, { x: 25, y: 150 }, 1, 2)
             createCrystalCircle('STAGE5', 2.5, { x: 25, y: 150 }, 2, 8)
@@ -6696,13 +6506,11 @@
             createCrystalCircle('STAGE5', 3.5, { x: -25, y: 150 }, 1, 8)
             createCrystalCircle('STAGE5', 4, { x: -25, y: 150 }, 2, 8)
 
-
             createCrystalCircle('STAGE5', 1.5, { x: -150, y: 25 }, 1, 2)
             createCrystalCircle('STAGE5', 2.5, { x: -150, y: 25 }, 2, 8)
             createCrystalCircle('STAGE5', 3, { x: -150, y: 25 }, 0, 8)
             createCrystalCircle('STAGE5', 3.5, { x: -150, y: 25 }, 1, 8)
             createCrystalCircle('STAGE5', 4, { x: -150, y: 25 }, 2, 8)
-
 
             createCrystalCircle('STAGE5', 2.25, { x: -92.5, y: 60 }, 1, 4)
             createCrystalCircle('STAGE5', 2.75, { x: -92.5, y: 60 }, 0, 8)
@@ -6714,7 +6522,6 @@
             createCrystalCircle('STAGE5', 2.75, { x: -75, y: 77.5 }, 0, 8)
             prize(5, 401, { x: -75, y: 77.5, z: 0 })
 
-
             window.appConfig.stages.components.createRuby({ x: -77.75, y: -78.5, z: 0 })
 
             createCrystalCircle('STAGE5', 2.75, { x: -77.5, y: -77.5 }, 2, 8)
@@ -6725,7 +6532,6 @@
             createCrystalCircle('STAGE5', 2.25, { x: -60, y: -92.5 }, 1, 4)
             createCrystalCircle('STAGE5', 2.75, { x: -60, y: -92.5 }, 0, 8)
             prize(5, 101, { x: -60, y: -92.5, z: 0 })
-
 
             window.appConfig.stages.components.createEmerald({ x: 76.5, y: 75.5, z: 0 })
 
@@ -6742,8 +6548,6 @@
             window.appConfig.stages.components.createDiamond({ x: 77.5, y: -78.5, z: 0 })
 
             createCrystalCircle('STAGE5', 2.75, { x: 77.5, y: -77.5 }, 2, 8)
-            // createCrystalCircle('STAGE5', 3.25, { x: 75, y: -75 }, 1, 16)
-            // createCrystalCircle('STAGE5', 3.75, { x: 75, y: -75 }, 2, 16)
             createCrystalCircle('STAGE5', 2.25, { x: 92.5, y: -60 }, 1, 4)
             createCrystalCircle('STAGE5', 2.75, { x: 92.5, y: -60 }, 0, 8)
             prize(5, 104, { x: 92.5, y: -60, z: 0 })
@@ -6751,8 +6555,6 @@
             createCrystalCircle('STAGE5', 2.25, { x: 60, y: -92.5 }, 1, 4)
             createCrystalCircle('STAGE5', 2.75, { x: 60, y: -92.5 }, 0, 8)
             prize(5, 105, { x: 60, y: -92.5, z: 0 })
-
-
 
             const stage5MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure(
               12,
@@ -6843,10 +6645,6 @@
             stage5MinorBeamStructureA.rotation.z = .25 * Math.PI
             scene.add(stage5MinorBeamStructureA);
 
-
-
-
-
             const stage5CrossBeamStructureB = createStage3CrossBeamStructure(
               .5,
               .75,
@@ -6880,11 +6678,6 @@
             );
             stage5MinorBeamStructureC.rotation.z = .25 * Math.PI
             scene.add(stage5MinorBeamStructureC);
-
-
-
-
-
 
             const stage5PlinkoStructure = createStage4PlinkoStructure(
               6,
@@ -6950,8 +6743,6 @@
             createCrystalCross('STAGE5', 5, { x: -90, y: -30 }, 1);
             createCrystalCross('STAGE5', 5, { x: -90, y: -10 }, 1);
 
-
-
             createCrystalCross('STAGE5', 5, { x: 100, y: 0 }, 0);
             createCrystalCross('STAGE5', 5, { x: 120, y: 0 }, 2);
             createCrystalCross('STAGE5', 5, { x: 110, y: 10 }, 1);
@@ -6966,9 +6757,6 @@
             createCrystalCross('STAGE5', 5, { x: 100, y: -20 }, 2);
             createCrystalCross('STAGE5', 5, { x: 90, y: -30 }, 1);
             createCrystalCross('STAGE5', 5, { x: 90, y: -10 }, 1);
-
-
-
 
             createCrystalCross('STAGE5', 5, { x: 0, y: 100 }, 0);
             createCrystalCross('STAGE5', 5, { x: 0, y: 120 }, 2);
@@ -7024,13 +6812,11 @@
             createCrystalCircle('STAGE5', 3.5, { x: 40, y: -60 }, 1, 8)
             createCrystalCircle('STAGE5', 4, { x: 40, y: -60 }, 0, 8)
 
-
             createCrystalCircle('STAGE5', 1.5, { x: -40, y: -60 }, 2, 2)
             createCrystalCircle('STAGE5', 2.5, { x: -40, y: -60 }, 1, 8)
             createCrystalCircle('STAGE5', 3, { x: -40, y: -60 }, 2, 8)
             createCrystalCircle('STAGE5', 3.5, { x: -40, y: -60 }, 1, 8)
             createCrystalCircle('STAGE5', 4, { x: -40, y: -60 }, 0, 8)
-
 
             window.appConfig.stages.components.createBumper("STAGE5BUMPER0", 1, { x: -115, y: 25, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE5BUMPER1", 1, { x: -115, y: -25, z: 0 }, 6)
@@ -7051,7 +6837,6 @@
             window.appConfig.stages.components.createBumper("STAGE5BUMPER7", 1, { x: -25, y: 115, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE5BUMPER_6", 1, { x: -75, y: -115, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE5BUMPER_7", 1, { x: -75, y: 115, z: 0 }, 6)
-
 
             window.appConfig.createSphere({
               bounce: 1,
@@ -7094,11 +6879,6 @@
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIND')
             })
 
-
-
-
-
-
             window.appConfig.createSphere({
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOINE',
@@ -7140,8 +6920,6 @@
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINH')
             })
 
-
-
             window.appConfig.createSphere({
               bounce: 1,
               name: window.appConfig.currentStage + '_SPHERECOINI',
@@ -7182,8 +6960,6 @@
               },
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINL')
             })
-
-
 
             window.appConfig.createSphere({
               bounce: 1,
@@ -7233,7 +7009,6 @@
             window.appConfig.stages.components.createSapphire({ x: -30, y: -30, z: 0 })
             window.appConfig.stages.components.createBlueIsland()
 
-
             window.appConfig.stages.STAGE5.STAGE5PRIZE0 = scene.children.find((obj) => obj.name === "STAGE5PRIZE0")
             window.appConfig.stages.STAGE5.STAGE5PRIZE1 = scene.children.find((obj) => obj.name === "STAGE5PRIZE1")
             window.appConfig.stages.STAGE5.STAGE5PRIZE2 = scene.children.find((obj) => obj.name === "STAGE5PRIZE2")
@@ -7254,17 +7029,19 @@
             window.appConfig.stages.STAGE5.data.started = true
           }
         }
-
-
       }
 
       window.appConfig.stages.components.stageInit()
       window.appConfig.stages[window.appConfig.currentStage].init()
 
-
       spawnBox();
 
-      requestAnimationFrame(render);
+      if(window.appConfig.vr === true) {
+        renderer.setAnimationLoop(render)
+      } else {
+        requestAnimationFrame(render);
+      }
+
       scene.simulate();
       window.appConfig.easyTimerLength = 60
       const timer = new easytimer.Timer({ countdown: true, startValues: { seconds: window.appConfig.easyTimerLength }, precision: "secondTenths" });
@@ -7474,9 +7251,7 @@
           (config && config.bounce) ? config.bounce : 0.5,
           1
         );
-        // debugger
         if (config && config.isIndicator === true) {
-          // debugger
           let superBallIndicator = new THREE.Mesh(
             superBallGeo,
             new THREE.MeshPhongMaterial({
@@ -7742,8 +7517,6 @@
       if (typeof theSphere.position.x === "number") {
         bh.position.lerp(theSphere.position, .001 * Math.random() * 2)
         bh.position.lerp(anchors[bhIndex], .00075)
-        // bh.position.x += lfo(3000 * (bhIndex + 1)) / ((bhIndex + 1) * 15)
-        // bh.position.y += lfo(3000 * (bhIndex + 1)) / ((bhIndex + 1) * 15)
         bh.scale.x += .001
         bh.scale.y += .001
         bh.scale.z += .001
@@ -7957,7 +7730,6 @@
           name: 'SUPERBALL_' + name,
           id: Math.round(Math.random() * 10000),
           startedCallback: (percentComplete) => {
-            // debugger
             // teleport the ball
             let teleportationMesh = window.appConfig.sphereTeleportationMesh()
             teleportationMesh.name = window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball
@@ -7992,9 +7764,6 @@
             }
           },
           completedCallback: () => {
-            // const theName = window.appConfig.currentStage + '_SPHERECOIN_' + Math.round(Math.random() * 1000)
-            // const superBallPositionScale = window.appConfig.stages[window.appConfig.currentStage].data.superBallPositionScale ? window.appConfig.stages[window.appConfig.currentStage].data.superBallPositionScale : 50
-            // window.appConfig.createSphere({ bounce: 1, name: theName, position: { x: (Math.random() * superBallPositionScale * 2) - superBallPositionScale, y: (Math.random() * superBallPositionScale * 2) - superBallPositionScale, z: 0 }, handleCollision: (c) => window.appConfig.superBallHandleCollision(c, theName) })
             scene.remove(scene.children.find((obj) => obj.name === window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball))
           }
         }
@@ -8019,8 +7788,6 @@
         portalMesh.incrementIndicator = () => {
           portalMesh.portalIndicatorCount++
           if (portalMesh.portalIndicatorCount === portalMesh.portalConfig.indicators) {
-            // enablePortal()
-            console.log('ALL GEMS ENABLED')
             portalMesh.portalConfig.active = true
           }
         }
@@ -8045,7 +7812,6 @@
             config.activeCallback(portalMesh)
           },
           completedCallback: () => {
-            // config.completedCallback(portalMesh)
           }
         }
       },
@@ -8234,11 +8000,6 @@
                     newPhysiObjCol.material.opacity = 1
                     window.appConfig.stages.components.demateralizeMesh(newPhysiObjCol, (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)))
                     scene.add(newPhysiObjCol)
-                    // newPhysiObjCol.addEventListener( 'collision', function( other_object ) {
-                    //   // window.appConfig.timers.activeTimers.push(window.appConfig.timers.demateralizeMesh(newPhysiObj))
-                    //   window.appConfig.stages.components.demateralizeMesh(newPhysiObjCol, bgObjectScale)
-                    //   scene.remove(newPhysiObjCol)
-                    // })
                     if (Math.random() < .05) {
                       window.appConfig.prize(window.appConfig.currentStageIndex, Math.round(Math.random() * 10000), { x: newPhysiObj.position.x, y: newPhysiObj.position.y, z: 0 })
                     }
@@ -8291,15 +8052,7 @@
               indicator = false,
               indicatorName = false
             ) => {
-              // var ellipse = new THREE.EllipseCurve(0, 0, s, s, 0, 2.0 * Math.PI, false);
-              // var ellipsePath = new THREE.CurvePath();
-              // ellipsePath.add(ellipse);
-              // var ellipseGeometry = ellipsePath.createPointsGeometry(n);
-
               let ellipseGeometry = new THREE.CircleGeometry(s, n * 2)
-              // if(indicator === true) {
-              //   debugger
-              // }
               let i = 1;
               for (i; i < ellipseGeometry.vertices.length; i++) {
                 let id = Math.round(Math.random() * 100000)
@@ -8317,11 +8070,9 @@
                       let theIndicator = scene.children.find(cf => cf.name.indexOf('SB_INDICATOR') > -1 && cf.indicatorActive === undefined)
                       theIndicator.indicatorActive = true
                       window.appConfig.timers.activeTimers.push(
-                        // window.appConfig.timers.activatePortalIndicator(rubyIndicator)
                         window.appConfig.timers.activatePortalIndicator(theIndicator)
                       )
                     }
-                    // console.log(scene.children.find(ch => ch.name.indexOf('PORTAL_TO_FINAL_STAGE') > -1).portalIndicatorCount)
                   },
                   isIndicator: indicator,
                   indicatorName: indicatorName
@@ -8331,26 +8082,12 @@
             }
             createGemSuperballs(15, 4)
 
-
             setTimeout(() => {
-
-
-
               window.appConfig.timers.activeTimers.push(
                 window.appConfig.timers.addPortalToStage({ x: 0, y: 0, z: -5 }, 'PORTAL_TO_FINAL_STAGE', { x: 0, y: 0, z: 0 },
                   window.appConfig.stages.components.finalPortalConfig)
               )
-
-              // setTimeout(() => {
-              //   window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
-              //   window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
-              //   window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
-              // }, 100)
-
-
             }, 10)
-
-
 
             setTimeout(() => {
               createGemSuperballs(4.5, 4, { x: 0, y: 0, z: 0 }, true, 'PORTAL_TO_FINAL_STAGE')
@@ -8418,7 +8155,6 @@
           },
           activeCallback: (percentComplete) => {
             indicator.material.opacity = .25 + (percentComplete * .75)
-            // console.log(percentComplete, indicator, indicator.material.opacity, indicator.material.color)
           }
         }
       },
@@ -9043,19 +8779,13 @@
         .find((obj) => obj.gameName === "POINTLIGHT3")
       if (
         window.appConfig.start === false &&
-        window.appConfig.pause === false //|| window.appConfig.toggleGravity === true
+        window.appConfig.pause === false
       ) {
-        // if (window.appConfig.start === false) {
-        //   sphere.position.set(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition); //initial sphere position
-        //   // sphere.position.set(0, 300, 0); //initial sphere position
-        // }
         sphere
           .setLinearVelocity(new THREE.Vector3(0, 0, 0));
         sphere
           .setAngularVelocity(new THREE.Vector3(0, 0, 0));
         scene.setGravity(new THREE.Vector3(0, 0, 0))
-        // sphere
-        //   .setLinearVelocity(new THREE.Vector3(0, 0, 0));
       } else {
         if (
           window.appConfig.touchStart === true &&
@@ -9086,21 +8816,18 @@
       pointLight1.position.set(
         sphere.position.x * lfo(1000),
         sphere.position.y * lfo(750),
-        // sphere.position.z * lfo(1500)
         10
       );
 
       pointLight2.position.set(
         sphere.position.x * lfo(777),
         sphere.position.y * lfo(1212),
-        // sphere.position.z * lfo(993)
         10
       );
 
       pointLight3.position.set(
         sphere.position.x * lfo(750),
         sphere.position.y * lfo(500),
-        // sphere.position.z * lfo(1412)
         10
       );
 
@@ -9124,24 +8851,9 @@
             window.appConfig.superballMaterialIncrement++
             sphereCoins.forEach(sc => {
               if (sc.setLinearVelocity) {
-                // if (sc.name.indexOf('FINALSTAGE') === -1) {
                 sc.setLinearVelocity(new THREE.Vector3(Math.random() * 25 - 12.5, Math.random() * 25 - 12.5, 0).add(sc._physijs.linearVelocity))
                 sc.material.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
-                // }
-                // try{
-                //   sc.material.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
-                // } catch (err) {
-                //   sc.material.color = new THREE.Color(0xffffff)
-                // }
-                
                 sc.children[0].material.color.set(new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]))
-                // window.appConfig.superBallMaterial.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
-
-                // if(window.appConfig.stages[window.appConfig.currentStage].data.remotes.length > 0) {
-                //   window.appConfig.stages[window.appConfig.currentStage].data.remotes.forEach(
-                //     r
-                //   )
-                // }
               }
             })
           }
@@ -9149,7 +8861,6 @@
           console.log('SUPERBALL ERROR - ', error)
         }
       }
-      // console.log(window.appConfig.superBallMaterial.color)
       if (window.appConfig.stages[window.appConfig.currentStage].data.portals && window.appConfig.stages[window.appConfig.currentStage].data.portals.length > 0 && window.appConfig.pause === false) {
         window.appConfig.stages[window.appConfig.currentStage].data.portals.forEach(p => {
           if (p.portalConfig && !p.portalConfig.sapphire || p.portalConfig.sapphire === false) {
@@ -9295,17 +9006,7 @@
         }
         if (coinValue > 0) {
           window.appConfig.score.coins += potentiallyGrabbedCoin.coinValue;
-          // debugger
-          // const gemNames = ['EMERALD', 'RUBY', 'DIAMOND', 'SAPPHIRE']
-          // gemNames.forEach(gN => {
-          //   if(window.appConfig.coins[coinIndexToRemove].name.indexOf(gn) > -1 ) {
-          // let theClone = potentiallyGrabbedCoin.clone()
-          // theClone.material = potentiallyGrabbedCoin.material.clone()
-          // theClone.name = 'DMESH'
           window.appConfig.stages.components.demateralizeMesh(potentiallyGrabbedCoin)
-          // debugger
-          //   }
-          // })
           potentiallyGrabbedCoin.visible = false
           window.appConfig.coins.splice(coinIndexToRemove, 1);
           document.querySelector("#score").innerHTML =
@@ -9342,24 +9043,12 @@
           }
 
           if (potentiallyGrabbedCoin.name.indexOf('SAPPHIRE') > -1 && (potentiallyGrabbedCoin.isBlueIsland === false || potentiallyGrabbedCoin.isBlueIsland === undefined || !potentiallyGrabbedCoin.isBlueIsland)) {
-            // let sapphireIndicator = scene.children.find(c => c.name.indexOf('S_INDICATOR') > -1 && c.indicatorActive === undefined)
-
-            // window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN_GEM' + id)
             let theIndicator = scene.children.find(cf => cf.name.indexOf('S_INDICATOR') > -1 && cf.indicatorActive === undefined)
             theIndicator.indicatorActive = true
-            // debugger
             window.appConfig.timers.activeTimers.push(
-              // window.appConfig.timers.activatePortalIndicator(rubyIndicator)
               window.appConfig.timers.activatePortalIndicator(theIndicator)
             )
-            // }
-
-
-            // window.appConfig.timers.activeTimers.push(
-            //   window.appConfig.timers.activatePortalIndicator(sapphireIndicator)
-            // )
           }
-
 
         } else if (prizeValue > 0) {
           if (window.appConfig.sfxTurnedOn) {
@@ -9425,7 +9114,11 @@
       }
 
       window.appConfig.coinFrameCheckNumber++
-      requestAnimationFrame(render);
+      if(window.appConfig.vr === true) {
+        renderer.setAnimationLoop(render)
+      } else {
+        requestAnimationFrame(render);
+      }
       renderer.render(scene, camera);
       if (window.appConfig.healthCheck.healthChecked === false) {
         render_stats.update();
@@ -9540,7 +9233,6 @@
         window.appConfig.howlSounds.backgroundMusic.play()
       }
       setTimeout(() => showHTMLElements(["pause-button", "game-scoreboard"]), 1000)
-      // get this argument in somewhere
       if (window.appConfig.isPortalStart === false) {
         window.appConfig.timers.activeTimers.push(timers.initialBallZoom())
       }
@@ -9654,9 +9346,6 @@
       toggleMusicButton({ value: window.appConfig.musicTurnedOn === true ? "on" : "off" })
       togglePerformanceButton({ value: window.appConfig.performanceLevel, onlyHTML: true })
       toggleControlsButton({ value: window.appConfig.events.primaryInput === "mouse" ? "swipe" : "click", onlyHTML: true })
-      // document.querySelector("#controls-toggle-button").textContent = window.appConfig.events.primaryInput === "click" ? "CLICK" : "SWIPE"
-      // document.querySelector("#performance-toggle-button").textContent = window.appConfig.performanceLevel
-
       showHTMLElements(["sounds", "tinted-overlay"]);
     };
     const showCredits = () => {
