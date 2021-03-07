@@ -272,7 +272,7 @@
     startLoadingInterval()
 
     const toggleMainLoading = () => {
-      document.querySelector('#gradient-curtain').style.opacity = 0
+      // document.querySelector('#gradient-curtain').style.opacity = 0
       document.querySelector('#main-loading').style.visibility = 'hidden'
       document.querySelector('#main-loading').style.display = 'none'
     }
@@ -327,7 +327,7 @@
 
   </script>
   <style>
-    #gradient-curtain,
+    /* #gradient-curtain, */
     #loading-gradient-curtain {
       position: fixed;
       width: 100%;
@@ -338,9 +338,9 @@
       background: linear-gradient(180deg, rgba(2, 0, 36, 0) 0%, rgba(121, 9, 117, 1) 0%, rgba(252, 231, 183, 1) 33%, rgba(0, 212, 255, 1) 66%);
     }
 
-    #gradient-curtain {
+    /* #gradient-curtain {
       z-index: 99;
-    }
+    } */
 
     #loading-gradient-curtain {
       z-index: 1000;
@@ -628,7 +628,7 @@
   </div>
 
 
-  <div id="gradient-curtain"></div>
+  <!-- <div id="gradient-curtain"></div> -->
   <div id="loading-gradient-curtain"></div>
 
   <div id="stage-name-container" class="hide menu-container">
@@ -2156,9 +2156,17 @@
               }
             }
           } else {
-
             sapphire.capturedCallback = () => {
               window.appConfig.howlSounds.sapphire.play()
+              const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
+              for (let biSounds = 0; biSounds < 20; biSounds++) {
+                setTimeout(() => {
+                  coinSounds[Math.round(Math.random() * (coinSounds.length - 1))].play()
+                  const blueCoin = window.appConfig.stages.components.blueCrystal(biSounds % 3, { x: sapphire.position.x + ((Math.random() * 25) - 12.5), y: sapphire.position.y + ((Math.random() * 20) - 10), z: 0 })
+                  scene.add(blueCoin)
+                }, biSounds * 50)
+              }
+              window.appConfig.stages.components.dematerializeMesh(sapphire, 5)
               window.appConfig.stages[window.appConfig.currentStage].data.sapphires++
             }
           }
@@ -7738,7 +7746,7 @@
 
         let thePortalMeshSpaceSphere = thePortalMesh.children.find(c => c.name === 'THE_SPACE_SPHERE')
         let theSphere = scene.children.find((obj) => obj.name === 'SPHERE0')
-        let theGradientCurtain = document.querySelector('#gradient-curtain')
+        // let theGradientCurtain = document.querySelector('#gradient-curtain')
         return {
           started: 0,
           ended: 0,
@@ -7771,7 +7779,7 @@
             if (thePercentComplete > .5) {
               window.appConfig.positionBall({ x: thePortalMesh.position.x, y: thePortalMesh.position.y, z: 0 })
               let teardownPercentComplete = (thePercentComplete - .5) * 2
-              theGradientCurtain.style.opacity = (thePercentComplete - .5) * 2
+              // theGradientCurtain.style.opacity = (thePercentComplete - .5) * 2
             }
             thePortalMesh.activeCallback(thePortalMesh, thePortalMesh.config, percentComplete)
           },
@@ -7908,26 +7916,35 @@
                     newPhysiObjCol.name = window.appConfig.currentStage + '_BGPHYSI_COL' + Math.round(Math.random() * 1000)
                     newPhysiObjCol.position.x = newPhysiObj.position.x + ((Math.random() * 25) - 12.5)
                     newPhysiObjCol.position.y = newPhysiObj.position.y + ((Math.random() * 25) - 12.5)
-                    newPhysiObjCol.position.z = 1.5
-                    newPhysiObjCol.rotation.x = Math.random() * Math.PI
-                    newPhysiObjCol.rotation.y = Math.random() * Math.PI
-                    newPhysiObjCol.rotation.z = Math.random() * Math.PI
-                    newPhysiObjCol.material.opacity = 1
-                    window.appConfig.stages.components.dematerializeMesh(newPhysiObjCol, (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)))
-                    scene.add(newPhysiObjCol)
-                    if (Math.random() < .05) {
-                      window.appConfig.prize(window.appConfig.currentStageIndex, Math.round(Math.random() * 10000), { x: newPhysiObj.position.x, y: newPhysiObj.position.y, z: 0 })
-                    }
-                    for (let superSounds = 0; superSounds < 4; superSounds++) {
-                      const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
+                    if(newPhysiObjCol.position.distanceTo(other_object.position) > 5) {
+                      newPhysiObjCol.position.z = 1.5
+                      newPhysiObjCol.rotation.x = Math.random() * Math.PI
+                      newPhysiObjCol.rotation.y = Math.random() * Math.PI
+                      newPhysiObjCol.rotation.z = Math.random() * Math.PI
+                      newPhysiObjCol.material.opacity = 1
+                      window.appConfig.stages.components.dematerializeMesh(newPhysiObjCol, (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)))
+                      newPhysiObjCol.addEventListener('collision', function (other_object2) {
+                        if(other_object2.name === 'SPHERE0') {
+                          window.appConfig.stages.components.dematerializeMesh(newPhysiObjCol, (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)))
+                          scene.remove(newPhysiObjCol)
+                        }
+                      })
+                      scene.add(newPhysiObjCol)
+                      if (Math.random() < .05) {
+                        window.appConfig.prize(window.appConfig.currentStageIndex, Math.round(Math.random() * 10000), { x: newPhysiObj.position.x, y: newPhysiObj.position.y, z: 0 })
+                      }
+                      for (let superSounds = 0; superSounds < 4; superSounds++) {
+                        const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
 
-                      setTimeout(() => {
-                        coinSounds[Math.round(Math.random() * (coinSounds.length - 1))].play()
-                        scene.add(window.appConfig.stages.components.crystal(superSounds % 3, { x: other_object.position.x + ((Math.random() * 25) - 12.5), y: other_object.position.y + ((Math.random() * 20) - 10), z: 0 }))
-                      }, superSounds * 50)
-                    }
+                        setTimeout(() => {
+                          coinSounds[Math.round(Math.random() * (coinSounds.length - 1))].play()
+                          scene.add(window.appConfig.stages.components.crystal(superSounds % 3, { x: other_object.position.x + ((Math.random() * 25) - 12.5), y: other_object.position.y + ((Math.random() * 20) - 10), z: 0 }))
+                        }, superSounds * 50)
+                      }
 
-                    bgObjectScale < 2.25 && newPhysiObjCol.setLinearVelocity(new THREE.Vector3().clone(other_object._physijs.linearVelocity))
+                      bgObjectScale < 2.25 && newPhysiObjCol.setLinearVelocity(new THREE.Vector3().clone(other_object._physijs.linearVelocity))
+
+                    }
                   }
 
                   if (newPhysiObj) {
@@ -8769,11 +8786,27 @@
                 sc.setLinearVelocity(new THREE.Vector3(Math.random() * 25 - 12.5, Math.random() * 25 - 12.5, 0).add(sc._physijs.linearVelocity))
                 sc.material.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
                 sc.children[0].material.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
+                if(Math.abs(sc.position.z) > 15 && sc.scored === undefined) {
+                  sc.scored === true
+                  window.appConfig.stages.components.dematerializeMesh(sc, 5)
+                  scene.remove(sc)
+                  window.appConfig.score.coins += 25000
+                  document.querySelector("#score").innerHTML = window.appConfig.score.coins.toLocaleString('en-US').replace(',', comma())
+                }
               }
             })
           }
         } catch (error) {
         }
+      }
+      if(window.appConfig.pause === true && (window.appConfig.pauseStoppedObjects === false || window.appConfig.pauseStoppedObjects === undefined)) {
+        window.appConfig.pauseStoppedObjects = true
+        scene.children.forEach(c => {
+          if (c.name && (c.name.indexOf('SPHERECOIN') > -1 || c.name.indexOf('FINALSTAGE_BUMPER') > -1) && c.setLinearVelocity) {
+            c.setLinearVelocity(new THREE.Vector3(0, 0, 0))
+            c.setAngularVelocity(new THREE.Vector3(0, 0, 0))
+          }
+        })
       }
       if (window.appConfig.stages[window.appConfig.currentStage].data.portals && window.appConfig.stages[window.appConfig.currentStage].data.portals.length > 0 && window.appConfig.pause === false) {
         window.appConfig.stages[window.appConfig.currentStage].data.portals.forEach(p => {
@@ -9191,7 +9224,7 @@
         window.appConfig.sphere.mass = window.appConfig.defaultSphereMass
 
         window.appConfig.timer.start();
-
+        window.appConfig.pauseStoppedObjects = false
         showGameMode();
       }
     };
