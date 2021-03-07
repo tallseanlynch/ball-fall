@@ -1,6 +1,6 @@
 setTimeout(() => {
     document.addEventListener("touchstart", (e) => {
-      if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'click') && !window.appConfig.userHasEnded) {
+      if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'click') && !window.appConfig.userHasEnded && window.appConfig.pause === false) {
         const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
         var inputVectorX = (e.touches[0].clientX / window.innerWidth * 2) - 1;
         var inputVectorY = (e.touches[0].clientY / window.innerHeight * -2) + 1;
@@ -8,7 +8,7 @@ setTimeout(() => {
         sphere.setLinearVelocity(new THREE.Vector3(inputVectorX * clickScale, inputVectorY * clickScale, 0))
       }
 
-      if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'touch') && !window.appConfig.userHasEnded) {
+      if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'touch') && !window.appConfig.userHasEnded && window.appConfig.pause === false) {
         window.appConfig.touchEnd = false;
         window.appConfig.touchStart = true;
         window.appConfig.currentX = e.touches[0].clientX;
@@ -27,7 +27,7 @@ setTimeout(() => {
       if(window.appConfig.events.primaryInput === undefined) {
         window.appConfig.events.primaryInput = 'mouse'
       }
-      if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'mouse') && !window.appConfig.userHasEnded) {
+      if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'mouse') && !window.appConfig.userHasEnded && window.appConfig.pause === false) {
         window.appConfig.touchEnd = false;
         window.appConfig.touchStart = true;
         window.appConfig.currentX = e.clientX;
@@ -48,7 +48,7 @@ setTimeout(() => {
           if(window.appConfig.events.primaryInput !== 'click'){
             window.appConfig.events.primaryInput = 'touch'
           }
-          if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'touch') && !window.appConfig.userHasEnded && window.appConfig.events.touchmove.active === false) {
+          if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'touch') && !window.appConfig.userHasEnded && window.appConfig.events.touchmove.active === false && window.appConfig.pause === false) {
             window.appConfig.events.touchmove.active = true
             window.appConfig.prevX = window.appConfig.currentX;
             window.appConfig.prevY = window.appConfig.currentY;
@@ -70,7 +70,7 @@ setTimeout(() => {
       document.body.addEventListener(
         "mousemove",
         (e) => {
-          if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'mouse') && !window.appConfig.userHasEnded && window.appConfig.events.touchmove.active === false) {
+          if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'mouse') && !window.appConfig.userHasEnded && window.appConfig.events.touchmove.active === false && window.appConfig.pause === false) {
             window.appConfig.events.touchmove.active = true
             window.appConfig.prevX = window.appConfig.currentX;
             window.appConfig.prevY = window.appConfig.currentY;
@@ -91,7 +91,7 @@ setTimeout(() => {
 
 
       document.addEventListener("mouseup", (e) => {
-        if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'mouse') && !window.appConfig.userHasEnded) {
+        if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'mouse') && !window.appConfig.userHasEnded && window.appConfig.pause === false) {
           window.appConfig.touchEnd = true;
           window.appConfig.touchStart = false;
           window.appConfig.currentX = 0;
@@ -102,7 +102,7 @@ setTimeout(() => {
       });
 
       document.addEventListener("touchend", (e) => {
-        if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'touch') && !window.appConfig.userHasEnded) {
+        if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'touch') && !window.appConfig.userHasEnded && window.appConfig.pause === false) {
           window.appConfig.touchEnd = true;
           window.appConfig.touchStart = false;
           window.appConfig.currentX = 0;
@@ -113,7 +113,7 @@ setTimeout(() => {
       });
 
       document.querySelector('body').addEventListener("click", (e) => {
-          if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'click') && !window.appConfig.userHasEnded) {
+          if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'click') && !window.appConfig.userHasEnded && window.appConfig.pause === false) {
             const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
             var inputVectorX = (e.clientX / window.innerWidth * 2) - 1;
             var inputVectorY = (e.clientY / window.innerHeight * -2) + 1;
