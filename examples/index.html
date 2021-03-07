@@ -151,24 +151,6 @@
         primaryInput: undefined,
         touchmove: { throttle: 25, active: false }
       },
-      colors: [
-        ["#f69679", "#f26c4f", "#ed1c24", "#9e0b0f", "#790000"],//0 red
-        ["#f9ad81", "#f68e56", "#f26522", "#a0410d", "#7b2e00"],//1 red organe
-        ["#fdc689", "#fbaf5d", "#f7941d", "#a3620a", "#7d4900"],//2 yellow orange
-        ["#fff799", "#fff568", "#fff200", "#aba000", "#827b00"],//3 yellow
-        ["#c4df9b", "#acd373", "#8dc63f", "#598527", "#406618"],//4 first green
-        ["#a3d39c", "#7cc576", "#39b54a", "#197b30", "#005e20"],//5 second green
-        ["#82ca9c", "#3cb878", "#00a651", "#007236", "#005826"],//6 third green
-        ["#7accc8", "#1cbbb4", "#00a99d", "#00746b", "#005952"],//7 green/blue
-        ["#6dcff6", "#00bff3", "#00aeef", "#0076a3", "#005b7f"],//8 light blue
-        ["#7da7d9", "#448ccb", "#0072bc", "#004a80", "#003663"],//9 dark blue 1
-        ["#8393ca", "#5674b9", "#0054a6", "#003471", "#002157"],//10 dark blue 2
-        ["#8781bd", "#605ca8", "#2e3192", "#1b1464", "#0d004c"],//11 cool purple
-        ["#a186be", "#8560a8", "#662d91", "#440e62", "#32004b"],//12 neutral purple
-        ["#bd8cbf", "#a864a8", "#92278f", "#630460", "#4b0049"],//13 warm putple
-        ["#f49ac1", "#f06eaa", "#ec008c", "#9e005d", "#7b0046"],//14 magenta
-        ["#f5989d", "#f26d7d", "#ed145b", "#9e0039", "#7a0026"]//15 cool red
-      ],
       performanceLevel: 2,
       isBlueIsland: false,
       blueIslandPoints: [
@@ -995,6 +977,26 @@
       camera,
       orbitControls;
 
+      window.appConfig.colors = [
+        [new THREE.Color("#f69679"), new THREE.Color("#f26c4f"), new THREE.Color("#ed1c24"), new THREE.Color("#9e0b0f"), new THREE.Color("#790000")],//0 red
+        [new THREE.Color("#f9ad81"), new THREE.Color("#f68e56"), new THREE.Color("#f26522"), new THREE.Color("#a0410d"), new THREE.Color("#7b2e00")],//1 red organe
+        [new THREE.Color("#fdc689"), new THREE.Color("#fbaf5d"), new THREE.Color("#f7941d"), new THREE.Color("#a3620a"), new THREE.Color("#7d4900")],//2 yellow orange
+        [new THREE.Color("#fff799"), new THREE.Color("#fff568"), new THREE.Color("#fff200"), new THREE.Color("#aba000"), new THREE.Color("#827b00")],//3 yellow
+        [new THREE.Color("#c4df9b"), new THREE.Color("#acd373"), new THREE.Color("#8dc63f"), new THREE.Color("#598527"), new THREE.Color("#406618")],//4 first green
+        [new THREE.Color("#a3d39c"), new THREE.Color("#7cc576"), new THREE.Color("#39b54a"), new THREE.Color("#197b30"), new THREE.Color("#005e20")],//5 second green
+        [new THREE.Color("#82ca9c"), new THREE.Color("#3cb878"), new THREE.Color("#00a651"), new THREE.Color("#007236"), new THREE.Color("#005826")],//6 third green
+        [new THREE.Color("#7accc8"), new THREE.Color("#1cbbb4"), new THREE.Color("#00a99d"), new THREE.Color("#00746b"), new THREE.Color("#005952")],//7 green/blue
+        [new THREE.Color("#6dcff6"), new THREE.Color("#00bff3"), new THREE.Color("#00aeef"), new THREE.Color("#0076a3"), new THREE.Color("#005b7f")],//8 light blue
+        [new THREE.Color("#7da7d9"), new THREE.Color("#448ccb"), new THREE.Color("#0072bc"), new THREE.Color("#004a80"), new THREE.Color("#003663")],//9 dark blue 1
+        [new THREE.Color("#8393ca"), new THREE.Color("#5674b9"), new THREE.Color("#0054a6"), new THREE.Color("#003471"), new THREE.Color("#002157")],//10 dark blue 2
+        [new THREE.Color("#8781bd"), new THREE.Color("#605ca8"), new THREE.Color("#2e3192"), new THREE.Color("#1b1464"), new THREE.Color("#0d004c")],//11 cool purple
+        [new THREE.Color("#a186be"), new THREE.Color("#8560a8"), new THREE.Color("#662d91"), new THREE.Color("#440e62"), new THREE.Color("#32004b")],//12 neutral purple
+        [new THREE.Color("#bd8cbf"), new THREE.Color("#a864a8"), new THREE.Color("#92278f"), new THREE.Color("#630460"), new THREE.Color("#4b0049")],//13 warm putple
+        [new THREE.Color("#f49ac1"), new THREE.Color("#f06eaa"), new THREE.Color("#ec008c"), new THREE.Color("#9e005d"), new THREE.Color("#7b0046")],//14 magenta
+        [new THREE.Color("#f5989d"), new THREE.Color("#f26d7d"), new THREE.Color("#ed145b"), new THREE.Color("#9e0039"), new THREE.Color("#7a0026")]//15 cool red
+      ],
+
+      
     initScene = function () {
       window.appConfig.soundsBackDestination = "";
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -1042,22 +1044,6 @@
       }
 
       scene.add(window.appConfig.lighting.hemisphereLight);
-      // const sfxButton =
-      //   document.querySelector('#sfx-toggle-button')
-      // if (window.appConfig.sfxTurnedOn) {
-      //   sfxButton.textContent = "ON"
-      // } else {
-      //   sfxButton.textContent = "OFF"
-      // }
-
-      // const musicButton =
-      //   document.querySelector('#music-toggle-button')
-      // if (window.appConfig.musicTurnedOn) {
-      //   musicButton.textContent = "ON"
-      // } else {
-      //   musicButton.textContent = "OFF"
-      // }
-
 
       camera = new THREE.PerspectiveCamera(
         35,
@@ -1267,8 +1253,6 @@
         beam0.rotation.set(config.r[0], config.r[1], config.r[2]);
 
         if (config && config.switchBeam && config.switchBeam.receiver) {
-          // debugger
-          // #3 add the name using the config
           beam0.name = window.appConfig.currentStage + '_' + config.switchBeam.receiver.name + '_SWITCHBEAM_RECEIVER_' + Math.round(Math.random() * 10000)
           beam0.switchBeam = {
             rotated: false,
@@ -1307,9 +1291,6 @@
       const blueTripleHex = 0x0b3d8b;
       const blueDoubleHex = 0x0f52ba;
       const blueSingleHex = 0x2875ee;
-      // const blueTripleHex = 0x159294;
-      // const blueDoubleHex = 0xffa6bb;
-      // const blueSingleHex = 0xffd5c9;
       const tripleScale = 2;
       const doubleScale = 1.5;
       const singleScale = 1;
@@ -1698,10 +1679,6 @@
         crystalCircle.debugType = 'CRYSTALCIRCLE'
         crystalCircle.debugName = 'CRYSTALCIRCLE' + window.appConfig.itemAmounts.crystalCircle
         crystalCircle.name = name + '_' + crystalCircle.debugName
-        // var ellipse = new THREE.EllipseCurve(0, 0, s, s, 0, 2.0 * Math.PI, false);
-        // var ellipsePath = new THREE.CurvePath();
-        // ellipsePath.add(ellipse);
-        // var ellipseGeometry = ellipsePath.createPointsGeometry(n);
 
         var ellipseGeometry = new THREE.CircleGeometry(s, n * 2)
 
@@ -2065,14 +2042,11 @@
               depthWrite: false
             })
           )
-          // debugger
           superBallShell.scale.x = bumper.scale.x * 2.5
           superBallShell.scale.y = bumper.scale.y * 2.5
           superBallShell.scale.z = bumper.scale.z * 2.5
           bumper.add(superBallShell)
         }
-        // bumper.setCcdMotionThreshold(.5)
-        // bumper.setCcdSweptSphereRadius(1)
       }
 
       window.appConfig.sapphires = []
@@ -2095,7 +2069,6 @@
         const sapphireColor = new THREE.Color('#0F52BA')
         const material = new THREE.MeshPhongMaterial({
           color: isCoin === false ? 0xffffff : sapphireColor,
-          // specular: 0x050505,
           shininess: 100,
           transparent: true,
           opacity: isCoin === false ? .25 : .95
@@ -2187,18 +2160,10 @@
             sapphire.capturedCallback = () => {
               window.appConfig.howlSounds.sapphire.play()
               window.appConfig.stages[window.appConfig.currentStage].data.sapphires++
-              console.log("sapphire number: ", window.appConfig.stages[window.appConfig.currentStage].data.sapphires)
-
             }
           }
-
-
-
-
-
           sapphire.position.set(p.x, p.y, p.z)
-        } // 
-
+        }
 
 
         let sapphireNameAdjustment = isCoin === false ? 'S_INDICATOR' : 'SAPPHIRE'
@@ -2213,9 +2178,6 @@
         }
         const sapphireName = nameFront + nameNum + nameEnd
         sapphire.name = sapphireName
-        // sapphire.rotation.x = Math.PI / 2
-        // sapphire.__dirtyPosition = true
-        // sapphire.__dirtyRotation = true
         sapphire.coinValue = 2500
         scene.add(sapphire)
 
@@ -2231,9 +2193,6 @@
         }
       }
 
-      // const rubyGeo = new THREE.OctahedronGeometry(2, 1)
-      // rubyGeo.scale.y = .5
-
       const createRuby = (p = { x: 0, y: 0, z: 0 }, isCoin = true, portalParent = false) => {
         const rubyShape = new THREE.Shape()
         rubyShape.moveTo(0, 0)
@@ -2246,10 +2205,6 @@
         rubyShape.lineTo(-.5, .5)
         rubyShape.lineTo(0, 0)
 
-        // rubyShape.lineTo(.5, 0)
-        // rubyShape.lineTo(0, -.5)
-        // rubyShape.lineTo(-.5, 0)
-        // rubyShape.lineTo(0, .5)
         const rubyGeo = new THREE.ExtrudeGeometry(rubyShape, {
           steps: 1,
           depth: .5,
@@ -2314,10 +2269,6 @@
         emeraldShape.lineTo(-.5, 1)
         emeraldShape.lineTo(0, 0)
 
-        // rubyShape.lineTo(.5, 0)
-        // rubyShape.lineTo(0, -.5)
-        // rubyShape.lineTo(-.5, 0)
-        // rubyShape.lineTo(0, .5)
         const emeraldGeo = new THREE.ExtrudeGeometry(emeraldShape, {
           steps: 1,
           depth: .5,
@@ -2340,7 +2291,6 @@
         emerald.scale.y = isCoin === false ? 1 : 1.5
         emerald.scale.x = isCoin === false ? 1 : 1.25
         emerald.scale.z = isCoin === false ? 1 : 1.25
-        // emerald.position.set(p.x, p.y, p.z)
 
         if (portalParent !== false) {
           let portalParentMesh = scene.children.find(c => c.name.indexOf(portalParent) > -1)
@@ -2405,8 +2355,6 @@
         diamond.add(diamondTopMesh)
         diamondTopMesh.position.y = 1.5
 
-        // diamond.position.set(p.x, p.y, p.z)
-
         if (portalParent !== false) {
           let portalParentMesh = scene.children.find(c => c.name.indexOf(portalParent) > -1)
           diamond.position.x = portalParentMesh.position.x + .125
@@ -2420,7 +2368,7 @@
         diamond.scale.y = isCoin === false ? 1 : 2
         diamond.scale.z = isCoin === false ? 1 : 2
         diamond.rotation.y = .25 * Math.PI
-        // diamond.scale.set(2, 2, 2)
+
         let diamondNameAdjustment = isCoin === false ? 'D_INDICATOR' : 'DIAMOND'
         diamond.name = window.appConfig.currentStage + '_' + diamondNameAdjustment + Math.floor(Math.random() * 10000)
 
@@ -2486,11 +2434,6 @@
 
           let spriteGroup = new THREE.Group()
 
-          // var ellipse = new THREE.EllipseCurve(0, 0, s, s, 0, 2.0 * Math.PI, false);
-          // var ellipsePath = new THREE.CurvePath();
-          // ellipsePath.add(ellipse);
-          // var ellipseGeometry = ellipsePath.createPointsGeometry(n);
-
           var ellipseGeometry = new THREE.CircleGeometry(s, n)
 
           let spritePlane = () => new THREE.Mesh(
@@ -2514,10 +2457,6 @@
 
           theBlackHoleMesh.add(spriteGroup)
           window.appConfig.stages[window.appConfig.currentStage].data.blackHoles.push(theBlackHoleMesh)
-          // window.appConfig.timers.activeTimers.push(
-          // blackHole            
-          // window.appConfig.timers.demateralizeMesh(spriteGroup)
-          // )
         }
         createSpriteCircles(.75, 4)
       }
@@ -2526,7 +2465,7 @@
 
 
 
-      const demateralizeMesh = (dMesh, scaleAdj = 2) => {
+      const dematerializeMesh = (dMesh, scaleAdj = 2) => {
         let theDSpriteMaterial = new THREE.MeshPhongMaterial({
           color: new THREE.Color().copy(dMesh.material.color),
           transparent: true,
@@ -2538,11 +2477,6 @@
         ) => {
 
           let spriteGroup = new THREE.Group()
-
-          // var ellipse = new THREE.EllipseCurve(0, 0, s, s, 0, 2.0 * Math.PI, false);
-          // var ellipsePath = new THREE.CurvePath();
-          // ellipsePath.add(ellipse);
-          // var ellipseGeometry = ellipsePath.createPointsGeometry(n);
 
           var ellipseGeometry = new THREE.CircleGeometry(s, n)
 
@@ -2567,7 +2501,7 @@
 
           scene.add(spriteGroup)
           window.appConfig.timers.activeTimers.push(
-            window.appConfig.timers.demateralizeMesh(spriteGroup)
+            window.appConfig.timers.dematerializeMesh(spriteGroup)
           )
         }
         createSpriteCircles(1, 4)
@@ -2578,7 +2512,7 @@
       window.appConfig.stages = {
         components: {
           createBlackHole: createBlackHole,
-          demateralizeMesh: demateralizeMesh,
+          dematerializeMesh: dematerializeMesh,
           stageInit: () => {
             window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
             window.appConfig.stages[window.appConfig.currentStage].data.portals = []
@@ -2923,10 +2857,6 @@
             scene.add(beamOne)
             scene.add(switchBeamTwo)
             scene.add(beamThree)
-
-            // rotateGroup.add(beamOne)
-            // rotateGroup.add(switchBeamTwo)
-            // rotateGroup.add(beamThree)
           },
           createRemoteSwitch: (config = {
             transmitter: {
@@ -3097,7 +3027,6 @@
 
             const finalStageWalls0 = window.appConfig.stages.components.createStage0MainBeamStructure(
               4,
-              // 0.5275,
               -.415,
               window.appConfig.currentStage + "_FINAL_STAGE_WALLS_0",
               { x: 0, y: 0, z: 0 },
@@ -3109,20 +3038,17 @@
 
             const finalStageWalls1 = window.appConfig.stages.components.createStage0MainBeamStructure(
               4,
-              // 0.5275,
               -.415,
               window.appConfig.currentStage + "_FINAL_STAGE_WALLS_1",
               { x: 0, y: 0, z: 0 },
               [0, 0, 0, 0],
               true
             );
-            // finalStageWalls0.rotation.z = .25 * Math.PI
             scene.add(finalStageWalls1);
 
 
             const finalStageWalls2 = window.appConfig.stages.components.createStage0MainBeamStructure(
               2.5,
-              // 0.5275,
               -.75,
               window.appConfig.currentStage + "_FINAL_STAGE_WALLS_2",
               { x: 0, y: 0, z: 0 },
@@ -3134,14 +3060,12 @@
 
             const finalStageWalls3 = window.appConfig.stages.components.createStage0MainBeamStructure(
               2.5,
-              // 0.5275,
               -.75,
               window.appConfig.currentStage + "_FINAL_STAGE_WALLS_3",
               { x: 0, y: 0, z: 0 },
               [0, 0, 0, 0],
               true
             );
-            // finalStageWalls0.rotation.z = .25 * Math.PI
             scene.add(finalStageWalls3);
 
             window.appConfig.stages[window.appConfig.currentStage].FINALSTAGEWALLS3 = finalStageWalls3
@@ -3161,12 +3085,11 @@
             window.appConfig.activeTransforms.push('FINALSTAGEWALLS0')
 
             const handleBumperCollision = (bumper, otherObject) => {
-              // bumper.setLinearVelocity(otherObject._physijs.linearVelocity.clone())
               if (bumper.coinThrottle === undefined) {
                 bumper.coinThrottle = false
               }
               if (otherObject.name === 'SPHERE0') {
-                window.appConfig.stages.components.demateralizeMesh(bumper, 5)
+                window.appConfig.stages.components.dematerializeMesh(bumper, 5)
                 if (bumper.coinThrottle === false) {
                   bumper.coinThrottle = true
                   const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
@@ -3272,7 +3195,6 @@
             }
           },
 
-          // Sapphire portal config
           sapphirePortalConfig: {
             startedCallback: (thePortalMesh, config, percentComplete) => {
             },
@@ -3319,7 +3241,7 @@
                 ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0)
               }))
               let theSphere = scene.children.find(c => c.name === 'SPHERE0')
-              window.appConfig.stages.components.demateralizeMesh(theSphere)
+              window.appConfig.stages.components.dematerializeMesh(theSphere)
             },
             portalConfig: {
               sapphire: true,
@@ -7214,13 +7136,9 @@
           window.appConfig.howlSounds.superball.play()
           if (window.appConfig.stages[window.appConfig.currentStage].data.gemSuperBalls < 8) {
             window.appConfig.stages[window.appConfig.currentStage].data.gemSuperBalls++
-            console.log('GEM SUPERBALLS - ' + window.appConfig.stages[window.appConfig.currentStage].data.gemSuperBalls)
-            if (window.appConfig.stages[window.appConfig.currentStage].data.gemSuperBalls === 8) {
-              console.log('ALL GEM SUPERBALLS COLLECTED!')
-            }
           }
           window.appConfig.timers.activeTimers.push(window.appConfig.timers.superBallTeleport(the_object))
-          window.appConfig.stages.components.demateralizeMesh(other_object, 5)
+          window.appConfig.stages.components.dematerializeMesh(other_object, 5)
           const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
           for (let superSounds = 0; superSounds < 20; superSounds++) {
             setTimeout(() => {
@@ -7528,16 +7446,16 @@
           theSphere.setLinearVelocity(newVelocity)
         }
         if (currentTimeAdj % 10 === 0) {
-          window.appConfig.stages.components.demateralizeMesh(bh, Math.random() * .5)
+          window.appConfig.stages.components.dematerializeMesh(bh, Math.random() * .5)
         }
         bh.material.opacity = .98 + (lfo(500) * .2)
       }
     }
 
-    window.appConfig.superBallMaterial.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
+    window.appConfig.superBallMaterial.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
 
     const timers = {
-      demateralizeMesh: (dMesh) => {
+      dematerializeMesh: (dMesh) => {
         const name = dMesh.name + Math.round(Math.random() * 10000)
         const dMeshLfoAdj = Math.round(Math.random() * 1000)
         return {
@@ -7603,7 +7521,7 @@
           name: name,
           id: Math.round(Math.random() * 10000),
           startedCallback: (percentComplete) => {
-            bumper.material.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
+            bumper.material.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
           },
           completedCallback: (percentComplete) => {
             bumper.material.color = bumper.standardColor.clone()
@@ -7620,12 +7538,12 @@
         let remoteSwitchMaterial = new THREE.Color().copy(remoteTransmitter.material.color)
 
         if (window.appConfig.superBallMaterial.color.set) {
-          window.appConfig.superBallMaterial.color.set(new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]))
+          window.appConfig.superBallMaterial.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
         } else {
-          window.appConfig.superBallMaterial.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
+          window.appConfig.superBallMaterial.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
         }
         const activeCallback = (percentComplete) => {
-          window.appConfig.superBallMaterial.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
+          window.appConfig.superBallMaterial.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
           remoteLine.children.forEach((rlc, rlci) => {
             rlc.material.color = remoteSwitchMaterial.lerp(
               window.appConfig.superBallMaterial.color,
@@ -7973,7 +7891,7 @@
 
               newPhysiObj.addEventListener('collision', function (other_object) {
                 if (other_object.name === 'SPHERE0') {
-                  window.appConfig.stages.components.demateralizeMesh(newPhysiObj, 5)
+                  window.appConfig.stages.components.dematerializeMesh(newPhysiObj, 5)
                   let divisions = Math.round(Math.random() * ((bgObj.scale.x + bgObj.scale.y + bgObj.scale.z)) / 2)
                   let bgObjectScale = Math.ceil((bgObj.scale.x + bgObj.scale.y + bgObj.scale.z) / 3)
                   for (let div = 0; div < divisions; div++) {
@@ -7995,7 +7913,7 @@
                     newPhysiObjCol.rotation.y = Math.random() * Math.PI
                     newPhysiObjCol.rotation.z = Math.random() * Math.PI
                     newPhysiObjCol.material.opacity = 1
-                    window.appConfig.stages.components.demateralizeMesh(newPhysiObjCol, (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)))
+                    window.appConfig.stages.components.dematerializeMesh(newPhysiObjCol, (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)))
                     scene.add(newPhysiObjCol)
                     if (Math.random() < .05) {
                       window.appConfig.prize(window.appConfig.currentStageIndex, Math.round(Math.random() * 10000), { x: newPhysiObj.position.x, y: newPhysiObj.position.y, z: 0 })
@@ -8836,10 +8754,10 @@
               sphereCoins.push(c)
             }
             if ((c.name.indexOf('FINAL_STAGE_WALL') > -1 || c.name.indexOf('SB_INDICATOR') > 1) && window.appConfig.superBallMaterial) {
-              c.material.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
+              c.material.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
               if (c.name.indexOf('FINAL_STAGE_WALL') > -1) {
                 c.children.forEach(finC => {
-                  finC.material.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
+                  finC.material.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
                 })
               }
             }
@@ -8849,19 +8767,18 @@
             sphereCoins.forEach(sc => {
               if (sc.setLinearVelocity) {
                 sc.setLinearVelocity(new THREE.Vector3(Math.random() * 25 - 12.5, Math.random() * 25 - 12.5, 0).add(sc._physijs.linearVelocity))
-                sc.material.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
-                sc.children[0].material.color.set(new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]))
+                sc.material.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
+                sc.children[0].material.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
               }
             })
           }
         } catch (error) {
-          console.log('SUPERBALL ERROR - ', error)
         }
       }
       if (window.appConfig.stages[window.appConfig.currentStage].data.portals && window.appConfig.stages[window.appConfig.currentStage].data.portals.length > 0 && window.appConfig.pause === false) {
         window.appConfig.stages[window.appConfig.currentStage].data.portals.forEach(p => {
           if (p.portalConfig && !p.portalConfig.sapphire || p.portalConfig.sapphire === false) {
-            p.material.color = new THREE.Color(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
+            p.material.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
           }
           if ((p.portalConfig && p.portalConfig.active === true) || !p.portalConfig) {
             if (sphere.position.distanceTo(p.position) < 7.5 && p.activated === false) {
@@ -9003,7 +8920,7 @@
         }
         if (coinValue > 0) {
           window.appConfig.score.coins += potentiallyGrabbedCoin.coinValue;
-          window.appConfig.stages.components.demateralizeMesh(potentiallyGrabbedCoin)
+          window.appConfig.stages.components.dematerializeMesh(potentiallyGrabbedCoin)
           potentiallyGrabbedCoin.visible = false
           window.appConfig.coins.splice(coinIndexToRemove, 1);
           document.querySelector("#score").innerHTML =
@@ -9470,19 +9387,16 @@
         if (config.value !== undefined) {
           switch (config.value) {
             case 0:
-              console.log("case 0", window.appConfig.performanceLevel)
               document.querySelector("#performance-toggle-button-low").classList.remove("gray")
               document.querySelector("#performance-toggle-button-med").classList.add("gray")
               document.querySelector("#performance-toggle-button-high").classList.add("gray")
               break
             case 1:
-              console.log("case 1", window.appConfig.performanceLevel)
               document.querySelector("#performance-toggle-button-low").classList.add("gray")
               document.querySelector("#performance-toggle-button-med").classList.remove("gray")
               document.querySelector("#performance-toggle-button-high").classList.add("gray")
               break
             case 2:
-              console.log("case 2", window.appConfig.performanceLevel)
               document.querySelector("#performance-toggle-button-low").classList.add("gray")
               document.querySelector("#performance-toggle-button-med").classList.add("gray")
               document.querySelector("#performance-toggle-button-high").classList.remove("gray")
