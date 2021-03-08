@@ -44,10 +44,10 @@
       left: 50%;
       top: 50%;
     }
-
   </style>
 
   <script>
+
 
     const hasPerformanceReport = (window.localStorage.getItem('performanceLevel') !== null)
 
@@ -704,6 +704,8 @@
   <script onLoad="scriptLoaded('event-handlers.js')" type="text/javascript" src="./event-handlers.js"></script>
   <!-- <script onLoad="scriptLoaded('VRButton.js')" type="text/javascript" src="./VRButton.js"></script> -->
   <script onLoad="scriptLoaded('debug.js')" type="text/javascript" src="./debug.js"></script>
+  <script onLoad="scriptLoaded('GLTFLoader.js')" type="text/javascript" src="js/GLTFLoader.js"></script>
+
   <script onLoad="scriptLoaded('main')" type="text/javascript">
     "use strict";
     const coinProperties = {
@@ -995,8 +997,55 @@
       [new THREE.Color("#f49ac1"), new THREE.Color("#f06eaa"), new THREE.Color("#ec008c"), new THREE.Color("#9e005d"), new THREE.Color("#7b0046")],//14 magenta
       [new THREE.Color("#f5989d"), new THREE.Color("#f26d7d"), new THREE.Color("#ed145b"), new THREE.Color("#9e0039"), new THREE.Color("#7a0026")]//15 cool red
     ]
+    let crystalLoader
+    const startCrystalLoader = () => {
+      crystalLoader = new THREE.GLTFLoader();
 
-      
+      // // Optional: Provide a DRACOLoader instance to decode compressed mesh data
+      // const dracoLoader = new DRACOLoader();
+      // dracoLoader.setDecoderPath( '/examples/js/libs/draco/' );
+      // loader.setDRACOLoader( dracoLoader );
+
+      // Load a glTF resource
+      crystalLoader.load(
+        // resource URL
+        'models/crystal.gltf',
+        // called when the resource is loaded
+        function (gltf) {
+          const crystal = gltf.scene.children[0]
+          crystal.name = 'CRYSTAL_GLTF'
+          window.appConfig.crystalGLTF = crystal
+          // window.appConfig.crystalGLTF.material = window.appConfig.crystalMaterials[2].standard
+          initScene()
+
+          // scene.add( gltf.scene.children[2]);
+          // gltf.name = 'SATURN'
+
+          // gltf.animations; // Array<THREE.AnimationClip>
+          // gltf.scene; // THREE.Group
+          // gltf.scenes; // Array<THREE.Group>
+          // gltf.cameras; // Array<THREE.Camera>
+          // gltf.asset; // Object
+          // setTimeout(() => {
+          //   rotateSaturnAtStart()
+          // }, 0)
+        },
+        // called while loading is progressing
+        function (xhr) {
+
+          console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+
+        },
+        // called when loading has errors
+        function (error) {
+          console.log(error)
+          console.log('An error happened');
+
+        }
+      );
+
+    }
+
     initScene = function () {
       window.appConfig.soundsBackDestination = "";
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -1294,13 +1343,14 @@
       const tripleScale = 2;
       const doubleScale = 1.5;
       const singleScale = 1;
-      const xScaleMod = 0.5;
+      const xScaleMod = 1;
       const yScaleMod = 1;
-      const zScaleMod = 0.5;
+      const zScaleMod = 1;
       const crystalMaterialOptions = {
         // color: 0x000000,
         specular: 0x050505,
-        shininess: 100
+        shininess: 100,
+        side: THREE.DoubleSide
       };
       window.appConfig.crystalMaterials = [
         {
@@ -1325,36 +1375,42 @@
           standard: new THREE.MeshPhongMaterial({
             emissive: blueSingleHex,
             specular: 0x050505,
-            shininess: 100
+            shininess: 100,
+            side: THREE.DoubleSide
           }),
           pulsing: new THREE.MeshPhongMaterial({
             emissive: blueSingleHex,
             specular: 0x050505,
-            shininess: 100
+            shininess: 100,
+            side: THREE.DoubleSide
           })
         },
         {
           standard: new THREE.MeshPhongMaterial({
             emissive: blueDoubleHex,
             specular: 0x050505,
-            shininess: 100
+            shininess: 100,
+            side: THREE.DoubleSide
           }),
           pulsing: new THREE.MeshPhongMaterial({
             emissive: blueDoubleHex,
             specular: 0x050505,
-            shininess: 100
+            shininess: 100,
+            side: THREE.DoubleSide
           })
         },
         {
           standard: new THREE.MeshPhongMaterial({
             emissive: blueTripleHex,
             specular: 0x050505,
-            shininess: 100
+            shininess: 100,
+            side: THREE.DoubleSide
           }),
           pulsing: new THREE.MeshPhongMaterial({
             emissive: blueTripleHex,
             specular: 0x050505,
-            shininess: 100
+            shininess: 100,
+            side: THREE.DoubleSide
           })
         },
         {
@@ -1370,30 +1426,10 @@
       window.appConfig.blueCrystalMaterials[2].pulsing.name = "blue2pulsing"
       const crystal = (size = 0, p = { x: 0, y: 0, z: 0 }) => {
         let coin
+
         if (window.appConfig.performanceLevel > 0) {
-          coin = new THREE.Mesh();
-          let crystalTop, crystalMiddle, crystalBottom, coinMaterial
+          coin = new THREE.Mesh(window.appConfig.crystalGLTF.geometry, window.appConfig.crystalMaterials[size].standard);
 
-          coinMaterial = window.appConfig.crystalMaterials[size].standard
-
-          crystalTop = new THREE.Mesh(
-            crystalTopGeometry,
-            coinMaterial
-          );
-          crystalTop.translateY(0.75);
-          crystalMiddle = new THREE.Mesh(
-            crystalMiddleGeometry,
-            coinMaterial
-          );
-
-          crystalBottom = new THREE.Mesh(
-            crystalBottomGeometry,
-            coinMaterial
-          );
-          crystalBottom.translateY(-0.75);
-          coin.add(crystalTop);
-          coin.add(crystalMiddle);
-          coin.add(crystalBottom);
           coin.position.set(p.x, p.y, 0);
 
         } else {
@@ -1420,10 +1456,6 @@
           coin.coinValue = 100;
           coin.baseColor = singleHex
           if (window.appConfig.performanceLevel > 0) {
-            coin.children.forEach((child) => {
-              child.material.color.setHex(singleHex);
-            });
-
           }
         }
         if (size === 1) {
@@ -1445,9 +1477,6 @@
           coin.coinValue = 200;
           coin.baseColor = doubleHex
           if (window.appConfig.performanceLevel > 0) {
-            coin.children.forEach((child) => {
-              child.material.color.setHex(doubleHex);
-            });
 
           }
         }
@@ -1471,9 +1500,7 @@
           coin.coinValue = 300;
           coin.baseColor = tripleHex
           if (window.appConfig.performanceLevel > 0) {
-            coin.children.forEach((child) => {
-              child.material.color.setHex(tripleHex);
-            });
+
           }
         }
         if (window.appConfig.performanceLevel === 0) {
@@ -1489,28 +1516,7 @@
       const blueCrystal = (size = 0, p = { x: 0, y: 0, z: 0 }) => {
         let coin
         if (window.appConfig.performanceLevel > 0) {
-          coin = new THREE.Mesh();
-          let crystalTop, crystalMiddle, crystalBottom, coinMaterial
-
-          crystalTop = new THREE.Mesh(
-            crystalTopGeometry,
-            window.appConfig.blueCrystalMaterials[size].standard
-          );
-          crystalTop.translateY(0.75);
-          crystalMiddle = new THREE.Mesh(
-            crystalMiddleGeometry,
-            window.appConfig.blueCrystalMaterials[size].standard
-          );
-
-          crystalBottom = new THREE.Mesh(
-            crystalBottomGeometry,
-            window.appConfig.blueCrystalMaterials[size].standard
-          );
-
-          crystalBottom.translateY(-0.75);
-          coin.add(crystalTop);
-          coin.add(crystalMiddle);
-          coin.add(crystalBottom);
+          coin = new THREE.Mesh(window.appConfig.crystalGLTF.geometry, window.appConfig.blueCrystalMaterials[size].standard);
           coin.position.set(p.x, p.y, 0);
 
         } else {
@@ -1536,12 +1542,6 @@
           coin.coinType = "single";
           coin.coinValue = 100;
           coin.baseColor = singleHex
-          if (window.appConfig.performanceLevel > 0) {
-            coin.children.forEach((child) => {
-              child.material.color.setHex(singleHex);
-            });
-
-          }
         }
         if (size === 1) {
           if (window.appConfig.performanceLevel > 0) {
@@ -1561,12 +1561,6 @@
           coin.coinType = "double";
           coin.coinValue = 200;
           coin.baseColor = doubleHex
-          if (window.appConfig.performanceLevel > 0) {
-            coin.children.forEach((child) => {
-              child.material.color.setHex(doubleHex);
-            });
-
-          }
         }
 
         if (size === 2) {
@@ -1587,11 +1581,6 @@
           coin.coinType = "triple";
           coin.coinValue = 300;
           coin.baseColor = tripleHex
-          if (window.appConfig.performanceLevel > 0) {
-            coin.children.forEach((child) => {
-              child.material.color.setHex(tripleHex);
-            });
-          }
         }
         if (window.appConfig.performanceLevel === 0) {
 
@@ -6966,7 +6955,7 @@
 
       spawnBox();
 
-      if(window.appConfig.vr === true) {
+      if (window.appConfig.vr === true) {
         renderer.setAnimationLoop(render)
       } else {
         requestAnimationFrame(render);
@@ -7332,14 +7321,16 @@
               }
             } else if (sprite0.isFetchingCoin && window.appConfig.start && !window.appConfig.pause) {
               if (sprite0.fetchData.target.isBlueIsland === true) {
-                sprite0.fetchData.target.children.forEach(child => {
-                  child.material = window.appConfig.blueCrystalMaterials[sprite0.fetchData.target.size].pulsing
-                })
+                // sprite0.fetchData.target.children.forEach(child => {
+                //   child.material = window.appConfig.blueCrystalMaterials[sprite0.fetchData.target.size].pulsing
+                // })
+                sprite0.fetchData.target.material = window.appConfig.blueCrystalMaterials[sprite0.fetchData.target.size].pulsing
               }
               if (sprite0.fetchData.target.isBlueIsland === false) {
-                sprite0.fetchData.target.children.forEach(child => {
-                  child.material = window.appConfig.crystalMaterials[sprite0.fetchData.target.size].pulsing
-                })
+                // sprite0.fetchData.target.children.forEach(child => {
+                //   child.material = window.appConfig.crystalMaterials[sprite0.fetchData.target.size].pulsing
+                // })
+                sprite0.fetchData.target.material = window.appConfig.crystalMaterials[sprite0.fetchData.target.size].pulsing
               }
               let percentComplete = window.appConfig.timers.data[`spriteFetch${sprite0.num}`].percentComplete
               if (percentComplete < .5) {
@@ -7853,7 +7844,7 @@
         }
       },
       backgroundToPhysi: () => {
-        if(window.appConfig.performanceLevel === 0) {
+        if (window.appConfig.performanceLevel === 0) {
           window.appConfig.stages[window.appConfig.currentStage].initBackground()
         }
 
@@ -7919,7 +7910,7 @@
                     newPhysiObjCol.name = window.appConfig.currentStage + '_BGPHYSI_COL' + Math.round(Math.random() * 1000)
                     newPhysiObjCol.position.x = newPhysiObj.position.x + ((Math.random() * 25) - 12.5)
                     newPhysiObjCol.position.y = newPhysiObj.position.y + ((Math.random() * 25) - 12.5)
-                    if(newPhysiObjCol.position.distanceTo(other_object.position) > 5) {
+                    if (newPhysiObjCol.position.distanceTo(other_object.position) > 5) {
                       newPhysiObjCol.position.z = 1.5
                       newPhysiObjCol.rotation.x = Math.random() * Math.PI
                       newPhysiObjCol.rotation.y = Math.random() * Math.PI
@@ -7927,7 +7918,7 @@
                       newPhysiObjCol.material.opacity = 1
                       window.appConfig.stages.components.dematerializeMesh(newPhysiObjCol, (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)))
                       newPhysiObjCol.addEventListener('collision', function (other_object2) {
-                        if(other_object2.name === 'SPHERE0') {
+                        if (other_object2.name === 'SPHERE0') {
                           window.appConfig.stages.components.dematerializeMesh(newPhysiObjCol, (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)))
                           scene.remove(newPhysiObjCol)
                         }
@@ -8076,13 +8067,13 @@
           id: Math.round(Math.random() * 10000),
           startedCallback: () => {
             let thePortal
-            if (indicator.name.indexOf('D_INDICATOR') > -1 || indicator.name.indexOf('R_INDICATOR') > -1 || indicator.name.indexOf('E_INDICATOR') > -1 ) {
+            if (indicator.name.indexOf('D_INDICATOR') > -1 || indicator.name.indexOf('R_INDICATOR') > -1 || indicator.name.indexOf('E_INDICATOR') > -1) {
               thePortal = scene.children.find(c => c.name.indexOf('GEM_STAGE_END') > -1)
             }
             if (scene.children.find(c => c.name.indexOf('PORTAL_TO_FINAL_STAGE') > -1)) {
               thePortal = scene.children.find(c => c.name.indexOf('PORTAL_TO_FINAL_STAGE') > -1)
             }
-            if (indicator.name.indexOf('S_INDICATOR') > -1 ) {
+            if (indicator.name.indexOf('S_INDICATOR') > -1) {
               thePortal = scene.children.find(c => c.name.indexOf('SAPPHIRE_00') > -1)
             }
             thePortal.incrementIndicator()
@@ -8789,7 +8780,7 @@
                 sc.setLinearVelocity(new THREE.Vector3(Math.random() * 25 - 12.5, Math.random() * 25 - 12.5, 0).add(sc._physijs.linearVelocity))
                 sc.material.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
                 sc.children[0].material.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
-                if(Math.abs(sc.position.z) > 15 && sc.scored === undefined) {
+                if (Math.abs(sc.position.z) > 15 && sc.scored === undefined) {
                   sc.scored === true
                   window.appConfig.stages.components.dematerializeMesh(sc, 5)
                   scene.remove(sc)
@@ -8802,7 +8793,7 @@
         } catch (error) {
         }
       }
-      if(window.appConfig.pause === true && (window.appConfig.pauseStoppedObjects === false || window.appConfig.pauseStoppedObjects === undefined)) {
+      if (window.appConfig.pause === true && (window.appConfig.pauseStoppedObjects === false || window.appConfig.pauseStoppedObjects === undefined)) {
         window.appConfig.pauseStoppedObjects = true
         scene.children.forEach(c => {
           if (c.name && (c.name.indexOf('SPHERECOIN') > -1 || c.name.indexOf('FINALSTAGE_BUMPER') > -1) && c.setLinearVelocity) {
@@ -9064,7 +9055,7 @@
       }
 
       window.appConfig.coinFrameCheckNumber++
-      if(window.appConfig.vr === true) {
+      if (window.appConfig.vr === true) {
         renderer.setAnimationLoop(render)
       } else {
         requestAnimationFrame(render);
@@ -9446,7 +9437,7 @@
         }
       }
     }
-    window.onload = initScene;
+    window.onload = startCrystalLoader;
   </script>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
