@@ -3000,6 +3000,9 @@
 
             const theTransmitterSphereLine = createTransmitterSphereLine(transmitterGroup, receiverGroup)
             scene.add(theTransmitterSphereLine)
+            setTimeout(() => {
+              theTransmitterSphereLine.updatePoints()
+            }, 100)
             window.appConfig.stages[window.appConfig.currentStage].data.remotes.push({
               transmitter: transmitterGroup,
               receiver: receiverGroup,
