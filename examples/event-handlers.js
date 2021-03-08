@@ -1,7 +1,8 @@
 setTimeout(() => {
     document.addEventListener("touchstart", (e) => {
       if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'click') && !window.appConfig.userHasEnded && window.appConfig.pause === false) {
-        const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
+        // const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
+        const sphere = window.appConfig.sphere
         var inputVectorX = (e.touches[0].clientX / window.innerWidth * 2) - 1;
         var inputVectorY = (e.touches[0].clientY / window.innerHeight * -2) + 1;
         const clickScale = 100
@@ -114,7 +115,7 @@ setTimeout(() => {
 
       document.querySelector('body').addEventListener("click", (e) => {
           if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'click') && !window.appConfig.userHasEnded && window.appConfig.pause === false) {
-            const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
+            const sphere = window.appConfig.sphere //scene.children.find((obj) => obj.gameName === "SPHERE0")
             var inputVectorX = (e.clientX / window.innerWidth * 2) - 1;
             var inputVectorY = (e.clientY / window.innerHeight * -2) + 1;
             const clickScale = 50

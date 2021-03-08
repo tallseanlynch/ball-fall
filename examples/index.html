@@ -1105,6 +1105,7 @@
       camera.position.set(0, 10, 10);
       camera.lookAt(new THREE.Vector3(0, 10, 0));
       scene.add(camera);
+      camera.material = new THREE.MeshPhongMaterial({color: 0xffffff})
 
       light = new THREE.SpotLight(0xffffff);
       light.position.set(20, 80, 15);
@@ -1183,7 +1184,7 @@
         opacity: 1
       })
 
-      const beamCapGeometry = new THREE.BoxGeometry(1.45, 2, 1.45)
+      const beamCapGeometry = new THREE.BoxGeometry(2.2, 2, 2.2)
       const switchIndicatorGeo = new THREE.BoxGeometry(1, 1, 1)
 
       const createBeam = (config, isFinalStage = false) => {
@@ -1279,7 +1280,7 @@
           }
 
           beam0.addEventListener('collision', (other_object) => {
-            const theSwitchBeam = scene.children.find((obj) => obj.name === beam0.name)
+            const theSwitchBeam = beam0
             if (other_object.name === 'SPHERE0' && theSwitchBeam.switchBeam.rotated === false) {
               let theSwitchIndicator = beam0.switchBeam.switchIndicatorsGeos[theSwitchBeam.switchBeam.activeSwitchIndicators]
               window.appConfig.howlSounds.doors[theSwitchBeam.switchBeam.activeSwitchIndicators].play()
@@ -1316,7 +1317,7 @@
           theReceiver.position.y = beam0.position.y
           theReceiver.position.z = 5
 
-          let beamToRotate = () => { return scene.children.find((rec) => rec.name.indexOf(beam0.name) > -1) }
+          let beamToRotate = () => { return beam0 }
 
           setTimeout(() => {
             beam0.rotate = () => {
@@ -2010,7 +2011,7 @@
         bumper.__dirtyRotation = true
         scene.add(bumper)
         bumper.addEventListener('collision', (other_object) => {
-          if (other_object.name === 'SPHERE0') {
+          if (other_object.name === 'SPHERE0' && window.appConfig.pause === false) {
             collisionCallback(bumper, other_object)
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.bumperHit(bumper))
           }
@@ -2491,7 +2492,7 @@
             theSprite.scale.z = dMesh.scale.z * scaleAdj
             theSprite.position.x = dMesh.position.x + ellipseGeometry.vertices[i].x * s
             theSprite.position.y = dMesh.position.y + ellipseGeometry.vertices[i].y * s
-            theSprite.position.z = 0
+            theSprite.position.z = dMesh.position.z + ellipseGeometry.vertices[i].z * s
             theSprite.name = id
             spriteGroup.add(theSprite)
           }
@@ -3088,7 +3089,7 @@
               if (bumper.coinThrottle === undefined) {
                 bumper.coinThrottle = false
               }
-              if (otherObject.name === 'SPHERE0') {
+              if (otherObject.name === 'SPHERE0' && window.appConfig.pause === false) {
                 window.appConfig.stages.components.dematerializeMesh(bumper, 5)
                 if (bumper.coinThrottle === false) {
                   bumper.coinThrottle = true
@@ -3240,7 +3241,7 @@
                 updateName: window.appConfig.stages[window.appConfig.currentStage].name,
                 ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0)
               }))
-              let theSphere = scene.children.find(c => c.name === 'SPHERE0')
+              let theSphere = window.appConfig.sphere // scene.children.find(c => c.name === 'SPHERE0')
               window.appConfig.stages.components.dematerializeMesh(theSphere)
             },
             portalConfig: {
@@ -3361,8 +3362,8 @@
                 c.rotation.z = (Math.random() * 2) * Math.PI
               })
               bgGroup.activeCallback = () => {
-                if (scene.children.find((obj) => obj.name === "STAGE0BGGROUP")) {
-                  scene.children.find((obj) => obj.name === "STAGE0BGGROUP").children.forEach((c, ci) => {
+                if (bgGroup) {
+                  bgGroup.children.forEach((c, ci) => {
                     c.position.y += .005 * ci / 2
                     c.rotation.y += .005
                     if (c.position.y > 125) {
@@ -3759,8 +3760,8 @@
                 c.rotation.z = (Math.random() * 2) * Math.PI
               })
               bgGroup.activeCallback = () => {
-                if (scene.children.find((obj) => obj.name === "STAGE1BGGROUP")) {
-                  scene.children.find((obj) => obj.name === "STAGE1BGGROUP").children.forEach((c, ci) => {
+                if (bgGroup) {
+                  bgGroup.children.forEach((c, ci) => {
                     c.position.y += .005 * ci / 2
                     c.rotation.y += .005
                     if (c.position.y > 125) {
@@ -4199,8 +4200,8 @@
                 c.rotation.z = (Math.random() * 2) * Math.PI
               })
               bgGroup.activeCallback = () => {
-                if (scene.children.find((obj) => obj.name === "STAGE2BGGROUP")) {
-                  scene.children.find((obj) => obj.name === "STAGE2BGGROUP").children.forEach((c, ci) => {
+                if (bgGroup) {
+                  bgGroup.children.forEach((c, ci) => {
                     c.position.y += .005 * ci / 2
                     c.rotation.y += .005
                     if (c.position.y > 125) {
@@ -4683,8 +4684,8 @@
                 c.rotation.z = (Math.random() * 2) * Math.PI
               })
               bgGroup.activeCallback = () => {
-                if (scene.children.find((obj) => obj.name === "STAGE3BGGROUP")) {
-                  scene.children.find((obj) => obj.name === "STAGE3BGGROUP").children.forEach((c, ci) => {
+                if (bgGroup) {
+                  bgGroup.children.forEach((c, ci) => {
                     c.position.y += .005 * ci / 2
                     c.rotation.y += .005
                     if (c.position.y > 125) {
@@ -5410,8 +5411,8 @@
                 c.rotation.z = (Math.random() * 2) * Math.PI
               })
               bgGroup.activeCallback = () => {
-                if (scene.children.find((obj) => obj.name === "STAGE4BGGROUP")) {
-                  scene.children.find((obj) => obj.name === "STAGE4BGGROUP").children.forEach((c, ci) => {
+                if (bgGroup) {
+                  bgGroup.children.forEach((c, ci) => {
                     c.position.y += .005 * ci / 2
                     c.rotation.y += .005
                     if (c.position.y > 125) {
@@ -6262,8 +6263,8 @@
                 c.rotation.z = (Math.random() * 2) * Math.PI
               })
               bgGroup.activeCallback = () => {
-                if (scene.children.find((obj) => obj.name === "STAGE5BGGROUP")) {
-                  scene.children.find((obj) => obj.name === "STAGE5BGGROUP").children.forEach((c, ci) => {
+                if (bgGroup) {
+                  bgGroup.children.forEach((c, ci) => {
                     c.position.y += .005 * ci / 2
                     c.rotation.y += .005
                     if (c.position.y > 125) {
@@ -7028,11 +7029,13 @@
             ]
             if (suonousFeatureTypes.indexOf(collided_with.featureType) > -1) {
 
-              const sphere = scene.children.find(obj => {
-                if (obj.gameName === "SPHERE0" && obj.type === "Mesh") {
-                  return obj
-                }
-              })
+              // const sphere = scene.children.find(obj => {
+              //   if (obj.gameName === "SPHERE0" && obj.type === "Mesh") {
+              //     return obj
+              //   }
+              // })
+
+              const sphere = window.appConfig.sphere
 
               const i = Math.floor(collisionInc % playHowlOnCollision.length)
               if (!(lastCollisions[0] === collided_with.uuid && lastCollisions[1] === collided_with.uuid && lastCollisions[2] === collided_with.uuid)) {
@@ -7424,7 +7427,7 @@
         new THREE.Vector3(0, -100, 0),
         new THREE.Vector3(-100, 0, 0)
       ]
-      let theSphere = scene.children.find((obj) => obj.name === 'SPHERE0')
+      let theSphere = window.appConfig.sphere
       let bhSprites = bh.children[0].children
       bhSprites.forEach((bhSprite, bhi) => {
         bhSprite.position.x = lfo(2500 + (bhi * 75)) * (.4 + lfo(bhi * 1000))
@@ -7469,6 +7472,13 @@
           currentTime: 0,
           name: name,
           id: Math.round(Math.random() * 10000),
+          startedCallback: () => {
+            setTimeout(() => {
+              if(dMesh) {
+                scene.remove(dMesh)
+              }
+            }, 2600)
+          },
           activeCallback: (percentComplete) => {
             dMesh.children.forEach((pc, pci) => {
               pc.position.x += lfo(500 + dMeshLfoAdj + (pci + 1)) / 10
@@ -7739,7 +7749,7 @@
         window.appConfig.timer.pause()
 
         let thePortalMeshSpaceSphere = thePortalMesh.children.find(c => c.name === 'THE_SPACE_SPHERE')
-        let theSphere = scene.children.find((obj) => obj.name === 'SPHERE0')
+        let theSphere = window.appConfig.sphere
         // let theGradientCurtain = document.querySelector('#gradient-curtain')
         return {
           started: 0,
@@ -7753,6 +7763,9 @@
           startedCallback: (percentComplete) => {
             thePortalMesh.startedCallback(thePortalMesh, thePortalMesh.config, percentComplete)
             setTimeout(window.appConfig.howlSounds.circuitLine.play(), 750)
+            // setTimeout(() => {
+              window.appConfig.timers.activeTimers.push(window.appConfig.timers.showTransitionFX())
+            // }, 500)
           },
           activeCallback: (thePercentComplete) => {
             let percentComplete = thePercentComplete
@@ -7801,7 +7814,8 @@
           window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
         }
         let thePortalMeshSpaceSphere = thePortalMesh.children.find(c => c.name === 'THE_SPACE_SPHERE')
-        let theSphere = scene.children.find((obj) => obj.name === 'SPHERE0')
+        let theSphere = window.appConfig.sphere
+        // window.appConfig.sphere
         return {
           started: 0,
           ended: 0,
@@ -7892,7 +7906,7 @@
               )
 
               newPhysiObj.addEventListener('collision', function (other_object) {
-                if (other_object.name === 'SPHERE0') {
+                if (other_object.name === 'SPHERE0' && window.appConfig.pause === false) {
                   window.appConfig.stages.components.dematerializeMesh(newPhysiObj, 5)
                   let divisions = Math.round(Math.random() * ((bgObj.scale.x + bgObj.scale.y + bgObj.scale.z)) / 2)
                   let bgObjectScale = Math.ceil((bgObj.scale.x + bgObj.scale.y + bgObj.scale.z) / 3)
@@ -7918,7 +7932,7 @@
                       newPhysiObjCol.material.opacity = 1
                       window.appConfig.stages.components.dematerializeMesh(newPhysiObjCol, (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)))
                       newPhysiObjCol.addEventListener('collision', function (other_object2) {
-                        if (other_object2.name === 'SPHERE0') {
+                        if (other_object2.name === 'SPHERE0' && window.appConfig.pause === false) {
                           window.appConfig.stages.components.dematerializeMesh(newPhysiObjCol, (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)))
                           scene.remove(newPhysiObjCol)
                         }
@@ -7991,7 +8005,7 @@
                     z: 0
                   },
                   handleCollision: (c) => {
-                    if (c.name === 'SPHERE0') {
+                    if (c.name === 'SPHERE0' && window.appConfig.pause === false) {
                       window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN_GEM' + id)
                       let theIndicator = scene.children.find(cf => cf.name.indexOf('SB_INDICATOR') > -1 && cf.indicatorActive === undefined)
                       theIndicator.indicatorActive = true
@@ -8084,9 +8098,27 @@
           }
         }
       },
+      showTransitionFX: () => {
+        return {
+          started: 0,
+          ended: 0,
+          percentComplete: 0,
+          time: 2000,
+          timeLeft: 0,
+          currentTime: 0,
+          name: 'TRANSITION_FX' + Math.round(Math.random() * 10000),
+          id: Math.round(Math.random() * 10000),
+          activeCallback: (percentComplete) => {
+            if(percentComplete % 4 < 2) {
+              window.appConfig.stages.components.dematerializeMesh(camera, Math.random() * 15)
+              window.appConfig.stages.components.dematerializeMesh(camera, Math.random() * 5)
+            }
+          }
+        }
+      },
       countdownName: (config) => {
         window.appConfig.pauseSuperballs = true
-        let countdownSphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
+        let countdownSphere = window.appConfig.sphere
         return {
           started: 0,
           ended: 0,
@@ -8097,12 +8129,14 @@
           name: 'COUNTDOWNNAME',
           id: Math.round(Math.random() * 10000),
           startedCallback: (percentComplete) => {
+            // setTimeout(() => {
+              window.appConfig.timers.activeTimers.push(window.appConfig.timers.showTransitionFX())
+            // }, 500)
+
             if (config && config.updateName) {
               document.querySelector("#stage-name-title").innerText = config.updateName
             }
-
             showStageCountDownName()
-
             if (config && config.ballPosition) {
               window.appConfig.positionBall(config.ballPosition)
             } else {
@@ -8152,7 +8186,7 @@
         }
       },
       countdown2: (config) => {
-        let countdownSphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
+        let countdownSphere = window.appConfig.sphere
         return {
           started: 0,
           ended: 0,
@@ -8189,7 +8223,7 @@
         }
       },
       countdown1: (config) => {
-        let countdownSphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
+        let countdownSphere = window.appConfig.sphere
         return {
           started: 0,
           ended: 0,
@@ -8209,15 +8243,14 @@
           activeCallback: () => {
             if (config && config.ballPosition) {
               window.appConfig.positionBall(config.ballPosition)
-              countdownSphere
-                .setLinearVelocity(new THREE.Vector3(0, 0, 0));
-              countdownSphere
-                .setAngularVelocity(new THREE.Vector3(0, 0, 0));
-              scene.setGravity(new THREE.Vector3(0, 0, 0))
-
             } else {
               window.appConfig.positionBall(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition)
             }
+            countdownSphere
+              .setLinearVelocity(new THREE.Vector3(0, 0, 0));
+            countdownSphere
+              .setAngularVelocity(new THREE.Vector3(0, 0, 0));
+            scene.setGravity(new THREE.Vector3(0, 0, 0))
           }
         }
       },
@@ -8249,6 +8282,7 @@
             if (action && action.countdownStartCompletedCallback) {
               action.countdownStartCompletedCallback()
             }
+            
           },
         }
       },
@@ -8316,7 +8350,6 @@
             }
             if (action && action.autoStart === true) {
               window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName())
-
             }
             if (action && action.autoStart === false) {
               showStart()
@@ -8694,7 +8727,15 @@
         }
       }
 
-      const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0");
+      // let sphere
+      // if(window.appConfig.sphere) {
+      //   sphere = window.appConfig.sphere
+      // } else {
+      //   sphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
+      // }
+
+      let sphere = window.appConfig.sphere
+
       const pointLight0 = scene.children
         .find((obj) => obj.gameName === "POINTLIGHT0")
       const pointLight1 = scene.children
@@ -8903,6 +8944,12 @@
       })
 
 
+      if (window.appConfig.performanceLevel > 1) {
+        if (window.appConfig.stages[window.appConfig.currentStage].bgGroupActiveCallback) {
+          window.appConfig.stages[window.appConfig.currentStage].bgGroupActiveCallback()
+        }
+      }
+
       const sphereLinearVelocityLength = sphere.getLinearVelocity().length()
       const xCoinMod = 2 + sphereLinearVelocityLength * .03
       const yCoinMod = 3 + sphereLinearVelocityLength * .03
@@ -8921,11 +8968,6 @@
           }
         }
       );
-      if (window.appConfig.performanceLevel > 1) {
-        if (window.appConfig.stages[window.appConfig.currentStage].bgGroupActiveCallback) {
-          window.appConfig.stages[window.appConfig.currentStage].bgGroupActiveCallback()
-        }
-      }
 
       if (potentiallyGrabbedCoin !== undefined) {
         const coinValue = potentiallyGrabbedCoin.coinValue
@@ -9036,6 +9078,11 @@
 
         if (potentiallyGrabbedCoin.capturedCallback) {
           potentiallyGrabbedCoin.capturedCallback()
+          setTimeout(() => {
+            scene.remove(potentiallyGrabbedCoin)
+          }, 500)
+        } else {
+          scene.remove(potentiallyGrabbedCoin)
         }
       }
 
@@ -9067,7 +9114,7 @@
     }; // end of render
 
     window.appConfig.positionBall = (p) => {
-      const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
+      const sphere = window.appConfig.sphere // scene.children.find((obj) => obj.gameName === "SPHERE0")
       sphere.position.x = p.x
       sphere.position.y = p.y
       sphere.position.z = p.z
@@ -9075,7 +9122,7 @@
     }
 
     window.appConfig.positionCamera = (p) => {
-      const cam = scene.children.find((obj) => obj.type === "PerspectiveCamera")
+      const cam = window.appConfig.sphere // scene.children.find((obj) => obj.type === "PerspectiveCamera")
       cam.position.x = p.x
       cam.position.y = p.y
       cam.position.z = p.z
@@ -9182,17 +9229,17 @@
       scene.setGravity(new THREE.Vector3(0, -10, 0));
       window.appConfig.sphere.mass = window.appConfig.defaultSphereMass
       document.querySelector("#pause-button").disabled = false;
-      const theBall = scene.children.find(c => c.gameName === 'SPHERE0')
+      const theBall = window.appConfig.sphere //scene.children.find(c => c.gameName === 'SPHERE0')
       theBall.position.set(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition);
       if (window.appConfig.finalStageActiveTransforms === false) {
         window.appConfig.activeTransforms = window.appConfig.stages[window.appConfig.currentStage].defaultTransforms
       }
-      const sphere = scene.children.find(obj => {
-        if (obj.gameName === "SPHERE0" && obj.type === "Mesh") {
-          return obj
-        }
-      })
-      sphere.setLinearVelocity(new THREE.Vector3(0, -10, 0))
+      // const sphere = scene.children.find(obj => {
+      //   if (obj.gameName === "SPHERE0" && obj.type === "Mesh") {
+      //     return obj
+      //   }
+      // })
+      theBall.setLinearVelocity(new THREE.Vector3(0, -10, 0))
     };
 
     const pause = () => {

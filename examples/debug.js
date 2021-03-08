@@ -30,7 +30,7 @@ setTimeout(() => {
         if (window.appConfig.debug.currentDebugMeshIndex >= scene.children.length) {
             currentDebugMeshIndex = 4
         }
-        console.log(window.appConfig.debug)
+        // console.log(window.appConfig.debug)
         }
     
         const decrementDebugObject = () => {
@@ -38,7 +38,7 @@ setTimeout(() => {
         if (window.appConfig.debug.currentDebugMeshIndex <= 4) {
             currentDebugMeshIndex = scene.children.length
         }
-        console.log(window.appConfig.debug)
+        // console.log(window.appConfig.debug)
         }
     
         const translateObject = (e) => {
@@ -53,7 +53,7 @@ setTimeout(() => {
             objectToTranslate.position.x += dirs[e.keyCode].x
             objectToTranslate.position.y += dirs[e.keyCode].y
             objectToTranslate.__dirtyPosition = true
-            console.log(window.appConfig.debug)
+            // console.log(window.appConfig.debug)
             const queryNamePx = '#'+objectToTranslate.name+' .px'
             document.querySelector(queryNamePx).value = objectToTranslate.position.x
             const queryNamePy = '#'+objectToTranslate.name+' .py'
@@ -110,7 +110,7 @@ setTimeout(() => {
                 }
             })
             
-            console.log("SHOWDEBUGMENU")
+            // console.log("SHOWDEBUGMENU")
         }
 //            ${JSON.stringify(timer, null, 2)}
 
@@ -157,7 +157,7 @@ setTimeout(() => {
         }
 
         const toggleDebugBallGravity = () => {
-            console.log('toggle gravity lol...')
+            // console.log('toggle gravity lol...')
             // if(window.appConfig.debug.toggleGravity === false) {
             //     // scene.setGravity(new THREE.Vector3(0, 0, 0));
             //     // window.appConfig.sphere._physijs.mass = 0
@@ -187,11 +187,11 @@ setTimeout(() => {
     
         const keycodesArray = Object.values(window.appConfig.debug.debugKeyCodes)
         document.addEventListener('keydown', function (e) {
-            console.log(e.keyCode)
+            // console.log(e.keyCode)
         if (keycodesArray.indexOf(e.keyCode) > -1) {
-            console.log('Keydown event fired')
-            console.log(e)
-            console.log(e.keyCode)
+            // console.log('Keydown event fired')
+            // console.log(e)
+            // console.log(e.keyCode)
             keydownFunctions[e.keyCode](e)
         }
         });
