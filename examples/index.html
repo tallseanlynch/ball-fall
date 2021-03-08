@@ -7761,6 +7761,7 @@
           name: 'PORTAL_' + name + String(Math.round(Math.random() * 1000)),
           id: Math.round(Math.random() * 10000),
           startedCallback: (percentComplete) => {
+            window.appConfig.isPortalStart = true
             thePortalMesh.startedCallback(thePortalMesh, thePortalMesh.config, percentComplete)
             setTimeout(window.appConfig.howlSounds.circuitLine.play(), 750)
             // setTimeout(() => {
@@ -7826,7 +7827,6 @@
           name: 'PORTAL_REMOVAL_' + name + String(Math.round(Math.random() * 1000)),
           id: Math.round(Math.random() * 10000),
           startedCallback: (percentComplete) => {
-            window.appConfig.isPortalStart = true
             thePortalMesh.position.x = thePortalMesh.portalTarget.x
             thePortalMesh.position.y = thePortalMesh.portalTarget.y
           },
@@ -8277,7 +8277,6 @@
             }
             const noInitialBallZoom = true
             window.appConfig.gameModeFunctions.start(noInitialBallZoom)
-            window.appConfig.stageTotalTimePlayed = window.appConfig.easyTimerLength
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownStartFlash())
             if (action && action.countdownStartCompletedCallback) {
               action.countdownStartCompletedCallback()
@@ -8308,6 +8307,9 @@
           //   }
           // },
           completedCallback: () => {
+            if(window.appConfig.isPortalStart === false) {
+              window.appConfig.stageTotalTimePlayed = window.appConfig.easyTimerLength
+            }
             window.appConfig.isPortalStart = false
           }
         }
@@ -9049,7 +9051,7 @@
               window.appConfig.score.coins.toLocaleString('en-US').replace(',', comma())
           }
           const currentTime = window.appConfig.timer.getTimeValues()
-          const newTimer = new easytimer.Timer({ countdown: true, startValues: { minutes: currentTime.minutes, seconds: currentTime.seconds + 10, secondTenths: currentTime.secondTenths }, precision: "secondTenths" });
+          const newTimer = new easytimer.Timer({ countdown: true, startValues: { minutes: currentTime.minutes, seconds: currentTime.seconds + 15, secondTenths: currentTime.secondTenths }, precision: "secondTenths" });
           window.appConfig.stageTotalTimePlayed += 15
           window.appConfig.timer.stop()
           window.appConfig.timer.removeEventListener("secondTenthsUpdated", function (e) {
@@ -9102,6 +9104,9 @@
       }
 
       window.appConfig.coinFrameCheckNumber++
+
+      console.log(window.appConfig.isPortalStart, window.appConfig.stageTotalTimePlayed)
+
       if (window.appConfig.vr === true) {
         renderer.setAnimationLoop(render)
       } else {
