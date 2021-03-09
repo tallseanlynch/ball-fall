@@ -1105,7 +1105,7 @@
       camera.position.set(0, 10, 10);
       camera.lookAt(new THREE.Vector3(0, 10, 0));
       scene.add(camera);
-      camera.material = new THREE.MeshPhongMaterial({color: 0xffffff})
+      camera.material = new THREE.MeshPhongMaterial({ color: 0xffffff })
 
       light = new THREE.SpotLight(0xffffff);
       light.position.set(20, 80, 15);
@@ -7474,7 +7474,7 @@
           id: Math.round(Math.random() * 10000),
           startedCallback: () => {
             setTimeout(() => {
-              if(dMesh) {
+              if (dMesh) {
                 scene.remove(dMesh)
               }
             }, 2600)
@@ -7633,14 +7633,17 @@
             switchBeam.finalRotationZ = switchBeam.rotation.z + (.5 * Math.PI)
           },
           activeCallback: (percentComplete) => {
-            if (switchBeam.rotation.z > switchBeam.finalRotationZ || switchBeam.rotation.z + ((.5 * Math.PI) / 100) > switchBeam.finalRotationZ) {
-              switchBeam.rotation.z = switchBeam.finalRotationZ
-            } else {
-              switchBeam.rotation.z += (.5 * Math.PI) / 100
-            }
+            // if (switchBeam.rotation.z > switchBeam.finalRotationZ || switchBeam.rotation.z + ((.5 * Math.PI) / 100) > switchBeam.finalRotationZ) {
+            //   switchBeam.rotation.z = switchBeam.finalRotationZ
+            // } else {
+            //   switchBeam.rotation.z += (.5 * Math.PI) / 100
+            // }
+            switchBeam.rotation.z = switchBeam.originalRotationZ + ((.5 * Math.PI) * percentComplete)
             switchBeam.__dirtyRotation = true
           },
           completedCallback: (percentComplete) => {
+            switchBeam.rotation.z = switchBeam.finalRotationZ
+            switchBeam.__dirtyRotation = true
             window.appConfig.howlSounds.circuitReceiver.play()
           }
         }
@@ -7765,7 +7768,7 @@
             thePortalMesh.startedCallback(thePortalMesh, thePortalMesh.config, percentComplete)
             setTimeout(window.appConfig.howlSounds.circuitLine.play(), 750)
             // setTimeout(() => {
-              window.appConfig.timers.activeTimers.push(window.appConfig.timers.showTransitionFX())
+            window.appConfig.timers.activeTimers.push(window.appConfig.timers.showTransitionFX())
             // }, 500)
           },
           activeCallback: (thePercentComplete) => {
@@ -8109,7 +8112,7 @@
           name: 'TRANSITION_FX' + Math.round(Math.random() * 10000),
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
-            if(percentComplete % 4 < 2) {
+            if (percentComplete % 4 < 2) {
               window.appConfig.stages.components.dematerializeMesh(camera, Math.random() * 15)
               window.appConfig.stages.components.dematerializeMesh(camera, Math.random() * 5)
             }
@@ -8130,7 +8133,7 @@
           id: Math.round(Math.random() * 10000),
           startedCallback: (percentComplete) => {
             // setTimeout(() => {
-              window.appConfig.timers.activeTimers.push(window.appConfig.timers.showTransitionFX())
+            window.appConfig.timers.activeTimers.push(window.appConfig.timers.showTransitionFX())
             // }, 500)
 
             if (config && config.updateName) {
@@ -8281,7 +8284,7 @@
             if (action && action.countdownStartCompletedCallback) {
               action.countdownStartCompletedCallback()
             }
-            
+
           },
         }
       },
@@ -8307,7 +8310,7 @@
           //   }
           // },
           completedCallback: () => {
-            if(window.appConfig.isPortalStart === false) {
+            if (window.appConfig.isPortalStart === false) {
               window.appConfig.stageTotalTimePlayed = window.appConfig.easyTimerLength
             }
             window.appConfig.isPortalStart = false
@@ -9104,8 +9107,6 @@
       }
 
       window.appConfig.coinFrameCheckNumber++
-
-      console.log(window.appConfig.isPortalStart, window.appConfig.stageTotalTimePlayed)
 
       if (window.appConfig.vr === true) {
         renderer.setAnimationLoop(render)
