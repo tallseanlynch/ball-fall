@@ -3369,7 +3369,7 @@
                     if (c.position.y > 125) {
                       c.position.y = -125
                     }
-                    c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
+                    // c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
                   })
                 }
               }
@@ -3767,7 +3767,7 @@
                     if (c.position.y > 125) {
                       c.position.y = -125
                     }
-                    c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
+                    // c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
                   })
                 }
               }
@@ -4207,7 +4207,7 @@
                     if (c.position.y > 125) {
                       c.position.y = -125
                     }
-                    c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
+                    // c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
                   })
                 }
               }
@@ -4691,7 +4691,7 @@
                     if (c.position.y > 125) {
                       c.position.y = -125
                     }
-                    c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
+                    // c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
                   })
                 }
               }
@@ -5418,7 +5418,7 @@
                     if (c.position.y > 125) {
                       c.position.y = -125
                     }
-                    c.scale.set(lfo(500 + ci * 1500) * 5 + 5, lfo(500 + ci * 1750) * 5 + 5, lfo(500 + ci * 2000) * 5 + 5)
+                    // c.scale.set(lfo(500 + ci * 1500) * 5 + 5, lfo(500 + ci * 1750) * 5 + 5, lfo(500 + ci * 2000) * 5 + 5)
                   })
                 }
               }
@@ -6270,7 +6270,7 @@
                     if (c.position.y > 125) {
                       c.position.y = -125
                     }
-                    c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
+                    // c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
                   })
                 }
               }
@@ -7773,6 +7773,7 @@
           },
           activeCallback: (thePercentComplete) => {
             let percentComplete = thePercentComplete
+            thePortalMesh.material.opacity = .25 + .75 * thePercentComplete
             if (thePercentComplete < .51) {
               percentComplete = thePercentComplete * 2
               if (percentComplete > 1) {
