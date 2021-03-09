@@ -1,5 +1,9 @@
+const margin = 24
+
 setTimeout(() => {
     document.addEventListener("touchstart", (e) => {
+      if (e.touches[0].pageX < margin || e.touches[0].pageX > window.innerWidth - margin) return;
+      e.preventDefault();
       if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'click') && !window.appConfig.userHasEnded && window.appConfig.pause === false) {
         // const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
         const sphere = window.appConfig.sphere
@@ -25,6 +29,8 @@ setTimeout(() => {
     });
 
     document.addEventListener("mousedown", (e) => {
+      if (e.pageX < margin || e.pageX > window.innerWidth - margin) return;
+      e.preventDefault();
       if(window.appConfig.events.primaryInput === undefined) {
         window.appConfig.events.primaryInput = 'mouse'
       }
@@ -42,10 +48,19 @@ setTimeout(() => {
           window.appConfig.currentY - window.appConfig.prevY;
       }
     });
+
+    document.addEventListener("pause", () => {
+      if(window.appConfig.start === true && window.appConfig.userHasEnded === false && window.appConfig.pause === false) {
+        window.appConfig.gameModeFunctions.pause()
+      }
+    }, false);
+
     
       document.body.addEventListener(
         "touchmove",
         (e) => {
+          if (e.touches[0].pageX < margin || e.touches[0].pageX > window.innerWidth - margin) return;
+          e.preventDefault();
           if(window.appConfig.events.primaryInput !== 'click'){
             window.appConfig.events.primaryInput = 'touch'
           }
@@ -59,7 +74,6 @@ setTimeout(() => {
               e.touches[0].clientX - window.appConfig.prevX;
             window.appConfig.diffY =
               e.touches[0].clientY - window.appConfig.prevY;
-            e.preventDefault();
             setTimeout(() => {
               window.appConfig.events.touchmove.active = false
             }, window.appConfig.events.touchmove.throttle)
@@ -71,6 +85,8 @@ setTimeout(() => {
       document.body.addEventListener(
         "mousemove",
         (e) => {
+          if (e.pageX < margin || e.pageX > window.innerWidth - margin) return;
+          e.preventDefault();
           if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'mouse') && !window.appConfig.userHasEnded && window.appConfig.events.touchmove.active === false && window.appConfig.pause === false) {
             window.appConfig.events.touchmove.active = true
             window.appConfig.prevX = window.appConfig.currentX;
@@ -81,7 +97,6 @@ setTimeout(() => {
               e.clientX - window.appConfig.prevX;
             window.appConfig.diffY =
               e.clientY - window.appConfig.prevY;
-            e.preventDefault();
             setTimeout(() => {
               window.appConfig.events.touchmove.active = false
             }, window.appConfig.events.touchmove.throttle)
@@ -92,6 +107,8 @@ setTimeout(() => {
 
 
       document.addEventListener("mouseup", (e) => {
+        if (e.pageX < margin || e.pageX > window.innerWidth - margin) return;
+        e.preventDefault();
         if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'mouse') && !window.appConfig.userHasEnded && window.appConfig.pause === false) {
           window.appConfig.touchEnd = true;
           window.appConfig.touchStart = false;
@@ -103,6 +120,8 @@ setTimeout(() => {
       });
 
       document.addEventListener("touchend", (e) => {
+        if (e.touches[0].pageX < margin || e.touches[0].pageX > window.innerWidth - margin) return;
+        e.preventDefault();
         if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'touch') && !window.appConfig.userHasEnded && window.appConfig.pause === false) {
           window.appConfig.touchEnd = true;
           window.appConfig.touchStart = false;
@@ -114,6 +133,7 @@ setTimeout(() => {
       });
 
       document.querySelector('body').addEventListener("click", (e) => {
+          if (e.pageX < margin || e.pageX > window.innerWidth - margin) return;
           if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'click') && !window.appConfig.userHasEnded && window.appConfig.pause === false) {
             const sphere = window.appConfig.sphere //scene.children.find((obj) => obj.gameName === "SPHERE0")
             var inputVectorX = (e.clientX / window.innerWidth * 2) - 1;
