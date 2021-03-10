@@ -425,7 +425,20 @@
   <div id="tinted-overlay"></div>
   <div id="game-scoreboard" class="hide">
     <div id="timer"></div>
-    <div id="score"></div>
+    <div id="score">
+      <!-- <div id="score-millions-container"><span id="score-millions-text"></span></div>
+      <span id="score-millions-comma" class="comma">,</span>
+      <div id="score-thousands-container"><span id="score-thousands-text"></span>
+      </div>
+      <span id="score-thousands-comma" class="comma">,</span>
+      <div id="score-hundreds-container"><span id="score-hundreds-text"></span>
+      </div> -->
+      <span id="score-millions-text"></span>
+      <span id="score-millions-comma" class="comma">,</span>
+      <span id="score-thousands-text"></span>
+      <span id="score-thousands-comma" class="comma">,</span>
+      <span id="score-hundreds-text"></span>
+    </div>
   </div>
   <div id="sounds" class="hide menu-container">
     <div id="sounds-title" class="menu-title-text margin-bottom-3 font-e">Settings</div>
@@ -6993,7 +7006,7 @@
       timer.addEventListener("secondTenthsUpdated", function (e) {
         document.querySelector(
           "#timer"
-        ).innerText = `${timer
+        ).childNodes[0].data = `${timer
           .getTimeValues()
           .toString(["minutes", "seconds", "secondTenths"])}`;
       });
@@ -8840,7 +8853,7 @@
                   window.appConfig.stages.components.dematerializeMesh(sc, 5)
                   scene.remove(sc)
                   window.appConfig.score.coins += 25000
-                  document.querySelector("#score").innerHTML = window.appConfig.score.coins.toLocaleString('en-US').replace(',', comma())
+                  window.appConfig.gameModeFunctions.updateGameScore({ score: window.appConfig.score.coins })
                 }
               }
             })
@@ -8943,7 +8956,7 @@
       if (window.appConfig.userHasEnded) {
         window.appConfig.sphere
           .setLinearVelocity(new THREE.Vector3(0, 0, 0));
-          window.appConfig.sphere
+        window.appConfig.sphere
           .setAngularVelocity(new THREE.Vector3(0, 0, 0));
       }
       window.appConfig.crystalMaterials.forEach(cm => {
@@ -9006,8 +9019,7 @@
           window.appConfig.stages.components.dematerializeMesh(potentiallyGrabbedCoin)
           potentiallyGrabbedCoin.visible = false
           window.appConfig.coins.splice(coinIndexToRemove, 1);
-          document.querySelector("#score").innerHTML =
-            window.appConfig.score.coins.toLocaleString('en-US').replace(',', comma())
+          window.appConfig.gameModeFunctions.updateGameScore({ score: window.appConfig.score.coins })
           if (potentiallyGrabbedCoin.coinType === 'single' && window.appConfig.sfxTurnedOn) {
             window.appConfig.howlSounds.coins.sCoin[Math.floor(Math.random() * 2.99)].play()
           }
@@ -9059,8 +9071,7 @@
             setTimeout(() => {
               window.appConfig.coinScoreThrottle = false
             }, 250)
-            document.querySelector("#score").innerHTML =
-              window.appConfig.score.coins.toLocaleString('en-US').replace(',', comma())
+            window.appConfig.gameModeFunctions.updateGameScore({ score: window.appConfig.score.coins })
           }
           const currentTime = window.appConfig.timer.getTimeValues()
           const newTimer = new easytimer.Timer({ countdown: true, startValues: { minutes: currentTime.minutes, seconds: currentTime.seconds + 15, secondTenths: currentTime.secondTenths }, precision: "secondTenths" });
@@ -9069,7 +9080,7 @@
           window.appConfig.timer.removeEventListener("secondTenthsUpdated", function (e) {
             document.querySelector(
               "#timer"
-            ).innerText = `${window.appConfig.timer
+            ).childNodes[0].data = `${window.appConfig.timer
               .getTimeValues()
               .toString(["minutes", "seconds", "secondTenths"])}`;
           });
@@ -9081,7 +9092,7 @@
           newTimer.addEventListener("secondTenthsUpdated", function (e) {
             document.querySelector(
               "#timer"
-            ).innerText = `${window.appConfig.timer
+            ).childNodes[0].data = `${window.appConfig.timer
               .getTimeValues()
               .toString(["minutes", "seconds", "secondTenths"])}`;
           });
@@ -9297,7 +9308,7 @@
       window.appConfig.sprites.forEach(sprite => {
         sprite.reset()
       })
-      document.querySelector("#score").innerText = 0
+      window.appConfig.gameModeFunctions.updateGameScore({ score: 0 })
       showHTMLElements([]);
       document.querySelector("#curtain").classList.remove("opacity-0");
       const newTimer = new easytimer.Timer({ countdown: true, startValues: { seconds: window.appConfig.easyTimerLength }, precision: "secondTenths" });
@@ -9317,7 +9328,7 @@
       newTimer.addEventListener("secondTenthsUpdated", function (e) {
         document.querySelector(
           "#timer"
-        ).innerText = `${window.appConfig.timer
+        ).childNodes[0].data = `${window.appConfig.timer
           .getTimeValues()
           .toString(["minutes", "seconds", "secondTenths"])}`;
       });
@@ -9328,11 +9339,62 @@
       window.appConfig.timer.pause();
       window.appConfig.activeTransforms = []
     };
-
+    window.appConfig.scoreSelectors = {
+      hundreds: document.querySelector("#score-hundreds-text"),
+      thousands: document.querySelector("#score-thousands-text"),
+      millions: document.querySelector("#score-millions-text"),
+      thousandsComma: document.querySelector("#score-thousands-comma"),
+      millionsComma: document.querySelector("#score-millions-comma"),
+      timer: document.querySelector("#timer")
+    }
+    window.appConfig.scoreSelectors.hundreds.textContent = "0"
+    window.appConfig.scoreSelectors.thousands.textContent = " "
+    window.appConfig.scoreSelectors.millions.textContent = " "
+    window.appConfig.scoreSelectors.timer.textContent = " "
     window.appConfig.gameModeFunctions = {
       start: start,
       reset: reset,
-      pause: pause
+      pause: pause,
+      updateGameTime: (config) => {
+        if (config && config.time) {
+
+        }
+      },
+      updateGameScore: (config) => {
+        // document.querySelector("#score").innerHTML =
+        //   window.appConfig.score.coins.toLocaleString('en-US').replace(',', comma())
+        if (config && config.score) {
+          const scoreString = config.score.toString()
+          const scoreLength = scoreString.length
+          const sl0 = scoreString[scoreLength - 1] !== undefined ? scoreString[scoreLength - 1] : " "
+          const sl1 = scoreString[scoreLength - 2] !== undefined ? scoreString[scoreLength - 2] : " "
+          const sl2 = scoreString[scoreLength - 3] !== undefined ? scoreString[scoreLength - 3] : " "
+          const hVal = sl2 + sl1 + sl0
+          window.appConfig.scoreSelectors.hundreds.childNodes[0].data = hVal
+          const sl3 = scoreString[scoreLength - 4] !== undefined ? scoreString[scoreLength - 4] : " "
+          const sl4 = scoreString[scoreLength - 5] !== undefined ? scoreString[scoreLength - 5] : " "
+          const sl5 = scoreString[scoreLength - 6] !== undefined ? scoreString[scoreLength - 6] : " "
+          const tVal = sl5 + sl4 + sl3
+          window.appConfig.scoreSelectors.thousands.childNodes[0].data = tVal
+          const sl6 = scoreString[scoreLength - 7] !== undefined ? scoreString[scoreLength - 7] : " "
+          const sl7 = scoreString[scoreLength - 8] !== undefined ? scoreString[scoreLength - 8] : " "
+          const sl8 = scoreString[scoreLength - 9] !== undefined ? scoreString[scoreLength - 9] : " "
+          const mVal = sl8 + sl7 + sl6
+          window.appConfig.scoreSelectors.millions.childNodes[0].data = mVal
+          if (tVal === "   ") {
+            window.appConfig.scoreSelectors.thousandsComma.classList.add("hide")
+          } else {
+            window.appConfig.scoreSelectors.thousandsComma.classList.remove("hide")
+
+          }
+          if (mVal === "   ") {
+            window.appConfig.scoreSelectors.millionsComma.classList.add("hide")
+          } else {
+            window.appConfig.scoreSelectors.millionsComma.classList.remove("hide")
+
+          }
+        }
+      }
     }
     const colorLightnessLfo = (baseColor, lfoMod) => {
       const color = new THREE.Color(baseColor)
