@@ -967,7 +967,7 @@
     var initScene,
       render,
       _boxes = [],
-      spawnBox,
+      initGame,
       loader,
       renderer,
       render_stats,
@@ -1107,6 +1107,17 @@
       scene.add(camera);
       camera.material = new THREE.MeshPhongMaterial({ color: 0xffffff })
 
+      let pixelRatio = window.devicePixelRatio
+      let AA = true
+      if (pixelRatio > 1) {
+        AA = false
+      }
+
+      // this.renderer = new THREE.WebGLRenderer({
+      //   antialias: AA,
+      //   powerPreference: "high-performance",
+      // })
+
       light = new THREE.SpotLight(0xffffff);
       light.position.set(20, 80, 15);
       light.target.position.copy(scene.position);
@@ -1126,6 +1137,7 @@
       pointLight0.power = 5;
       pointLight0.decay = 1;
       pointLight0.distance = 25;
+      window.appConfig.pointLight0 = pointLight0
       scene.add(pointLight0);
 
       const pointLight1 = new THREE.PointLight(getRandomColor(), 1);
@@ -1133,6 +1145,7 @@
       pointLight1.power = 5;
       pointLight1.decay = 1;
       pointLight1.distance = 25;
+      window.appConfig.pointLight1 = pointLight1
       scene.add(pointLight1);
 
       const pointLight2 = new THREE.PointLight(getRandomColor(), 1);
@@ -1140,6 +1153,7 @@
       pointLight2.power = 5;
       pointLight2.decay = 1;
       pointLight2.distance = 25;
+      window.appConfig.pointLight2 = pointLight2
       scene.add(pointLight2);
 
       const pointLight3 = new THREE.PointLight(getRandomColor(), 1);
@@ -1147,6 +1161,7 @@
       pointLight3.power = 5;
       pointLight3.decay = 1;
       pointLight3.distance = 25;
+      window.appConfig.pointLight3 = pointLight3
       scene.add(pointLight3);
 
       function onWindowResize(event) {
@@ -2463,6 +2478,8 @@
 
 
 
+      const theSpritePlaneGeometry = new THREE.PlaneGeometry(.25, .25, 1, 1)
+
       const dematerializeMesh = (dMesh, scaleAdj = 2) => {
         let theDSpriteMaterial = new THREE.MeshPhongMaterial({
           color: new THREE.Color().copy(dMesh.material.color),
@@ -2479,7 +2496,7 @@
           var ellipseGeometry = new THREE.CircleGeometry(s, n)
 
           let spritePlane = () => new THREE.Mesh(
-            new THREE.PlaneGeometry(.25, .25, 1, 1),
+            theSpritePlaneGeometry,
             theDSpriteMaterial
           )
 
@@ -6961,7 +6978,7 @@
       window.appConfig.stages.components.stageInit()
       window.appConfig.stages[window.appConfig.currentStage].init()
 
-      spawnBox();
+      initGame();
 
       if (window.appConfig.vr === true) {
         renderer.setAnimationLoop(render)
@@ -6986,7 +7003,7 @@
       document.querySelector("#curtain").classList.add("opacity-0");
     };
 
-    spawnBox = (function () {
+    initGame = (function () {
       var sphere_geometry = new THREE.SphereGeometry(1, 32, 32),
         collisionInc = 0,
         lastCollisions = ["", "", ""],
@@ -8741,30 +8758,13 @@
         }
       }
 
-      // let sphere
-      // if(window.appConfig.sphere) {
-      //   sphere = window.appConfig.sphere
-      // } else {
-      //   sphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
-      // }
-
-      let sphere = window.appConfig.sphere
-
-      const pointLight0 = scene.children
-        .find((obj) => obj.gameName === "POINTLIGHT0")
-      const pointLight1 = scene.children
-        .find((obj) => obj.gameName === "POINTLIGHT1")
-      const pointLight2 = scene.children
-        .find((obj) => obj.gameName === "POINTLIGHT2")
-      const pointLight3 = scene.children
-        .find((obj) => obj.gameName === "POINTLIGHT3")
       if (
         window.appConfig.start === false &&
         window.appConfig.pause === false
       ) {
-        sphere
+        window.appConfig.sphere
           .setLinearVelocity(new THREE.Vector3(0, 0, 0));
-        sphere
+        window.appConfig.sphere
           .setAngularVelocity(new THREE.Vector3(0, 0, 0));
         scene.setGravity(new THREE.Vector3(0, 0, 0))
       } else {
@@ -8783,32 +8783,32 @@
           if (newVelocityLength > speedClamp) {
             newVelocity = newVelocity.multiplyScalar(speedClamp / newVelocityLength)
           }
-          sphere
+          window.appConfig.sphere
             .setLinearVelocity(newVelocity)
         }
       }
 
-      pointLight0.position.set(
-        sphere.position.x,
-        sphere.position.y + 1,
-        sphere.position.z
+      window.appConfig.pointLight0.position.set(
+        window.appConfig.sphere.position.x,
+        window.appConfig.sphere.position.y + 1,
+        window.appConfig.sphere.position.z
       );
 
-      pointLight1.position.set(
-        sphere.position.x * lfo(1000),
-        sphere.position.y * lfo(750),
+      window.appConfig.pointLight1.position.set(
+        window.appConfig.sphere.position.x * lfo(1000),
+        window.appConfig.sphere.position.y * lfo(750),
         10
       );
 
-      pointLight2.position.set(
-        sphere.position.x * lfo(777),
-        sphere.position.y * lfo(1212),
+      window.appConfig.pointLight2.position.set(
+        window.appConfig.sphere.position.x * lfo(777),
+        window.appConfig.sphere.position.y * lfo(1212),
         10
       );
 
-      pointLight3.position.set(
-        sphere.position.x * lfo(750),
-        sphere.position.y * lfo(500),
+      window.appConfig.pointLight3.position.set(
+        window.appConfig.sphere.position.x * lfo(750),
+        window.appConfig.sphere.position.y * lfo(500),
         10
       );
 
@@ -8863,7 +8863,7 @@
             p.material.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
           }
           if ((p.portalConfig && p.portalConfig.active === true) || !p.portalConfig) {
-            if (sphere.position.distanceTo(p.position) < 7.5 && p.activated === false) {
+            if (window.appConfig.sphere.position.distanceTo(p.position) < 7.5 && p.activated === false) {
               p.activated = true
               window.appConfig.timers.activeTimers.push(
                 window.appConfig.timers.activatePortal(p)
@@ -8893,7 +8893,7 @@
       }
 
       if (window.appConfig.performanceLevel > 0 && currentTime % 5 < 1) {
-        const percentFinished = Math.abs(sphere.position.y) / 375;
+        const percentFinished = Math.abs(window.appConfig.sphere.position.y) / 375;
         window.appConfig.percentFinished = percentFinished;
         document.body.style.background =
           window.appConfig.stages.components.background(
@@ -8904,7 +8904,7 @@
 
       if (window.appConfig.stages[window.appConfig.currentStage].data.remotes) {
         window.appConfig.stages[window.appConfig.currentStage].data.remotes.forEach((r, ri) => {
-          if (r.transmitter.transmitterActive === false && r.transmitter.position.distanceTo(sphere.position) < 5) {
+          if (r.transmitter.transmitterActive === false && r.transmitter.position.distanceTo(window.appConfig.sphere.position) < 5) {
             r.transmitter.transmitterActive = true
             window.appConfig.timers.activeTimers.push(
               window.appConfig.timers.activateRemoteSwitch(r)
@@ -8928,8 +8928,8 @@
         }
       }
 
-      camera.position.x = sphere.position.x;
-      camera.position.y = sphere.position.y;
+      camera.position.x = window.appConfig.sphere.position.x;
+      camera.position.y = window.appConfig.sphere.position.y;
 
 
       if (!window.appConfig.debug || window.appConfig.debug.previousCameraZToggle === false) {
@@ -8941,9 +8941,9 @@
       }
 
       if (window.appConfig.userHasEnded) {
-        sphere
+        window.appConfig.sphere
           .setLinearVelocity(new THREE.Vector3(0, 0, 0));
-        sphere
+          window.appConfig.sphere
           .setAngularVelocity(new THREE.Vector3(0, 0, 0));
       }
       window.appConfig.crystalMaterials.forEach(cm => {
@@ -8964,7 +8964,7 @@
         }
       }
 
-      const sphereLinearVelocityLength = sphere.getLinearVelocity().length()
+      const sphereLinearVelocityLength = window.appConfig.sphere.getLinearVelocity().length()
       const xCoinMod = 2 + sphereLinearVelocityLength * .03
       const yCoinMod = 3 + sphereLinearVelocityLength * .03
 
@@ -8974,9 +8974,9 @@
           if (coinIndex % (window.appConfig.coinFrameCheckNumber % 5) < 1) {
             coinIndexToRemove = coinIndex;
             if (
-              Math.abs(coin.position.x - sphere.position.x) <
+              Math.abs(coin.position.x - window.appConfig.sphere.position.x) <
               coin.scale.x * xCoinMod &&
-              Math.abs(coin.position.y - sphere.position.y) < coin.scale.x * yCoinMod) {
+              Math.abs(coin.position.y - window.appConfig.sphere.position.y) < coin.scale.x * yCoinMod) {
               return true
             } else return false;
           }
