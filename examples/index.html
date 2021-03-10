@@ -726,6 +726,10 @@
       ]
     }
 
+    window.appConfig.originVector = new THREE.Vector3(0,0,0)
+    window.appConfig.gravityVector = new THREE.Vector3(0, -10, 0)
+    window.appConfig.spriteVector = new THREE.Vector3(0, 0, 0)
+    window.appConfig.blackHoleVector = new THREE.Vector3(0, 0, 0)
     const stageProperties = {
       STAGE0: {
         backgroundColors: [
@@ -997,6 +1001,7 @@
       [new THREE.Color("#f49ac1"), new THREE.Color("#f06eaa"), new THREE.Color("#ec008c"), new THREE.Color("#9e005d"), new THREE.Color("#7b0046")],//14 magenta
       [new THREE.Color("#f5989d"), new THREE.Color("#f26d7d"), new THREE.Color("#ed145b"), new THREE.Color("#9e0039"), new THREE.Color("#7a0026")]//15 cool red
     ]
+
     let crystalLoader
     const startCrystalLoader = () => {
       crystalLoader = new THREE.GLTFLoader();
@@ -1074,7 +1079,7 @@
 
       scene = new Physijs.Scene();
 
-      scene.setGravity(new THREE.Vector3(0, -10, 0));
+      scene.setGravity(window.appConfig.gravityVector);
 
       scene.addEventListener("update", function () {
         scene.simulate(undefined, 1);
@@ -1724,6 +1729,12 @@
       const teardownStage = (stage) => {
         window.appConfig.coins = []
         const uuidsToRemove = []
+        let stageKeys = Object.keys(window.appConfig.stages[stage])
+        stageKeys.forEach(key => {
+          if(window.appConfig.stages[stage][key] !== undefined && window.appConfig.stages[stage][key].position && window.appConfig.stages[stage][key].position.uuid) {
+            delete window.appConfig.stages[stage][key]
+          }
+        })
         scene.children.forEach(c => {
           if ((c.name.indexOf(stage) > -1) || (c.featureType && c.featureType === "COIN")) {
             uuidsToRemove.push(c.uuid)
@@ -1731,8 +1742,36 @@
         })
         uuidsToRemove.forEach(uuid => {
           const foundIt = scene.children.find(c => c.uuid === uuid)
+          if(foundIt.mass !== undefined && foundIt.geometry && foundIt.geometry.type === 'BoxGeometry' && foundIt.children.length > 0) {
+            console.log('foundIt parent')
+            foundIt.children.forEach(bc => {
+              if(bc.mass !== undefined && bc.geometry && bc.geometry.type === 'BoxGeometry') {
+                console.log('foundIt child')
+                bc.geometry.dispose()
+                bc.material.dispose()
+                bc.removeEventListener('collision', window.appConfig.handleCollision)
+                foundIt.remove(bc)
+              }
+            })
+            // foundIt.geometry.dispose()
+          }
+          if(foundIt.type === 'Group' && foundIt.name.indexOf('CRYSTAL') > -1 && foundIt.children.length > 0) {
+            console.log('found crystal')
+            foundIt.children.forEach(gc => {
+              foundIt.remove(gc)
+              gc.material.dispose()
+              gc.geometry.dispose()
+            })
+          }
           scene.remove(foundIt)
+          if(foundIt.mass && foundIt.geometry && foundIt.geometry.type === 'BoxGeometry') {
+            console.log('foundIt single beam')
+            foundIt.geometry.dispose()
+            foundIt.material.dispose()
+          }
         })
+        renderer.renderLists.dispose();
+        renderer.dispose()
       }
 
       const registerStageObject = (stage, object) => {
@@ -3326,7 +3365,7 @@
             xAdj: -60,
             vAdj: -70,
             sAdj: 2,
-            startingPosition: new THREE.Vector3(0, 0, 0),
+            startingPosition: window.appConfig.originVector,
             sapphirePortalPosition: { x: 95, y: 95, z: -5 }
           },
           name: stageProperties.STAGE0.name,
@@ -3713,7 +3752,7 @@
             xAdj: -60,
             vAdj: -70,
             sAdj: 2,
-            startingPosition: new THREE.Vector3(0, 0, 0),
+            startingPosition: window.appConfig.originVector,
             sapphirePortalPosition: { x: 0, y: 100, z: -5 }
           },
           number: stageProperties.STAGE1.number,
@@ -4155,7 +4194,7 @@
             xAdj: -60,
             vAdj: -70,
             sAdj: 2,
-            startingPosition: new THREE.Vector3(0, 0, 0),
+            startingPosition: window.appConfig.originVector,
             sapphirePortalPosition: { x: 0, y: 72.5, z: -5 }
           },
           backgroundColors: stageProperties.STAGE2.backgroundColors,
@@ -4614,7 +4653,7 @@
             xAdj: -60,
             vAdj: -70,
             sAdj: 2,
-            startingPosition: new THREE.Vector3(0, 0, 0),
+            startingPosition: window.appConfig.originVector,
             sapphirePortalPosition: { x: 148.75, y: 25, z: -5 }
           },
           backgroundColors: stageProperties.STAGE3.backgroundColors,
@@ -5328,7 +5367,7 @@
             xAdj: -60,
             vAdj: -70,
             sAdj: 2,
-            startingPosition: new THREE.Vector3(0, 0, 0),
+            startingPosition: window.appConfig.originVector,
             sapphirePortalPosition: { x: 120, y: 0, z: -5 }
           },
           number: stageProperties.STAGE4.number,
@@ -6217,7 +6256,7 @@
             xAdj: -60,
             vAdj: -70,
             sAdj: 2,
-            startingPosition: new THREE.Vector3(0, 0, 0),
+            startingPosition: window.appConfig.originVector,
             sapphirePortalPosition: { x: 0, y: -137.5, z: -5 }
           },
           backgroundColors: stageProperties.STAGE5.backgroundColors,
@@ -7075,6 +7114,7 @@
             }
           }
         }
+        window.appConfig.handleCollision = handleCollision
 
       const sphereTeleportationGroup = new THREE.Group()
       const sphereTeleportationGeometry = new THREE.TetrahedronGeometry(16)
@@ -7309,7 +7349,7 @@
 
           sprite0.activeCallback = () => {
             setSpriteSpherical(sprite0)
-            const spriteVector3 = new THREE.Vector3()
+            const spriteVector3 = window.appConfig.spriteVector
             spriteVector3.setFromSpherical(sprite0.spherical)
             spriteVector3.x = spriteVector3.x + window.appConfig.sphere.position.x
             spriteVector3.y = spriteVector3.y + window.appConfig.sphere.position.y
@@ -7444,13 +7484,14 @@
       window.appConfig.debugger = !window.appConfig.debugger
     }
 
+    const anchors = [
+      new THREE.Vector3(0, 100, 0),
+      new THREE.Vector3(100, 0, 0),
+      new THREE.Vector3(0, -100, 0),
+      new THREE.Vector3(-100, 0, 0)
+    ]
+
     window.appConfig.handleBlackHole = (bh, bhIndex) => {
-      const anchors = [
-        new THREE.Vector3(0, 100, 0),
-        new THREE.Vector3(100, 0, 0),
-        new THREE.Vector3(0, -100, 0),
-        new THREE.Vector3(-100, 0, 0)
-      ]
       let theSphere = window.appConfig.sphere
       let bhSprites = bh.children[0].children
       bhSprites.forEach((bhSprite, bhi) => {
@@ -7470,7 +7511,8 @@
           let sphereLinearVelocity = theSphere._physijs.linearVelocity
           let velocityRise = bh.position.y - theSphere.position.y
           let velocityRun = bh.position.x - theSphere.position.x
-          let velocityAdj = new THREE.Vector3(velocityRun, velocityRise, 0).normalize().multiplyScalar(distanceToSphere / 4)
+          window.appConfig.blackHoleVector.set(velocityRun, velocityRise, 0)
+          let velocityAdj = window.appConfig.blackHoleVector.normalize().multiplyScalar(distanceToSphere / 4)
           let newVelocity = sphereLinearVelocity.add(velocityAdj)
           theSphere.setLinearVelocity(newVelocity)
         }
@@ -7979,7 +8021,7 @@
                         }, superSounds * 50)
                       }
 
-                      bgObjectScale < 2.25 && newPhysiObjCol.setLinearVelocity(new THREE.Vector3().clone(other_object._physijs.linearVelocity))
+                      // bgObjectScale < 2.25 && newPhysiObjCol.setLinearVelocity(new THREE.Vector3().clone(other_object._physijs.linearVelocity))
 
                     }
                   }
@@ -7997,7 +8039,7 @@
               window.appConfig.currentStage + "_GEM_STAGE_WALLS"
             );
             scene.add(gemStageWalls);
-            const originCoor = new THREE.Vector3(0, 0, 0)
+            const originCoor = window.appConfig.originVector
             theBgObjects.forEach(bgO => {
               if (bgO.position.distanceTo(originCoor) < 25) {
                 bgO.position.x = bgO.position.x * 2
@@ -8197,10 +8239,10 @@
               window.appConfig.positionBall(config.ballPosition)
 
               countdownSphere
-                .setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                .setLinearVelocity(window.appConfig.originVector);
               countdownSphere
-                .setAngularVelocity(new THREE.Vector3(0, 0, 0));
-              scene.setGravity(new THREE.Vector3(0, 0, 0))
+                .setAngularVelocity(window.appConfig.originVector);
+              scene.setGravity(window.appConfig.originVector)
 
             } else {
               window.appConfig.positionBall(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition)
@@ -8234,10 +8276,10 @@
             if (config && config.ballPosition) {
               window.appConfig.positionBall(config.ballPosition)
               countdownSphere
-                .setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                .setLinearVelocity(window.appConfig.originVector);
               countdownSphere
-                .setAngularVelocity(new THREE.Vector3(0, 0, 0));
-              scene.setGravity(new THREE.Vector3(0, 0, 0))
+                .setAngularVelocity(window.appConfig.originVector);
+              scene.setGravity(window.appConfig.originVector)
 
             } else {
               window.appConfig.positionBall(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition)
@@ -8276,10 +8318,10 @@
               window.appConfig.positionBall(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition)
             }
             countdownSphere
-              .setLinearVelocity(new THREE.Vector3(0, 0, 0));
+              .setLinearVelocity(window.appConfig.originVector);
             countdownSphere
-              .setAngularVelocity(new THREE.Vector3(0, 0, 0));
-            scene.setGravity(new THREE.Vector3(0, 0, 0))
+              .setAngularVelocity(window.appConfig.originVector);
+            scene.setGravity(window.appConfig.originVector)
           }
         }
       },
@@ -8385,7 +8427,7 @@
             if (action && action.autoStart === false) {
               showStart()
             }
-            scene.setGravity(new THREE.Vector3(0, 0, 0));
+            scene.setGravity(window.appConfig.originVector);
             window.appConfig.sphere.mass = 0
             document.querySelector('#stage-number').innerHTML = 'ZONE ' + window.appConfig.stages[window.appConfig.currentStage].number
             document.querySelector('#stage-name-title').innerHTML = window.appConfig.stages[window.appConfig.currentStage].name
@@ -8660,8 +8702,9 @@
     const appTimers = window.appConfig.timers
     window.appConfig.coinFrameCheckNumber = 0
 
-
+    let renderVector = new THREE.Vector3(0, 0, 0)
     render = function () {
+      renderVector.set(0, 0, 0)
       currentTime = new Date().getTime();
 
       if (!window.appConfig.stages[window.appConfig.currentStage].data.started) {
@@ -8763,21 +8806,20 @@
         window.appConfig.pause === false
       ) {
         window.appConfig.sphere
-          .setLinearVelocity(new THREE.Vector3(0, 0, 0));
+          .setLinearVelocity(window.appConfig.originVector);
         window.appConfig.sphere
-          .setAngularVelocity(new THREE.Vector3(0, 0, 0));
-        scene.setGravity(new THREE.Vector3(0, 0, 0))
+          .setAngularVelocity(window.appConfig.originVector);
+        scene.setGravity(window.appConfig.originVector)
       } else {
         if (
           window.appConfig.touchStart === true &&
           window.appConfig.touchEnd === false
         ) {
           const scaleV = 0.5;
-          let newVelocity = new THREE.Vector3(
-            window.appConfig.diffX * scaleV,
+          renderVector.set(window.appConfig.diffX * scaleV,
             window.appConfig.diffY * -scaleV,
-            0
-          )
+            0)
+          let newVelocity = renderVector
           const speedClamp = 50
           const newVelocityLength = newVelocity.length()
           if (newVelocityLength > speedClamp) {
@@ -8832,7 +8874,8 @@
             window.appConfig.superballMaterialIncrement++
             sphereCoins.forEach(sc => {
               if (sc.setLinearVelocity) {
-                sc.setLinearVelocity(new THREE.Vector3(Math.random() * 25 - 12.5, Math.random() * 25 - 12.5, 0).add(sc._physijs.linearVelocity))
+                renderVector.set(Math.random() * 25 - 12.5, Math.random() * 25 - 12.5, 0)
+                sc.setLinearVelocity(renderVector.add(sc._physijs.linearVelocity))
                 sc.material.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
                 sc.children[0].material.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
                 if (Math.abs(sc.position.z) > 15 && sc.scored === undefined) {
@@ -8852,8 +8895,8 @@
         window.appConfig.pauseStoppedObjects = true
         scene.children.forEach(c => {
           if (c.name && (c.name.indexOf('SPHERECOIN') > -1 || c.name.indexOf('FINALSTAGE_BUMPER') > -1) && c.setLinearVelocity) {
-            c.setLinearVelocity(new THREE.Vector3(0, 0, 0))
-            c.setAngularVelocity(new THREE.Vector3(0, 0, 0))
+            c.setLinearVelocity(window.appConfig.originVector)
+            c.setAngularVelocity(window.appConfig.originVector)
           }
         })
       }
@@ -8942,9 +8985,9 @@
 
       if (window.appConfig.userHasEnded) {
         window.appConfig.sphere
-          .setLinearVelocity(new THREE.Vector3(0, 0, 0));
+          .setLinearVelocity(window.appConfig.originVector);
           window.appConfig.sphere
-          .setAngularVelocity(new THREE.Vector3(0, 0, 0));
+          .setAngularVelocity(window.appConfig.originVector);
       }
       window.appConfig.crystalMaterials.forEach(cm => {
         const newHsl = colorLightnessLfo(cm.pulsing.color, 268)
@@ -9156,7 +9199,7 @@
     const startStageEnd = () => {
       window.appConfig.userHasEnded = true
 
-      scene.setGravity(new THREE.Vector3(0, 0, 0));
+      scene.setGravity(window.appConfig.originVector);
       window.appConfig.sphere.mass = 0
 
       window.appConfig.timers.activeTimers.push(window.appConfig.timers.stageResultsBallZoom())
@@ -9241,7 +9284,7 @@
       }
       window.appConfig.timer.start();
 
-      scene.setGravity(new THREE.Vector3(0, -10, 0));
+      scene.setGravity(window.appConfig.gravityVector);
       window.appConfig.sphere.mass = window.appConfig.defaultSphereMass
       document.querySelector("#pause-button").disabled = false;
       const theBall = window.appConfig.sphere //scene.children.find(c => c.gameName === 'SPHERE0')
@@ -9254,7 +9297,7 @@
       //     return obj
       //   }
       // })
-      theBall.setLinearVelocity(new THREE.Vector3(0, -10, 0))
+      theBall.setLinearVelocity(window.appConfig.gravityVector)
     };
 
     const pause = () => {
@@ -9268,15 +9311,15 @@
       if (window.appConfig.pause) {
         window.appConfig.timer.pause();
 
-        scene.setGravity(new THREE.Vector3(0, 0, 0));
+        scene.setGravity(window.appConfig.originVector);
         window.appConfig.sphere.mass = 0
-        window.appConfig.sphere.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-        window.appConfig.sphere.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-        scene.setGravity(new THREE.Vector3(0, 0, 0))
+        window.appConfig.sphere.setLinearVelocity(window.appConfig.originVector);
+        window.appConfig.sphere.setAngularVelocity(window.appConfig.originVector);
+        scene.setGravity(window.appConfig.originVector)
 
         showPauseMenu();
       } else {
-        scene.setGravity(new THREE.Vector3(0, window.appConfig.defaultSceneGravity, 0));
+        scene.setGravity(window.appConfig.gravityVector);
         window.appConfig.sphere.mass = window.appConfig.defaultSphereMass
 
         window.appConfig.timer.start();
