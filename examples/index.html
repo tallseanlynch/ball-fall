@@ -1744,7 +1744,9 @@
         const uuidsToRemove = []
         let stageKeys = Object.keys(window.appConfig.stages[stage])
         stageKeys.forEach(key => {
-          if(window.appConfig.stages[stage][key] !== undefined && window.appConfig.stages[stage][key].position && window.appConfig.stages[stage][key].position.uuid) {
+          // debugger
+          if(window.appConfig.stages[stage][key] !== undefined && window.appConfig.stages[stage][key].position && window.appConfig.stages[stage][key].uuid) {
+            console.log('deleted old keys')
             delete window.appConfig.stages[stage][key]
           }
         })
@@ -1768,7 +1770,7 @@
             })
             // foundIt.geometry.dispose()
           }
-          if(foundIt.type === 'Group' && foundIt.name.indexOf('CRYSTAL') > -1 && foundIt.children.length > 0) {
+          if(foundIt.type === 'Group' && (foundIt.name.indexOf('CRYSTAL') > -1 || foundIt.name.indexOf('BGGROUP' > -1)) && foundIt.children.length > 0) {
             console.log('found crystal')
             foundIt.children.forEach(gc => {
               foundIt.remove(gc)
@@ -1776,12 +1778,15 @@
               gc.geometry.dispose()
             })
           }
+
+          foundIt.geometry && foundIt.geometry.dispose()
+          foundIt.material && foundIt.material.dispose()
           scene.remove(foundIt)
-          if(foundIt.mass && foundIt.geometry && foundIt.geometry.type === 'BoxGeometry') {
-            console.log('foundIt single beam')
-            foundIt.geometry.dispose()
-            foundIt.material.dispose()
-          }
+          // if(foundIt.mass && foundIt.geometry && foundIt.geometry.type === 'BoxGeometry') {
+          //   console.log('foundIt single beam')
+            // foundIt.geometry.dispose()
+            // foundIt.material.dispose()
+          // }
         })
         renderer.renderLists.dispose();
         renderer.dispose()
@@ -7554,6 +7559,13 @@
           startedCallback: () => {
             setTimeout(() => {
               if (dMesh) {
+                dMesh.children.forEach(c => {
+                  c.material.dispose()
+                  c.geometry.dispose()
+                  dMesh.remove(c)
+                })
+                dMesh.material && dMesh.material.dispose()
+                dMesh.geometry && dMesh.geometry.dispose()
                 scene.remove(dMesh)
               }
             }, 2600)
@@ -7577,6 +7589,13 @@
             })
           },
           completedCallback: () => {
+            dMesh.children.forEach(c => {
+              c.material.dispose()
+              c.geometry.dispose()
+              dMesh.remove(c)
+            })
+            dMesh.material && dMesh.material.dispose()
+            dMesh.geometry && dMesh.geometry.dispose()
             scene.remove(dMesh)
           }
         }
