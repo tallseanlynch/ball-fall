@@ -3384,7 +3384,16 @@
                 indicators: 8
               }
             }
-          }
+          },
+          setUpPortalIndicators: (setUpFunction) =>{
+            setTimeout(() => {
+              try{
+                setUpFunction()
+              } catch(err) {
+                setTimeout(() => {setUpFunction()}, 1000)
+              }
+            }, 1000)
+          } 
         },
         STAGE0: {
           data: {
@@ -3487,7 +3496,8 @@
             )
 
 
-            setTimeout(() => {
+            // setTimeout(() => {
+            const createStage0Portals = () => {
               window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
@@ -3499,10 +3509,11 @@
               for (i; i < ellipseGeometry.vertices.length; i++) {
                 window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
               }
+            }
+            // }, 1000)
 
-            }, 100)
 
-
+            window.appConfig.stages.components.setUpPortalIndicators(createStage0Portals)
 
 
             window.appConfig.stages.components.createBumper("STAGE0BUMPER0", 1, { x: -70, y: -72.5, z: 0 }, 5)
@@ -3900,7 +3911,13 @@
               window.appConfig.timers.addPortalToStage({ x: -50, y: -50, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
                 window.appConfig.stages.components.gemPortalConfig())
             )
-            setTimeout(() => {
+
+            window.appConfig.timers.activeTimers.push(
+              window.appConfig.timers.addPortalToStage({ x: 0, y: 100, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
+                window.appConfig.stages.components.sapphirePortalConfig())
+            )
+
+            const createStage1Portals = () => {
               window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
@@ -3911,13 +3928,11 @@
               for (i; i < ellipseGeometry.vertices.length; i++) {
                 window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
               }
-            }, 100)
-            window.appConfig.stages.components.createBlueIsland()
+            }
 
-            window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 0, y: 100, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
-                window.appConfig.stages.components.sapphirePortalConfig())
-            )
+            window.appConfig.stages.components.setUpPortalIndicators(createStage1Portals)
+
+            window.appConfig.stages.components.createBlueIsland()
 
 
             window.appConfig.createSphere({
@@ -4334,7 +4349,13 @@
               window.appConfig.timers.addPortalToStage({ x: 0, y: -70, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
                 window.appConfig.stages.components.gemPortalConfig())
             )
-            setTimeout(() => {
+
+            window.appConfig.timers.activeTimers.push(
+              window.appConfig.timers.addPortalToStage({ x: 0, y: 72.5, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
+                window.appConfig.stages.components.sapphirePortalConfig())
+            )
+
+            const createStage2Portals = () => {
               window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
@@ -4345,14 +4366,11 @@
               for (i; i < ellipseGeometry.vertices.length; i++) {
                 window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
               }
-            }, 100)
+            }
+
+            window.appConfig.stages.components.setUpPortalIndicators(createStage2Portals)
+
             window.appConfig.stages.components.createBlueIsland()
-
-            window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 0, y: 72.5, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
-                window.appConfig.stages.components.sapphirePortalConfig())
-            )
-
 
             window.appConfig.createSphere({
               bounce: 1,
@@ -4802,10 +4820,17 @@
               window.appConfig.timers.addPortalToStage({ x: -148.75, y: 25, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
                 window.appConfig.stages.components.gemPortalConfig())
             )
-            setTimeout(() => {
+
+            window.appConfig.timers.activeTimers.push(
+              window.appConfig.timers.addPortalToStage({ x: 148.75, y: 25, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
+                window.appConfig.stages.components.sapphirePortalConfig())
+            )
+
+            const createStage3Portals = () => {
               window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
+
               let ellipseGeometry = new THREE.CircleGeometry(4.125, 5)
               ellipseGeometry.rotateZ((2 * Math.PI) / 20)
 
@@ -4813,13 +4838,9 @@
               for (i; i < ellipseGeometry.vertices.length; i++) {
                 window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
               }
-            }, 100)
+            }
 
-
-            window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 148.75, y: 25, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
-                window.appConfig.stages.components.sapphirePortalConfig())
-            )
+            window.appConfig.stages.components.setUpPortalIndicators(createStage3Portals)
 
             window.appConfig.stages.components.createBumper("STAGE3BUMPER1", 1, { x: -147.5, y: -5, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE3BUMPER1", 1, { x: -10, y: 90, z: 0 }, 6)
@@ -5978,7 +5999,13 @@
               window.appConfig.timers.addPortalToStage({ x: -120, y: 0, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
                 window.appConfig.stages.components.gemPortalConfig())
             )
-            setTimeout(() => {
+
+            window.appConfig.timers.activeTimers.push(
+              window.appConfig.timers.addPortalToStage({ x: 120, y: 0, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
+                window.appConfig.stages.components.sapphirePortalConfig())
+            )
+
+            const createStage4Portals = () => {
               window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
@@ -5989,12 +6016,9 @@
               for (i; i < ellipseGeometry.vertices.length; i++) {
                 window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
               }
-            }, 100)
+            }
 
-            window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 120, y: 0, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
-                window.appConfig.stages.components.sapphirePortalConfig())
-            )
+            window.appConfig.stages.components.setUpPortalIndicators(createStage4Portals)
 
             createCrystalCross('STAGE4', 3, { x: 45, y: 117.75 }, 0);
             createCrystalCross('STAGE4', 3, { x: 60, y: 117.75 }, 1);
@@ -6385,7 +6409,13 @@
               window.appConfig.timers.addPortalToStage({ x: 0, y: 137.5, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
                 window.appConfig.stages.components.gemPortalConfig())
             )
-            setTimeout(() => {
+
+            window.appConfig.timers.activeTimers.push(
+              window.appConfig.timers.addPortalToStage({ x: 0, y: -137.5, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
+                window.appConfig.stages.components.sapphirePortalConfig())
+            )
+
+            const createStage5Portals = () => {
               window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
@@ -6396,12 +6426,9 @@
               for (i; i < ellipseGeometry.vertices.length; i++) {
                 window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
               }
-            }, 100)
+            }
 
-            window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 0, y: -137.5, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
-                window.appConfig.stages.components.sapphirePortalConfig())
-            )
+            window.appConfig.stages.components.setUpPortalIndicators(createStage5Portals)
 
             createCrystalCircle('STAGE5', 1.5, { x: 25, y: 150 }, 1, 2)
             createCrystalCircle('STAGE5', 2.5, { x: 25, y: 150 }, 2, 8)
