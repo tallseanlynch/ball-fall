@@ -1016,6 +1016,19 @@
       [new THREE.Color("#f5989d"), new THREE.Color("#f26d7d"), new THREE.Color("#ed145b"), new THREE.Color("#9e0039"), new THREE.Color("#7a0026")]//15 cool red
     ]
 
+    window.appConfig.loadingPhysi = {
+      started: 0,
+      loaded: 0,
+      registerMesh: (mesh) => {
+        window.appConfig.loadingPhysi.started++
+        mesh.addEventListener("ready", window.appConfig.loadingPhysi.loadedHandler(mesh.name))
+
+      },
+      loadedHandler: (name) => {
+        console.log("Physi loaded " + name)
+        window.appConfig.loadingPhysi.loaded++
+      }
+    }
     let crystalLoader
     const startCrystalLoader = () => {
       crystalLoader = new THREE.GLTFLoader();
@@ -1245,7 +1258,6 @@
           ),
           0
         );
-
         if (window.appConfig.performanceLevel > 0) {
           const beam0cap0 = new Physijs.BoxMesh(
             beamCapGeometry,
@@ -1277,6 +1289,7 @@
 
         beam0.name = window.appConfig.currentStage + '_BEAM'
 
+        window.appConfig.loadingPhysi.registerMesh(beam0)
         if (config.switchBeam && config.switchBeam.receiver === undefined) {
           const switchIndicator = () => {
             return new THREE.Mesh(
@@ -2091,6 +2104,7 @@
         bumper.__dirtyPosition = true
         bumper.__dirtyRotation = true
         scene.add(bumper)
+        window.appConfig.loadingPhysi.registerMesh(bumper)
         bumper.addEventListener('collision', (other_object) => {
           if (other_object.name === 'SPHERE0' && window.appConfig.pause === false) {
             collisionCallback(bumper, other_object)
@@ -2735,6 +2749,7 @@
             );
 
             minorBeamStructure.name = name;
+            window.appConfig.loadingPhysi.registerMesh(minorBeamStructure)
             minorBeamStructure.__dirtyPosition = true;
             minorBeamStructure.featureType = "BEAM"
             return minorBeamStructure;
@@ -2813,6 +2828,7 @@
               })
             );
             mainStructure.name = name;
+            window.appConfig.loadingPhysi.registerMesh(mainStructure)
             mainStructure.__dirtyPosition = true;
             mainStructure.featureType = "BEAM"
             return mainStructure;
@@ -2848,6 +2864,7 @@
               })
             );
             mainStructure.name = name;
+            window.appConfig.loadingPhysi.registerMesh(mainStructure)
             mainStructure.children[1].position.x -= .25
             mainStructure.children[1].position.y -= .25
             mainStructure.children[1].__dirtyPosition = true
@@ -2888,6 +2905,7 @@
               }
             }
             mainStructure.name = name;
+            window.appConfig.loadingPhysi.registerMesh(mainStructure)
             mainStructure.featureType = "BEAM"
             return mainStructure;
           },
@@ -7296,6 +7314,7 @@
           sphere.addEventListener("collision", (config && config.handleCollision) ? config.handleCollision : handleCollision);
           sphere.gameName = (config && config.name) ? config.name : "SPHERE0";
           sphere.name = (config && config.name) ? config.name : "SPHERE0";
+          window.appConfig.loadingPhysi.registerMesh(sphere)
           sphere.setCcdMotionThreshold(.5)
           sphere.setCcdSweptSphereRadius(1)
           if (config && config.handleCollision) {
@@ -7468,6 +7487,7 @@
         );
         glassMesh0.gameName = "FRONTGLASS";
         glassMesh0.name = "glassMesh0";
+        window.appConfig.loadingPhysi.registerMesh(glassMesh0)
 
         const glassMesh1 = new Physijs.BoxMesh(
           new THREE.BoxGeometry(1000, 1000, 1),
@@ -7481,6 +7501,7 @@
         );
         glassMesh1.gameName = "BACKGLASS";
         glassMesh1.name = "glassMesh1";
+        window.appConfig.loadingPhysi.registerMesh(glassMesh1)
 
         glassMesh0.position.z = 1.5;
         glassMesh1.position.z = -1.5;
@@ -8013,7 +8034,7 @@
               theBgObjects.push(
                 newPhysiObj
               )
-
+              window.appConfig.loadingPhysi.registerMesh(newPhysiObj)
               newPhysiObj.addEventListener('collision', function (other_object) {
                 if (other_object.name === 'SPHERE0' && window.appConfig.pause === false) {
                   window.appConfig.stages.components.dematerializeMesh(newPhysiObj, 5)
@@ -8040,6 +8061,8 @@
                       newPhysiObjCol.rotation.z = Math.random() * Math.PI
                       newPhysiObjCol.material.opacity = 1
                       window.appConfig.stages.components.dematerializeMesh(newPhysiObjCol, (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)))
+
+                      window.appConfig.loadingPhysi.registerMesh(newPhysiObjCol)
                       newPhysiObjCol.addEventListener('collision', function (other_object2) {
                         if (other_object2.name === 'SPHERE0' && window.appConfig.pause === false) {
                           window.appConfig.stages.components.dematerializeMesh(newPhysiObjCol, (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)))
