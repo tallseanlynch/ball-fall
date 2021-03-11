@@ -8382,9 +8382,8 @@
           id: Math.round(Math.random() * 10000),
           startedCallback: (percentComplete) => {
             // setTimeout(() => {
-            if (window.appConfig.requestFullscreenResult === undefined) {
+            if (window.appConfig.requestFullscreenResult !== false) {
               appConfig.gameModeFunctions.requestFullscreen()
-
             }
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.showTransitionFX())
             // }, 500)
@@ -9489,6 +9488,9 @@
 
         showPauseMenu();
       } else {
+        if (window.appConfig.requestFullscreenResult !== false) {
+          appConfig.gameModeFunctions.requestFullscreen()
+        }
         scene.setGravity(window.appConfig.gravityVector);
         window.appConfig.sphere.mass = window.appConfig.defaultSphereMass
 
@@ -9499,6 +9501,9 @@
     };
 
     const reset = (action) => {
+      if (window.appConfig.requestFullscreenResult !== false) {
+        appConfig.gameModeFunctions.requestFullscreen()
+      }
       if (window.appConfig.timers.pauseTimers === true) {
         window.appConfig.timers.pauseTimers = false
       }
@@ -9631,16 +9636,14 @@
         }
       },
       requestFullscreen: () => {
-        if (!document.fullscreenElement) {
+        if (!document.fullscreenElement && window.appConfig.requestFullscreenResult !== false) {
           document.querySelector('html').requestFullscreen().catch(err => {
+            document.exitFullscreen();
+            window.appConfig.requestFullscreenResult = false
             alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
           });
-          window.appConfig.requestFullscreenResult = document.fullscreenElement
-        } else {
-          document.exitFullscreen();
-          window.appConfig.requestFullscreenResult = false
+          window.appConfig.requestFullscreenResult = true
         }
-
       }
     }
     const colorLightnessLfo = (baseColor, lfoMod) => {
@@ -9655,9 +9658,15 @@
       showHTMLElements(["report", "tinted-overlay"]);
     }
     const showLevelSelect = () => {
+      if (window.appConfig.requestFullscreenResult !== false) {
+        appConfig.gameModeFunctions.requestFullscreen()
+      }
       showHTMLElements(["level-select", "tinted-overlay"]);
     };
     const showSounds = () => {
+      if (window.appConfig.requestFullscreenResult !== false) {
+        appConfig.gameModeFunctions.requestFullscreen()
+      }
       toggleSFXButton({ value: window.appConfig.sfxTurnedOn === true ? "on" : "off" })
       toggleMusicButton({ value: window.appConfig.musicTurnedOn === true ? "on" : "off" })
       togglePerformanceButton({ value: window.appConfig.performanceLevel, onlyHTML: true })
