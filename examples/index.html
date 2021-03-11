@@ -1020,8 +1020,8 @@
       started: 0,
       loaded: 0,
       registerMesh: (mesh) => {
-        window.appConfig.loadingPhysi.started++
-        mesh.addEventListener("ready", window.appConfig.loadingPhysi.loadedHandler(mesh.name))
+        // window.appConfig.loadingPhysi.started++
+        // mesh.addEventListener("ready", window.appConfig.loadingPhysi.loadedHandler(mesh.name))
 
       },
       loadedHandler: (name) => {
@@ -2075,7 +2075,7 @@
           })
         }
       ]
-
+      window.appConfig.meshComponents = {}
       const createBumper = (name = "NO_NAME", size = 0, p = { x: 0, y: 0, z: 0 }, sides = 5, bounce = 2, weight = 0, scale = 1, collisionCallback = () => { }, color) => {
         const bumperGeo = new THREE.CylinderGeometry((2 + size) * (2 / 3), 3 + size, 1, sides)
         // const bumperColor = window.appConfig.bumperMaterials[0].standard.color.clone()
@@ -2136,37 +2136,63 @@
         }
       }
 
-      window.appConfig.sapphires = []
-      const createSapphire = (p = { x: 0, y: 0, z: 0 }, isBlueIsland = false, isCoin = true, portalParent = false) => {
-        const sapphireShape = new THREE.Shape()
-        sapphireShape.moveTo(0, .5)
-        sapphireShape.lineTo(.5, 0)
-        sapphireShape.lineTo(0, -.5)
-        sapphireShape.lineTo(-.5, 0)
-        sapphireShape.lineTo(0, .5)
-        const sapphireGeo = new THREE.ExtrudeGeometry(sapphireShape, {
-          steps: 1,
-          depth: .5,
-          bevelEnabled: true,
-          bevelThickness: .5,
-          bevelSize: .5,
-          bevelSegments: 1,
-          bevelOffset: 0,
-        })
-        const sapphireColor = new THREE.Color('#0F52BA')
-        const material = new THREE.MeshPhongMaterial({
-          color: isCoin === false ? 0xffffff : sapphireColor,
+      window.appConfig.meshComponents.sapphire = {}
+      window.appConfig.meshComponents.sapphire.shape = new THREE.Shape()
+      window.appConfig.meshComponents.sapphire.shape.moveTo(0, .5)
+      window.appConfig.meshComponents.sapphire.shape.lineTo(.5, 0)
+      window.appConfig.meshComponents.sapphire.shape.lineTo(0, -.5)
+      window.appConfig.meshComponents.sapphire.shape.lineTo(-.5, 0)
+      window.appConfig.meshComponents.sapphire.shape.lineTo(0, .5)
+      window.appConfig.meshComponents.sapphire.color = new THREE.Color('#0F52BA')
+      window.appConfig.meshComponents.sapphire.whiteColor = new THREE.Color('#FFFFFF')
+
+      window.appConfig.meshComponents.sapphire.geometry = new THREE.ExtrudeGeometry(window.appConfig.meshComponents.sapphire.shape, {
+        steps: 1,
+        depth: .5,
+        bevelEnabled: true,
+        bevelThickness: .5,
+        bevelSize: .5,
+        bevelSegments: 1,
+        bevelOffset: 0,
+      })
+      window.appConfig.meshComponents.sapphire.blueMaterial = () => {
+        return new THREE.MeshPhongMaterial({
+          color: window.appConfig.meshComponents.sapphire.color,
           shininess: 100,
           transparent: true,
-          opacity: isCoin === false ? .25 : .95
+          opacity: .95
         })
-        const sapphire = new THREE.Mesh(sapphireGeo, material)
+      }
+      window.appConfig.meshComponents.sapphire.whiteMaterial = () => {
+        return new THREE.MeshPhongMaterial({
+          color: window.appConfig.meshComponents.sapphire.whiteColor,
+          shininess: 100,
+          transparent: true,
+          opacity: .25
+        })
+      }
+      window.appConfig.meshComponents.sapphire.sapphireGeoLine = new THREE.EdgesGeometry(window.appConfig.meshComponents.sapphire.geometry)
+      window.appConfig.meshComponents.sapphire.blueLineMaterial = () => {
+        return new THREE.LineBasicMaterial({ color: window.appConfig.meshComponents.sapphire.color, linewidth: 1 })
+      }
+      window.appConfig.meshComponents.sapphire.whiteLineMaterial = () => {
+        return new THREE.LineBasicMaterial({ color: window.appConfig.meshComponents.sapphire.whiteColor, linewidth: 1 })
+      }
+      window.appConfig.meshComponents.sapphire.wireframeBlue = () => {
+        return new THREE.LineSegments(window.appConfig.meshComponents.sapphire.sapphireGeoLine, window.appConfig.meshComponents.sapphire.blueLineMaterial())
+      }
+      window.appConfig.meshComponents.sapphire.wireframeWhite = () => {
+        return new THREE.LineSegments(window.appConfig.meshComponents.sapphire.sapphireGeoLine, window.appConfig.meshComponents.sapphire.whiteLineMaterial())
+      }
+      window.appConfig.sapphires = []
+      const createSapphire = (p = { x: 0, y: 0, z: 0 }, isBlueIsland = false, isCoin = true, portalParent = false) => {
+        const sapphire = new THREE.Mesh(window.appConfig.meshComponents.sapphire.geometry, isCoin === true ? window.appConfig.meshComponents.sapphire.blueMaterial() : window.appConfig.meshComponents.sapphire.whiteMaterial())
         sapphire.scale.x = isCoin === false ? 1 : 2
         sapphire.scale.y = isCoin === false ? 1 : 2
         sapphire.scale.z = isCoin === false ? 1 : 2
 
         if (portalParent !== false) {
-          sapphire.originalMaterialColor = sapphireColor
+          sapphire.originalMaterialColor = window.appConfig.meshComponents.sapphire.color
           let portalParentMesh = scene.children.find(c => c.name.indexOf(portalParent) > -1)
           sapphire.position.x = portalParentMesh.position.x + p.x
           sapphire.position.y = portalParentMesh.position.y + p.y
@@ -2287,10 +2313,7 @@
         scene.add(sapphire)
 
         // wireframe
-        let sapphireGeoLine = new THREE.EdgesGeometry(sapphire.geometry)
-        let mat = new THREE.LineBasicMaterial({ color: isCoin === false ? 0xffffff : sapphireColor, linewidth: 1 })
-        let wireframe = new THREE.LineSegments(sapphireGeoLine, mat)
-        sapphire.add(wireframe)
+        sapphire.add(isCoin === false ? window.appConfig.meshComponents.sapphire.wireframeWhite() : window.appConfig.meshComponents.sapphire.wireframeBlue())
 
         if (isCoin === true) {
           window.appConfig.sapphires.push(sapphire)
