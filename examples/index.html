@@ -1219,7 +1219,7 @@
       })
 
       const beamCapGeometry = new THREE.BoxGeometry(2.2, 2, 2.2)
-      const switchIndicatorGeo = new THREE.BoxGeometry(1, 1, 1)
+      const switchIndicatorGeo = new THREE.BoxGeometry(1.5, 1.5, 1.5)
 
       const createBeam = (config, isFinalStage = false) => {
         const lengthMod = window.appConfig.performanceLevel > 0 ? 10 : 10.15
@@ -1282,9 +1282,9 @@
             return new THREE.Mesh(
               switchIndicatorGeo,
               new THREE.MeshPhongMaterial({
-                color: new THREE.Color(config.switchBeam.color),
+                color: window.appConfig.superBallMaterial.color,
                 transparent: true,
-                opacity: .15
+                opacity: .25
               })
             )
           }
@@ -1365,9 +1365,9 @@
         return beam0;
       };
 
-      const crystalTopGeometry = new THREE.CylinderGeometry(0, 1, 0.5, 6)
-      const crystalMiddleGeometry = new THREE.CylinderGeometry(1, 1, 1, 6)
-      const crystalBottomGeometry = new THREE.CylinderGeometry(1, 0, 0.5, 6)
+      // const crystalTopGeometry = new THREE.CylinderGeometry(0, 1, 0.5, 6)
+      // const crystalMiddleGeometry = new THREE.CylinderGeometry(1, 1, 1, 6)
+      // const crystalBottomGeometry = new THREE.CylinderGeometry(1, 0, 0.5, 6)
 
       const tripleHex = 0x159294;
       const doubleHex = 0xffa6bb;
@@ -7195,6 +7195,10 @@
         }
       )
 
+      const spritePlaneGeometry = new THREE.PlaneGeometry(.5, .5, 1, 1)
+      const spaceSphereGeometry = new THREE.DodecahedronGeometry(1, 2)
+      const whiteColor = new THREE.Color(0x000000)
+
       window.appConfig.portalMesh = (sapphire) => {
         const sapphireColor = new THREE.Color('#0F52BA')
 
@@ -7212,14 +7216,14 @@
             {
               transparent: true,
               opacity: .25,
-              color: new THREE.Color(0x000000)
+              color: whiteColor
             }
           )
         )
         let sapphireAdj = sapphire === true ? 'SAPPHIRE' : ''
         theMesh.name = window.appConfig.currentStage + "_" + sapphireAdj + Math.round(Math.random() * 10000)
         let theSpaceSphere = new THREE.Mesh(
-          new THREE.DodecahedronGeometry(1, 2),
+          spaceSphereGeometry,
           portalMeshSpaceMaterial
         )
         theSpaceSphere.scale.x = 0
@@ -7234,7 +7238,7 @@
         })
         theSpritePoints.forEach((sp, spi) => {
           let theSprite = new THREE.Mesh(
-            new THREE.PlaneGeometry(.5, .5, 1, 1),
+            spritePlaneGeometry,
             spi % 2 === 0 ? window.appConfig.superBallMaterial : sapphire ? sapphireMaterial : portalMeshSpaceMaterial
           )
           theSprite.oPosition = {}
@@ -7268,11 +7272,11 @@
         }
       }
 
+      const superBallGeo = new THREE.IcosahedronGeometry(1, 0)
+      const superBallShellGeo = new THREE.SphereGeometry(3, 32, 32)
+
       window.appConfig.createSphere = function (config) {
         var sphere, material;
-
-        const superBallGeo = new THREE.IcosahedronGeometry(1, 0)
-
         material = Physijs.createMaterial(
           new THREE.MeshPhongMaterial({
             color: 0xffffff,
@@ -7307,7 +7311,7 @@
           let mat = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 1 })
           let wireframe = new THREE.LineSegments(superBallGeoLine, mat)
           superBallIndicator.add(wireframe)
-          superBallIndicator.originalMaterialColor = new THREE.Color(0xffffff)
+          superBallIndicator.originalMaterialColor = whiteColor
 
         } else {
           sphere = new Physijs.SphereMesh((config && config.name) ? superBallGeo : sphere_geometry, material);
@@ -7327,7 +7331,7 @@
           sphere.setCcdSweptSphereRadius(1)
           if (config && config.handleCollision) {
             const superBallShell = new THREE.Mesh(
-              new THREE.SphereGeometry(3, 32, 32),
+              superBallShellGeo,
               new THREE.MeshPhongMaterial({
                 color: 0xffffff,
                 reflectivity: 100,
@@ -7373,10 +7377,12 @@
           const spriteTheta = (lfo((sprite.thetaT + sprite.thetaMod * sprite.thetaT)) + lfo(721 * Math.random()) / 1000) * (Math.PI)
           sprite.spherical.set(sprite.radius + lfoPositive(1111) * 10, spritePhi, spriteTheta)
         }
+
+        const spriteGeometry = new THREE.SphereGeometry(.2, 16, 16)
+        const spriteMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .5 })
+
         window.appConfig.sprites = []
         const createSprite = (num) => {
-          const spriteGeometry = new THREE.SphereGeometry(.2, 16, 16)
-          const spriteMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .5 })
           const thetaMod = Math.random()
           const phiMod = Math.random()
           const sprite0Mesh = new THREE.Mesh(spriteGeometry, spriteMaterial)
@@ -7483,27 +7489,25 @@
 
         const sidesColor = getRandomColor();
 
+        const glassGeo = new THREE.BoxGeometry(1000, 1000, 1)
+        const glassMaterial = new THREE.MeshBasicMaterial({
+          color: getRandomColor(),
+          opacity: 0,
+          transparent: true,
+          wireframe: true,
+        })
+
         const glassMesh0 = new Physijs.BoxMesh(
-          new THREE.BoxGeometry(1000, 1000, 1),
-          new THREE.MeshBasicMaterial({
-            color: getRandomColor(),
-            opacity: 0,
-            transparent: true,
-            wireframe: true,
-          }),
+          glassGeo,
+          glassMaterial,
           0
         );
         glassMesh0.gameName = "FRONTGLASS";
         glassMesh0.name = "glassMesh0";
 
         const glassMesh1 = new Physijs.BoxMesh(
-          new THREE.BoxGeometry(1000, 1000, 1),
-          new THREE.MeshBasicMaterial({
-            color: getRandomColor(),
-            opacity: 0.0,
-            transparent: true,
-            wireframe: true,
-          }),
+          glassGeo,
+          glassMaterial,
           0
         );
         glassMesh1.gameName = "BACKGLASS";
@@ -7746,7 +7750,7 @@
           name: switchIndicator.name + Math.round(Math.random() * 10000),
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
-            switchIndicator.material.opacity = .15 + (percentComplete * .85)
+            switchIndicator.material.opacity = .25 + (percentComplete * .85)
           }
         }
       },
@@ -8161,11 +8165,11 @@
                 window.appConfig.timers.addPortalToStage({ x: 0, y: 0, z: -5 }, 'PORTAL_TO_FINAL_STAGE', { x: 0, y: 0, z: 0 },
                   window.appConfig.stages.components.finalPortalConfig())
               )
-            }, 10)
+            }, 1000)
 
             setTimeout(() => {
               createGemSuperballs(4.5, 4, { x: 0, y: 0, z: 0 }, true, 'PORTAL_TO_FINAL_STAGE')
-            }, 250)
+            }, 1500)
           }
         }
       },
