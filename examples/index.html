@@ -9581,12 +9581,12 @@
       reset: reset,
       pause: pause,
       updateGameTime: (config) => {
-        if (config && config.time) {
+        if (config !== undefined && config.time !== undefined) {
 
         }
       },
       updateGameScore: (config) => {
-        if (config && config.score) {
+        if (config !== undefined && config.score !== undefined) {
           const scoreString = config.score.toString()
           const scoreLength = scoreString.length
           const sl0 = scoreString[scoreLength - 1] !== undefined ? scoreString[scoreLength - 1] : " "
