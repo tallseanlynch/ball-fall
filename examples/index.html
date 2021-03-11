@@ -3297,6 +3297,8 @@
           gemPortalConfig: () => {
             return {
               startedCallback: (thePortalMesh, config, percentComplete) => {
+                // window.appConfig.howlSounds.backgroundMusic.changeSrc(window.appConfig.stages[window.appConfig.currentStage].sounds.backgroundMusic, true)
+                window.appConfig.howlSounds.backgroundMusic.changeSrc("sounds/GEM_ZONE.mp3", true)
               },
               activeCallback: (thePortalMesh, config, percentComplete) => {
               },
@@ -3343,6 +3345,8 @@
           sapphirePortalConfig: () => {
             return {
               startedCallback: (thePortalMesh, config, percentComplete) => {
+                // window.appConfig.howlSounds.backgroundMusic.changeSrc(stageSounds.backgroundMusic, true)
+                window.appConfig.howlSounds.backgroundMusic.changeSrc("sounds/SAPPHIRE_ISLAND.mp3", true)
               },
               activeCallback: (thePortalMesh, config, percentComplete) => {
               },
@@ -3390,6 +3394,8 @@
                 }))
                 let theSphere = window.appConfig.sphere // scene.children.find(c => c.name === 'SPHERE0')
                 window.appConfig.stages.components.dematerializeMesh(theSphere)
+                window.appConfig.howlSounds.backgroundMusic.changeSrc(window.appConfig.stages[window.appConfig.currentStage].sounds.backgroundMusic, true)
+                // window.appConfig.howlSounds.backgroundMusic.changeSrc("sounds/SAPPHIRE_ISLAND.mp3", true)
               },
               portalConfig: {
                 sapphire: true,
@@ -3400,6 +3406,8 @@
           finalPortalConfig: () => {
             return {
               startedCallback: (thePortalMesh, config, percentComplete) => {
+                // window.appConfig.howlSounds.backgroundMusic.changeSrc(window.appConfig.stages[window.appConfig.currentStage].sounds.backgroundMusic, true)
+                window.appConfig.howlSounds.backgroundMusic.changeSrc("sounds/FINAL_ZONE.mp3", true)
               },
               activeCallback: (thePortalMesh, config, percentComplete) => {
               },
