@@ -399,9 +399,14 @@ button:focus {
   font-weight: 900;
   color: #ffffff;
 }
-#score-millions-container, #score-thousands-container, #score-hundreds-container {
-  display: inline-block;
+#score-hundreds-text, #score-thousands-text {
+  margin-left: -.45rem;
 }
+#score-millions-text, #score-thousands-text {
+  margin-right: -.45rem;
+}
+
+
 .level-select-button {
   width: 100%;
   display: block;
