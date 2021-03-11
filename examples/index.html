@@ -3444,15 +3444,15 @@
               }
             }
           },
-          setUpPortalIndicators: (setUpFunction) =>{
+          setUpPortalIndicators: (setUpFunction) => {
             setTimeout(() => {
-              try{
+              try {
                 setUpFunction()
-              } catch(err) {
-                setTimeout(() => {setUpFunction()}, 1000)
+              } catch (err) {
+                setTimeout(() => { setUpFunction() }, 1000)
               }
             }, 1000)
-          } 
+          }
         },
         STAGE0: {
           data: {
@@ -7925,7 +7925,10 @@
             }
           },
           completedCallback: () => {
-            scene.remove(scene.children.find((obj) => obj.name === window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball))
+            let theMesh = scene.children.find((obj) => obj.name === window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball)
+            if (theMesh !== undefined) {
+              scene.remove(theMesh)
+            }
           }
         }
       },
