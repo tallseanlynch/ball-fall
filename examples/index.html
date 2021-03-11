@@ -1016,6 +1016,19 @@
       [new THREE.Color("#f5989d"), new THREE.Color("#f26d7d"), new THREE.Color("#ed145b"), new THREE.Color("#9e0039"), new THREE.Color("#7a0026")]//15 cool red
     ]
 
+    window.appConfig.loadingPhysi = {
+      started: 0,
+      loaded: 0,
+      registerMesh: (mesh) => {
+        // window.appConfig.loadingPhysi.started++
+        // mesh.addEventListener("ready", window.appConfig.loadingPhysi.loadedHandler(mesh.name))
+
+      },
+      loadedHandler: (name) => {
+        console.log("Physi loaded " + name)
+        window.appConfig.loadingPhysi.loaded++
+      }
+    }
     let crystalLoader
     const startCrystalLoader = () => {
       crystalLoader = new THREE.GLTFLoader();
@@ -1245,7 +1258,6 @@
           ),
           0
         );
-
         if (window.appConfig.performanceLevel > 0) {
           const beam0cap0 = new Physijs.BoxMesh(
             beamCapGeometry,
@@ -1277,6 +1289,7 @@
 
         beam0.name = window.appConfig.currentStage + '_BEAM'
 
+        window.appConfig.loadingPhysi.registerMesh(beam0)
         if (config.switchBeam && config.switchBeam.receiver === undefined) {
           const switchIndicator = () => {
             return new THREE.Mesh(
@@ -1317,7 +1330,9 @@
             const theSwitchBeam = beam0
             if (other_object.name === 'SPHERE0' && theSwitchBeam.switchBeam.rotated === false) {
               let theSwitchIndicator = beam0.switchBeam.switchIndicatorsGeos[theSwitchBeam.switchBeam.activeSwitchIndicators]
-              window.appConfig.howlSounds.doors[theSwitchBeam.switchBeam.activeSwitchIndicators].play()
+              if (window.appConfig.sfxTurnedOn) {
+                window.appConfig.howlSounds.doors[theSwitchBeam.switchBeam.activeSwitchIndicators].play()
+              }
               theSwitchBeam.switchBeam.activeSwitchIndicators++
               theSwitchBeam.switchBeam.switchIndicatorsThrottle = true
               window.appConfig.timers.activeTimers.push(window.appConfig.timers.switchIndicatorActivate(theSwitchIndicator))
@@ -2060,7 +2075,7 @@
           })
         }
       ]
-
+      window.appConfig.meshComponents = {}
       const createBumper = (name = "NO_NAME", size = 0, p = { x: 0, y: 0, z: 0 }, sides = 5, bounce = 2, weight = 0, scale = 1, collisionCallback = () => { }, color) => {
         const bumperGeo = new THREE.CylinderGeometry((2 + size) * (2 / 3), 3 + size, 1, sides)
         // const bumperColor = window.appConfig.bumperMaterials[0].standard.color.clone()
@@ -2091,6 +2106,7 @@
         bumper.__dirtyPosition = true
         bumper.__dirtyRotation = true
         scene.add(bumper)
+        window.appConfig.loadingPhysi.registerMesh(bumper)
         bumper.addEventListener('collision', (other_object) => {
           if (other_object.name === 'SPHERE0' && window.appConfig.pause === false) {
             collisionCallback(bumper, other_object)
@@ -2120,37 +2136,63 @@
         }
       }
 
-      window.appConfig.sapphires = []
-      const createSapphire = (p = { x: 0, y: 0, z: 0 }, isBlueIsland = false, isCoin = true, portalParent = false) => {
-        const sapphireShape = new THREE.Shape()
-        sapphireShape.moveTo(0, .5)
-        sapphireShape.lineTo(.5, 0)
-        sapphireShape.lineTo(0, -.5)
-        sapphireShape.lineTo(-.5, 0)
-        sapphireShape.lineTo(0, .5)
-        const sapphireGeo = new THREE.ExtrudeGeometry(sapphireShape, {
-          steps: 1,
-          depth: .5,
-          bevelEnabled: true,
-          bevelThickness: .5,
-          bevelSize: .5,
-          bevelSegments: 1,
-          bevelOffset: 0,
-        })
-        const sapphireColor = new THREE.Color('#0F52BA')
-        const material = new THREE.MeshPhongMaterial({
-          color: isCoin === false ? 0xffffff : sapphireColor,
+      window.appConfig.meshComponents.sapphire = {}
+      window.appConfig.meshComponents.sapphire.shape = new THREE.Shape()
+      window.appConfig.meshComponents.sapphire.shape.moveTo(0, .5)
+      window.appConfig.meshComponents.sapphire.shape.lineTo(.5, 0)
+      window.appConfig.meshComponents.sapphire.shape.lineTo(0, -.5)
+      window.appConfig.meshComponents.sapphire.shape.lineTo(-.5, 0)
+      window.appConfig.meshComponents.sapphire.shape.lineTo(0, .5)
+      window.appConfig.meshComponents.sapphire.color = new THREE.Color('#0F52BA')
+      window.appConfig.meshComponents.sapphire.whiteColor = new THREE.Color('#FFFFFF')
+
+      window.appConfig.meshComponents.sapphire.geometry = new THREE.ExtrudeGeometry(window.appConfig.meshComponents.sapphire.shape, {
+        steps: 1,
+        depth: .5,
+        bevelEnabled: true,
+        bevelThickness: .5,
+        bevelSize: .5,
+        bevelSegments: 1,
+        bevelOffset: 0,
+      })
+      window.appConfig.meshComponents.sapphire.blueMaterial = () => {
+        return new THREE.MeshPhongMaterial({
+          color: window.appConfig.meshComponents.sapphire.color,
           shininess: 100,
           transparent: true,
-          opacity: isCoin === false ? .25 : .95
+          opacity: .95
         })
-        const sapphire = new THREE.Mesh(sapphireGeo, material)
+      }
+      window.appConfig.meshComponents.sapphire.whiteMaterial = () => {
+        return new THREE.MeshPhongMaterial({
+          color: window.appConfig.meshComponents.sapphire.whiteColor,
+          shininess: 100,
+          transparent: true,
+          opacity: .25
+        })
+      }
+      window.appConfig.meshComponents.sapphire.sapphireGeoLine = new THREE.EdgesGeometry(window.appConfig.meshComponents.sapphire.geometry)
+      window.appConfig.meshComponents.sapphire.blueLineMaterial = () => {
+        return new THREE.LineBasicMaterial({ color: window.appConfig.meshComponents.sapphire.color, linewidth: 1 })
+      }
+      window.appConfig.meshComponents.sapphire.whiteLineMaterial = () => {
+        return new THREE.LineBasicMaterial({ color: window.appConfig.meshComponents.sapphire.whiteColor, linewidth: 1 })
+      }
+      window.appConfig.meshComponents.sapphire.wireframeBlue = () => {
+        return new THREE.LineSegments(window.appConfig.meshComponents.sapphire.sapphireGeoLine, window.appConfig.meshComponents.sapphire.blueLineMaterial())
+      }
+      window.appConfig.meshComponents.sapphire.wireframeWhite = () => {
+        return new THREE.LineSegments(window.appConfig.meshComponents.sapphire.sapphireGeoLine, window.appConfig.meshComponents.sapphire.whiteLineMaterial())
+      }
+      window.appConfig.sapphires = []
+      const createSapphire = (p = { x: 0, y: 0, z: 0 }, isBlueIsland = false, isCoin = true, portalParent = false) => {
+        const sapphire = new THREE.Mesh(window.appConfig.meshComponents.sapphire.geometry, isCoin === true ? window.appConfig.meshComponents.sapphire.blueMaterial() : window.appConfig.meshComponents.sapphire.whiteMaterial())
         sapphire.scale.x = isCoin === false ? 1 : 2
         sapphire.scale.y = isCoin === false ? 1 : 2
         sapphire.scale.z = isCoin === false ? 1 : 2
 
         if (portalParent !== false) {
-          sapphire.originalMaterialColor = sapphireColor
+          sapphire.originalMaterialColor = window.appConfig.meshComponents.sapphire.color
           let portalParentMesh = scene.children.find(c => c.name.indexOf(portalParent) > -1)
           sapphire.position.x = portalParentMesh.position.x + p.x
           sapphire.position.y = portalParentMesh.position.y + p.y
@@ -2216,10 +2258,14 @@
           }
           if (isBlueIsland) {
             sapphire.capturedCallback = () => {
-              window.appConfig.howlSounds.sapphire.play()
+              if (window.appConfig.sfxTurnedOn) {
+                window.appConfig.howlSounds.sapphire.play()
+              }
               for (let biSounds = 0; biSounds < 10; biSounds++) {
                 setTimeout(() => {
-                  window.appConfig.coinSounds[Math.round(Math.random() * (window.appConfig.coinSounds.length - 1))].play()
+                  if (window.appConfig.sfxTurnedOn) {
+                    window.appConfig.coinSounds[Math.round(Math.random() * (window.appConfig.coinSounds.length - 1))].play()
+                  }
                   const blueCoin = window.appConfig.stages.components.blueCrystal(biSounds % 3, { x: sapphire.position.x + ((Math.random() * 25) - 12.5), y: sapphire.position.y + ((Math.random() * 20) - 10), z: 0 })
                   scene.add(blueCoin)
                 }, biSounds * 50)
@@ -2231,10 +2277,14 @@
             }
           } else {
             sapphire.capturedCallback = () => {
-              window.appConfig.howlSounds.sapphire.play()
+              if (window.appConfig.sfxTurnedOn) {
+                window.appConfig.howlSounds.sapphire.play()
+              }
               for (let biSounds = 0; biSounds < 20; biSounds++) {
                 setTimeout(() => {
-                  window.appConfig.coinSounds[Math.round(Math.random() * (window.appConfig.coinSounds.length - 1))].play()
+                  if (window.appConfig.sfxTurnedOn) {
+                    window.appConfig.coinSounds[Math.round(Math.random() * (window.appConfig.coinSounds.length - 1))].play()
+                  }
                   const blueCoin = window.appConfig.stages.components.blueCrystal(biSounds % 3, { x: sapphire.position.x + ((Math.random() * 25) - 12.5), y: sapphire.position.y + ((Math.random() * 20) - 10), z: 0 })
                   scene.add(blueCoin)
                 }, biSounds * 50)
@@ -2263,10 +2313,7 @@
         scene.add(sapphire)
 
         // wireframe
-        let sapphireGeoLine = new THREE.EdgesGeometry(sapphire.geometry)
-        let mat = new THREE.LineBasicMaterial({ color: isCoin === false ? 0xffffff : sapphireColor, linewidth: 1 })
-        let wireframe = new THREE.LineSegments(sapphireGeoLine, mat)
-        sapphire.add(wireframe)
+        sapphire.add(isCoin === false ? window.appConfig.meshComponents.sapphire.wireframeWhite() : window.appConfig.meshComponents.sapphire.wireframeBlue())
 
         if (isCoin === true) {
           window.appConfig.sapphires.push(sapphire)
@@ -2322,7 +2369,9 @@
         ruby.name = window.appConfig.currentStage + '_' + rubyNameAdjustment + Math.floor(Math.random() * 10000)
         ruby.coinValue = 5000
         ruby.capturedCallback = () => {
-          window.appConfig.howlSounds.ruby.play()
+          if (window.appConfig.sfxTurnedOn) {
+            window.appConfig.howlSounds.ruby.play()
+          }
         }
         scene.add(ruby)
 
@@ -2396,7 +2445,9 @@
         let wireframe = new THREE.LineSegments(emeraldGeoLine, mat)
 
         emerald.capturedCallback = () => {
-          window.appConfig.howlSounds.emerald.play()
+          if (window.appConfig.sfxTurnedOn) {
+            window.appConfig.howlSounds.emerald.play()
+          }
         }
         scene.add(emerald)
         emerald.add(wireframe)
@@ -2455,7 +2506,9 @@
 
         diamond.coinValue = 25000
         diamond.capturedCallback = () => {
-          window.appConfig.howlSounds.diamond.play()
+          if (window.appConfig.sfxTurnedOn) {
+            window.appConfig.howlSounds.diamond.play()
+          }
         }
         scene.add(diamond)
 
@@ -2735,6 +2788,7 @@
             );
 
             minorBeamStructure.name = name;
+            window.appConfig.loadingPhysi.registerMesh(minorBeamStructure)
             minorBeamStructure.__dirtyPosition = true;
             minorBeamStructure.featureType = "BEAM"
             return minorBeamStructure;
@@ -2813,6 +2867,7 @@
               })
             );
             mainStructure.name = name;
+            window.appConfig.loadingPhysi.registerMesh(mainStructure)
             mainStructure.__dirtyPosition = true;
             mainStructure.featureType = "BEAM"
             return mainStructure;
@@ -2848,6 +2903,7 @@
               })
             );
             mainStructure.name = name;
+            window.appConfig.loadingPhysi.registerMesh(mainStructure)
             mainStructure.children[1].position.x -= .25
             mainStructure.children[1].position.y -= .25
             mainStructure.children[1].__dirtyPosition = true
@@ -2888,6 +2944,7 @@
               }
             }
             mainStructure.name = name;
+            window.appConfig.loadingPhysi.registerMesh(mainStructure)
             mainStructure.featureType = "BEAM"
             return mainStructure;
           },
@@ -3180,7 +3237,9 @@
                   bumper.coinThrottle = true
                   for (let superSounds = 0; superSounds < 10; superSounds++) {
                     setTimeout(() => {
-                      window.appConfig.coinSounds[Math.round(Math.random() * (window.appConfig.coinSounds.length - 1))].play()
+                      if (window.appConfig.sfxTurnedOn) {
+                        window.appConfig.coinSounds[Math.round(Math.random() * (window.appConfig.coinSounds.length - 1))].play()
+                      }
                       scene.add(window.appConfig.stages.components.crystal(superSounds % 3, { x: bumper.position.x + ((Math.random() * 25) - 12.5), y: bumper.position.y + ((Math.random() * 20) - 10), z: 0 }))
                     }, superSounds * 50)
                   }
@@ -3385,15 +3444,15 @@
               }
             }
           },
-          setUpPortalIndicators: (setUpFunction) =>{
+          setUpPortalIndicators: (setUpFunction) => {
             setTimeout(() => {
-              try{
+              try {
                 setUpFunction()
-              } catch(err) {
-                setTimeout(() => {setUpFunction()}, 1000)
+              } catch (err) {
+                setTimeout(() => { setUpFunction() }, 1000)
               }
             }, 1000)
-          } 
+          }
         },
         STAGE0: {
           data: {
@@ -7119,28 +7178,44 @@
 
             const playHowlOnCollision = [
               function () {
-                window.appConfig.howlSounds.beams[0].play();
+                if (window.appConfig.sfxTurnedOn) {
+                  window.appConfig.howlSounds.beams[0].play();
+                }
               },
               function () {
-                window.appConfig.howlSounds.beams[1].play();
+                if (window.appConfig.sfxTurnedOn) {
+                  window.appConfig.howlSounds.beams[1].play();
+                }
               },
               function () {
-                window.appConfig.howlSounds.beams[2].play();
+                if (window.appConfig.sfxTurnedOn) {
+                  window.appConfig.howlSounds.beams[2].play();
+                }
               },
               function () {
-                window.appConfig.howlSounds.beams[3].play();
+                if (window.appConfig.sfxTurnedOn) {
+                  window.appConfig.howlSounds.beams[3].play();
+                }
               },
               function () {
-                window.appConfig.howlSounds.beams[4].play();
+                if (window.appConfig.sfxTurnedOn) {
+                  window.appConfig.howlSounds.beams[4].play();
+                }
               },
               function () {
-                window.appConfig.howlSounds.beams[5].play();
+                if (window.appConfig.sfxTurnedOn) {
+                  window.appConfig.howlSounds.beams[5].play();
+                }
               },
               function () {
-                window.appConfig.howlSounds.beams[6].play();
+                if (window.appConfig.sfxTurnedOn) {
+                  window.appConfig.howlSounds.beams[6].play();
+                }
               },
               function () {
-                window.appConfig.howlSounds.beams[7].play();
+                if (window.appConfig.sfxTurnedOn) {
+                  window.appConfig.howlSounds.beams[7].play();
+                }
               }
             ]
             if (suonousFeatureTypes.indexOf(collided_with.featureType) > -1) {
@@ -7257,7 +7332,9 @@
 
       window.appConfig.superBallHandleCollision = function (other_object, the_object) {
         if (other_object.name === 'SPHERE0') {
-          window.appConfig.howlSounds.superball.play()
+          if (window.appConfig.sfxTurnedOn) {
+            window.appConfig.howlSounds.superball.play()
+          }
           if (window.appConfig.stages[window.appConfig.currentStage].data.gemSuperBalls < 8) {
             window.appConfig.stages[window.appConfig.currentStage].data.gemSuperBalls++
           }
@@ -7265,7 +7342,9 @@
           window.appConfig.stages.components.dematerializeMesh(other_object, 5)
           for (let superSounds = 0; superSounds < 20; superSounds++) {
             setTimeout(() => {
-              window.appConfig.coinSounds[Math.round(Math.random() * (window.appConfig.coinSounds.length - 1))].play()
+              if (window.appConfig.sfxTurnedOn) {
+                window.appConfig.coinSounds[Math.round(Math.random() * (window.appConfig.coinSounds.length - 1))].play()
+              }
               scene.add(window.appConfig.stages.components.crystal(superSounds % 3, { x: other_object.position.x + ((Math.random() * 25) - 12.5), y: other_object.position.y + ((Math.random() * 20) - 10), z: 0 }))
             }, superSounds * 50)
           }
@@ -7327,6 +7406,7 @@
           sphere.addEventListener("collision", (config && config.handleCollision) ? config.handleCollision : handleCollision);
           sphere.gameName = (config && config.name) ? config.name : "SPHERE0";
           sphere.name = (config && config.name) ? config.name : "SPHERE0";
+          window.appConfig.loadingPhysi.registerMesh(sphere)
           sphere.setCcdMotionThreshold(.5)
           sphere.setCcdSweptSphereRadius(1)
           if (config && config.handleCollision) {
@@ -7417,8 +7497,17 @@
             sprite0.mesh.position.z = spriteVector3.z
             sprite0.mesh.material.opacity = .5 + (lfoPositive(1000) + lfoPositive(77) / 2)
 
-            if (!sprite0.isFetchingCoin && window.appConfig.start && !window.appConfig.pause && !window.appConfig.userHasEnded) {
-              if (sprite0.returnData && sprite0.returnData.startingPosition) {
+            if (sprite0.isFetchingCoin === true && window.appConfig.userHasEnded === true) {
+              sprite0.reset()
+              const foundTimerIndex = window.appConfig.timers.activeTimers.findIndex((timer, timerIndex) => {
+                return timer.name === `SPRITERETURN${sprite0.num}`
+              })
+              if (foundTimerIndex > -1) {
+                window.appConfig.timers.activeTimers.splice(foundTimerIndex, 1)
+              }
+
+            } else if (sprite0.isFetchingCoin === false && window.appConfig.start === true && window.appConfig.pause === false && window.appConfig.userHasEnded === false) {
+              if (sprite0.returnData !== undefined && sprite0.returnData.startingPosition !== undefined) {
                 let percentComplete = window.appConfig.timers.data[`spriteReturn${sprite0.num}`].percentComplete
                 const newX = sprite0.returnData.startingPosition.x * (1 - percentComplete) + (spriteVector3.x * percentComplete)
                 const newY = sprite0.returnData.startingPosition.y * (1 - percentComplete) + (spriteVector3.y * percentComplete)
@@ -7427,7 +7516,7 @@
               }
 
               const theCoin = findCoin(sprite0.mesh.position.x, sprite0.mesh.position.y)
-              if (theCoin) {
+              if (theCoin !== undefined) {
                 sprite0.isFetchingCoin = true
                 sprite0.fetchData.startingPosition = sprite0.mesh.position.clone()
                 sprite0.fetchData.target = theCoin
@@ -7444,7 +7533,7 @@
                 window.appConfig.timers.activeTimers.push(window.appConfig.timers[`spriteFetch${sprite0.num}`](sprite0))
                 theCoin.spriteFetching = sprite0
               }
-            } else if (sprite0.isFetchingCoin && window.appConfig.start && !window.appConfig.pause) {
+            } else if (sprite0.isFetchingCoin === true && window.appConfig.start === true && window.appConfig.pause === false) {
               if (sprite0.fetchData.target.isBlueIsland === true) {
                 // sprite0.fetchData.target.children.forEach(child => {
                 //   child.material = window.appConfig.blueCrystalMaterials[sprite0.fetchData.target.size].pulsing
@@ -7463,7 +7552,7 @@
                 sprite0.mesh.position.x = sprite0.fetchData.startingPosition.x * (1 - percentThere) + (sprite0.fetchData.target.position.x * percentThere)
                 sprite0.mesh.position.y = sprite0.fetchData.startingPosition.y * (1 - percentThere) + (sprite0.fetchData.target.position.y * percentThere)
               } else if (percentComplete > .5) {
-                if (!sprite0.fetchData.coinStartingPosition) {
+                if (sprite0.fetchData.coinStartingPosition === undefined) {
                   sprite0.fetchData.coinStartingPosition = sprite0.fetchData.target.position.clone()
                 }
                 const percentThere = (percentComplete - .5) / .5
@@ -7504,6 +7593,7 @@
         );
         glassMesh0.gameName = "FRONTGLASS";
         glassMesh0.name = "glassMesh0";
+        window.appConfig.loadingPhysi.registerMesh(glassMesh0)
 
         const glassMesh1 = new Physijs.BoxMesh(
           glassGeo,
@@ -7512,6 +7602,7 @@
         );
         glassMesh1.gameName = "BACKGLASS";
         glassMesh1.name = "glassMesh1";
+        window.appConfig.loadingPhysi.registerMesh(glassMesh1)
 
         glassMesh0.position.z = 1.5;
         glassMesh1.position.z = -1.5;
@@ -7677,7 +7768,9 @@
         }
       },
       activateRemoteSwitch: (remoteSwitch) => {
-        window.appConfig.howlSounds.circuitTransmitter.play()
+        if (window.appConfig.sfxTurnedOn) {
+          window.appConfig.howlSounds.circuitTransmitter.play()
+        }
         let remoteTransmitter = remoteSwitch.transmitter.children[0]
         let remoteTransmitterIco = remoteSwitch.transmitter.children[1]
         let remoteReceiver = remoteSwitch.receiver.children[0]
@@ -7780,7 +7873,9 @@
           completedCallback: (percentComplete) => {
             switchBeam.rotation.z = switchBeam.finalRotationZ
             switchBeam.__dirtyRotation = true
-            window.appConfig.howlSounds.circuitReceiver.play()
+            if (window.appConfig.sfxTurnedOn) {
+              window.appConfig.howlSounds.circuitReceiver.play()
+            }
           }
         }
       },
@@ -7830,7 +7925,10 @@
             }
           },
           completedCallback: () => {
-            scene.remove(scene.children.find((obj) => obj.name === window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball))
+            let theMesh = scene.children.find((obj) => obj.name === window.appConfig.currentStage + '_TELEPORTATION_MESH__' + superball)
+            if (theMesh !== undefined) {
+              scene.remove(theMesh)
+            }
           }
         }
       },
@@ -7902,7 +8000,11 @@
           startedCallback: (percentComplete) => {
             window.appConfig.isPortalStart = true
             thePortalMesh.startedCallback(thePortalMesh, thePortalMesh.config, percentComplete)
-            setTimeout(window.appConfig.howlSounds.circuitLine.play(), 750)
+            setTimeout(() => {
+              if (window.appConfig.sfxTurnedOn) {
+                window.appConfig.howlSounds.circuitLine.play()
+              }
+            }, 750)
             // setTimeout(() => {
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.showTransitionFX())
             // }, 500)
@@ -8044,7 +8146,7 @@
               theBgObjects.push(
                 newPhysiObj
               )
-
+              window.appConfig.loadingPhysi.registerMesh(newPhysiObj)
               newPhysiObj.addEventListener('collision', function (other_object) {
                 if (other_object.name === 'SPHERE0' && window.appConfig.pause === false) {
                   window.appConfig.stages.components.dematerializeMesh(newPhysiObj, 5)
@@ -8071,6 +8173,8 @@
                       newPhysiObjCol.rotation.z = Math.random() * Math.PI
                       newPhysiObjCol.material.opacity = 1
                       window.appConfig.stages.components.dematerializeMesh(newPhysiObjCol, (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)))
+
+                      window.appConfig.loadingPhysi.registerMesh(newPhysiObjCol)
                       newPhysiObjCol.addEventListener('collision', function (other_object2) {
                         if (other_object2.name === 'SPHERE0' && window.appConfig.pause === false) {
                           window.appConfig.stages.components.dematerializeMesh(newPhysiObjCol, (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)))
@@ -8083,7 +8187,9 @@
                       }
                       for (let superSounds = 0; superSounds < 4; superSounds++) {
                         setTimeout(() => {
-                          window.appConfig.coinSounds[Math.round(Math.random() * (window.appConfig.coinSounds.length - 1))].play()
+                          if (window.appConfig.sfxTurnedOn) {
+                            window.appConfig.coinSounds[Math.round(Math.random() * (window.appConfig.coinSounds.length - 1))].play()
+                          }
                           scene.add(window.appConfig.stages.components.crystal(superSounds % 3, { x: other_object.position.x + ((Math.random() * 25) - 12.5), y: other_object.position.y + ((Math.random() * 20) - 10), z: 0 }))
                         }, superSounds * 50)
                       }
@@ -9475,12 +9581,12 @@
       reset: reset,
       pause: pause,
       updateGameTime: (config) => {
-        if (config && config.time) {
+        if (config !== undefined && config.time !== undefined) {
 
         }
       },
       updateGameScore: (config) => {
-        if (config && config.score) {
+        if (config !== undefined && config.score !== undefined) {
           const scoreString = config.score.toString()
           const scoreLength = scoreString.length
           const sl0 = scoreString[scoreLength - 1] !== undefined ? scoreString[scoreLength - 1] : " "
