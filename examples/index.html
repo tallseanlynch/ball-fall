@@ -8374,6 +8374,10 @@
           id: Math.round(Math.random() * 10000),
           startedCallback: (percentComplete) => {
             // setTimeout(() => {
+            if (window.appConfig.requestFullscreenResult === undefined) {
+              appConfig.gameModeFunctions.requestFullscreen()
+
+            }
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.showTransitionFX())
             // }, 500)
 
@@ -9617,6 +9621,18 @@
 
           }
         }
+      },
+      requestFullscreen: () => {
+        if (!document.fullscreenElement) {
+          document.querySelector('html').requestFullscreen().catch(err => {
+            alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+          });
+          window.appConfig.requestFullscreenResult = document.fullscreenElement
+        } else {
+          document.exitFullscreen();
+          window.appConfig.requestFullscreenResult = false
+        }
+
       }
     }
     const colorLightnessLfo = (baseColor, lfoMod) => {
