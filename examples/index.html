@@ -743,7 +743,7 @@
     window.appConfig.gravityVector = new THREE.Vector3(0, -10, 0)
     window.appConfig.spriteVector = new THREE.Vector3(0, 0, 0)
     window.appConfig.blackHoleVector = new THREE.Vector3(0, 0, 0)
-    
+
     const stageProperties = {
       STAGE0: {
         backgroundColors: [
@@ -7054,7 +7054,7 @@
       }
 
       scene.simulate();
-      window.appConfig.easyTimerLength = 3
+      window.appConfig.easyTimerLength = 60
       const timer = new easytimer.Timer({ countdown: true, startValues: { seconds: window.appConfig.easyTimerLength }, precision: "secondTenths" });
       window.appConfig.timer = timer
       timer.addEventListener("secondTenthsUpdated", function (e) {
