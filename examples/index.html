@@ -739,7 +739,7 @@
       ]
     }
 
-    window.appConfig.originVector = new THREE.Vector3(0,0,0)
+    window.appConfig.originVector = new THREE.Vector3(0, 0, 0)
     window.appConfig.gravityVector = new THREE.Vector3(0, -10, 0)
     window.appConfig.spriteVector = new THREE.Vector3(0, 0, 0)
     window.appConfig.blackHoleVector = new THREE.Vector3(0, 0, 0)
@@ -1745,7 +1745,7 @@
         let stageKeys = Object.keys(window.appConfig.stages[stage])
         stageKeys.forEach(key => {
           // debugger
-          if(window.appConfig.stages[stage][key] !== undefined && window.appConfig.stages[stage][key].position && window.appConfig.stages[stage][key].uuid) {
+          if (window.appConfig.stages[stage][key] !== undefined && window.appConfig.stages[stage][key].position && window.appConfig.stages[stage][key].uuid) {
             console.log('deleted old keys')
             delete window.appConfig.stages[stage][key]
           }
@@ -1755,39 +1755,43 @@
             uuidsToRemove.push(c.uuid)
           }
         })
-        uuidsToRemove.forEach(uuid => {
-          const foundIt = scene.children.find(c => c.uuid === uuid)
-          if(foundIt.mass !== undefined && foundIt.geometry && foundIt.geometry.type === 'BoxGeometry' && foundIt.children.length > 0) {
-            console.log('foundIt parent')
-            foundIt.children.forEach(bc => {
-              if(bc.mass !== undefined && bc.geometry && bc.geometry.type === 'BoxGeometry') {
-                console.log('foundIt child')
-                bc.geometry.dispose()
-                bc.material.dispose()
-                bc.removeEventListener('collision', window.appConfig.handleCollision)
-                foundIt.remove(bc)
-              }
+        let uuidsInt = 0
+        let removedUuidsInt = 0
+        let unhandledInt = 0
+        let processedGeos = 0
+        let processedMats = 0
+        let cleanupDepth = [0, 0, 0, 0, 0, 0, 0, 0]
+        const recursiveRemove = (parent, level = 0) => {
+          cleanupDepth[level]++
+          if (parent.children.length > 0) {
+            parent.children.forEach(child => {
+              recursiveRemove(child, level + 1)
+              parent.remove(child)
             })
-            // foundIt.geometry.dispose()
           }
-          if(foundIt.type === 'Group' && (foundIt.name.indexOf('CRYSTAL') > -1 || foundIt.name.indexOf('BGGROUP' > -1)) && foundIt.children.length > 0) {
-            console.log('found crystal')
-            foundIt.children.forEach(gc => {
-              foundIt.remove(gc)
-              gc.material.dispose()
-              gc.geometry.dispose()
-            })
+          if (parent.geometry !== undefined) {
+            parent.geometry.dispose()
+            processedGeos++
+          }
+          if (parent.material !== undefined) {
+            parent.material.dispose()
+            processedMats++
           }
 
-          foundIt.geometry && foundIt.geometry.dispose()
-          foundIt.material && foundIt.material.dispose()
+        }
+        uuidsToRemove.forEach(uuid => {
+          uuidsInt++
+          let wasHandled = false
+          const foundIt = scene.children.find(c => c.uuid === uuid)
+          recursiveRemove(foundIt)
           scene.remove(foundIt)
-          // if(foundIt.mass && foundIt.geometry && foundIt.geometry.type === 'BoxGeometry') {
-          //   console.log('foundIt single beam')
-            // foundIt.geometry.dispose()
-            // foundIt.material.dispose()
-          // }
         })
+        // console.error("uuidsInt: ", uuidsInt)
+        // console.error("removedUuidsInt: ", removedUuidsInt)
+        // console.error("unhandledInt: ", unhandledInt)
+        // console.error("processedGeos: ", processedGeos)
+        // console.error("processedMats: ", processedMats)
+        // console.error("cleanupDepth: ", cleanupDepth)
         renderer.renderLists.dispose();
         renderer.dispose()
       }
@@ -7132,7 +7136,7 @@
             }
           }
         }
-        window.appConfig.handleCollision = handleCollision
+      window.appConfig.handleCollision = handleCollision
 
       const sphereTeleportationGroup = new THREE.Group()
       const sphereTeleportationGeometry = new THREE.TetrahedronGeometry(16)
@@ -9018,7 +9022,7 @@
       if (window.appConfig.userHasEnded) {
         window.appConfig.sphere
           .setLinearVelocity(window.appConfig.originVector);
-          window.appConfig.sphere
+        window.appConfig.sphere
           .setAngularVelocity(window.appConfig.originVector);
       }
       window.appConfig.crystalMaterials.forEach(cm => {
