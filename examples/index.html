@@ -743,6 +743,7 @@
     window.appConfig.gravityVector = new THREE.Vector3(0, -10, 0)
     window.appConfig.spriteVector = new THREE.Vector3(0, 0, 0)
     window.appConfig.blackHoleVector = new THREE.Vector3(0, 0, 0)
+    
     const stageProperties = {
       STAGE0: {
         backgroundColors: [
@@ -1166,21 +1167,21 @@
       window.appConfig.pointLight1 = pointLight1
       scene.add(pointLight1);
 
-      const pointLight2 = new THREE.PointLight(getRandomColor(), 1);
-      pointLight2.gameName = "POINTLIGHT2";
-      pointLight2.power = 5;
-      pointLight2.decay = 1;
-      pointLight2.distance = 25;
-      window.appConfig.pointLight2 = pointLight2
-      scene.add(pointLight2);
+      // const pointLight2 = new THREE.PointLight(getRandomColor(), 1);
+      // pointLight2.gameName = "POINTLIGHT2";
+      // pointLight2.power = 5;
+      // pointLight2.decay = 1;
+      // pointLight2.distance = 25;
+      // window.appConfig.pointLight2 = pointLight2
+      // scene.add(pointLight2);
 
-      const pointLight3 = new THREE.PointLight(getRandomColor(), 1);
-      pointLight3.gameName = "POINTLIGHT3";
-      pointLight3.power = 5;
-      pointLight3.decay = 1;
-      pointLight3.distance = 25;
-      window.appConfig.pointLight3 = pointLight3
-      scene.add(pointLight3);
+      // const pointLight3 = new THREE.PointLight(getRandomColor(), 1);
+      // pointLight3.gameName = "POINTLIGHT3";
+      // pointLight3.power = 5;
+      // pointLight3.decay = 1;
+      // pointLight3.distance = 25;
+      // window.appConfig.pointLight3 = pointLight3
+      // scene.add(pointLight3);
 
       function onWindowResize(event) {
         var tanFOV = Math.tan(((Math.PI / 180) * camera.fov) / 2);
@@ -1746,7 +1747,7 @@
         stageKeys.forEach(key => {
           // debugger
           if (window.appConfig.stages[stage][key] !== undefined && window.appConfig.stages[stage][key].position && window.appConfig.stages[stage][key].uuid) {
-            console.log('deleted old keys')
+            // console.log('deleted old keys')
             delete window.appConfig.stages[stage][key]
           }
         })
@@ -2044,7 +2045,11 @@
           window.appConfig.howlSounds.beams[6].changeSrc(stageSounds.beams[6])
           window.appConfig.howlSounds.beams[7].changeSrc(stageSounds.beams[7])
         }
+
+        window.appConfig.coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
       }
+
+
       window.appConfig.bumperMaterials = [
         {
           standard: new THREE.MeshPhongMaterial({
@@ -2161,30 +2166,34 @@
           sapphire.hasTarget = false
           sapphire.travelData = {}
           sapphire.isBlueIsland = isBlueIsland
+
+          sapphire.sapphireVector0 = new THREE.Vector2(0, 0)
+          sapphire.sapphireVector1 = new THREE.Vector2(0, 0)
+          sapphire.sapphireVector2 = new THREE.Vector2(0, 0)
+          sapphire.sapphireVector3 = new THREE.Vector2(0, 0)
+
           sapphire.activeCallback = () => {
             if (window.appConfig.start === true && window.appConfig.pause === false && window.appConfig.userHasEnded === false) {
               if (sapphire.hasTarget === false) {
                 let lengthVal = isBlueIsland ? window.appConfig.blueIslandPoints.length : window.appConfig.coins.length
-                const randomNum = Math.floor(Math.random() * lengthVal)
+                let randomNum = Math.floor(Math.random() * lengthVal)
                 let targetCoin = isBlueIsland ? window.appConfig.blueIslandPoints[randomNum] : window.appConfig.coins[randomNum]
                 if (targetCoin === undefined) {
                   targetCoin = { position: { x: 100, y: 100 } }
                 }
-                const v0 = new THREE.Vector2(sapphire.position.x, sapphire.position.y)
-                const v1 = new THREE.Vector2()
-                const v2 = new THREE.Vector2()
-                const v3 = new THREE.Vector2(targetCoin.position.x, targetCoin.position.y)
-                v1.lerpVectors(v0, v3, .25)
-                v1.x += 30
-                v1.y += 30
-                v2.lerpVectors(v0, v3, .75)
-                v2.x -= 30
-                v2.y -= 30
-                const curve = new THREE.CubicBezierCurve(v0, v1, v2, v3)
-                sapphire.travelData.curve = curve
+                sapphire.sapphireVector0.set(sapphire.position.x, sapphire.position.y)
+                sapphire.sapphireVector1.set(0, 0)
+                sapphire.sapphireVector2.set(0, 0)
+                sapphire.sapphireVector3.set(targetCoin.position.x, targetCoin.position.y)
+                sapphire.sapphireVector1.lerpVectors(sapphire.sapphireVector0, sapphire.sapphireVector3, .25)
+                sapphire.sapphireVector1.x += 30
+                sapphire.sapphireVector1.y += 30
+                sapphire.sapphireVector2.lerpVectors(sapphire.sapphireVector0, sapphire.sapphireVector3, .75)
+                sapphire.sapphireVector2.x -= 30
+                sapphire.sapphireVector2.y -= 30
+                sapphire.travelData.curve = new THREE.CubicBezierCurve(sapphire.sapphireVector0, sapphire.sapphireVector1, sapphire.sapphireVector2, sapphire.sapphireVector3)
                 sapphire.hasTarget = true
-                const ms = Math.ceil(curve.getLength() * 50)
-                window.appConfig.timers.activeTimers.push(window.appConfig.timers.sapphireTravel(sapphire, ms))
+                window.appConfig.timers.activeTimers.push(window.appConfig.timers.sapphireTravel(sapphire, Math.ceil(sapphire.travelData.curve.getLength() * 50)))
 
               }
             }
@@ -2208,10 +2217,9 @@
           if (isBlueIsland) {
             sapphire.capturedCallback = () => {
               window.appConfig.howlSounds.sapphire.play()
-              const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
               for (let biSounds = 0; biSounds < 10; biSounds++) {
                 setTimeout(() => {
-                  coinSounds[Math.round(Math.random() * (coinSounds.length - 1))].play()
+                  window.appConfig.coinSounds[Math.round(Math.random() * (window.appConfig.coinSounds.length - 1))].play()
                   const blueCoin = window.appConfig.stages.components.blueCrystal(biSounds % 3, { x: sapphire.position.x + ((Math.random() * 25) - 12.5), y: sapphire.position.y + ((Math.random() * 20) - 10), z: 0 })
                   scene.add(blueCoin)
                 }, biSounds * 50)
@@ -2224,10 +2232,9 @@
           } else {
             sapphire.capturedCallback = () => {
               window.appConfig.howlSounds.sapphire.play()
-              const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
               for (let biSounds = 0; biSounds < 20; biSounds++) {
                 setTimeout(() => {
-                  coinSounds[Math.round(Math.random() * (coinSounds.length - 1))].play()
+                  window.appConfig.coinSounds[Math.round(Math.random() * (window.appConfig.coinSounds.length - 1))].play()
                   const blueCoin = window.appConfig.stages.components.blueCrystal(biSounds % 3, { x: sapphire.position.x + ((Math.random() * 25) - 12.5), y: sapphire.position.y + ((Math.random() * 20) - 10), z: 0 })
                   scene.add(blueCoin)
                 }, biSounds * 50)
@@ -2297,8 +2304,8 @@
           transparent: true
         })
 
-        const ruby = new THREE.Mesh(rubyGeo, rubyMaterial
-        )
+        const ruby = new THREE.Mesh(rubyGeo, rubyMaterial)
+
         if (portalParent !== false) {
           let portalParentMesh = scene.children.find(c => c.name.indexOf(portalParent) > -1)
           ruby.position.x = portalParentMesh.position.x - 3.5
@@ -3171,10 +3178,9 @@
                 window.appConfig.stages.components.dematerializeMesh(bumper, 5)
                 if (bumper.coinThrottle === false) {
                   bumper.coinThrottle = true
-                  const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
                   for (let superSounds = 0; superSounds < 10; superSounds++) {
                     setTimeout(() => {
-                      coinSounds[Math.round(Math.random() * (coinSounds.length - 1))].play()
+                      window.appConfig.coinSounds[Math.round(Math.random() * (window.appConfig.coinSounds.length - 1))].play()
                       scene.add(window.appConfig.stages.components.crystal(superSounds % 3, { x: bumper.position.x + ((Math.random() * 25) - 12.5), y: bumper.position.y + ((Math.random() * 20) - 10), z: 0 }))
                     }, superSounds * 50)
                   }
@@ -7228,10 +7234,9 @@
           }
           window.appConfig.timers.activeTimers.push(window.appConfig.timers.superBallTeleport(the_object))
           window.appConfig.stages.components.dematerializeMesh(other_object, 5)
-          const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
           for (let superSounds = 0; superSounds < 20; superSounds++) {
             setTimeout(() => {
-              coinSounds[Math.round(Math.random() * (coinSounds.length - 1))].play()
+              window.appConfig.coinSounds[Math.round(Math.random() * (window.appConfig.coinSounds.length - 1))].play()
               scene.add(window.appConfig.stages.components.crystal(superSounds % 3, { x: other_object.position.x + ((Math.random() * 25) - 12.5), y: other_object.position.y + ((Math.random() * 20) - 10), z: 0 }))
             }, superSounds * 50)
           }
@@ -8049,10 +8054,8 @@
                         window.appConfig.prize(window.appConfig.currentStageIndex, Math.round(Math.random() * 10000), { x: newPhysiObj.position.x, y: newPhysiObj.position.y, z: 0 })
                       }
                       for (let superSounds = 0; superSounds < 4; superSounds++) {
-                        const coinSounds = [...window.appConfig.howlSounds.coins.sCoin, ...window.appConfig.howlSounds.coins.mCoin, ...window.appConfig.howlSounds.coins.lCoin]
-
                         setTimeout(() => {
-                          coinSounds[Math.round(Math.random() * (coinSounds.length - 1))].play()
+                          window.appConfig.coinSounds[Math.round(Math.random() * (window.appConfig.coinSounds.length - 1))].play()
                           scene.add(window.appConfig.stages.components.crystal(superSounds % 3, { x: other_object.position.x + ((Math.random() * 25) - 12.5), y: other_object.position.y + ((Math.random() * 20) - 10), z: 0 }))
                         }, superSounds * 50)
                       }
@@ -8851,12 +8854,12 @@
           window.appConfig.touchStart === true &&
           window.appConfig.touchEnd === false
         ) {
-          const scaleV = 0.5;
+          const scaleV = 0.75;
           renderVector.set(window.appConfig.diffX * scaleV,
             window.appConfig.diffY * -scaleV,
             0)
           let newVelocity = renderVector
-          const speedClamp = 50
+          const speedClamp = 75
           const newVelocityLength = newVelocity.length()
           if (newVelocityLength > speedClamp) {
             newVelocity = newVelocity.multiplyScalar(speedClamp / newVelocityLength)
@@ -8878,17 +8881,17 @@
         10
       );
 
-      window.appConfig.pointLight2.position.set(
-        window.appConfig.sphere.position.x * lfo(777),
-        window.appConfig.sphere.position.y * lfo(1212),
-        10
-      );
+      // window.appConfig.pointLight2.position.set(
+      //   window.appConfig.sphere.position.x * lfo(777),
+      //   window.appConfig.sphere.position.y * lfo(1212),
+      //   10
+      // );
 
-      window.appConfig.pointLight3.position.set(
-        window.appConfig.sphere.position.x * lfo(750),
-        window.appConfig.sphere.position.y * lfo(500),
-        10
-      );
+      // window.appConfig.pointLight3.position.set(
+      //   window.appConfig.sphere.position.x * lfo(750),
+      //   window.appConfig.sphere.position.y * lfo(500),
+      //   10
+      // );
 
       if (window.appConfig.pauseSuperballs === false && window.appConfig.pause === false && window.appConfig.userHasEnded === false && currentTime % 15 < 2) {
         let sphereCoins = []
@@ -9206,20 +9209,20 @@
     }; // end of render
 
     window.appConfig.positionBall = (p) => {
-      const sphere = window.appConfig.sphere // scene.children.find((obj) => obj.gameName === "SPHERE0")
-      sphere.position.x = p.x
-      sphere.position.y = p.y
-      sphere.position.z = p.z
-      sphere.__dirtyPosition = true
+      // const sphere =  // scene.children.find((obj) => obj.gameName === "SPHERE0")
+      window.appConfig.sphere.position.x = p.x
+      window.appConfig.sphere.position.y = p.y
+      window.appConfig.sphere.position.z = p.z
+      window.appConfig.sphere.__dirtyPosition = true
     }
 
-    window.appConfig.positionCamera = (p) => {
-      const cam = window.appConfig.sphere // scene.children.find((obj) => obj.type === "PerspectiveCamera")
-      cam.position.x = p.x
-      cam.position.y = p.y
-      cam.position.z = p.z
-      cam.__dirtyPosition = true
-    }
+    // window.appConfig.positionCamera = (p) => {
+    //   const cam = window.appConfig.camera // scene.children.find((obj) => obj.type === "PerspectiveCamera")
+    //   cam.position.x = p.x
+    //   cam.position.y = p.y
+    //   cam.position.z = p.z
+    //   cam.__dirtyPosition = true
+    // }
 
     const calculateStageScore = (seconds, coins) => {
       let normalizedSeconds = Math.floor(seconds)
