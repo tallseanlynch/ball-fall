@@ -526,18 +526,18 @@
         <table id="high-scores-table" class="margin-bottom-3 table-margin-1">
           <tr id="high-score-1-row">
             <td class="font-a high-score-ordinal">1.</td>
-            <td class="font-b high-score-score" id="high-score-1-score"></td>
-            <td class="font-b high-score-sec" id="high-score-1-sec"></td>
+            <td class="font-b high-score-score" id="high-score-1-score">0</td>
+            <td class="font-b high-score-sec" id="high-score-1-sec">0 sec</td>
           </tr>
           <tr id="high-score-2-row">
             <td class="font-a high-score-ordinal">2.</td>
-            <td class="font-b high-score-score" id="high-score-2-score"></td>
-            <td class="font-b high-score-sec" id="high-score-2-sec"></td>
+            <td class="font-b high-score-score" id="high-score-2-score">0</td>
+            <td class="font-b high-score-sec" id="high-score-2-sec">0 sec</td>
           </tr>
           <tr id="high-score-3-row">
             <td class="font-a high-score-ordinal">3.</td>
-            <td class="font-b high-score-score" id="high-score-3-score"></td>
-            <td class="font-b high-score-sec" id="high-score-3-sec"></td>
+            <td class="font-b high-score-score" id="high-score-3-score">0</td>
+            <td class="font-b high-score-sec" id="high-score-3-sec">0 sec</td>
           </tr>
         </table>
       </div>
@@ -7054,20 +7054,18 @@
       }
 
       scene.simulate();
-      window.appConfig.easyTimerLength = 60
+      window.appConfig.easyTimerLength = 3
       const timer = new easytimer.Timer({ countdown: true, startValues: { seconds: window.appConfig.easyTimerLength }, precision: "secondTenths" });
       window.appConfig.timer = timer
       timer.addEventListener("secondTenthsUpdated", function (e) {
-        document.querySelector(
-          "#timer"
-        ).childNodes[0].data = `${timer
+        window.appConfig.selectors.timer.childNodes[0].data = `${timer
           .getTimeValues()
           .toString(["minutes", "seconds", "secondTenths"])}`;
       });
       timer.addEventListener("targetAchieved", function (e) {
         startStageEnd()
       })
-      document.querySelector("#curtain").classList.add("opacity-0");
+      window.appConfig.selectors.curtain.classList.add("opacity-0");
     };
 
     initGame = (function () {
@@ -7861,7 +7859,6 @@
 
         let thePortalMeshSpaceSphere = thePortalMesh.children.find(c => c.name === 'THE_SPACE_SPHERE')
         let theSphere = window.appConfig.sphere
-        // let theGradientCurtain = document.querySelector('#gradient-curtain')
         return {
           started: 0,
           ended: 0,
@@ -8244,7 +8241,7 @@
             // }, 500)
 
             if (config && config.updateName) {
-              document.querySelector("#stage-name-title").childNodes[0].data = config.updateName
+              window.appConfig.selectors.stageNameTitle.childNodes[0].data = config.updateName
             }
             showStageCountDownName()
             if (config && config.ballPosition) {
@@ -8253,25 +8250,16 @@
               window.appConfig.positionBall(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition)
             }
 
-            document.querySelector('#stage-name-title').style.opacity = 1
-            document.querySelector('#stage-number').style.opacity = 1
+            window.appConfig.selectors.stageNameTitle.style.opacity = 1
+            window.appConfig.selectors.stageNumber.style.opacity = 1
           },
           activeCallback: (percentComplete) => {
             const percentComputed = (percentComplete * 16) > 8 ? 8 : (percentComplete * 16)
-            document.querySelector('#stage-name-title').style.fontSize = percentComputed * .33 + "rem"
-            document.querySelector('#stage-number').style.fontSize = percentComputed / 2 + "rem"
-            // document.querySelector('#gradient-curtain').style.background = window.appConfig.stages.components.background(
-            //   lfoPositive(2750), window.appConfig.stages[window.appConfig.currentStage].backgroundColors
-            // )
-            // if (percentComplete < .5) {
-            //   document.querySelector('#gradient-curtain').style.opacity = percentComplete * 2
-            // }
-            // if (percentComplete > .5) {
-            //   document.querySelector('#gradient-curtain').style.opacity = (1 - ((percentComplete - .5) * 2)) < 0 ? 0 : (1 - ((percentComplete - .5) * 2))
-            // }
+            window.appConfig.selectors.stageNameTitle.style.fontSize = percentComputed * .33 + "rem"
+            window.appConfig.selectors.stageNumber.style.fontSize = percentComputed / 2 + "rem"
             if (percentComplete > .9) {
-              document.querySelector('#stage-name-title').style.opacity = 1 - (percentComplete - .9) * 10
-              document.querySelector('#stage-number').style.opacity = 1 - (percentComplete - .9) * 10
+              window.appConfig.selectors.stageNameTitle.style.opacity = 1 - (percentComplete - .9) * 10
+              window.appConfig.selectors.stageNumber.style.opacity = 1 - (percentComplete - .9) * 10
             }
 
             if (config && config.ballPosition) {
@@ -8468,10 +8456,10 @@
             }
             scene.setGravity(window.appConfig.originVector);
             window.appConfig.sphere.mass = 0
-            document.querySelector('#stage-number').childNodes[0].data = 'ZONE ' + window.appConfig.stages[window.appConfig.currentStage].number
-            document.querySelector('#stage-name-title').childNodes[0].data = window.appConfig.stages[window.appConfig.currentStage].name
+            window.appConfig.selectors.stageNumber.childNodes[0].data = 'ZONE ' + window.appConfig.stages[window.appConfig.currentStage].number
+            window.appConfig.selectors.stageNameTitle.childNodes[0].data = window.appConfig.stages[window.appConfig.currentStage].name
 
-            document.querySelector("#curtain").classList.add("opacity-0");
+            window.appConfig.selectors.curtain.classList.add("opacity-0");
             const restartBallPosition = window.appConfig.stages[window.appConfig.currentStage].data.startingPosition
             window.appConfig.positionBall(restartBallPosition)
             window.appConfig.timers.data.initialBallZoom.percentComplete = 0
@@ -9147,9 +9135,7 @@
           window.appConfig.stageTotalTimePlayed += 15
           window.appConfig.timer.stop()
           window.appConfig.timer.removeEventListener("secondTenthsUpdated", function (e) {
-            document.querySelector(
-              "#timer"
-            ).childNodes[0].data = `${window.appConfig.timer
+            window.appConfig.selectors.timer.childNodes[0].data = `${window.appConfig.timer
               .getTimeValues()
               .toString(["minutes", "seconds", "secondTenths"])}`;
           });
@@ -9159,9 +9145,7 @@
           window.appConfig.timer = newTimer
           newTimer.start()
           newTimer.addEventListener("secondTenthsUpdated", function (e) {
-            document.querySelector(
-              "#timer"
-            ).childNodes[0].data = `${window.appConfig.timer
+            window.appConfig.selectors.timer.childNodes[0].data = `${window.appConfig.timer
               .getTimeValues()
               .toString(["minutes", "seconds", "secondTenths"])}`;
           });
@@ -9259,43 +9243,43 @@
       const stageScore = calculateStageScore(window.appConfig.timer
         .getTimeValues().seconds, window.appConfig.score.coins)
 
-      document.querySelector("#report-time").childNodes[0].data = window.appConfig.stageTotalTimePlayed + ' sec';
-      document.querySelector("#report-score").childNodes[0].data =
+      window.appConfig.selectors.reportTime.childNodes[0].data = window.appConfig.stageTotalTimePlayed + ' sec';
+      window.appConfig.selectors.reportScore.innerHTML =
         stageScore.toLocaleString('en-US').replace(',', comma());
 
       const theHighScores = window.appConfig.highscores[window.appConfig.currentStage].highscores
-      const hs1Row = document.querySelector("#high-score-1-row")
-      const hs2Row = document.querySelector("#high-score-2-row")
-      const hs3Row = document.querySelector("#high-score-3-row")
-      const hs1Score = document.querySelector("#high-score-1-score")
-      const hs2Score = document.querySelector("#high-score-2-score")
-      const hs3Score = document.querySelector("#high-score-3-score")
-      const hs1Sec = document.querySelector("#high-score-1-sec")
-      const hs2Sec = document.querySelector("#high-score-2-sec")
-      const hs3Sec = document.querySelector("#high-score-3-sec")
+      const hs1Row = window.appConfig.selectors.highScore1Row
+      const hs2Row = window.appConfig.selectors.highScore2Row
+      const hs3Row = window.appConfig.selectors.highScore3Row
+      const hs1Score = window.appConfig.selectors.highScore1Score
+      const hs2Score = window.appConfig.selectors.highScore2Score
+      const hs3Score = window.appConfig.selectors.highScore3Score
+      const hs1Sec = window.appConfig.selectors.highScore1Sec
+      const hs2Sec = window.appConfig.selectors.highScore2Sec
+      const hs3Sec = window.appConfig.selectors.highScore3Sec
       if (theHighScores[0] && theHighScores[0].lengthPlayed && theHighScores[0].totalScore) {
-        hs1Score.childNodes[0].data = theHighScores[0].totalScore.toLocaleString('en-US').replace(',', comma())
-        hs1Sec.childNodes[0].data = theHighScores[0].lengthPlayed + " sec"
+        hs1Score.innerHTML = theHighScores[0].totalScore.toLocaleString('en-US').replace(',', comma())
+        hs1Sec.innerHTML = theHighScores[0].lengthPlayed + " sec"
         hs1Row.classList.remove("hide")
       } else {
         hs1Row.classList.add("hide")
       }
       if (theHighScores[1] && theHighScores[1].lengthPlayed && theHighScores[1].totalScore) {
-        hs2Score.childNodes[0].data = theHighScores[1].totalScore.toLocaleString('en-US').replace(',', comma())
-        hs2Sec.childNodes[0].data = theHighScores[1].lengthPlayed + " sec"
+        hs2Score.innerHTML = theHighScores[1].totalScore.toLocaleString('en-US').replace(',', comma())
+        hs2Sec.innerHTML = theHighScores[1].lengthPlayed + " sec"
         hs2Row.classList.remove("hide")
       } else {
         hs2Row.classList.add("hide")
       }
       if (theHighScores[2] && theHighScores[2].lengthPlayed && theHighScores[2].totalScore) {
-        hs3Score.childNodes[0].data = theHighScores[2].totalScore.toLocaleString('en-US').replace(',', comma())
-        hs3Sec.childNodes[0].data = theHighScores[2].lengthPlayed + " sec"
+        hs3Score.innerHTML = theHighScores[2].totalScore.toLocaleString('en-US').replace(',', comma())
+        hs3Sec.innerHTML = theHighScores[2].lengthPlayed + " sec"
         hs3Row.classList.remove("hide")
       } else {
         hs3Row.classList.add("hide")
       }
 
-      document.querySelector("#pause-button").disabled = true;
+      window.appConfig.selectors.pauseButton.disabled = true;
 
     }
 
@@ -9323,7 +9307,7 @@
 
       scene.setGravity(window.appConfig.gravityVector);
       window.appConfig.sphere.mass = window.appConfig.defaultSphereMass
-      document.querySelector("#pause-button").disabled = false;
+      window.appConfig.selectors.pauseButton.disabled = false;
       const theBall = window.appConfig.sphere //scene.children.find(c => c.gameName === 'SPHERE0')
       theBall.position.set(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition);
       if (window.appConfig.finalStageActiveTransforms === false) {
@@ -9379,13 +9363,11 @@
       })
       window.appConfig.gameModeFunctions.updateGameScore({ score: 0 })
       showHTMLElements([]);
-      document.querySelector("#curtain").classList.remove("opacity-0");
+      window.appConfig.selectors.curtain.classList.remove("opacity-0");
       const newTimer = new easytimer.Timer({ countdown: true, startValues: { seconds: window.appConfig.easyTimerLength }, precision: "secondTenths" });
       window.appConfig.timer.stop()
       window.appConfig.timer.removeEventListener("secondTenthsUpdated", function (e) {
-        document.querySelector(
-          "#timer"
-        ).childNodes[0].data = `${window.appConfig.timer
+        window.appConfig.selectors.timer.childNodes[0].data = `${window.appConfig.timer
           .getTimeValues()
           .toString(["minutes", "seconds", "secondTenths"])}`;
       });
@@ -9395,9 +9377,7 @@
       window.appConfig.timer = newTimer
       newTimer.start()
       newTimer.addEventListener("secondTenthsUpdated", function (e) {
-        document.querySelector(
-          "#timer"
-        ).childNodes[0].data = `${window.appConfig.timer
+        window.appConfig.selectors.timer.childNodes[0].data = `${window.appConfig.timer
           .getTimeValues()
           .toString(["minutes", "seconds", "secondTenths"])}`;
       });
@@ -9408,18 +9388,57 @@
       window.appConfig.timer.pause();
       window.appConfig.activeTransforms = []
     };
-    window.appConfig.scoreSelectors = {
-      hundreds: document.querySelector("#score-hundreds-text"),
-      thousands: document.querySelector("#score-thousands-text"),
-      millions: document.querySelector("#score-millions-text"),
-      thousandsComma: document.querySelector("#score-thousands-comma"),
-      millionsComma: document.querySelector("#score-millions-comma"),
-      timer: document.querySelector("#timer")
+    window.appConfig.selectors = {
+      scoreHundreds: document.querySelector("#score-hundreds-text"),
+      scoreThousands: document.querySelector("#score-thousands-text"),
+      scoreMillions: document.querySelector("#score-millions-text"),
+      scoreThousandsComma: document.querySelector("#score-thousands-comma"),
+      scoreMillionsComma: document.querySelector("#score-millions-comma"),
+      sfxToggleOn: document.querySelector("#sfx-toggle-button-on"),
+      sfxToggleOff: document.querySelector("#sfx-toggle-button-off"),
+      musicToggleOn: document.querySelector("#music-toggle-button-on"),
+      musicToggleOff: document.querySelector("#music-toggle-button-off"),
+      timer: document.querySelector("#timer"),
+      controlsToggleClick: document.querySelector("#controls-toggle-button-click"),
+      controlsToggleSwipe: document.querySelector("#controls-toggle-button-swipe"),
+      performanceToggleLow: document.querySelector("#performance-toggle-button-low"),
+      performanceToggleMed: document.querySelector("#performance-toggle-button-med"),
+      performanceToggleHigh: document.querySelector("#performance-toggle-button-high"),
+      // circle0: document.querySelector('#circle0'),
+      // circle1: document.querySelector('#circle1'),
+      // circle2: document.querySelector('#circle2'),
+      // circle3: document.querySelector('#circle3'),
+      // circle4: document.querySelector('#circle4'),
+      // loadingGradientCurtain: document.querySelector('#loading-gradient-curtain'),
+      // mainLoading: document.querySelector('#main-loading'),
+      curtain: document.querySelector("#curtain"),
+      stageNameTitle: document.querySelector("#stage-name-title"),
+      stageNumber: document.querySelector('#stage-number'),
+      reportTime: document.querySelector("#report-time"),
+      reportScore: document.querySelector("#report-score"),
+      highScore1Row: document.querySelector("#high-score-1-row"),
+      highScore2Row: document.querySelector("#high-score-2-row"),
+      highScore3Row: document.querySelector("#high-score-3-row"),
+      highScore1Score: document.querySelector("#high-score-1-score"),
+      highScore2Score: document.querySelector("#high-score-2-score"),
+      highScore3Score: document.querySelector("#high-score-3-score"),
+      highScore1Sec: document.querySelector("#high-score-1-sec"),
+      highScore2Sec: document.querySelector("#high-score-2-sec"),
+      highScore3Sec: document.querySelector("#high-score-3-sec"),
+      pauseButton: document.querySelector("#pause-button")
     }
-    window.appConfig.scoreSelectors.hundreds.textContent = "0"
-    window.appConfig.scoreSelectors.thousands.textContent = " "
-    window.appConfig.scoreSelectors.millions.textContent = " "
-    window.appConfig.scoreSelectors.timer.textContent = " "
+    window.appConfig.selectors.scoreHundreds.textContent = "0"
+    window.appConfig.selectors.scoreThousands.textContent = " "
+    window.appConfig.selectors.scoreMillions.textContent = " "
+    window.appConfig.selectors.timer.textContent = " "
+    window.appConfig.selectors.reportTime.textContent = " "
+    window.appConfig.selectors.reportScore.textContent = " "
+    window.appConfig.selectors.highScore1Score.textContent = " "
+    window.appConfig.selectors.highScore2Score.textContent = " "
+    window.appConfig.selectors.highScore3Score.textContent = " "
+    window.appConfig.selectors.highScore1Sec.textContent = " "
+    window.appConfig.selectors.highScore2Sec.textContent = " "
+    window.appConfig.selectors.highScore3Sec.textContent = " "
     window.appConfig.gameModeFunctions = {
       start: start,
       reset: reset,
@@ -9430,8 +9449,6 @@
         }
       },
       updateGameScore: (config) => {
-        // document.querySelector("#score").childNodes[0].data =
-        //   window.appConfig.score.coins.toLocaleString('en-US').replace(',', comma())
         if (config && config.score) {
           const scoreString = config.score.toString()
           const scoreLength = scoreString.length
@@ -9439,27 +9456,27 @@
           const sl1 = scoreString[scoreLength - 2] !== undefined ? scoreString[scoreLength - 2] : " "
           const sl2 = scoreString[scoreLength - 3] !== undefined ? scoreString[scoreLength - 3] : " "
           const hVal = sl2 + sl1 + sl0
-          window.appConfig.scoreSelectors.hundreds.childNodes[0].data = hVal
+          window.appConfig.selectors.scoreHundreds.childNodes[0].data = hVal
           const sl3 = scoreString[scoreLength - 4] !== undefined ? scoreString[scoreLength - 4] : " "
           const sl4 = scoreString[scoreLength - 5] !== undefined ? scoreString[scoreLength - 5] : " "
           const sl5 = scoreString[scoreLength - 6] !== undefined ? scoreString[scoreLength - 6] : " "
           const tVal = sl5 + sl4 + sl3
-          window.appConfig.scoreSelectors.thousands.childNodes[0].data = tVal
+          window.appConfig.selectors.scoreThousands.childNodes[0].data = tVal
           const sl6 = scoreString[scoreLength - 7] !== undefined ? scoreString[scoreLength - 7] : " "
           const sl7 = scoreString[scoreLength - 8] !== undefined ? scoreString[scoreLength - 8] : " "
           const sl8 = scoreString[scoreLength - 9] !== undefined ? scoreString[scoreLength - 9] : " "
           const mVal = sl8 + sl7 + sl6
-          window.appConfig.scoreSelectors.millions.childNodes[0].data = mVal
+          window.appConfig.selectors.scoreMillions.childNodes[0].data = mVal
           if (tVal === "   ") {
-            window.appConfig.scoreSelectors.thousandsComma.classList.add("hide")
+            window.appConfig.selectors.scoreThousandsComma.classList.add("hide")
           } else {
-            window.appConfig.scoreSelectors.thousandsComma.classList.remove("hide")
+            window.appConfig.selectors.scoreThousandsComma.classList.remove("hide")
 
           }
           if (mVal === "   ") {
-            window.appConfig.scoreSelectors.millionsComma.classList.add("hide")
+            window.appConfig.selectors.scoreMillionsComma.classList.add("hide")
           } else {
-            window.appConfig.scoreSelectors.millionsComma.classList.remove("hide")
+            window.appConfig.selectors.scoreMillionsComma.classList.remove("hide")
 
           }
         }
@@ -9542,13 +9559,13 @@
         switch (config.value) {
           case "on":
             window.appConfig.sfxTurnedOn = true
-            document.querySelector("#sfx-toggle-button-on").classList.remove("gray")
-            document.querySelector("#sfx-toggle-button-off").classList.add("gray")
+            window.appConfig.selectors.sfxToggleOn.classList.remove("gray")
+            window.appConfig.selectors.sfxToggleOff.classList.add("gray")
             break
           case "off":
             window.appConfig.sfxTurnedOn = false
-            document.querySelector("#sfx-toggle-button-on").classList.add("gray")
-            document.querySelector("#sfx-toggle-button-off").classList.remove("gray")
+            window.appConfig.selectors.sfxToggleOn.classList.add("gray")
+            window.appConfig.selectors.sfxToggleOff.classList.remove("gray")
             break
         }
       }
@@ -9558,13 +9575,13 @@
         switch (config.value) {
           case "on":
             window.appConfig.musicTurnedOn = true
-            document.querySelector("#music-toggle-button-on").classList.remove("gray")
-            document.querySelector("#music-toggle-button-off").classList.add("gray")
+            window.appConfig.selectors.musicToggleOn.classList.remove("gray")
+            window.appConfig.selectors.musicToggleOff.classList.add("gray")
             break
           case "off":
             window.appConfig.musicTurnedOn = false
-            document.querySelector("#music-toggle-button-on").classList.add("gray")
-            document.querySelector("#music-toggle-button-off").classList.remove("gray")
+            window.appConfig.selectors.musicToggleOn.classList.add("gray")
+            window.appConfig.selectors.musicToggleOff.classList.remove("gray")
             break
         }
       }
@@ -9584,16 +9601,16 @@
                 window.appConfig.events.primaryInput = "click"
 
               }
-              document.querySelector("#controls-toggle-button-click").classList.remove("gray")
-              document.querySelector("#controls-toggle-button-swipe").classList.add("gray")
+              window.appConfig.selectors.controlsToggleClick.classList.remove("gray")
+              window.appConfig.selectors.controlsToggleSwipe.classList.add("gray")
               break
             case "swipe":
               if (onlyHTML === false) {
                 window.appConfig.events.primaryInput = "mouse"
 
               }
-              document.querySelector("#controls-toggle-button-click").classList.add("gray")
-              document.querySelector("#controls-toggle-button-swipe").classList.remove("gray")
+              window.appConfig.selectors.controlsToggleClick.classList.add("gray")
+              window.appConfig.selectors.controlsToggleSwipe.classList.remove("gray")
           }
         }
       }
@@ -9607,19 +9624,19 @@
         if (config.value !== undefined) {
           switch (config.value) {
             case 0:
-              document.querySelector("#performance-toggle-button-low").classList.remove("gray")
-              document.querySelector("#performance-toggle-button-med").classList.add("gray")
-              document.querySelector("#performance-toggle-button-high").classList.add("gray")
+              window.appConfig.selectors.performanceToggleLow.classList.remove("gray")
+              window.appConfig.selectors.performanceToggleMed.classList.add("gray")
+              window.appConfig.selectors.performanceToggleHigh.classList.add("gray")
               break
             case 1:
-              document.querySelector("#performance-toggle-button-low").classList.add("gray")
-              document.querySelector("#performance-toggle-button-med").classList.remove("gray")
-              document.querySelector("#performance-toggle-button-high").classList.add("gray")
+              window.appConfig.selectors.performanceToggleLow.classList.add("gray")
+              window.appConfig.selectors.performanceToggleMed.classList.remove("gray")
+              window.appConfig.selectors.performanceToggleHigh.classList.add("gray")
               break
             case 2:
-              document.querySelector("#performance-toggle-button-low").classList.add("gray")
-              document.querySelector("#performance-toggle-button-med").classList.add("gray")
-              document.querySelector("#performance-toggle-button-high").classList.remove("gray")
+              window.appConfig.selectors.performanceToggleLow.classList.add("gray")
+              window.appConfig.selectors.performanceToggleMed.classList.add("gray")
+              window.appConfig.selectors.performanceToggleHigh.classList.remove("gray")
               break
           }
         }
