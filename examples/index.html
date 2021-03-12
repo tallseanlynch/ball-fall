@@ -4,6 +4,7 @@
 
 <head>
   <meta name="viewport" content="initial-scale = 1, user-scalable = no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <title>Ballsinki</title>
   <link rel="icon" type="image/png" href="icon.png">
   <style>
@@ -9641,12 +9642,17 @@
 
         /* View in fullscreen */
         function openFullscreen() {
-          if (window.appConfig.selectors.html.requestFullscreen) {
-            window.appConfig.selectors.html.requestFullscreen();
-          } else if (window.appConfig.selectors.html.webkitRequestFullscreen) { /* Safari */
-            window.appConfig.selectors.html.webkitRequestFullscreen();
-          } else if (window.appConfig.selectors.html.msRequestFullscreen) { /* IE11 */
-            window.appConfig.selectors.html.msRequestFullscreen();
+          if(!document.fullscreenElement) {
+            if (window.appConfig.selectors.html.requestFullscreen) {
+              window.appConfig.selectors.html.requestFullscreen();
+              window.appConfig.requestFullscreenResult = true
+            } else if (window.appConfig.selectors.html.webkitRequestFullscreen) { /* Safari */
+              window.appConfig.selectors.html.webkitRequestFullscreen();
+              window.appConfig.requestFullscreenResult = true
+            } else if (window.appConfig.selectors.html.msRequestFullscreen) { /* IE11 */
+              window.appConfig.selectors.html.msRequestFullscreen();
+              window.appConfig.requestFullscreenResult = true
+            }
           }
         }
 
@@ -9654,15 +9660,20 @@
         function closeFullscreen() {
           if (document.exitFullscreen) {
             document.exitFullscreen();
+            window.appConfig.requestFullscreenResult = false
           } else if (document.webkitExitFullscreen) { /* Safari */
             document.webkitExitFullscreen();
+            window.appConfig.requestFullscreenResult = false
           } else if (document.msExitFullscreen) { /* IE11 */
             document.msExitFullscreen();
+            window.appConfig.requestFullscreenResult = false
           }
         }
 
         try {
-          openFullscreen()
+          if(window.appConfig.requestFullscreenResult !== false) {
+            openFullscreen()
+          }
         } catch(err) {
           closeFullscreen()
         }
