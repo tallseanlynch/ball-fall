@@ -1,12 +1,17 @@
 setTimeout(() => {
+  const handleClick = (e) => {
+    window.appConfig.clickXCoor = (e.touches && e.touches[0].clientX) || e.clientX
+    window.appConfig.clickYCoor = (e.touches && e.touches[0].clientY) || e.clientY
+    window.appConfig.clickInputVectorX = (window.appConfig.clickXCoor / window.innerWidth * 2) - 1;
+    window.appConfig.clickInputVectorY = (window.appConfig.clickYCoor / window.innerHeight * -2) + 1;
+    if (window.appConfig.clickXCoor > 80 && window.appConfig.clickYCoor < (window.innerHeight - 80 )){
+      window.appConfig.clickVector.set(window.appConfig.clickInputVectorX * window.appConfig.clickScale, window.appConfig.clickInputVectorY * window.appConfig.clickScale, 0)
+      window.appConfig.sphere.setLinearVelocity(window.appConfig.clickVector)
+    }
+  }
     document.addEventListener("touchstart", (e) => {
       if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'click') && !window.appConfig.userHasEnded && window.appConfig.pause === false) {
-        // const sphere = scene.children.find((obj) => obj.gameName === "SPHERE0")
-        const sphere = window.appConfig.sphere
-        var inputVectorX = (e.touches[0].clientX / window.innerWidth * 2) - 1;
-        var inputVectorY = (e.touches[0].clientY / window.innerHeight * -2) + 1;
-        const clickScale = 100
-        sphere.setLinearVelocity(new THREE.Vector3(inputVectorX * clickScale, inputVectorY * clickScale, 0))
+        handleClick(e)
       }
 
       if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'touch') && !window.appConfig.userHasEnded && window.appConfig.pause === false) {
@@ -115,11 +120,7 @@ setTimeout(() => {
 
       document.querySelector('body').addEventListener("click", (e) => {
           if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'click') && !window.appConfig.userHasEnded && window.appConfig.pause === false) {
-            const sphere = window.appConfig.sphere //scene.children.find((obj) => obj.gameName === "SPHERE0")
-            var inputVectorX = (e.clientX / window.innerWidth * 2) - 1;
-            var inputVectorY = (e.clientY / window.innerHeight * -2) + 1;
-            const clickScale = 50
-            sphere.setLinearVelocity(new THREE.Vector3(inputVectorX * clickScale, inputVectorY * clickScale, 0))  
+            handleClick(e)
           }  
       });
 

@@ -743,6 +743,12 @@
     window.appConfig.gravityVector = new THREE.Vector3(0, -10, 0)
     window.appConfig.spriteVector = new THREE.Vector3(0, 0, 0)
     window.appConfig.blackHoleVector = new THREE.Vector3(0, 0, 0)
+    window.appConfig.clickVector = new THREE.Vector3(0, 0, 0)
+    window.appConfig.clickXCoor = 0
+    window.appConfig.clickYCoor = 0
+    window.appConfig.clickInputVectorX = 0
+    window.appConfig.clickInputVectorY = 0
+    window.appConfig.clickScale = 100
 
     const stageProperties = {
       STAGE0: {
@@ -1169,7 +1175,7 @@
 
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.render(scene, camera);
-        window.appConfig.events.primaryInput = undefined
+        // window.appConfig.events.primaryInput = undefined
       }
       onWindowResize();
       window.addEventListener("resize", onWindowResize, false);
@@ -2091,6 +2097,8 @@
       window.appConfig.meshComponents.sapphire.shape.lineTo(0, .5)
       window.appConfig.meshComponents.sapphire.color = new THREE.Color('#0F52BA')
       window.appConfig.meshComponents.sapphire.whiteColor = new THREE.Color('#FFFFFF')
+      window.appConfig.inputScaleV = 0.7
+      window.appConfig.speedClamp = 70
 
       window.appConfig.meshComponents.sapphire.geometry = new THREE.ExtrudeGeometry(window.appConfig.meshComponents.sapphire.shape, {
         steps: 1,
@@ -8854,18 +8862,14 @@
           window.appConfig.touchStart === true &&
           window.appConfig.touchEnd === false
         ) {
-          const scaleV = 0.75;
-          renderVector.set(window.appConfig.diffX * scaleV,
-            window.appConfig.diffY * -scaleV,
+          renderVector.set(window.appConfig.diffX * window.appConfig.inputScaleV,
+            window.appConfig.diffY * -window.appConfig.inputScaleV,
             0)
-          let newVelocity = renderVector
-          const speedClamp = 75
-          const newVelocityLength = newVelocity.length()
-          if (newVelocityLength > speedClamp) {
-            newVelocity = newVelocity.multiplyScalar(speedClamp / newVelocityLength)
+          if (renderVector.length() > window.appConfig.speedClamp) {
+            renderVector = renderVector.multiplyScalar(window.appConfig.speedClamp / renderVector.length())
           }
           window.appConfig.sphere
-            .setLinearVelocity(newVelocity)
+            .setLinearVelocity(renderVector)
         }
       }
 
