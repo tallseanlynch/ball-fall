@@ -282,7 +282,6 @@
     startLoadingInterval()
 
     const toggleMainLoading = () => {
-      // document.querySelector('#gradient-curtain').style.opacity = 0
       document.querySelector('#main-loading').style.visibility = 'hidden'
       document.querySelector('#main-loading').style.display = 'none'
     }
@@ -329,7 +328,8 @@
       })
       if (loadedNumber === expectedLoadedNumber && window.localStorage.getItem('performanceLevel') !== null) {
         window.appConfig.healthCheck.healthChecked = true
-        window.appConfig.performanceLevel = JSON.parse(window.localStorage.getItem('performanceLevel')).performanceLevel
+        // window.appConfig.performanceLevel = JSON.parse(window.localStorage.getItem('performanceLevel')).performanceLevel
+        window.appConfig.performanceLevel = 2
         window.appConfig.loadingInterval.clearInterval()
         toggleMainLoading()
       }
@@ -337,7 +337,6 @@
 
   </script>
   <style>
-    /* #gradient-curtain, */
     #loading-gradient-curtain {
       position: fixed;
       width: 100%;
@@ -347,10 +346,6 @@
       pointer-events: none;
       background: linear-gradient(180deg, rgba(2, 0, 36, 0) 0%, rgba(121, 9, 117, 1) 0%, rgba(252, 231, 183, 1) 33%, rgba(0, 212, 255, 1) 66%);
     }
-
-    /* #gradient-curtain {
-      z-index: 99;
-    } */
 
     #loading-gradient-curtain {
       z-index: 1000;
@@ -460,7 +455,7 @@
             </div>
           </div>
         </div>
-        <div class="margin-bottom-2">
+        <!-- <div class="margin-bottom-2">
           <div class="sound-menu-key font-a">Performance</div>
           <div class="sound-menu-values-container">
             <div class="sound-menu-value-third font-b">
@@ -476,7 +471,7 @@
                 onClick="togglePerformanceButton({value:2})">HIGH</button>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
       <div id="sound-right">
         <div class="margin-bottom-2">
@@ -643,8 +638,6 @@
     </div>
   </div>
 
-
-  <!-- <div id="gradient-curtain"></div> -->
   <div id="loading-gradient-curtain"></div>
 
   <div id="stage-name-container" class="hide menu-container">
@@ -1041,37 +1034,19 @@
       // dracoLoader.setDecoderPath( '/examples/js/libs/draco/' );
       // loader.setDRACOLoader( dracoLoader );
 
-      // Load a glTF resource
       crystalLoader.load(
-        // resource URL
         'models/crystal.gltf',
-        // called when the resource is loaded
         function (gltf) {
           const crystal = gltf.scene.children[0]
           crystal.name = 'CRYSTAL_GLTF'
           window.appConfig.crystalGLTF = crystal
-          // window.appConfig.crystalGLTF.material = window.appConfig.crystalMaterials[2].standard
           initScene()
-
-          // scene.add( gltf.scene.children[2]);
-          // gltf.name = 'SATURN'
-
-          // gltf.animations; // Array<THREE.AnimationClip>
-          // gltf.scene; // THREE.Group
-          // gltf.scenes; // Array<THREE.Group>
-          // gltf.cameras; // Array<THREE.Camera>
-          // gltf.asset; // Object
-          // setTimeout(() => {
-          //   rotateSaturnAtStart()
-          // }, 0)
         },
-        // called while loading is progressing
         function (xhr) {
 
           console.log((xhr.loaded / xhr.total * 100) + '% loaded');
 
         },
-        // called when loading has errors
         function (error) {
           console.log(error)
           console.log('An error happened');
@@ -1148,11 +1123,6 @@
         AA = false
       }
 
-      // this.renderer = new THREE.WebGLRenderer({
-      //   antialias: AA,
-      //   powerPreference: "high-performance",
-      // })
-
       light = new THREE.SpotLight(0xffffff);
       light.position.set(20, 80, 15);
       light.target.position.copy(scene.position);
@@ -1182,22 +1152,6 @@
       pointLight1.distance = 25;
       window.appConfig.pointLight1 = pointLight1
       scene.add(pointLight1);
-
-      // const pointLight2 = new THREE.PointLight(getRandomColor(), 1);
-      // pointLight2.gameName = "POINTLIGHT2";
-      // pointLight2.power = 5;
-      // pointLight2.decay = 1;
-      // pointLight2.distance = 25;
-      // window.appConfig.pointLight2 = pointLight2
-      // scene.add(pointLight2);
-
-      // const pointLight3 = new THREE.PointLight(getRandomColor(), 1);
-      // pointLight3.gameName = "POINTLIGHT3";
-      // pointLight3.power = 5;
-      // pointLight3.decay = 1;
-      // pointLight3.distance = 25;
-      // window.appConfig.pointLight3 = pointLight3
-      // scene.add(pointLight3);
 
       function onWindowResize(event) {
         var tanFOV = Math.tan(((Math.PI / 180) * camera.fov) / 2);
@@ -1245,7 +1199,6 @@
         if (config && config.color) {
           beamMaterial = new THREE.MeshPhongMaterial({
             color: config.color,
-            // emissive: config.color,
             transparent: true,
             opacity: 1
           })
@@ -1383,10 +1336,6 @@
         return beam0;
       };
 
-      // const crystalTopGeometry = new THREE.CylinderGeometry(0, 1, 0.5, 6)
-      // const crystalMiddleGeometry = new THREE.CylinderGeometry(1, 1, 1, 6)
-      // const crystalBottomGeometry = new THREE.CylinderGeometry(1, 0, 0.5, 6)
-
       const tripleHex = 0x159294;
       const doubleHex = 0xffa6bb;
       const singleHex = 0xffd5c9;
@@ -1400,7 +1349,6 @@
       const yScaleMod = 1;
       const zScaleMod = 1;
       const crystalMaterialOptions = {
-        // color: 0x000000,
         specular: 0x050505,
         shininess: 100,
         side: THREE.DoubleSide
@@ -1763,9 +1711,7 @@
         const uuidsToRemove = []
         let stageKeys = Object.keys(window.appConfig.stages[stage])
         stageKeys.forEach(key => {
-          // debugger
           if (window.appConfig.stages[stage][key] !== undefined && window.appConfig.stages[stage][key].position && window.appConfig.stages[stage][key].uuid) {
-            // console.log('deleted old keys')
             delete window.appConfig.stages[stage][key]
           }
         })
@@ -1805,12 +1751,6 @@
           recursiveRemove(foundIt)
           scene.remove(foundIt)
         })
-        // console.error("uuidsInt: ", uuidsInt)
-        // console.error("removedUuidsInt: ", removedUuidsInt)
-        // console.error("unhandledInt: ", unhandledInt)
-        // console.error("processedGeos: ", processedGeos)
-        // console.error("processedMats: ", processedMats)
-        // console.error("cleanupDepth: ", cleanupDepth)
         renderer.renderLists.dispose();
         renderer.dispose()
       }
@@ -2081,7 +2021,7 @@
       window.appConfig.meshComponents = {}
       const createBumper = (name = "NO_NAME", size = 0, p = { x: 0, y: 0, z: 0 }, sides = 5, bounce = 2, weight = 0, scale = 1, collisionCallback = () => { }, color) => {
         const bumperGeo = new THREE.CylinderGeometry((2 + size) * (2 / 3), 3 + size, 1, sides)
-        // const bumperColor = window.appConfig.bumperMaterials[0].standard.color.clone()
+
         let bumperColor
         if (color !== undefined) {
           bumperColor = new THREE.Color(color)
@@ -2127,7 +2067,6 @@
               opacity: 0.25,
               specular: 0x050505,
               shininess: 200,
-              // alphaTest: 0.5,
               side: THREE.DoubleSide,
               depthWrite: false
             })
@@ -2201,12 +2140,7 @@
           sapphire.position.y = portalParentMesh.position.y + p.y
           sapphire.position.z = -2.5
 
-
         } else {
-
-
-
-
 
           sapphire.hasTarget = false
           sapphire.travelData = {}
@@ -2975,8 +2909,6 @@
             }
 
             const remoteSwitchBeamConfig = () => {
-              // debugger
-              // #2 add the name using the config
               return {
                 switchIndicators: 1,
                 color: window.appConfig.stages[window.appConfig.currentStage].backgroundColors[3],
@@ -3062,8 +2994,6 @@
             receiverGroup.position.x = config.receiver.p.x
             receiverGroup.position.y = config.receiver.p.y
             receiverGroup.position.z = 10
-            // debugger
-            // #1 create the remote switch
             receiverGroup.name = window.appConfig.currentStage + '_' + config.receiver.name + '_RECEIVERGROUP_' + Math.round(Math.random() * 10000)
             receiverGroup.switchName = config.receiver.name
             transmitterGroup.name = window.appConfig.currentStage + '_TRANSMITTERGROUP_' + Math.round(Math.random() * 10000)
@@ -3300,7 +3230,6 @@
           gemPortalConfig: () => {
             return {
               startedCallback: (thePortalMesh, config, percentComplete) => {
-                // window.appConfig.howlSounds.backgroundMusic.changeSrc(window.appConfig.stages[window.appConfig.currentStage].sounds.backgroundMusic, true)
                 window.appConfig.howlSounds.backgroundMusic.changeSrc("sounds/GEM_ZONE.mp3", true)
               },
               activeCallback: (thePortalMesh, config, percentComplete) => {
@@ -3348,7 +3277,6 @@
           sapphirePortalConfig: () => {
             return {
               startedCallback: (thePortalMesh, config, percentComplete) => {
-                // window.appConfig.howlSounds.backgroundMusic.changeSrc(stageSounds.backgroundMusic, true)
                 window.appConfig.howlSounds.backgroundMusic.changeSrc("sounds/SAPPHIRE_ISLAND.mp3", true)
               },
               activeCallback: (thePortalMesh, config, percentComplete) => {
@@ -3395,10 +3323,9 @@
                   updateName: window.appConfig.stages[window.appConfig.currentStage].name,
                   ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0)
                 }))
-                let theSphere = window.appConfig.sphere // scene.children.find(c => c.name === 'SPHERE0')
+                let theSphere = window.appConfig.sphere
                 window.appConfig.stages.components.dematerializeMesh(theSphere)
                 window.appConfig.howlSounds.backgroundMusic.changeSrc(window.appConfig.stages[window.appConfig.currentStage].sounds.backgroundMusic, true)
-                // window.appConfig.howlSounds.backgroundMusic.changeSrc("sounds/SAPPHIRE_ISLAND.mp3", true)
               },
               portalConfig: {
                 sapphire: true,
@@ -3409,7 +3336,6 @@
           finalPortalConfig: () => {
             return {
               startedCallback: (thePortalMesh, config, percentComplete) => {
-                // window.appConfig.howlSounds.backgroundMusic.changeSrc(window.appConfig.stages[window.appConfig.currentStage].sounds.backgroundMusic, true)
                 window.appConfig.howlSounds.backgroundMusic.changeSrc("sounds/FINAL_ZONE.mp3", true)
               },
               activeCallback: (thePortalMesh, config, percentComplete) => {
@@ -3539,7 +3465,6 @@
                     if (c.position.y > 125) {
                       c.position.y = -125
                     }
-                    // c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
                   })
                 }
               }
@@ -3551,10 +3476,6 @@
           },
           init: () => {
 
-
-
-
-            // portal
             window.appConfig.timers.activeTimers.push(
               window.appConfig.timers.addPortalToStage({ x: 95, y: -95, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
                 window.appConfig.stages.components.gemPortalConfig())
@@ -3565,8 +3486,6 @@
                 window.appConfig.stages.components.sapphirePortalConfig())
             )
 
-
-            // setTimeout(() => {
             const createStage0Portals = () => {
               window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
               window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
@@ -3580,7 +3499,6 @@
                 window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
               }
             }
-            // }, 1000)
 
 
             window.appConfig.stages.components.setUpPortalIndicators(createStage0Portals)
@@ -3939,7 +3857,6 @@
                     if (c.position.y > 125) {
                       c.position.y = -125
                     }
-                    // c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
                   })
                 }
               }
@@ -4383,7 +4300,6 @@
                     if (c.position.y > 125) {
                       c.position.y = -125
                     }
-                    // c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
                   })
                 }
               }
@@ -4579,8 +4495,6 @@
               "STAGE2MAINSTRUCTURE_3",
               { x: 0, y: 0 },
               [1, 0, 0, 0]
-              // [bottom, left, right, top]
-
             );
             scene.add(stage2MainBeamStructure3)
 
@@ -4591,7 +4505,6 @@
               "STAGE2MAINSTRUCTURE1",
               { x: 0, y: 0 },
               [1, 1, 0, 0]
-              // [bottom, left, right, top]
             );
             stage2MainBeamStructure1.rotation.z = .25 * Math.PI
             scene.add(stage2MainBeamStructure1);
@@ -4600,9 +4513,6 @@
               14,
               0.56,
               "STAGE2MAINSTRUCTURE_2"
-              // { x: 0, y: 0 },
-              // [1, 1, 0, 0]
-              // [bottom, left, right, top]
             );
             stage2MainBeamStructure_2.rotation.z = .25 * Math.PI
             scene.add(stage2MainBeamStructure_2);
@@ -4870,7 +4780,6 @@
                     if (c.position.y > 125) {
                       c.position.y = -125
                     }
-                    // c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
                   })
                 }
               }
@@ -5030,7 +4939,6 @@
               -.3525,
               "STAGE3MAINSTRUCTURECIRCLE0",
               { x: 0, y: 25 }
-              // [0, 0, 1, 1]
             );
             scene.add(stage3MainBeamStructureCircle0)
 
@@ -5039,12 +4947,9 @@
               -.3525,
               "STAGE3MAINSTRUCTURECIRCLE1",
               { x: 0, y: 25 }
-              // [0, 0, 1, 1]
             );
             stage3MainBeamStructureCircle1.rotation.z = .25 * Math.PI
             scene.add(stage3MainBeamStructureCircle1)
-
-            // stage3MainBeamStructureCircle0.rotation.z = .25 * Math.PI
 
 
             window.appConfig.stages.components.createRemoteSwitch({
@@ -5065,7 +4970,6 @@
               "STAGE3MAINSTRUCTURE2",
               { x: -110, y: 25 },
               [0, 0, 1, 0]
-              // [bottom, left, right, top]
             )
             scene.add(stage3MainBeamStructure2)
 
@@ -5087,7 +4991,6 @@
               "STAGE3MAINSTRUCTURE3",
               { x: 110, y: 25 },
               [0, 1, 0, 0]
-              // [bottom, left, right, top]
             )
             scene.add(stage3MainBeamStructure3)
 
@@ -5097,7 +5000,6 @@
               "STAGE3MAINSTRUCTURE4",
               { x: 0, y: 135 },
               [1, 1, 0, 0]
-              // [bottom, left, right, top]
             )
             stage3MainBeamStructure4.rotation.z = .25 * Math.PI
             scene.add(stage3MainBeamStructure4)
@@ -5108,7 +5010,6 @@
               "STAGE3MAINSTRUCTURE5",
               { x: 0, y: 151.5 },
               [0, 0, 1, 1]
-              // [bottom, left, right, top]
             )
             stage3MainBeamStructure5.rotation.z = .25 * Math.PI
             scene.add(stage3MainBeamStructure5)
@@ -5600,7 +5501,6 @@
                     if (c.position.y > 125) {
                       c.position.y = -125
                     }
-                    // c.scale.set(lfo(500 + ci * 1500) * 5 + 5, lfo(500 + ci * 1750) * 5 + 5, lfo(500 + ci * 2000) * 5 + 5)
                   })
                 }
               }
@@ -5909,7 +5809,6 @@
               0.57,
               "STAGE4MAINSTRUCTURE_1"
             );
-            // stage4MainBeamStructure_1.rotation.z = .25 * Math.PI
             scene.add(stage4MainBeamStructure_1);
 
 
@@ -5919,8 +5818,6 @@
               "STAGE4MAINSTRUCTURE_2",
               { x: -58.5, y: 73.5 },
               [1, 0, 1, 1]
-              // [bottom, left, right, top]
-
             );
 
             scene.add(stage4MainBeamStructure_2);
@@ -5931,8 +5828,6 @@
               "STAGE4MAINSTRUCTURE_3",
               { x: 75, y: 58.5 },
               [1, 1, 1, 0]
-              // [bottom, left, right, top]
-
             );
 
             scene.add(stage4MainBeamStructure_3);
@@ -5971,10 +5866,7 @@
               "STAGE4MAINSTRUCTURE_4",
               { x: 58.5, y: -73.5 },
               [1, 1, 0, 1]
-              // [bottom, left, right, top]
-
             );
-            // stage4MainBeamStructure.rotation.z = .25 * Math.PI
             scene.add(stage4MainBeamStructure_4);
 
 
@@ -6455,7 +6347,6 @@
                     if (c.position.y > 125) {
                       c.position.y = -125
                     }
-                    // c.scale.set(lfo(500 + ci * 1500) * 10 + 5, lfo(500 + ci * 1750) * 10 + 5, lfo(500 + ci * 2000) * 10 + 5)
                   })
                 }
               }
@@ -7231,12 +7122,6 @@
             ]
             if (suonousFeatureTypes.indexOf(collided_with.featureType) > -1) {
 
-              // const sphere = scene.children.find(obj => {
-              //   if (obj.gameName === "SPHERE0" && obj.type === "Mesh") {
-              //     return obj
-              //   }
-              // })
-
               const sphere = window.appConfig.sphere
 
               const i = Math.floor(collisionInc % playHowlOnCollision.length)
@@ -7290,7 +7175,6 @@
 
         const sapphireMaterial = new THREE.MeshPhongMaterial({
           color: sapphireColor,
-          // specular: 0x050505,
           shininess: 100,
           transparent: true,
           opacity: .9
@@ -7430,7 +7314,6 @@
                 opacity: 0.25,
                 specular: 0x050505,
                 shininess: 200,
-                // alphaTest: 0.5,
                 side: THREE.DoubleSide,
                 depthWrite: false
               })
@@ -7546,15 +7429,9 @@
               }
             } else if (sprite0.isFetchingCoin === true && window.appConfig.start === true && window.appConfig.pause === false) {
               if (sprite0.fetchData.target.isBlueIsland === true) {
-                // sprite0.fetchData.target.children.forEach(child => {
-                //   child.material = window.appConfig.blueCrystalMaterials[sprite0.fetchData.target.size].pulsing
-                // })
                 sprite0.fetchData.target.material = window.appConfig.blueCrystalMaterials[sprite0.fetchData.target.size].pulsing
               }
               if (sprite0.fetchData.target.isBlueIsland === false) {
-                // sprite0.fetchData.target.children.forEach(child => {
-                //   child.material = window.appConfig.crystalMaterials[sprite0.fetchData.target.size].pulsing
-                // })
                 sprite0.fetchData.target.material = window.appConfig.crystalMaterials[sprite0.fetchData.target.size].pulsing
               }
               let percentComplete = window.appConfig.timers.data[`spriteFetch${sprite0.num}`].percentComplete
@@ -7873,11 +7750,6 @@
             switchBeam.finalRotationZ = switchBeam.rotation.z + (.5 * Math.PI)
           },
           activeCallback: (percentComplete) => {
-            // if (switchBeam.rotation.z > switchBeam.finalRotationZ || switchBeam.rotation.z + ((.5 * Math.PI) / 100) > switchBeam.finalRotationZ) {
-            //   switchBeam.rotation.z = switchBeam.finalRotationZ
-            // } else {
-            //   switchBeam.rotation.z += (.5 * Math.PI) / 100
-            // }
             switchBeam.rotation.z = switchBeam.originalRotationZ + ((.5 * Math.PI) * percentComplete)
             switchBeam.__dirtyRotation = true
           },
@@ -8040,7 +7912,6 @@
               thePortalMesh.material.opacity = 1
               window.appConfig.positionBall({ x: thePortalMesh.position.x, y: thePortalMesh.position.y, z: 0 })
               let teardownPercentComplete = (thePercentComplete - .5) * 2
-              // theGradientCurtain.style.opacity = (thePercentComplete - .5) * 2
             }
             thePortalMesh.activeCallback(thePortalMesh, thePortalMesh.config, percentComplete)
           },
@@ -8069,7 +7940,6 @@
         }
         let thePortalMeshSpaceSphere = thePortalMesh.children.find(c => c.name === 'THE_SPACE_SPHERE')
         let theSphere = window.appConfig.sphere
-        // window.appConfig.sphere
         return {
           started: 0,
           ended: 0,
@@ -8172,7 +8042,6 @@
                         0.6 // low restitution
                       ),
                       0
-                      // bgObjectScale < 2.25 ? 1 : 0 // mass
                     )
                     newPhysiObjCol.name = window.appConfig.currentStage + '_BGPHYSI_COL' + Math.round(Math.random() * 1000)
                     newPhysiObjCol.position.x = newPhysiObj.position.x + ((Math.random() * 25) - 12.5)
@@ -8204,8 +8073,6 @@
                           scene.add(window.appConfig.stages.components.crystal(superSounds % 3, { x: other_object.position.x + ((Math.random() * 25) - 12.5), y: other_object.position.y + ((Math.random() * 20) - 10), z: 0 }))
                         }, superSounds * 50)
                       }
-
-                      // bgObjectScale < 2.25 && newPhysiObjCol.setLinearVelocity(new THREE.Vector3().clone(other_object._physijs.linearVelocity))
 
                     }
                   }
@@ -8384,12 +8251,10 @@
           name: 'COUNTDOWNNAME',
           id: Math.round(Math.random() * 10000),
           startedCallback: (percentComplete) => {
-            // setTimeout(() => {
             if (window.appConfig.requestFullscreenResult !== false) {
               appConfig.gameModeFunctions.requestFullscreen()
             }
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.showTransitionFX())
-            // }, 500)
 
             if (config && config.updateName) {
               window.appConfig.selectors.stageNameTitle.childNodes[0].data = config.updateName
@@ -8547,14 +8412,6 @@
           currentTime: 0,
           name: 'COUNTDOWNSTARTFLASH',
           id: Math.round(Math.random() * 10000),
-          // activeCallback: (percentComplete) => {
-          //   if (percentComplete < .5) {
-          //     document.querySelector('#gradient-curtain').style.opacity = percentComplete * 2
-          //   }
-          //   if (percentComplete > .5) {
-          //     document.querySelector('#gradient-curtain').style.opacity = (1 - ((percentComplete - .5) * 2)) < 0 ? 0 : (1 - ((percentComplete - .5) * 2))
-          //   }
-          // },
           completedCallback: () => {
             if (window.appConfig.isPortalStart === false) {
               window.appConfig.stageTotalTimePlayed = window.appConfig.easyTimerLength
@@ -9020,18 +8877,6 @@
         10
       );
 
-      // window.appConfig.pointLight2.position.set(
-      //   window.appConfig.sphere.position.x * lfo(777),
-      //   window.appConfig.sphere.position.y * lfo(1212),
-      //   10
-      // );
-
-      // window.appConfig.pointLight3.position.set(
-      //   window.appConfig.sphere.position.x * lfo(750),
-      //   window.appConfig.sphere.position.y * lfo(500),
-      //   10
-      // );
-
       if (window.appConfig.pauseSuperballs === false && window.appConfig.pause === false && window.appConfig.userHasEnded === false && currentTime % 15 < 2) {
         let sphereCoins = []
         try {
@@ -9131,9 +8976,6 @@
               window.appConfig.timers.activateRemoteSwitch(r)
             )
           }
-          // if (currentTime % 10 < 1) {
-          //   r.line.updatePoints()
-          // }
         })
       }
 
@@ -9344,20 +9186,11 @@
     }; // end of render
 
     window.appConfig.positionBall = (p) => {
-      // const sphere =  // scene.children.find((obj) => obj.gameName === "SPHERE0")
       window.appConfig.sphere.position.x = p.x
       window.appConfig.sphere.position.y = p.y
       window.appConfig.sphere.position.z = p.z
       window.appConfig.sphere.__dirtyPosition = true
     }
-
-    // window.appConfig.positionCamera = (p) => {
-    //   const cam = window.appConfig.camera // scene.children.find((obj) => obj.type === "PerspectiveCamera")
-    //   cam.position.x = p.x
-    //   cam.position.y = p.y
-    //   cam.position.z = p.z
-    //   cam.__dirtyPosition = true
-    // }
 
     const calculateStageScore = (seconds, coins) => {
       let normalizedSeconds = Math.floor(seconds)
@@ -9459,16 +9292,11 @@
       scene.setGravity(window.appConfig.gravityVector);
       window.appConfig.sphere.mass = window.appConfig.defaultSphereMass
       window.appConfig.selectors.pauseButton.disabled = false;
-      const theBall = window.appConfig.sphere //scene.children.find(c => c.gameName === 'SPHERE0')
+      const theBall = window.appConfig.sphere
       theBall.position.set(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition);
       if (window.appConfig.finalStageActiveTransforms === false) {
         window.appConfig.activeTransforms = window.appConfig.stages[window.appConfig.currentStage].defaultTransforms
       }
-      // const sphere = scene.children.find(obj => {
-      //   if (obj.gameName === "SPHERE0" && obj.type === "Mesh") {
-      //     return obj
-      //   }
-      // })
       theBall.setLinearVelocity(window.appConfig.gravityVector)
     };
 
@@ -9561,13 +9389,6 @@
       performanceToggleLow: document.querySelector("#performance-toggle-button-low"),
       performanceToggleMed: document.querySelector("#performance-toggle-button-med"),
       performanceToggleHigh: document.querySelector("#performance-toggle-button-high"),
-      // circle0: document.querySelector('#circle0'),
-      // circle1: document.querySelector('#circle1'),
-      // circle2: document.querySelector('#circle2'),
-      // circle3: document.querySelector('#circle3'),
-      // circle4: document.querySelector('#circle4'),
-      // loadingGradientCurtain: document.querySelector('#loading-gradient-curtain'),
-      // mainLoading: document.querySelector('#main-loading'),
       curtain: document.querySelector("#curtain"),
       stageNameTitle: document.querySelector("#stage-name-title"),
       stageNumber: document.querySelector('#stage-number'),
@@ -9679,25 +9500,6 @@
         } catch(err) {
           closeFullscreen()
         }
-        // debugger
-      //   let hasFS = window.appConfig.selectors.html.requestFullscreen
-      //   let hasWRFS = window.appConfig.selectors.html.webkitRequestFullscreen
-      //   let hasMRFS = window.appConfig.selectors.html.msRequestFullscreen
-      //   let theFullscreen = hasFS || hasWRFS || hasMRFS
-    
-      //   let hasExitFS = document.exitFullscreen
-      //   let hasExitWRFS = document.webkitExitFullscreen
-      //   let hasExitMRFS = document.msExitFullscreen
-      //   let theExitFullscreen = hasExitFS || hasExitWRFS || hasExitMRFS
-
-      //   if (!document.fullscreenElement && window.appConfig.requestFullscreenResult !== false && theFullscreen !== undefined) {
-      //     theFullscreen().catch(err => {
-      //       theExitFullscreen();
-      //       window.appConfig.requestFullscreenResult = false
-      //       console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-      //     });
-      //     window.appConfig.requestFullscreenResult = true
-      //   }
       }
     }
     const colorLightnessLfo = (baseColor, lfoMod) => {
@@ -9723,7 +9525,7 @@
       }
       toggleSFXButton({ value: window.appConfig.sfxTurnedOn === true ? "on" : "off" })
       toggleMusicButton({ value: window.appConfig.musicTurnedOn === true ? "on" : "off" })
-      togglePerformanceButton({ value: window.appConfig.performanceLevel, onlyHTML: true })
+      // togglePerformanceButton({ value: window.appConfig.performanceLevel, onlyHTML: true })
       toggleControlsButton({ value: window.appConfig.events.primaryInput === "mouse" ? "swipe" : "click", onlyHTML: true })
       showHTMLElements(["sounds", "tinted-overlay"]);
     };
@@ -9839,38 +9641,38 @@
         }
       }
     }
-    const togglePerformanceButton = (config) => {
-      if (config) {
-        let onlyHTML = false
-        if (config.onlyHTML && config.onlyHTML === true) {
-          onlyHTML = true
-        }
-        if (config.value !== undefined) {
-          switch (config.value) {
-            case 0:
-              window.appConfig.selectors.performanceToggleLow.classList.remove("gray")
-              window.appConfig.selectors.performanceToggleMed.classList.add("gray")
-              window.appConfig.selectors.performanceToggleHigh.classList.add("gray")
-              break
-            case 1:
-              window.appConfig.selectors.performanceToggleLow.classList.add("gray")
-              window.appConfig.selectors.performanceToggleMed.classList.remove("gray")
-              window.appConfig.selectors.performanceToggleHigh.classList.add("gray")
-              break
-            case 2:
-              window.appConfig.selectors.performanceToggleLow.classList.add("gray")
-              window.appConfig.selectors.performanceToggleMed.classList.add("gray")
-              window.appConfig.selectors.performanceToggleHigh.classList.remove("gray")
-              break
-          }
-        }
-        if (onlyHTML === false) {
-          window.appConfig.performanceLevel = config.value
-          window.localStorage.setItem('performanceLevel', JSON.stringify({ performanceLevel: config.value }))
-          reset({ action: 'levelSelect', level: window.appConfig.currentStageIndex, autoStart: false })
-        }
-      }
-    }
+    // const togglePerformanceButton = (config) => {
+    //   if (config) {
+    //     let onlyHTML = false
+    //     if (config.onlyHTML && config.onlyHTML === true) {
+    //       onlyHTML = true
+    //     }
+    //     if (config.value !== undefined) {
+    //       switch (config.value) {
+    //         case 0:
+    //           window.appConfig.selectors.performanceToggleLow.classList.remove("gray")
+    //           window.appConfig.selectors.performanceToggleMed.classList.add("gray")
+    //           window.appConfig.selectors.performanceToggleHigh.classList.add("gray")
+    //           break
+    //         case 1:
+    //           window.appConfig.selectors.performanceToggleLow.classList.add("gray")
+    //           window.appConfig.selectors.performanceToggleMed.classList.remove("gray")
+    //           window.appConfig.selectors.performanceToggleHigh.classList.add("gray")
+    //           break
+    //         case 2:
+    //           window.appConfig.selectors.performanceToggleLow.classList.add("gray")
+    //           window.appConfig.selectors.performanceToggleMed.classList.add("gray")
+    //           window.appConfig.selectors.performanceToggleHigh.classList.remove("gray")
+    //           break
+    //       }
+    //     }
+    //     if (onlyHTML === false) {
+    //       window.appConfig.performanceLevel = config.value
+    //       window.localStorage.setItem('performanceLevel', JSON.stringify({ performanceLevel: config.value }))
+    //       reset({ action: 'levelSelect', level: window.appConfig.currentStageIndex, autoStart: false })
+    //     }
+    //   }
+    // }
     window.onload = startCrystalLoader;
   </script>
 
