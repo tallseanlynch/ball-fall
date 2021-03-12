@@ -9579,7 +9579,8 @@
       highScore1Sec: document.querySelector("#high-score-1-sec"),
       highScore2Sec: document.querySelector("#high-score-2-sec"),
       highScore3Sec: document.querySelector("#high-score-3-sec"),
-      pauseButton: document.querySelector("#pause-button")
+      pauseButton: document.querySelector("#pause-button"),
+      html: document.querySelector("html")
     }
     window.appConfig.selectors.scoreHundreds.textContent = "0"
     window.appConfig.selectors.scoreThousands.textContent = " "
@@ -9636,14 +9637,54 @@
         }
       },
       requestFullscreen: () => {
-        if (!document.fullscreenElement && window.appConfig.requestFullscreenResult !== false) {
-          document.querySelector('html').requestFullscreen().catch(err => {
-            document.exitFullscreen();
-            window.appConfig.requestFullscreenResult = false
-            alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-          });
-          window.appConfig.requestFullscreenResult = true
+
+
+        /* View in fullscreen */
+        function openFullscreen() {
+          if (window.appConfig.selectors.html.requestFullscreen) {
+            window.appConfig.selectors.html.requestFullscreen();
+          } else if (window.appConfig.selectors.html.webkitRequestFullscreen) { /* Safari */
+            window.appConfig.selectors.html.webkitRequestFullscreen();
+          } else if (window.appConfig.selectors.html.msRequestFullscreen) { /* IE11 */
+            window.appConfig.selectors.html.msRequestFullscreen();
+          }
         }
+
+        /* Close fullscreen */
+        function closeFullscreen() {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) { /* Safari */
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) { /* IE11 */
+            document.msExitFullscreen();
+          }
+        }
+
+        try {
+          openFullscreen()
+        } catch(err) {
+          closeFullscreen()
+        }
+        // debugger
+      //   let hasFS = window.appConfig.selectors.html.requestFullscreen
+      //   let hasWRFS = window.appConfig.selectors.html.webkitRequestFullscreen
+      //   let hasMRFS = window.appConfig.selectors.html.msRequestFullscreen
+      //   let theFullscreen = hasFS || hasWRFS || hasMRFS
+    
+      //   let hasExitFS = document.exitFullscreen
+      //   let hasExitWRFS = document.webkitExitFullscreen
+      //   let hasExitMRFS = document.msExitFullscreen
+      //   let theExitFullscreen = hasExitFS || hasExitWRFS || hasExitMRFS
+
+      //   if (!document.fullscreenElement && window.appConfig.requestFullscreenResult !== false && theFullscreen !== undefined) {
+      //     theFullscreen().catch(err => {
+      //       theExitFullscreen();
+      //       window.appConfig.requestFullscreenResult = false
+      //       console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+      //     });
+      //     window.appConfig.requestFullscreenResult = true
+      //   }
       }
     }
     const colorLightnessLfo = (baseColor, lfoMod) => {
