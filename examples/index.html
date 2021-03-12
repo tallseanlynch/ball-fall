@@ -8,6 +8,15 @@
   <title>Ballsinki</title>
   <link rel="icon" type="image/png" href="icon.png">
   <style>
+    * {
+      user-select: none;
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      -o-user-select: none;
+      overscroll-behavior: none;
+    }
+
     body,
     html {
       margin: 0;
@@ -427,13 +436,6 @@
   <div id="game-scoreboard" class="hide">
     <div id="timer"></div>
     <div id="score">
-      <!-- <div id="score-millions-container"><span id="score-millions-text"></span></div>
-      <span id="score-millions-comma" class="comma">,</span>
-      <div id="score-thousands-container"><span id="score-thousands-text"></span>
-      </div>
-      <span id="score-thousands-comma" class="comma">,</span>
-      <div id="score-hundreds-container"><span id="score-hundreds-text"></span>
-      </div> -->
       <span id="score-millions-text"></span>
       <span id="score-millions-comma" class="comma">,</span>
       <span id="score-thousands-text"></span>
