@@ -333,7 +333,8 @@
         window.appConfig.loadingInterval.clearInterval()
         toggleMainLoading()
       }
-    }
+      
+   }
 
   </script>
   <style>
@@ -734,6 +735,9 @@
         "sounds/Sound FX/SFX COIN 3c.mp3"
       ]
     }
+
+    window.appConfig.performanceLevel = 2
+    window.localStorage.setItem('performanceLevel', JSON.stringify({ performanceLevel: 2 }))
 
     window.appConfig.originVector = new THREE.Vector3(0, 0, 0)
     window.appConfig.gravityVector = new THREE.Vector3(0, -10, 0)
