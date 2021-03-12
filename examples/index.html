@@ -644,7 +644,8 @@
   <div id="stage-name-container" class="hide menu-container">
     <div id="stage-number">ZONE 1</div>
     <div id="stage-name">
-      <div id="stage-name-title">NATURAL WONDER</div>
+      <div id="stage-name-title0">NATURAL</div>
+      <div id="stage-name-title1">WONDER</div>
     </div>
   </div>
   <div id="stage-countdown-3-container" class="hide menu-container">
@@ -8267,9 +8268,18 @@
               appConfig.gameModeFunctions.requestFullscreen()
             }
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.showTransitionFX())
-
+            
             if (config && config.updateName) {
-              window.appConfig.selectors.stageNameTitle.childNodes[0].data = config.updateName
+            let displayName = config.updateName.split(' ')
+            if (displayName[0] !== undefined) {
+              window.appConfig.selectors.stageNameTitle0.childNodes[0].data = displayName[0]
+            }
+            if (displayName[1] !== undefined) {
+              window.appConfig.selectors.stageNameTitle1.childNodes[0].data = displayName[1]
+              window.appConfig.selectors.stageNameTitle1.classList.remove("hide")
+            } else {
+              window.appConfig.selectors.stageNameTitle1.classList.add("hide")
+            }
             }
             showStageCountDownName()
             if (config && config.ballPosition) {
@@ -8278,15 +8288,18 @@
               window.appConfig.positionBall(window.appConfig.stages[window.appConfig.currentStage].data.startingPosition)
             }
 
-            window.appConfig.selectors.stageNameTitle.style.opacity = 1
+            window.appConfig.selectors.stageNameTitle0.style.opacity = 1
+            window.appConfig.selectors.stageNameTitle1.style.opacity = 1
             window.appConfig.selectors.stageNumber.style.opacity = 1
           },
           activeCallback: (percentComplete) => {
             const percentComputed = (percentComplete * 16) > 8 ? 8 : (percentComplete * 16)
-            window.appConfig.selectors.stageNameTitle.style.fontSize = percentComputed * .33 + "rem"
+            window.appConfig.selectors.stageNameTitle0.style.fontSize = percentComputed * .33 + "rem"
+            window.appConfig.selectors.stageNameTitle1.style.fontSize = percentComputed * .33 + "rem"
             window.appConfig.selectors.stageNumber.style.fontSize = percentComputed / 2 + "rem"
             if (percentComplete > .9) {
-              window.appConfig.selectors.stageNameTitle.style.opacity = 1 - (percentComplete - .9) * 10
+              window.appConfig.selectors.stageNameTitle0.style.opacity = 1 - (percentComplete - .9) * 10
+              window.appConfig.selectors.stageNameTitle1.style.opacity = 1 - (percentComplete - .9) * 10
               window.appConfig.selectors.stageNumber.style.opacity = 1 - (percentComplete - .9) * 10
             }
 
@@ -8477,8 +8490,16 @@
             scene.setGravity(window.appConfig.originVector);
             window.appConfig.sphere.mass = 0
             window.appConfig.selectors.stageNumber.childNodes[0].data = 'ZONE ' + window.appConfig.stages[window.appConfig.currentStage].number
-            window.appConfig.selectors.stageNameTitle.childNodes[0].data = window.appConfig.stages[window.appConfig.currentStage].name
-
+            let displayName = window.appConfig.stages[window.appConfig.currentStage].name.split(' ')
+            if (displayName[0] !== undefined) {
+              window.appConfig.selectors.stageNameTitle0.childNodes[0].data = displayName[0]
+            }
+            if (displayName[1] !== undefined) {
+              window.appConfig.selectors.stageNameTitle1.childNodes[0].data = displayName[1]
+              window.appConfig.selectors.stageNameTitle1.classList.remove("hide")
+            } else {
+              window.appConfig.selectors.stageNameTitle1.classList.add("hide")
+            }
             window.appConfig.selectors.curtain.classList.add("opacity-0");
             const restartBallPosition = window.appConfig.stages[window.appConfig.currentStage].data.startingPosition
             window.appConfig.positionBall(restartBallPosition)
@@ -9398,7 +9419,8 @@
       performanceToggleMed: document.querySelector("#performance-toggle-button-med"),
       performanceToggleHigh: document.querySelector("#performance-toggle-button-high"),
       curtain: document.querySelector("#curtain"),
-      stageNameTitle: document.querySelector("#stage-name-title"),
+      stageNameTitle0: document.querySelector("#stage-name-title0"),
+      stageNameTitle1: document.querySelector("#stage-name-title1"),
       stageNumber: document.querySelector('#stage-number'),
       reportTime: document.querySelector("#report-time"),
       reportScore: document.querySelector("#report-score"),
