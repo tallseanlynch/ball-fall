@@ -9700,7 +9700,7 @@
       toggleSFXButton({ value: window.appConfig.sfxTurnedOn === true ? "on" : "off" })
       toggleMusicButton({ value: window.appConfig.musicTurnedOn === true ? "on" : "off" })
       // togglePerformanceButton({ value: window.appConfig.performanceLevel, onlyHTML: true })
-      toggleControlsButton({ value: window.appConfig.events.primaryInput === "mouse" ? "swipe" : "click", onlyHTML: true })
+      toggleControlsButton({ value: window.appConfig.events.primaryInput, onlyHTML: true })
       showHTMLElements(["sounds", "tinted-overlay"]);
     };
     const showCredits = () => {
@@ -9799,7 +9799,6 @@
             case "click":
               if (onlyHTML === false) {
                 window.appConfig.events.primaryInput = "click"
-
               }
               window.appConfig.selectors.controlsToggleClick.classList.remove("gray")
               window.appConfig.selectors.controlsToggleSwipe.classList.add("gray")
@@ -9807,14 +9806,29 @@
             case "swipe":
               if (onlyHTML === false) {
                 window.appConfig.events.primaryInput = "mouse"
-
               }
               window.appConfig.selectors.controlsToggleClick.classList.add("gray")
               window.appConfig.selectors.controlsToggleSwipe.classList.remove("gray")
+              break
+            case "mouse":
+              if (onlyHTML === false) {
+                window.appConfig.events.primaryInput = "mouse"
+              }
+              window.appConfig.selectors.controlsToggleClick.classList.add("gray")
+              window.appConfig.selectors.controlsToggleSwipe.classList.remove("gray")
+              break
+            case "touch":
+              if (onlyHTML === false) {
+                window.appConfig.events.primaryInput = "mouse"
+              }
+              window.appConfig.selectors.controlsToggleClick.classList.add("gray")
+              window.appConfig.selectors.controlsToggleSwipe.classList.remove("gray")
+              break
           }
         }
       }
     }
+    window.appConfig.toggleControlsButton = toggleControlsButton
     // const togglePerformanceButton = (config) => {
     //   if (config) {
     //     let onlyHTML = false

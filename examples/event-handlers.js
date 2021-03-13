@@ -32,6 +32,7 @@ setTimeout(() => {
     document.addEventListener("mousedown", (e) => {
       if(window.appConfig.events.primaryInput === undefined) {
         window.appConfig.events.primaryInput = 'mouse'
+        window.appConfig.toggleControlsButton({ value: "mouse", onlyHTML: true })
       }
       if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'mouse') && !window.appConfig.userHasEnded && window.appConfig.pause === false) {
         window.appConfig.touchEnd = false;
@@ -53,6 +54,7 @@ setTimeout(() => {
         (e) => {
           if(window.appConfig.events.primaryInput !== 'click'){
             window.appConfig.events.primaryInput = 'touch'
+            window.appConfig.toggleControlsButton({ value: 'touch', onlyHTML: true })
           }
           if ((window.appConfig.events.primaryInput === undefined || window.appConfig.events.primaryInput === 'touch') && !window.appConfig.userHasEnded && window.appConfig.events.touchmove.active === false && window.appConfig.pause === false) {
             window.appConfig.events.touchmove.active = true
