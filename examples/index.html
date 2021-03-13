@@ -58,8 +58,9 @@
 
   <script>
 
+    window.localStorage.setItem('performanceLevel', JSON.stringify({ performanceLevel: 2 }))
 
-    const hasPerformanceReport = (window.localStorage.getItem('performanceLevel') !== null)
+    const hasPerformanceReport = true //(window.localStorage.getItem('performanceLevel') !== null)
 
     const comma = () => {
       return `<span class="comma">,</span>`
