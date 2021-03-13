@@ -750,6 +750,7 @@
     window.appConfig.clickInputVectorX = 0
     window.appConfig.clickInputVectorY = 0
     window.appConfig.clickScale = 100
+    window.appConfig.coinsToRemove = []
 
     const stageProperties = {
       STAGE0: {
@@ -2597,6 +2598,165 @@
 
       window.appConfig.stages = {
         components: {
+          handleCoinRemoval: (coinsToRemove, all = false) => {
+
+          coinsToRemove.reverse()
+          if(coinsToRemove.length > 0) {
+            coinsToRemove.forEach(potentiallyGrabbedCoin => {
+
+              const coinValue = potentiallyGrabbedCoin.coinValue
+              const prizeValue = potentiallyGrabbedCoin.prizeValue
+              if (potentiallyGrabbedCoin.spriteFetching) {
+                potentiallyGrabbedCoin.spriteFetching.fetchData = {}
+                potentiallyGrabbedCoin.spriteFetching.isFetchingCoin = false
+                const foundTimerIndex = window.appConfig.timers.activeTimers.findIndex((timer, timerIndex) => {
+                  return timer.name === `SPRITEFETCH${potentiallyGrabbedCoin.spriteFetching.num}`
+                })
+                if (foundTimerIndex > -1) {
+                  window.appConfig.timers.activeTimers.splice(foundTimerIndex, 1)
+                }
+                potentiallyGrabbedCoin.spriteFetching.isReturning = true
+                window.appConfig.timers.activeTimers.push(window.appConfig.timers[`spriteReturn${potentiallyGrabbedCoin.spriteFetching.num}`](potentiallyGrabbedCoin.spriteFetching))
+                potentiallyGrabbedCoin.spriteFetching.returnData = {
+                  startingPosition: potentiallyGrabbedCoin.spriteFetching.mesh.position.clone()
+                }
+              }
+              if (coinValue > 0) {
+                window.appConfig.score.coins += potentiallyGrabbedCoin.coinValue;
+                window.appConfig.stages.components.dematerializeMesh(potentiallyGrabbedCoin)
+                potentiallyGrabbedCoin.visible = false
+                // coin.coinRemovalIndex = coinIndex
+                window.appConfig.coins.splice(potentiallyGrabbedCoin.coinRemovalIndex, 1);
+                window.appConfig.gameModeFunctions.updateGameScore({ score: window.appConfig.score.coins })
+                if (potentiallyGrabbedCoin.coinType === 'single' && window.appConfig.sfxTurnedOn) {
+                  window.appConfig.howlSounds.coins.sCoin[Math.floor(Math.random() * 2.99)].play()
+                }
+                if (potentiallyGrabbedCoin.coinType === 'double' && window.appConfig.sfxTurnedOn) {
+                  window.appConfig.howlSounds.coins.mCoin[Math.floor(Math.random() * 2.99)].play()
+                }
+                if (potentiallyGrabbedCoin.coinType === 'triple' && window.appConfig.sfxTurnedOn) {
+                  window.appConfig.howlSounds.coins.lCoin[Math.floor(Math.random() * 2.99)].play()
+                }
+
+                if (potentiallyGrabbedCoin.capturedCallback && all === true) {
+                  potentiallyGrabbedCoin.capturedCallback()
+                  setTimeout(() => {
+                    scene.remove(potentiallyGrabbedCoin)
+                  }, 500)
+                } else {
+                  scene.remove(potentiallyGrabbedCoin)
+                }
+
+
+                if(all === false) {
+                  if (potentiallyGrabbedCoin.name.indexOf('RUBY') > -1) {
+                    let rubyIndicator = scene.children.find(c => c.name.indexOf('R_INDICATOR') > -1)
+                    window.appConfig.timers.activeTimers.push(
+                      window.appConfig.timers.activatePortalIndicator(rubyIndicator)
+                    )
+                  }
+
+                  if (potentiallyGrabbedCoin.name.indexOf('EMERALD') > -1) {
+                    let emeraldIndicator = scene.children.find(c => c.name.indexOf('E_INDICATOR') > -1)
+                    window.appConfig.timers.activeTimers.push(
+                      window.appConfig.timers.activatePortalIndicator(emeraldIndicator)
+                    )
+                  }
+
+                  if (potentiallyGrabbedCoin.name.indexOf('DIAMOND') > -1) {
+                    let diamondIndicator = scene.children.find(c => c.name.indexOf('D_INDICATOR') > -1)
+                    window.appConfig.timers.activeTimers.push(
+                      window.appConfig.timers.activatePortalIndicator(diamondIndicator)
+                    )
+                  }
+
+                  if (potentiallyGrabbedCoin.name.indexOf('SAPPHIRE') > -1 && (potentiallyGrabbedCoin.isBlueIsland === false || potentiallyGrabbedCoin.isBlueIsland === undefined || !potentiallyGrabbedCoin.isBlueIsland)) {
+                    let theIndicator = scene.children.find(cf => cf.name.indexOf('S_INDICATOR') > -1 && cf.indicatorActive === undefined)
+                    theIndicator.indicatorActive = true
+                    window.appConfig.timers.activeTimers.push(
+                      window.appConfig.timers.activatePortalIndicator(theIndicator)
+                    )
+                  }
+                }
+
+              } else if (prizeValue > 0 && all === false) {
+                if (window.appConfig.sfxTurnedOn) {
+                  window.appConfig.howlSounds.prize.play()
+                }
+                window.appConfig.score.coins += potentiallyGrabbedCoin.prizeValue;
+                potentiallyGrabbedCoin.visible = false
+                window.appConfig.coins.splice(potentiallyGrabbedCoin.coinRemovalIndex, 1);
+                if (window.appConfig.coinScoreThrottle === false) {
+                  window.appConfig.coinScoreThrottle = true
+                  setTimeout(() => {
+                    window.appConfig.coinScoreThrottle = false
+                  }, 250)
+                  window.appConfig.gameModeFunctions.updateGameScore({ score: window.appConfig.score.coins })
+                }
+                const currentTime = window.appConfig.timer.getTimeValues()
+                const newTimer = new easytimer.Timer({ countdown: true, startValues: { minutes: currentTime.minutes, seconds: currentTime.seconds + 15, secondTenths: currentTime.secondTenths }, precision: "secondTenths" });
+                window.appConfig.stageTotalTimePlayed += 15
+                window.appConfig.timer.stop()
+                window.appConfig.timer.removeEventListener("secondTenthsUpdated", function (e) {
+                  window.appConfig.selectors.timer.childNodes[0].data = `${window.appConfig.timer
+                    .getTimeValues()
+                    .toString(["minutes", "seconds", "secondTenths"])}`;
+                });
+                window.appConfig.timer.removeEventListener("targetAchieved", function (e) {
+                  startStageEnd()
+                })
+                window.appConfig.timer = newTimer
+                newTimer.start()
+                newTimer.addEventListener("secondTenthsUpdated", function (e) {
+                  window.appConfig.selectors.timer.childNodes[0].data = `${window.appConfig.timer
+                    .getTimeValues()
+                    .toString(["minutes", "seconds", "secondTenths"])}`;
+                });
+                newTimer.addEventListener("targetAchieved", function (e) {
+                  startStageEnd()
+                })
+              }
+
+              if (potentiallyGrabbedCoin.capturedCallback) {
+                potentiallyGrabbedCoin.capturedCallback()
+                setTimeout(() => {
+                  scene.remove(potentiallyGrabbedCoin)
+                }, 500)
+              } else {
+                scene.remove(potentiallyGrabbedCoin)
+              }
+
+
+
+
+              })
+            }
+
+
+
+          },
+
+          findCoinsToRemove: () => {
+            const sphereLinearVelocityLength = window.appConfig.sphere.getLinearVelocity().length()
+            const xCoinMod = 2 + sphereLinearVelocityLength * .03
+            const yCoinMod = 3 + sphereLinearVelocityLength * .03
+            delete window.appConfig.coinsToRemove
+            window.appConfig.coinsToRemove = []
+            window.appConfig.coins.forEach(
+              (coin, coinIndex) => {
+                if (coinIndex % (window.appConfig.coinFrameCheckNumber % 5) < 1) {
+                  if (
+                    Math.abs(coin.position.x - window.appConfig.sphere.position.x) <
+                    coin.scale.x * xCoinMod &&
+                    Math.abs(coin.position.y - window.appConfig.sphere.position.y) < coin.scale.x * yCoinMod) {
+                      coin.coinRemovalIndex = coinIndex
+                      window.appConfig.coinsToRemove.push(coin)
+                  }
+                }
+              }
+            )
+            return window.appConfig.coinsToRemove
+          },
           createBlackHole: createBlackHole,
           dematerializeMesh: dematerializeMesh,
           stageInit: () => {
@@ -3179,8 +3339,53 @@
               }
               if (otherObject.name === 'SPHERE0' && window.appConfig.pause === false) {
                 window.appConfig.stages.components.dematerializeMesh(bumper, 5)
+                if(bumper.bumps === undefined) {
+                  bumper.bumps = 0
+                }
                 if (bumper.coinThrottle === false) {
+                  bumper.bumps++
                   bumper.coinThrottle = true
+
+                  if(bumper.bumps % 5 === 0) {
+                    // let name = window.appConfig.currentStage + '_SPHERECOIN_' + Math.round(Math.random() * 10000)
+                    // window.appConfig.createSphere({
+                    // bounce: 1,
+                    // name: name,
+                    // position: {
+                    //   x: (Math.random() * 20) -10 ,
+                    //   y: (Math.random() * 20) -10,
+                    //   z: 0
+                    // },
+                    // handleCollision: (c) => window.appConfig.superBallHandleCollision(c, name)
+                  // })
+
+
+
+
+                  for(let fsb = 0; fsb < 2; fsb++) {
+                  // for(let fsb = 0; fsb < 5; fsb++) {
+                    let name = window.appConfig.currentStage + '_SPHERECOIN_FSB_' + fsb + '_' + Math.round(Math.random() * 10000)
+                    window.appConfig.createSphere({
+                      bounce: 1,
+                      name: name,
+                      position: {
+                        x: (Math.random() * 20) -10 ,
+                        y: (Math.random() * 20) -10,
+                        z: 0
+                      },
+                      // handleCollision: (c) => window.appConfig.superBallHandleCollision(c, name)
+                      handleCollision: (c) => {
+                        window.appConfig.superBallHandleCollision(c, name)
+                        window.appConfig.timers.activeTimers.push(
+                          window.appConfig.timers.moveCoinsToSphere()
+                        )
+                      }                      
+                    })
+                  }
+
+
+
+                  }
                   for (let superSounds = 0; superSounds < 10; superSounds++) {
                     setTimeout(() => {
                       if (window.appConfig.sfxTurnedOn) {
@@ -3488,7 +3693,7 @@
             createBackgroundAnimation()
           },
           init: () => {
-
+            // window.appConfig.stages.components.createFinalStage()
             window.appConfig.timers.activeTimers.push(
               window.appConfig.timers.addPortalToStage({ x: 95, y: -95, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
                 window.appConfig.stages.components.gemPortalConfig())
@@ -7574,6 +7779,33 @@
     window.appConfig.superBallMaterial.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
 
     const timers = {
+      moveCoinsToSphere: () => {
+        const name = 'MOVE_COINS_TO_SPHERE' + Math.round(Math.random() * 10000)
+        const dMeshLfoAdj = Math.round(Math.random() * 1000)
+        return {
+          started: 0,
+          ended: 0,
+          percentComplete: 0,
+          time: 1000,
+          timeLeft: 0,
+          currentTime: 0,
+          name: name,
+          id: Math.round(Math.random() * 10000),
+          activeCallback: (percentComplete) => {
+            if(Math.round(percentComplete) % 5 === 0) {
+              window.appConfig.coins.forEach(c => {
+                try {
+                  if(c && c.coinValue && c.coinValue > 0) {
+                    // console.log(c)
+                    c.position.lerp(window.appConfig.sphere.position, 0.0005)
+                  }
+                } catch (err) {}
+              })
+
+            }
+          },
+        }
+      },
       dematerializeMesh: (dMesh) => {
         const name = dMesh.name + Math.round(Math.random() * 10000)
         const dMeshLfoAdj = Math.round(Math.random() * 1000)
@@ -8931,11 +9163,49 @@
                 sc.material.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
                 sc.children[0].material.color.set(window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0])
                 if (Math.abs(sc.position.z) > 15 && sc.scored === undefined) {
+                  // FINALSTAGE_BUMPER
                   sc.scored === true
                   window.appConfig.stages.components.dematerializeMesh(sc, 5)
                   scene.remove(sc)
                   window.appConfig.score.coins += 25000
                   window.appConfig.gameModeFunctions.updateGameScore({ score: window.appConfig.score.coins })
+
+                  // for(let fsb = 0; fsb < 2; fsb++) {
+                  // // for(let fsb = 0; fsb < 5; fsb++) {
+                  //   let name = window.appConfig.currentStage + '_SPHERECOIN_FSB_' + fsb + '_' + Math.round(Math.random() * 10000)
+                  //   window.appConfig.createSphere({
+                  //     bounce: 1,
+                  //     name: name,
+                  //     position: {
+                  //       x: (Math.random() * 20) -10 ,
+                  //       y: (Math.random() * 20) -10,
+                  //       z: 0
+                  //     },
+                  //     // handleCollision: (c) => window.appConfig.superBallHandleCollision(c, name)
+                  //     handleCollision: (c) => {
+                  //       window.appConfig.superBallHandleCollision(c, name)
+                  //       window.appConfig.timers.activeTimers.push(
+                  //         window.appConfig.timers.moveCoinsToSphere()
+                  //       )
+                  //     }                      
+                  //   })
+                  // }
+
+                  // let superName = window.appConfig.currentStage + '_SPHERECOIN_SUPER_' + fsb + '_' + Math.round(Math.random() * 10000)
+                  // window.appConfig.createSphere({
+                  //   bounce: 1,
+                  //   name: superName,
+                  //   position: {
+                  //     x: (Math.random() * 20) -10 ,
+                  //     y: (Math.random() * 20) -10,
+                  //     z: 0
+                  //   },
+                  //   handleCollision: (c) => {
+                  //     window.appConfig.stages.components.handleCoinRemoval(window.appConfig.coins, true)
+                  //     window.appConfig.superBallHandleCollision(c, superName)
+                  //   }
+                  // })
+
                 }
               }
             })
@@ -9056,135 +9326,9 @@
         }
       }
 
-      const sphereLinearVelocityLength = window.appConfig.sphere.getLinearVelocity().length()
-      const xCoinMod = 2 + sphereLinearVelocityLength * .03
-      const yCoinMod = 3 + sphereLinearVelocityLength * .03
+      // window.appConfig.coinIndexToRemove = undefined
 
-      let coinIndexToRemove = undefined;
-      const potentiallyGrabbedCoin = window.appConfig.coins.find(
-        (coin, coinIndex) => {
-          if (coinIndex % (window.appConfig.coinFrameCheckNumber % 5) < 1) {
-            coinIndexToRemove = coinIndex;
-            if (
-              Math.abs(coin.position.x - window.appConfig.sphere.position.x) <
-              coin.scale.x * xCoinMod &&
-              Math.abs(coin.position.y - window.appConfig.sphere.position.y) < coin.scale.x * yCoinMod) {
-              return true
-            } else return false;
-          }
-        }
-      );
-
-      if (potentiallyGrabbedCoin !== undefined) {
-        const coinValue = potentiallyGrabbedCoin.coinValue
-        const prizeValue = potentiallyGrabbedCoin.prizeValue
-        if (potentiallyGrabbedCoin.spriteFetching) {
-          potentiallyGrabbedCoin.spriteFetching.fetchData = {}
-          potentiallyGrabbedCoin.spriteFetching.isFetchingCoin = false
-          const foundTimerIndex = window.appConfig.timers.activeTimers.findIndex((timer, timerIndex) => {
-            return timer.name === `SPRITEFETCH${potentiallyGrabbedCoin.spriteFetching.num}`
-          })
-          if (foundTimerIndex > -1) {
-            window.appConfig.timers.activeTimers.splice(foundTimerIndex, 1)
-          }
-          potentiallyGrabbedCoin.spriteFetching.isReturning = true
-          window.appConfig.timers.activeTimers.push(window.appConfig.timers[`spriteReturn${potentiallyGrabbedCoin.spriteFetching.num}`](potentiallyGrabbedCoin.spriteFetching))
-          potentiallyGrabbedCoin.spriteFetching.returnData = {
-            startingPosition: potentiallyGrabbedCoin.spriteFetching.mesh.position.clone()
-          }
-        }
-        if (coinValue > 0) {
-          window.appConfig.score.coins += potentiallyGrabbedCoin.coinValue;
-          window.appConfig.stages.components.dematerializeMesh(potentiallyGrabbedCoin)
-          potentiallyGrabbedCoin.visible = false
-          window.appConfig.coins.splice(coinIndexToRemove, 1);
-          window.appConfig.gameModeFunctions.updateGameScore({ score: window.appConfig.score.coins })
-          if (potentiallyGrabbedCoin.coinType === 'single' && window.appConfig.sfxTurnedOn) {
-            window.appConfig.howlSounds.coins.sCoin[Math.floor(Math.random() * 2.99)].play()
-          }
-          if (potentiallyGrabbedCoin.coinType === 'double' && window.appConfig.sfxTurnedOn) {
-            window.appConfig.howlSounds.coins.mCoin[Math.floor(Math.random() * 2.99)].play()
-          }
-          if (potentiallyGrabbedCoin.coinType === 'triple' && window.appConfig.sfxTurnedOn) {
-            window.appConfig.howlSounds.coins.lCoin[Math.floor(Math.random() * 2.99)].play()
-          }
-
-          if (potentiallyGrabbedCoin.name.indexOf('RUBY') > -1) {
-            let rubyIndicator = scene.children.find(c => c.name.indexOf('R_INDICATOR') > -1)
-            window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.activatePortalIndicator(rubyIndicator)
-            )
-          }
-
-          if (potentiallyGrabbedCoin.name.indexOf('EMERALD') > -1) {
-            let emeraldIndicator = scene.children.find(c => c.name.indexOf('E_INDICATOR') > -1)
-            window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.activatePortalIndicator(emeraldIndicator)
-            )
-          }
-
-          if (potentiallyGrabbedCoin.name.indexOf('DIAMOND') > -1) {
-            let diamondIndicator = scene.children.find(c => c.name.indexOf('D_INDICATOR') > -1)
-            window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.activatePortalIndicator(diamondIndicator)
-            )
-          }
-
-          if (potentiallyGrabbedCoin.name.indexOf('SAPPHIRE') > -1 && (potentiallyGrabbedCoin.isBlueIsland === false || potentiallyGrabbedCoin.isBlueIsland === undefined || !potentiallyGrabbedCoin.isBlueIsland)) {
-            let theIndicator = scene.children.find(cf => cf.name.indexOf('S_INDICATOR') > -1 && cf.indicatorActive === undefined)
-            theIndicator.indicatorActive = true
-            window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.activatePortalIndicator(theIndicator)
-            )
-          }
-
-        } else if (prizeValue > 0) {
-          if (window.appConfig.sfxTurnedOn) {
-            window.appConfig.howlSounds.prize.play()
-          }
-          window.appConfig.score.coins += potentiallyGrabbedCoin.prizeValue;
-          potentiallyGrabbedCoin.visible = false
-          window.appConfig.coins.splice(coinIndexToRemove, 1);
-          if (window.appConfig.coinScoreThrottle === false) {
-            window.appConfig.coinScoreThrottle = true
-            setTimeout(() => {
-              window.appConfig.coinScoreThrottle = false
-            }, 250)
-            window.appConfig.gameModeFunctions.updateGameScore({ score: window.appConfig.score.coins })
-          }
-          const currentTime = window.appConfig.timer.getTimeValues()
-          const newTimer = new easytimer.Timer({ countdown: true, startValues: { minutes: currentTime.minutes, seconds: currentTime.seconds + 15, secondTenths: currentTime.secondTenths }, precision: "secondTenths" });
-          window.appConfig.stageTotalTimePlayed += 15
-          window.appConfig.timer.stop()
-          window.appConfig.timer.removeEventListener("secondTenthsUpdated", function (e) {
-            window.appConfig.selectors.timer.childNodes[0].data = `${window.appConfig.timer
-              .getTimeValues()
-              .toString(["minutes", "seconds", "secondTenths"])}`;
-          });
-          window.appConfig.timer.removeEventListener("targetAchieved", function (e) {
-            startStageEnd()
-          })
-          window.appConfig.timer = newTimer
-          newTimer.start()
-          newTimer.addEventListener("secondTenthsUpdated", function (e) {
-            window.appConfig.selectors.timer.childNodes[0].data = `${window.appConfig.timer
-              .getTimeValues()
-              .toString(["minutes", "seconds", "secondTenths"])}`;
-          });
-          newTimer.addEventListener("targetAchieved", function (e) {
-            startStageEnd()
-          })
-        }
-
-        if (potentiallyGrabbedCoin.capturedCallback) {
-          potentiallyGrabbedCoin.capturedCallback()
-          setTimeout(() => {
-            scene.remove(potentiallyGrabbedCoin)
-          }, 500)
-        } else {
-          scene.remove(potentiallyGrabbedCoin)
-        }
-      }
+      window.appConfig.stages.components.handleCoinRemoval(window.appConfig.stages.components.findCoinsToRemove())
 
       window.appConfig.sprites.forEach(sprite => {
         sprite.activeCallback()
