@@ -752,7 +752,9 @@
     window.appConfig.clickInputVectorY = 0
     window.appConfig.clickScale = 100
     window.appConfig.coinsToRemove = []
-
+    window.appConfig.colorLightnessLfoColor = new THREE.Color(0x000000)
+    // appConfig single constants
+    
     const stageProperties = {
       STAGE0: {
         backgroundColors: [
@@ -7388,9 +7390,9 @@
       const spritePlaneGeometry = new THREE.PlaneGeometry(.5, .5, 1, 1)
       const spaceSphereGeometry = new THREE.DodecahedronGeometry(1, 2)
       const whiteColor = new THREE.Color(0x000000)
+      const sapphireColor = new THREE.Color(0x0F52BA)
 
       window.appConfig.portalMesh = (sapphire) => {
-        const sapphireColor = new THREE.Color('#0F52BA')
 
         const sapphireMaterial = new THREE.MeshPhongMaterial({
           color: sapphireColor,
@@ -7401,7 +7403,7 @@
 
         let theMesh = new THREE.Mesh(
           portalGeometry,
-          sapphire ? sapphireMaterial : new THREE.MeshPhongMaterial(
+          sapphire === true ? sapphireMaterial : new THREE.MeshPhongMaterial(
             {
               transparent: true,
               opacity: .25,
@@ -8100,6 +8102,9 @@
             portalMesh.position.z = thePortal.z
             scene.add(portalMesh)
             window.appConfig.stages[window.appConfig.currentStage].data.portals.push(portalMesh)
+            // setTimeout(() => {
+            //   portalMesh.material.color = new THREE.Color(0x0F52BA)
+            // }, 1000)
           },
           activeCallback: (percentComplete) => {
             portalMesh.material.opacity = percentComplete * .85
@@ -9237,16 +9242,16 @@
             }
             p.rotation.z += .01
           }
-          if (p.portalConfig && p.portalConfig.active === false) {
-            p.material.color = 0x000000
-            p.material.opacity = .25
-          }
+          // if (p.portalConfig && p.portalConfig.active === false) {
+          //   // p.material.color = 0x000000
+          //   // p.material.opacity = .25
+          // }
           p.children.forEach((pc, pci) => {
             if (pc.oPosition) {
-              if (p.portalConfig && p.portalConfig.active === false) {
-                pc.material.color = 0x000000
-                pc.material.opacity = .25
-              }
+              // if (p.portalConfig && p.portalConfig.active === false) {
+              //   // pc.material.color = 0x000000
+              //   // pc.material.opacity = .25
+              // }
               pc.position.x = pc.oPosition.x * lfo(500 + (pci + 1) * 125) * 2
               pc.position.y = pc.oPosition.y * lfo(500 + (pci + 1) * 100) * 2
               pc.position.z = pc.oPosition.z * lfo(500 + (pci + 1) * 75) * 2
@@ -9309,6 +9314,7 @@
         window.appConfig.sphere
           .setAngularVelocity(window.appConfig.originVector);
       }
+
       window.appConfig.crystalMaterials.forEach(cm => {
         const newHsl = colorLightnessLfo(cm.pulsing.color, 268)
         cm.pulsing.color.setHSL(newHsl.h, newHsl.s, newHsl.l)
@@ -9334,6 +9340,7 @@
       window.appConfig.sprites.forEach(sprite => {
         sprite.activeCallback()
       })
+
       window.appConfig.sapphires.forEach(sapphire => {
         sapphire.activeCallback()
       })
@@ -9678,9 +9685,9 @@
       }
     }
     const colorLightnessLfo = (baseColor, lfoMod) => {
-      const color = new THREE.Color(baseColor)
+      // const color = new THREE.Color(baseColor)
       let hsl = {}
-      color.getHSL(hsl)
+      baseColor.getHSL(hsl)
       const theLfo = lfoPositive(141 + lfoMod) * .6
       hsl.l = hsl.l + theLfo
       return hsl
