@@ -334,8 +334,8 @@
         window.appConfig.loadingInterval.clearInterval()
         toggleMainLoading()
       }
-      
-   }
+
+    }
 
   </script>
   <style>
@@ -754,7 +754,7 @@
     window.appConfig.coinsToRemove = []
     window.appConfig.colorLightnessLfoColor = new THREE.Color(0x000000)
     // appConfig single constants
-    
+
     const stageProperties = {
       STAGE0: {
         backgroundColors: [
@@ -1040,9 +1040,10 @@
         window.appConfig.loadingPhysi.loaded++
       }
     }
-    let crystalLoader
+    let crystalLoader = new THREE.GLTFLoader();
+    let vertGradientLoader = new THREE.FileLoader()
+    let fragGradientLoader = new THREE.FileLoader()
     const startCrystalLoader = () => {
-      crystalLoader = new THREE.GLTFLoader();
 
       // // Optional: Provide a DRACOLoader instance to decode compressed mesh data
       // const dracoLoader = new DRACOLoader();
@@ -1055,7 +1056,36 @@
           const crystal = gltf.scene.children[0]
           crystal.name = 'CRYSTAL_GLTF'
           window.appConfig.crystalGLTF = crystal
-          initScene()
+          vertGradientLoader.load('shaders/gradient.vert',
+            (vertData) => {
+              console.log(vertData)
+              window.appConfig.shaders = {}
+              window.appConfig.shaders.vertGradient = vertData
+              fragGradientLoader.load('shaders/gradient.frag',
+                (fragData) => {
+                  console.log(fragData)
+                  window.appConfig.shaders.fragGradient = fragData
+                  initScene()
+                  //onload
+                },
+                (xhr) => {
+                  //onprogress
+                  console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                },
+                (err) => {
+                  //onerror
+                  console.log(err)
+                })
+              //onload
+            },
+            (xhr) => {
+              //onprogress
+              console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+            },
+            (err) => {
+              //onerror
+              console.log(err)
+            })
         },
         function (xhr) {
 
@@ -2603,45 +2633,124 @@
         components: {
           handleCoinRemoval: (coinsToRemove, all = false) => {
 
-          coinsToRemove.reverse()
-          if(coinsToRemove.length > 0) {
-            coinsToRemove.forEach(potentiallyGrabbedCoin => {
+            coinsToRemove.reverse()
+            if (coinsToRemove.length > 0) {
+              coinsToRemove.forEach(potentiallyGrabbedCoin => {
 
-              const coinValue = potentiallyGrabbedCoin.coinValue
-              const prizeValue = potentiallyGrabbedCoin.prizeValue
-              if (potentiallyGrabbedCoin.spriteFetching) {
-                potentiallyGrabbedCoin.spriteFetching.fetchData = {}
-                potentiallyGrabbedCoin.spriteFetching.isFetchingCoin = false
-                const foundTimerIndex = window.appConfig.timers.activeTimers.findIndex((timer, timerIndex) => {
-                  return timer.name === `SPRITEFETCH${potentiallyGrabbedCoin.spriteFetching.num}`
-                })
-                if (foundTimerIndex > -1) {
-                  window.appConfig.timers.activeTimers.splice(foundTimerIndex, 1)
+                const coinValue = potentiallyGrabbedCoin.coinValue
+                const prizeValue = potentiallyGrabbedCoin.prizeValue
+                if (potentiallyGrabbedCoin.spriteFetching) {
+                  potentiallyGrabbedCoin.spriteFetching.fetchData = {}
+                  potentiallyGrabbedCoin.spriteFetching.isFetchingCoin = false
+                  const foundTimerIndex = window.appConfig.timers.activeTimers.findIndex((timer, timerIndex) => {
+                    return timer.name === `SPRITEFETCH${potentiallyGrabbedCoin.spriteFetching.num}`
+                  })
+                  if (foundTimerIndex > -1) {
+                    window.appConfig.timers.activeTimers.splice(foundTimerIndex, 1)
+                  }
+                  potentiallyGrabbedCoin.spriteFetching.isReturning = true
+                  window.appConfig.timers.activeTimers.push(window.appConfig.timers[`spriteReturn${potentiallyGrabbedCoin.spriteFetching.num}`](potentiallyGrabbedCoin.spriteFetching))
+                  potentiallyGrabbedCoin.spriteFetching.returnData = {
+                    startingPosition: potentiallyGrabbedCoin.spriteFetching.mesh.position.clone()
+                  }
                 }
-                potentiallyGrabbedCoin.spriteFetching.isReturning = true
-                window.appConfig.timers.activeTimers.push(window.appConfig.timers[`spriteReturn${potentiallyGrabbedCoin.spriteFetching.num}`](potentiallyGrabbedCoin.spriteFetching))
-                potentiallyGrabbedCoin.spriteFetching.returnData = {
-                  startingPosition: potentiallyGrabbedCoin.spriteFetching.mesh.position.clone()
-                }
-              }
-              if (coinValue > 0) {
-                window.appConfig.score.coins += potentiallyGrabbedCoin.coinValue;
-                window.appConfig.stages.components.dematerializeMesh(potentiallyGrabbedCoin)
-                potentiallyGrabbedCoin.visible = false
-                // coin.coinRemovalIndex = coinIndex
-                window.appConfig.coins.splice(potentiallyGrabbedCoin.coinRemovalIndex, 1);
-                window.appConfig.gameModeFunctions.updateGameScore({ score: window.appConfig.score.coins })
-                if (potentiallyGrabbedCoin.coinType === 'single' && window.appConfig.sfxTurnedOn) {
-                  window.appConfig.howlSounds.coins.sCoin[Math.floor(Math.random() * 2.99)].play()
-                }
-                if (potentiallyGrabbedCoin.coinType === 'double' && window.appConfig.sfxTurnedOn) {
-                  window.appConfig.howlSounds.coins.mCoin[Math.floor(Math.random() * 2.99)].play()
-                }
-                if (potentiallyGrabbedCoin.coinType === 'triple' && window.appConfig.sfxTurnedOn) {
-                  window.appConfig.howlSounds.coins.lCoin[Math.floor(Math.random() * 2.99)].play()
+                if (coinValue > 0) {
+                  window.appConfig.score.coins += potentiallyGrabbedCoin.coinValue;
+                  window.appConfig.stages.components.dematerializeMesh(potentiallyGrabbedCoin)
+                  potentiallyGrabbedCoin.visible = false
+                  // coin.coinRemovalIndex = coinIndex
+                  window.appConfig.coins.splice(potentiallyGrabbedCoin.coinRemovalIndex, 1);
+                  window.appConfig.gameModeFunctions.updateGameScore({ score: window.appConfig.score.coins })
+                  if (potentiallyGrabbedCoin.coinType === 'single' && window.appConfig.sfxTurnedOn) {
+                    window.appConfig.howlSounds.coins.sCoin[Math.floor(Math.random() * 2.99)].play()
+                  }
+                  if (potentiallyGrabbedCoin.coinType === 'double' && window.appConfig.sfxTurnedOn) {
+                    window.appConfig.howlSounds.coins.mCoin[Math.floor(Math.random() * 2.99)].play()
+                  }
+                  if (potentiallyGrabbedCoin.coinType === 'triple' && window.appConfig.sfxTurnedOn) {
+                    window.appConfig.howlSounds.coins.lCoin[Math.floor(Math.random() * 2.99)].play()
+                  }
+
+                  if (potentiallyGrabbedCoin.capturedCallback && all === true) {
+                    potentiallyGrabbedCoin.capturedCallback()
+                    setTimeout(() => {
+                      scene.remove(potentiallyGrabbedCoin)
+                    }, 500)
+                  } else {
+                    scene.remove(potentiallyGrabbedCoin)
+                  }
+
+
+                  if (all === false) {
+                    if (potentiallyGrabbedCoin.name.indexOf('RUBY') > -1) {
+                      let rubyIndicator = scene.children.find(c => c.name.indexOf('R_INDICATOR') > -1)
+                      window.appConfig.timers.activeTimers.push(
+                        window.appConfig.timers.activatePortalIndicator(rubyIndicator)
+                      )
+                    }
+
+                    if (potentiallyGrabbedCoin.name.indexOf('EMERALD') > -1) {
+                      let emeraldIndicator = scene.children.find(c => c.name.indexOf('E_INDICATOR') > -1)
+                      window.appConfig.timers.activeTimers.push(
+                        window.appConfig.timers.activatePortalIndicator(emeraldIndicator)
+                      )
+                    }
+
+                    if (potentiallyGrabbedCoin.name.indexOf('DIAMOND') > -1) {
+                      let diamondIndicator = scene.children.find(c => c.name.indexOf('D_INDICATOR') > -1)
+                      window.appConfig.timers.activeTimers.push(
+                        window.appConfig.timers.activatePortalIndicator(diamondIndicator)
+                      )
+                    }
+
+                    if (potentiallyGrabbedCoin.name.indexOf('SAPPHIRE') > -1 && (potentiallyGrabbedCoin.isBlueIsland === false || potentiallyGrabbedCoin.isBlueIsland === undefined || !potentiallyGrabbedCoin.isBlueIsland)) {
+                      let theIndicator = scene.children.find(cf => cf.name.indexOf('S_INDICATOR') > -1 && cf.indicatorActive === undefined)
+                      theIndicator.indicatorActive = true
+                      window.appConfig.timers.activeTimers.push(
+                        window.appConfig.timers.activatePortalIndicator(theIndicator)
+                      )
+                    }
+                  }
+
+                } else if (prizeValue > 0 && all === false) {
+                  if (window.appConfig.sfxTurnedOn) {
+                    window.appConfig.howlSounds.prize.play()
+                  }
+                  window.appConfig.score.coins += potentiallyGrabbedCoin.prizeValue;
+                  potentiallyGrabbedCoin.visible = false
+                  window.appConfig.coins.splice(potentiallyGrabbedCoin.coinRemovalIndex, 1);
+                  if (window.appConfig.coinScoreThrottle === false) {
+                    window.appConfig.coinScoreThrottle = true
+                    setTimeout(() => {
+                      window.appConfig.coinScoreThrottle = false
+                    }, 250)
+                    window.appConfig.gameModeFunctions.updateGameScore({ score: window.appConfig.score.coins })
+                  }
+                  const currentTime = window.appConfig.timer.getTimeValues()
+                  const newTimer = new easytimer.Timer({ countdown: true, startValues: { minutes: currentTime.minutes, seconds: currentTime.seconds + 15, secondTenths: currentTime.secondTenths }, precision: "secondTenths" });
+                  window.appConfig.stageTotalTimePlayed += 15
+                  window.appConfig.timer.stop()
+                  window.appConfig.timer.removeEventListener("secondTenthsUpdated", function (e) {
+                    window.appConfig.selectors.timer.childNodes[0].data = `${window.appConfig.timer
+                      .getTimeValues()
+                      .toString(["minutes", "seconds", "secondTenths"])}`;
+                  });
+                  window.appConfig.timer.removeEventListener("targetAchieved", function (e) {
+                    startStageEnd()
+                  })
+                  window.appConfig.timer = newTimer
+                  newTimer.start()
+                  newTimer.addEventListener("secondTenthsUpdated", function (e) {
+                    window.appConfig.selectors.timer.childNodes[0].data = `${window.appConfig.timer
+                      .getTimeValues()
+                      .toString(["minutes", "seconds", "secondTenths"])}`;
+                  });
+                  newTimer.addEventListener("targetAchieved", function (e) {
+                    startStageEnd()
+                  })
                 }
 
-                if (potentiallyGrabbedCoin.capturedCallback && all === true) {
+                if (potentiallyGrabbedCoin.capturedCallback) {
                   potentiallyGrabbedCoin.capturedCallback()
                   setTimeout(() => {
                     scene.remove(potentiallyGrabbedCoin)
@@ -2649,85 +2758,6 @@
                 } else {
                   scene.remove(potentiallyGrabbedCoin)
                 }
-
-
-                if(all === false) {
-                  if (potentiallyGrabbedCoin.name.indexOf('RUBY') > -1) {
-                    let rubyIndicator = scene.children.find(c => c.name.indexOf('R_INDICATOR') > -1)
-                    window.appConfig.timers.activeTimers.push(
-                      window.appConfig.timers.activatePortalIndicator(rubyIndicator)
-                    )
-                  }
-
-                  if (potentiallyGrabbedCoin.name.indexOf('EMERALD') > -1) {
-                    let emeraldIndicator = scene.children.find(c => c.name.indexOf('E_INDICATOR') > -1)
-                    window.appConfig.timers.activeTimers.push(
-                      window.appConfig.timers.activatePortalIndicator(emeraldIndicator)
-                    )
-                  }
-
-                  if (potentiallyGrabbedCoin.name.indexOf('DIAMOND') > -1) {
-                    let diamondIndicator = scene.children.find(c => c.name.indexOf('D_INDICATOR') > -1)
-                    window.appConfig.timers.activeTimers.push(
-                      window.appConfig.timers.activatePortalIndicator(diamondIndicator)
-                    )
-                  }
-
-                  if (potentiallyGrabbedCoin.name.indexOf('SAPPHIRE') > -1 && (potentiallyGrabbedCoin.isBlueIsland === false || potentiallyGrabbedCoin.isBlueIsland === undefined || !potentiallyGrabbedCoin.isBlueIsland)) {
-                    let theIndicator = scene.children.find(cf => cf.name.indexOf('S_INDICATOR') > -1 && cf.indicatorActive === undefined)
-                    theIndicator.indicatorActive = true
-                    window.appConfig.timers.activeTimers.push(
-                      window.appConfig.timers.activatePortalIndicator(theIndicator)
-                    )
-                  }
-                }
-
-              } else if (prizeValue > 0 && all === false) {
-                if (window.appConfig.sfxTurnedOn) {
-                  window.appConfig.howlSounds.prize.play()
-                }
-                window.appConfig.score.coins += potentiallyGrabbedCoin.prizeValue;
-                potentiallyGrabbedCoin.visible = false
-                window.appConfig.coins.splice(potentiallyGrabbedCoin.coinRemovalIndex, 1);
-                if (window.appConfig.coinScoreThrottle === false) {
-                  window.appConfig.coinScoreThrottle = true
-                  setTimeout(() => {
-                    window.appConfig.coinScoreThrottle = false
-                  }, 250)
-                  window.appConfig.gameModeFunctions.updateGameScore({ score: window.appConfig.score.coins })
-                }
-                const currentTime = window.appConfig.timer.getTimeValues()
-                const newTimer = new easytimer.Timer({ countdown: true, startValues: { minutes: currentTime.minutes, seconds: currentTime.seconds + 15, secondTenths: currentTime.secondTenths }, precision: "secondTenths" });
-                window.appConfig.stageTotalTimePlayed += 15
-                window.appConfig.timer.stop()
-                window.appConfig.timer.removeEventListener("secondTenthsUpdated", function (e) {
-                  window.appConfig.selectors.timer.childNodes[0].data = `${window.appConfig.timer
-                    .getTimeValues()
-                    .toString(["minutes", "seconds", "secondTenths"])}`;
-                });
-                window.appConfig.timer.removeEventListener("targetAchieved", function (e) {
-                  startStageEnd()
-                })
-                window.appConfig.timer = newTimer
-                newTimer.start()
-                newTimer.addEventListener("secondTenthsUpdated", function (e) {
-                  window.appConfig.selectors.timer.childNodes[0].data = `${window.appConfig.timer
-                    .getTimeValues()
-                    .toString(["minutes", "seconds", "secondTenths"])}`;
-                });
-                newTimer.addEventListener("targetAchieved", function (e) {
-                  startStageEnd()
-                })
-              }
-
-              if (potentiallyGrabbedCoin.capturedCallback) {
-                potentiallyGrabbedCoin.capturedCallback()
-                setTimeout(() => {
-                  scene.remove(potentiallyGrabbedCoin)
-                }, 500)
-              } else {
-                scene.remove(potentiallyGrabbedCoin)
-              }
 
 
 
@@ -2752,8 +2782,8 @@
                     Math.abs(coin.position.x - window.appConfig.sphere.position.x) <
                     coin.scale.x * xCoinMod &&
                     Math.abs(coin.position.y - window.appConfig.sphere.position.y) < coin.scale.x * yCoinMod) {
-                      coin.coinRemovalIndex = coinIndex
-                      window.appConfig.coinsToRemove.push(coin)
+                    coin.coinRemovalIndex = coinIndex
+                    window.appConfig.coinsToRemove.push(coin)
                   }
                 }
               }
@@ -3342,14 +3372,14 @@
               }
               if (otherObject.name === 'SPHERE0' && window.appConfig.pause === false) {
                 window.appConfig.stages.components.dematerializeMesh(bumper, 5)
-                if(bumper.bumps === undefined) {
+                if (bumper.bumps === undefined) {
                   bumper.bumps = 0
                 }
                 if (bumper.coinThrottle === false) {
                   bumper.bumps++
                   bumper.coinThrottle = true
 
-                  if(bumper.bumps % 5 === 0) {
+                  if (bumper.bumps % 5 === 0) {
                     // let name = window.appConfig.currentStage + '_SPHERECOIN_' + Math.round(Math.random() * 10000)
                     // window.appConfig.createSphere({
                     // bounce: 1,
@@ -3360,31 +3390,31 @@
                     //   z: 0
                     // },
                     // handleCollision: (c) => window.appConfig.superBallHandleCollision(c, name)
-                  // })
+                    // })
 
 
 
 
-                  for(let fsb = 0; fsb < 2; fsb++) {
-                  // for(let fsb = 0; fsb < 5; fsb++) {
-                    let name = window.appConfig.currentStage + '_SPHERECOIN_FSB_' + fsb + '_' + Math.round(Math.random() * 10000)
-                    window.appConfig.createSphere({
-                      bounce: 1,
-                      name: name,
-                      position: {
-                        x: (Math.random() * 20) -10 ,
-                        y: (Math.random() * 20) -10,
-                        z: 0
-                      },
-                      // handleCollision: (c) => window.appConfig.superBallHandleCollision(c, name)
-                      handleCollision: (c) => {
-                        window.appConfig.superBallHandleCollision(c, name)
-                        window.appConfig.timers.activeTimers.push(
-                          window.appConfig.timers.moveCoinsToSphere()
-                        )
-                      }                      
-                    })
-                  }
+                    for (let fsb = 0; fsb < 2; fsb++) {
+                      // for(let fsb = 0; fsb < 5; fsb++) {
+                      let name = window.appConfig.currentStage + '_SPHERECOIN_FSB_' + fsb + '_' + Math.round(Math.random() * 10000)
+                      window.appConfig.createSphere({
+                        bounce: 1,
+                        name: name,
+                        position: {
+                          x: (Math.random() * 20) - 10,
+                          y: (Math.random() * 20) - 10,
+                          z: 0
+                        },
+                        // handleCollision: (c) => window.appConfig.superBallHandleCollision(c, name)
+                        handleCollision: (c) => {
+                          window.appConfig.superBallHandleCollision(c, name)
+                          window.appConfig.timers.activeTimers.push(
+                            window.appConfig.timers.moveCoinsToSphere()
+                          )
+                        }
+                      })
+                    }
 
 
 
@@ -3696,30 +3726,46 @@
             createBackgroundAnimation()
           },
           init: () => {
+            var myGradient = new THREE.Mesh(
+              new THREE.PlaneBufferGeometry(2, 2, 1, 1),
+              new THREE.ShaderMaterial({
+                uniforms: {
+                  uColorA: { value: new THREE.Color(0xffffff) },
+                  uColorB: { value: new THREE.Color(0xff0000) },
+                  uColorC: { value: new THREE.Color(0xffffff) },
+                  uColorD: { value: new THREE.Color(0xff0000) }
+                },
+                vertexShader: window.appConfig.shaders.vertGradient,
+                fragmentShader: window.appConfig.shaders.fragGradient
+              })
+            )
+          myGradient.material.depthWrite = false
+            myGradient.renderOrder = -99999
+            scene.add(myGradient)
             // window.appConfig.stages.components.createFinalStage()
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 95, y: -95, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
-                window.appConfig.stages.components.gemPortalConfig())
-            )
+            window.appConfig.timers.addPortalToStage({ x: 95, y: -95, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
+              window.appConfig.stages.components.gemPortalConfig())
+          )
 
             window.appConfig.timers.activeTimers.push(
-              window.appConfig.timers.addPortalToStage({ x: 95, y: 95, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
-                window.appConfig.stages.components.sapphirePortalConfig())
-            )
+            window.appConfig.timers.addPortalToStage({ x: 95, y: 95, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
+              window.appConfig.stages.components.sapphirePortalConfig())
+          )
 
             const createStage0Portals = () => {
-              window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
-              window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
-              window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
+            window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
+            window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
+            window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
 
-              let ellipseGeometry = new THREE.CircleGeometry(4.125, 5)
-              ellipseGeometry.rotateZ((2 * Math.PI) / 20)
+            let ellipseGeometry = new THREE.CircleGeometry(4.125, 5)
+            ellipseGeometry.rotateZ((2 * Math.PI) / 20)
 
-              let i = 1;
-              for (i; i < ellipseGeometry.vertices.length; i++) {
-                window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
-              }
+            let i = 1;
+            for (i; i < ellipseGeometry.vertices.length; i++) {
+              window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
             }
+          }
 
 
             window.appConfig.stages.components.setUpPortalIndicators(createStage0Portals)
@@ -3763,330 +3809,331 @@
             const createSwitchBeamWall = window.appConfig.stages.components.createSwitchBeamWall
             const createRemoteSwitch = window.appConfig.stages.components.createRemoteSwitch
 
-            createCrystalCircle('STAGE0', 3.5, { x: -97, y: 0 }, 0, 16)
-            createCrystalCircle('STAGE0', 3.25, { x: -97, y: 0 }, 1, 8)
-            createCrystalCircle('STAGE0', 2.75, { x: -97, y: 0 }, 2, 8)
+            createCrystalCircle('STAGE0', 3.5, { x: - 97, y: 0
+      }, 0, 16)
+      createCrystalCircle('STAGE0', 3.25, { x: -97, y: 0 }, 1, 8)
+      createCrystalCircle('STAGE0', 2.75, { x: -97, y: 0 }, 2, 8)
 
-            createCrystalCircle('STAGE0', 3.75, { x: -57, y: 0 }, 0, 16)
-            createCrystalCircle('STAGE0', 3.5, { x: -57, y: 0 }, 1, 8)
-            createCrystalCircle('STAGE0', 3, { x: -57, y: 0 }, 2, 8)
+      createCrystalCircle('STAGE0', 3.75, { x: -57, y: 0 }, 0, 16)
+      createCrystalCircle('STAGE0', 3.5, { x: -57, y: 0 }, 1, 8)
+      createCrystalCircle('STAGE0', 3, { x: -57, y: 0 }, 2, 8)
 
-            createCrystalCircle('STAGE0', 3.75, { x: 87.5, y: 0 }, 0, 16)
-            createCrystalCircle('STAGE0', 3.5, { x: 87.5, y: 0 }, 1, 8)
-            createCrystalCircle('STAGE0', 3, { x: 87.5, y: 0 }, 2, 8)
+      createCrystalCircle('STAGE0', 3.75, { x: 87.5, y: 0 }, 0, 16)
+      createCrystalCircle('STAGE0', 3.5, { x: 87.5, y: 0 }, 1, 8)
+      createCrystalCircle('STAGE0', 3, { x: 87.5, y: 0 }, 2, 8)
 
-            window.appConfig.createSphere({
-              bounce: 1,
-              name: window.appConfig.currentStage + '_SPHERECOINA',
-              position: {
-                x: -55,
-                y: 0,
-                z: 0
-              },
-              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINA')
-            })
-            window.appConfig.createSphere({
-              bounce: 1,
-              name: window.appConfig.currentStage + '_SPHERECOINB',
-              position: {
-                x: -55,
-                y: 0,
-                z: 0
-              },
-              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINB')
-            })
-            window.appConfig.createSphere({
-              bounce: 1,
-              name: window.appConfig.currentStage + '_SPHERECOINC',
-              position: {
-                x: -55,
-                y: 0,
-                z: 0
-              },
-              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINC')
-            })
-            window.appConfig.createSphere({
-              bounce: 1,
-              name: window.appConfig.currentStage + '_SPHERECOIND',
-              position: {
-                x: -55,
-                y: 0,
-                z: 0
-              },
-              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIND')
-            })
-
-            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: 20, z: 0 } })
-            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: -20, z: 0 } })
-
-            createRemoteSwitch({
-              transmitter: {
-                p: { x: -95, y: -95, z: 0 }
-              },
-              receiver: {
-                p: { x: -55, y: -20, z: 0 },
-                name: 'STAGE0RECEIVER_A'
-              }
-            })
-
-            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: -71.2, y: -20, z: 0 }, receiver: { name: 'STAGE0RECEIVER_A' } })
-
-            createRemoteSwitch({
-              transmitter: {
-                p: { x: -95, y: 95, z: 0 }
-              },
-              receiver: {
-                p: { x: -55, y: 20, z: 0 },
-                name: 'STAGE0RECEIVER_B'
-              }
-            })
-
-            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: -71.2, y: 20, z: 0 }, receiver: { name: 'STAGE0RECEIVER_B' } })
-
-            const stage0MainBeamStructure = createStage0MainBeamStructure(
-              2,
-              0,
-              "STAGE0MAINSTRUCTURE"
-            );
-            scene.add(stage0MainBeamStructure);
-            const stage0MainBeamStructure1 = createStage0MainBeamStructure(
-              4,
-              0,
-              "STAGE0MAINSTRUCTURE1"
-            );
-            scene.add(stage0MainBeamStructure1);
-            const stage0MainBeamStructure2 = createStage0MainBeamStructure(
-              8,
-              0.525,
-              "STAGE0MAINSTRUCTURE2",
-              { x: 0, y: 0 },
-              [0, 1, 0, 0]
-            );
-            scene.add(stage0MainBeamStructure2);
-
-            const stage0MainBeamStructure3 = createStage0MainBeamStructure(
-              10,
-              0.55,
-              "STAGE0MAINSTRUCTURE3",
-              { x: 0, y: 0 },
-              [0, 0, 1, 0]
-              // [bottom, left, right, top]
-            );
-            scene.add(stage0MainBeamStructure3);
-
-            const stage0MainBeamStructure4 = createStage0MainBeamStructure(
-              14,
-              0.575,
-              "STAGE0MAINSTRUCTURE4_ZONE-WALL"
-            );
-            scene.add(stage0MainBeamStructure4);
-
-            const stage0MinorBeamStructure = createStage0MainBeamStructure(
-              1,
-              -0.5,
-              "STAGE0MINORSTRUCTURE",
-              { x: 45, y: 45 }
-            );
-            scene.add(stage0MinorBeamStructure);
-            const stage0MinorBeamStructure1 = createStage0MainBeamStructure(
-              1,
-              -0.5,
-              "STAGE0MINORSTRUCTURE1",
-              { x: 45, y: -45 }
-            );
-            scene.add(stage0MinorBeamStructure1);
-            const stage0MinorBeamStructure2 = createStage0MainBeamStructure(
-              1,
-              -0.5,
-              "STAGE0MINORSTRUCTURE2",
-              { x: -45, y: -45 }
-            );
-            scene.add(stage0MinorBeamStructure2);
-            const stage0MinorBeamStructure3 = createStage0MainBeamStructure(
-              1,
-              -0.5,
-              "STAGE0MINORSTRUCTURE3",
-              { x: -45, y: 45 }
-            );
-            scene.add(stage0MinorBeamStructure3);
-
-            prize(0, 0, { x: 45, y: 45, z: 0 })
-            prize(0, 1, { x: 45, y: -45, z: 0 })
-            prize(0, 2, { x: -45, y: -45, z: 0 })
-            prize(0, 3, { x: -45, y: 45, z: 0 })
-
-            prize(0, 4, { x: -75, y: 15, z: 0 })
-            prize(0, 5, { x: -75, y: -15, z: 0 })
-            prize(0, 6, { x: -40, y: 15, z: 0 })
-            prize(0, 7, { x: -40, y: -15, z: 0 })
-
-            prize(0, 8, { x: 70, y: 15, z: 0 })
-            prize(0, 9, { x: 70, y: -15, z: 0 })
-            prize(0, 10, { x: 105, y: 15, z: 0 })
-            prize(0, 11, { x: 105, y: -15, z: 0 })
-
-            prize(0, 12, { x: 95, y: 80, z: 0 })
-            prize(0, 13, { x: 95, y: -80, z: 0 })
-
-            createCrystalCross('STAGE0', 5);
-            createCrystalCross('STAGE0', 10);
-            createCrystalCross('STAGE0', 5, { x: 20, y: 20 }, 1);
-            createCrystalCross('STAGE0', 5, { x: -20, y: 20 }, 1);
-            createCrystalCross('STAGE0', 5, { x: -20, y: -20 }, 1);
-            createCrystalCross('STAGE0', 5, { x: 20, y: -20 }, 1);
-            createCrystalCross('STAGE0', 3, { x: 55, y: 55 }, 0);
-            createCrystalCross('STAGE0', 3, { x: 35, y: 55 }, 0);
-            createCrystalCross('STAGE0', 3, { x: 35, y: 35 }, 0);
-            createCrystalCross('STAGE0', 3, { x: 55, y: 35 }, 0);
-            createCrystalCross('STAGE0', 3, { x: 55, y: -55 }, 0);
-            createCrystalCross('STAGE0', 3, { x: 35, y: -55 }, 0);
-            createCrystalCross('STAGE0', 3, { x: 35, y: -35 }, 0);
-            createCrystalCross('STAGE0', 3, { x: 55, y: -35 }, 0);
-            createCrystalCross('STAGE0', 3, { x: -55, y: -55 }, 0);
-            createCrystalCross('STAGE0', 3, { x: -35, y: -55 }, 0);
-            createCrystalCross('STAGE0', 3, { x: -35, y: -35 }, 0);
-            createCrystalCross('STAGE0', 3, { x: -55, y: -35 }, 0);
-            createCrystalCross('STAGE0', 3, { x: -55, y: 55 }, 0);
-            createCrystalCross('STAGE0', 3, { x: -35, y: 55 }, 0);
-            createCrystalCross('STAGE0', 3, { x: -35, y: 35 }, 0);
-            createCrystalCross('STAGE0', 3, { x: -55, y: 35 }, 0);
-            createCrystalLine('STAGE0', 5, { x: 54.5, y: -22 }, 0, 10, "y");
-            createCrystalLine('STAGE0', 5, { x: 40.5, y: -22.5 }, 0, 10, "y");
-            createCrystalLine('STAGE0', 10, { x: 47.5, y: -20 }, 2, 5, "y");
-            createCrystalLine('STAGE0', 10, { x: -20, y: -47.5 }, 2, 5, "x");
-            createCrystalLine('STAGE0', 5, { x: -22.5, y: -40 }, 0, 10, "x");
-            createCrystalLine('STAGE0', 5, { x: -22.5, y: -54.5 }, 0, 10, "x");
-            createCrystalLine('STAGE0', 10, { x: -20, y: 47.5 }, 2, 5, "x");
-            createCrystalLine('STAGE0', 5, { x: -22.5, y: 40 }, 0, 10, "x");
-            createCrystalLine('STAGE0', 5, { x: -22.5, y: 54.5 }, 0, 10, "x");
-
-            createCrystalLine('STAGE0--00', 8, { x: -90.5, y: -75 }, 0, 8, "y");
-            createCrystalLine('STAGE0--01', 8, { x: -97.5, y: -75 }, 1, 8, "y");
-            createCrystalLine('STAGE0--02', 8, { x: -104.5, y: -75 }, 2, 8, "y");
-
-            createCrystalLine('STAGE0--0', 8, { x: -90.5, y: 20 }, 0, 8, "y");
-            createCrystalLine('STAGE0--1', 8, { x: -97.5, y: 20 }, 1, 8, "y");
-            createCrystalLine('STAGE0--2', 8, { x: -104.5, y: 20 }, 2, 8, "y");
-
-            createCrystalLine('STAGE0--3', 8, { y: -90.5, x: -75 }, 0, 20, "x");
-            createCrystalLine('STAGE0--4', 8, { y: -97.5, x: -75 }, 1, 20, "x");
-            createCrystalLine('STAGE0--5', 8, { y: -104.5, x: -75 }, 2, 20, "x");
-
-            createCrystalLine('STAGE0--6', 8, { y: 90.5, x: -75 }, 0, 20, "x");
-            createCrystalLine('STAGE0--7', 8, { y: 97.5, x: -75 }, 1, 20, "x");
-            createCrystalLine('STAGE0--8', 8, { y: 104.5, x: -75 }, 2, 20, "x");
-
-            createCrystalLine('STAGE0--9', 6, { y: 70, x: -57.5 }, 1, 20, "x");
-            createCrystalLine('STAGE0--10', 6, { y: 75, x: -57.5 }, 0, 20, "x");
-
-            createCrystalLine('STAGE0--9', 6, { y: -70, x: -57.5 }, 1, 20, "x");
-            createCrystalLine('STAGE0--10', 6, { y: -75, x: -57.5 }, 0, 20, "x");
-
-            window.appConfig.stages.STAGE0.STAGE0PRIZE0 = scene.children.find((obj) => obj.name === "STAGE0PRIZE0")
-            window.appConfig.stages.STAGE0.STAGE0PRIZE1 = scene.children.find((obj) => obj.name === "STAGE0PRIZE1")
-            window.appConfig.stages.STAGE0.STAGE0PRIZE2 = scene.children.find((obj) => obj.name === "STAGE0PRIZE2")
-            window.appConfig.stages.STAGE0.STAGE0PRIZE3 = scene.children.find((obj) => obj.name === "STAGE0PRIZE3")
-            window.appConfig.stages.STAGE0.STAGE0MAINSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MAINSTRUCTURE")
-            window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE")
-            window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE1")
-            window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE2")
-            window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE3")
-            window.appConfig.stages.STAGE0.data.started = true
-          }
+      window.appConfig.createSphere({
+        bounce: 1,
+        name: window.appConfig.currentStage + '_SPHERECOINA',
+        position: {
+          x: -55,
+          y: 0,
+          z: 0
         },
-        STAGE1: {
-          data: {
-            started: false,
-            xAdj: -60,
+        handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINA')
+      })
+      window.appConfig.createSphere({
+        bounce: 1,
+        name: window.appConfig.currentStage + '_SPHERECOINB',
+        position: {
+          x: -55,
+          y: 0,
+          z: 0
+        },
+        handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINB')
+      })
+      window.appConfig.createSphere({
+        bounce: 1,
+        name: window.appConfig.currentStage + '_SPHERECOINC',
+        position: {
+          x: -55,
+          y: 0,
+          z: 0
+        },
+        handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINC')
+      })
+      window.appConfig.createSphere({
+        bounce: 1,
+        name: window.appConfig.currentStage + '_SPHERECOIND',
+        position: {
+          x: -55,
+          y: 0,
+          z: 0
+        },
+        handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIND')
+      })
+
+      createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: 20, z: 0 } })
+      createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: -20, z: 0 } })
+
+      createRemoteSwitch({
+        transmitter: {
+          p: { x: -95, y: -95, z: 0 }
+        },
+        receiver: {
+          p: { x: -55, y: -20, z: 0 },
+          name: 'STAGE0RECEIVER_A'
+        }
+      })
+
+      createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: -71.2, y: -20, z: 0 }, receiver: { name: 'STAGE0RECEIVER_A' } })
+
+      createRemoteSwitch({
+        transmitter: {
+          p: { x: -95, y: 95, z: 0 }
+        },
+        receiver: {
+          p: { x: -55, y: 20, z: 0 },
+          name: 'STAGE0RECEIVER_B'
+        }
+      })
+
+      createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: -71.2, y: 20, z: 0 }, receiver: { name: 'STAGE0RECEIVER_B' } })
+
+      const stage0MainBeamStructure = createStage0MainBeamStructure(
+        2,
+        0,
+        "STAGE0MAINSTRUCTURE"
+      );
+      scene.add(stage0MainBeamStructure);
+      const stage0MainBeamStructure1 = createStage0MainBeamStructure(
+        4,
+        0,
+        "STAGE0MAINSTRUCTURE1"
+      );
+      scene.add(stage0MainBeamStructure1);
+      const stage0MainBeamStructure2 = createStage0MainBeamStructure(
+        8,
+        0.525,
+        "STAGE0MAINSTRUCTURE2",
+        { x: 0, y: 0 },
+        [0, 1, 0, 0]
+      );
+      scene.add(stage0MainBeamStructure2);
+
+      const stage0MainBeamStructure3 = createStage0MainBeamStructure(
+        10,
+        0.55,
+        "STAGE0MAINSTRUCTURE3",
+        { x: 0, y: 0 },
+        [0, 0, 1, 0]
+        // [bottom, left, right, top]
+      );
+      scene.add(stage0MainBeamStructure3);
+
+      const stage0MainBeamStructure4 = createStage0MainBeamStructure(
+        14,
+        0.575,
+        "STAGE0MAINSTRUCTURE4_ZONE-WALL"
+      );
+      scene.add(stage0MainBeamStructure4);
+
+      const stage0MinorBeamStructure = createStage0MainBeamStructure(
+        1,
+        -0.5,
+        "STAGE0MINORSTRUCTURE",
+        { x: 45, y: 45 }
+      );
+      scene.add(stage0MinorBeamStructure);
+      const stage0MinorBeamStructure1 = createStage0MainBeamStructure(
+        1,
+        -0.5,
+        "STAGE0MINORSTRUCTURE1",
+        { x: 45, y: -45 }
+      );
+      scene.add(stage0MinorBeamStructure1);
+      const stage0MinorBeamStructure2 = createStage0MainBeamStructure(
+        1,
+        -0.5,
+        "STAGE0MINORSTRUCTURE2",
+        { x: -45, y: -45 }
+      );
+      scene.add(stage0MinorBeamStructure2);
+      const stage0MinorBeamStructure3 = createStage0MainBeamStructure(
+        1,
+        -0.5,
+        "STAGE0MINORSTRUCTURE3",
+        { x: -45, y: 45 }
+      );
+      scene.add(stage0MinorBeamStructure3);
+
+      prize(0, 0, { x: 45, y: 45, z: 0 })
+      prize(0, 1, { x: 45, y: -45, z: 0 })
+      prize(0, 2, { x: -45, y: -45, z: 0 })
+      prize(0, 3, { x: -45, y: 45, z: 0 })
+
+      prize(0, 4, { x: -75, y: 15, z: 0 })
+      prize(0, 5, { x: -75, y: -15, z: 0 })
+      prize(0, 6, { x: -40, y: 15, z: 0 })
+      prize(0, 7, { x: -40, y: -15, z: 0 })
+
+      prize(0, 8, { x: 70, y: 15, z: 0 })
+      prize(0, 9, { x: 70, y: -15, z: 0 })
+      prize(0, 10, { x: 105, y: 15, z: 0 })
+      prize(0, 11, { x: 105, y: -15, z: 0 })
+
+      prize(0, 12, { x: 95, y: 80, z: 0 })
+      prize(0, 13, { x: 95, y: -80, z: 0 })
+
+      createCrystalCross('STAGE0', 5);
+      createCrystalCross('STAGE0', 10);
+      createCrystalCross('STAGE0', 5, { x: 20, y: 20 }, 1);
+      createCrystalCross('STAGE0', 5, { x: -20, y: 20 }, 1);
+      createCrystalCross('STAGE0', 5, { x: -20, y: -20 }, 1);
+      createCrystalCross('STAGE0', 5, { x: 20, y: -20 }, 1);
+      createCrystalCross('STAGE0', 3, { x: 55, y: 55 }, 0);
+      createCrystalCross('STAGE0', 3, { x: 35, y: 55 }, 0);
+      createCrystalCross('STAGE0', 3, { x: 35, y: 35 }, 0);
+      createCrystalCross('STAGE0', 3, { x: 55, y: 35 }, 0);
+      createCrystalCross('STAGE0', 3, { x: 55, y: -55 }, 0);
+      createCrystalCross('STAGE0', 3, { x: 35, y: -55 }, 0);
+      createCrystalCross('STAGE0', 3, { x: 35, y: -35 }, 0);
+      createCrystalCross('STAGE0', 3, { x: 55, y: -35 }, 0);
+      createCrystalCross('STAGE0', 3, { x: -55, y: -55 }, 0);
+      createCrystalCross('STAGE0', 3, { x: -35, y: -55 }, 0);
+      createCrystalCross('STAGE0', 3, { x: -35, y: -35 }, 0);
+      createCrystalCross('STAGE0', 3, { x: -55, y: -35 }, 0);
+      createCrystalCross('STAGE0', 3, { x: -55, y: 55 }, 0);
+      createCrystalCross('STAGE0', 3, { x: -35, y: 55 }, 0);
+      createCrystalCross('STAGE0', 3, { x: -35, y: 35 }, 0);
+      createCrystalCross('STAGE0', 3, { x: -55, y: 35 }, 0);
+      createCrystalLine('STAGE0', 5, { x: 54.5, y: -22 }, 0, 10, "y");
+      createCrystalLine('STAGE0', 5, { x: 40.5, y: -22.5 }, 0, 10, "y");
+      createCrystalLine('STAGE0', 10, { x: 47.5, y: -20 }, 2, 5, "y");
+      createCrystalLine('STAGE0', 10, { x: -20, y: -47.5 }, 2, 5, "x");
+      createCrystalLine('STAGE0', 5, { x: -22.5, y: -40 }, 0, 10, "x");
+      createCrystalLine('STAGE0', 5, { x: -22.5, y: -54.5 }, 0, 10, "x");
+      createCrystalLine('STAGE0', 10, { x: -20, y: 47.5 }, 2, 5, "x");
+      createCrystalLine('STAGE0', 5, { x: -22.5, y: 40 }, 0, 10, "x");
+      createCrystalLine('STAGE0', 5, { x: -22.5, y: 54.5 }, 0, 10, "x");
+
+      createCrystalLine('STAGE0--00', 8, { x: -90.5, y: -75 }, 0, 8, "y");
+      createCrystalLine('STAGE0--01', 8, { x: -97.5, y: -75 }, 1, 8, "y");
+      createCrystalLine('STAGE0--02', 8, { x: -104.5, y: -75 }, 2, 8, "y");
+
+      createCrystalLine('STAGE0--0', 8, { x: -90.5, y: 20 }, 0, 8, "y");
+      createCrystalLine('STAGE0--1', 8, { x: -97.5, y: 20 }, 1, 8, "y");
+      createCrystalLine('STAGE0--2', 8, { x: -104.5, y: 20 }, 2, 8, "y");
+
+      createCrystalLine('STAGE0--3', 8, { y: -90.5, x: -75 }, 0, 20, "x");
+      createCrystalLine('STAGE0--4', 8, { y: -97.5, x: -75 }, 1, 20, "x");
+      createCrystalLine('STAGE0--5', 8, { y: -104.5, x: -75 }, 2, 20, "x");
+
+      createCrystalLine('STAGE0--6', 8, { y: 90.5, x: -75 }, 0, 20, "x");
+      createCrystalLine('STAGE0--7', 8, { y: 97.5, x: -75 }, 1, 20, "x");
+      createCrystalLine('STAGE0--8', 8, { y: 104.5, x: -75 }, 2, 20, "x");
+
+      createCrystalLine('STAGE0--9', 6, { y: 70, x: -57.5 }, 1, 20, "x");
+      createCrystalLine('STAGE0--10', 6, { y: 75, x: -57.5 }, 0, 20, "x");
+
+      createCrystalLine('STAGE0--9', 6, { y: -70, x: -57.5 }, 1, 20, "x");
+      createCrystalLine('STAGE0--10', 6, { y: -75, x: -57.5 }, 0, 20, "x");
+
+      window.appConfig.stages.STAGE0.STAGE0PRIZE0 = scene.children.find((obj) => obj.name === "STAGE0PRIZE0")
+      window.appConfig.stages.STAGE0.STAGE0PRIZE1 = scene.children.find((obj) => obj.name === "STAGE0PRIZE1")
+      window.appConfig.stages.STAGE0.STAGE0PRIZE2 = scene.children.find((obj) => obj.name === "STAGE0PRIZE2")
+      window.appConfig.stages.STAGE0.STAGE0PRIZE3 = scene.children.find((obj) => obj.name === "STAGE0PRIZE3")
+      window.appConfig.stages.STAGE0.STAGE0MAINSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MAINSTRUCTURE")
+      window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE")
+      window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE1")
+      window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE2")
+      window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE3")
+      window.appConfig.stages.STAGE0.data.started = true
+    }
+        },
+    STAGE1: {
+      data: {
+        started: false,
+          xAdj: -60,
             vAdj: -70,
-            sAdj: 2,
-            startingPosition: window.appConfig.originVector,
-            sapphirePortalPosition: { x: 0, y: 100, z: -5 }
-          },
-          number: stageProperties.STAGE1.number,
-          backgroundColors: stageProperties.STAGE1.backgroundColors,
+              sAdj: 2,
+                startingPosition: window.appConfig.originVector,
+                  sapphirePortalPosition: { x: 0, y: 100, z: -5 }
+      },
+      number: stageProperties.STAGE1.number,
+        backgroundColors: stageProperties.STAGE1.backgroundColors,
           basicColors: stageProperties.STAGE1.basicColors,
-          sounds: stageProperties.STAGE1.sounds,
-          name: stageProperties.STAGE1.name,
-          defaultTransforms: [
-            'STAGE1MINORSTRUCTURE',
-            'STAGE1MINORSTRUCTUREB',
-            'STAGE1MINORSTRUCTURE1',
-            'STAGE1MINORSTRUCTURE1B',
-            'STAGE1MINORSTRUCTURE2',
-            'STAGE1MINORSTRUCTURE2B',
-            'STAGE1MINORSTRUCTURE3',
-            'STAGE1MINORSTRUCTURE3A',
-            'STAGE1MINORSTRUCTURE3B',
-            'STAGE1PRIZE0',
-            'STAGE1PRIZE1',
-            'STAGE1PRIZE2',
-            'STAGE1PRIZE3'
-          ],
-          transforms: {
-            'STAGE1PRIZE0': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE1PRIZE1': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE1PRIZE2': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE1PRIZE3': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE1MINORSTRUCTURE': { r: { x: 0, y: 0, z: .01 } },
-            'STAGE1MINORSTRUCTUREA': { r: { x: 0, y: 0, z: .01 } },
-            'STAGE1MINORSTRUCTUREB': { r: { x: 0, y: 0, z: .01 } },
-            'STAGE1MINORSTRUCTURE1': { r: { x: 0, y: 0, z: .01 } },
-            'STAGE1MINORSTRUCTURE1A': { r: { x: 0, y: 0, z: .01 } },
-            'STAGE1MINORSTRUCTURE1B': { r: { x: 0, y: 0, z: .01 } },
-            'STAGE1MINORSTRUCTURE2': { r: { x: 0, y: 0, z: .01 } },
-            'STAGE1MINORSTRUCTURE2A': { r: { x: 0, y: 0, z: -.0025 } },
-            'STAGE1MINORSTRUCTURE2B': { r: { x: 0, y: 0, z: .01 } },
-            'STAGE1MINORSTRUCTURE3': { r: { x: 0, y: 0, z: -.01 } },
-            'STAGE1MINORSTRUCTURE3A': { r: { x: 0, y: 0, z: .0025 } },
-            'STAGE1MINORSTRUCTURE3B': { r: { x: 0, y: 0, z: .0025 } },
-          },
-          teardown: () => {
-            teardownStage('STAGE1')
-            window.appConfig.stages.STAGE1.data.started = false
-          },
-          initBackground: () => {
-            const createBackgroundAnimation = () => {
-              const bgGroup = new THREE.Group()
-              bgGroup.name = 'STAGE1BGGROUP'
-              const elementGeometry = new THREE.BoxGeometry(1, 1, 1)
-              const elementMaterials = [
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[0], transparent: true, opacity: .25 }),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[1], transparent: true, opacity: .25 }),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[2], transparent: true, opacity: .25 }),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[3], transparent: true, opacity: .25 }),
-              ]
+            sounds: stageProperties.STAGE1.sounds,
+              name: stageProperties.STAGE1.name,
+                defaultTransforms: [
+                  'STAGE1MINORSTRUCTURE',
+                  'STAGE1MINORSTRUCTUREB',
+                  'STAGE1MINORSTRUCTURE1',
+                  'STAGE1MINORSTRUCTURE1B',
+                  'STAGE1MINORSTRUCTURE2',
+                  'STAGE1MINORSTRUCTURE2B',
+                  'STAGE1MINORSTRUCTURE3',
+                  'STAGE1MINORSTRUCTURE3A',
+                  'STAGE1MINORSTRUCTURE3B',
+                  'STAGE1PRIZE0',
+                  'STAGE1PRIZE1',
+                  'STAGE1PRIZE2',
+                  'STAGE1PRIZE3'
+                ],
+                  transforms: {
+        'STAGE1PRIZE0': { r: { x: .005, y: .005, z: .005 } },
+        'STAGE1PRIZE1': { r: { x: .005, y: .005, z: .005 } },
+        'STAGE1PRIZE2': { r: { x: .005, y: .005, z: .005 } },
+        'STAGE1PRIZE3': { r: { x: .005, y: .005, z: .005 } },
+        'STAGE1MINORSTRUCTURE': { r: { x: 0, y: 0, z: .01 } },
+        'STAGE1MINORSTRUCTUREA': { r: { x: 0, y: 0, z: .01 } },
+        'STAGE1MINORSTRUCTUREB': { r: { x: 0, y: 0, z: .01 } },
+        'STAGE1MINORSTRUCTURE1': { r: { x: 0, y: 0, z: .01 } },
+        'STAGE1MINORSTRUCTURE1A': { r: { x: 0, y: 0, z: .01 } },
+        'STAGE1MINORSTRUCTURE1B': { r: { x: 0, y: 0, z: .01 } },
+        'STAGE1MINORSTRUCTURE2': { r: { x: 0, y: 0, z: .01 } },
+        'STAGE1MINORSTRUCTURE2A': { r: { x: 0, y: 0, z: -.0025 } },
+        'STAGE1MINORSTRUCTURE2B': { r: { x: 0, y: 0, z: .01 } },
+        'STAGE1MINORSTRUCTURE3': { r: { x: 0, y: 0, z: -.01 } },
+        'STAGE1MINORSTRUCTURE3A': { r: { x: 0, y: 0, z: .0025 } },
+        'STAGE1MINORSTRUCTURE3B': { r: { x: 0, y: 0, z: .0025 } },
+      },
+      teardown: () => {
+        teardownStage('STAGE1')
+        window.appConfig.stages.STAGE1.data.started = false
+      },
+        initBackground: () => {
+          const createBackgroundAnimation = () => {
+            const bgGroup = new THREE.Group()
+            bgGroup.name = 'STAGE1BGGROUP'
+            const elementGeometry = new THREE.BoxGeometry(1, 1, 1)
+            const elementMaterials = [
+              new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[0], transparent: true, opacity: .25 }),
+              new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[1], transparent: true, opacity: .25 }),
+              new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[2], transparent: true, opacity: .25 }),
+              new THREE.MeshPhongMaterial({ color: stageProperties.STAGE1.backgroundColors[3], transparent: true, opacity: .25 }),
+            ]
 
-              const numberOfElements = 50
-              let elementI = 0
-              for (elementI; elementI < numberOfElements; elementI++) {
-                bgGroup.add(new THREE.Mesh(elementGeometry, elementMaterials[elementI % elementMaterials.length]))
-              }
-              scene.add(bgGroup)
-              bgGroup.position.set(0, 0, -10)
-              bgGroup.children.forEach(c => {
-                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -20 + Math.random() * -30)
-                const bgElementScale = 1 + Math.random() * 10
-                c.scale.set(bgElementScale, bgElementScale, bgElementScale)
-                c.rotation.z = (Math.random() * 2) * Math.PI
-              })
-              bgGroup.activeCallback = () => {
-                if (bgGroup) {
-                  bgGroup.children.forEach((c, ci) => {
-                    c.position.y += .005 * ci / 2
-                    c.rotation.y += .005
-                    if (c.position.y > 125) {
-                      c.position.y = -125
-                    }
-                  })
-                }
-              }
-              bgGroup.activeCallback()
-              window.appConfig.stages['STAGE1'].bgGroupActiveCallback = bgGroup.activeCallback
+            const numberOfElements = 50
+            let elementI = 0
+            for (elementI; elementI < numberOfElements; elementI++) {
+              bgGroup.add(new THREE.Mesh(elementGeometry, elementMaterials[elementI % elementMaterials.length]))
             }
+            scene.add(bgGroup)
+            bgGroup.position.set(0, 0, -10)
+            bgGroup.children.forEach(c => {
+              c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -20 + Math.random() * -30)
+              const bgElementScale = 1 + Math.random() * 10
+              c.scale.set(bgElementScale, bgElementScale, bgElementScale)
+              c.rotation.z = (Math.random() * 2) * Math.PI
+            })
+            bgGroup.activeCallback = () => {
+              if (bgGroup) {
+                bgGroup.children.forEach((c, ci) => {
+                  c.position.y += .005 * ci / 2
+                  c.rotation.y += .005
+                  if (c.position.y > 125) {
+                    c.position.y = -125
+                  }
+                })
+              }
+            }
+            bgGroup.activeCallback()
+            window.appConfig.stages['STAGE1'].bgGroupActiveCallback = bgGroup.activeCallback
+          }
 
-            createBackgroundAnimation()
-          },
+          createBackgroundAnimation()
+        },
           init: () => {
             const createStage1MainBeamStructure = window.appConfig.stages.components.createStage1MainBeamStructure
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
@@ -4438,98 +4485,98 @@
             window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE3B = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE3B")
             window.appConfig.stages.STAGE1.data.started = true
           }
-        },
-        STAGE2: {
-          data: {
-            started: false,
-            xAdj: -60,
+    },
+    STAGE2: {
+      data: {
+        started: false,
+          xAdj: -60,
             vAdj: -70,
-            sAdj: 2,
-            startingPosition: window.appConfig.originVector,
-            sapphirePortalPosition: { x: 0, y: 72.5, z: -5 }
-          },
-          backgroundColors: stageProperties.STAGE2.backgroundColors,
-          basicColors: stageProperties.STAGE2.basicColors,
+              sAdj: 2,
+                startingPosition: window.appConfig.originVector,
+                  sapphirePortalPosition: { x: 0, y: 72.5, z: -5 }
+      },
+      backgroundColors: stageProperties.STAGE2.backgroundColors,
+        basicColors: stageProperties.STAGE2.basicColors,
           sounds: stageProperties.STAGE2.sounds,
-          name: stageProperties.STAGE2.name,
-          number: stageProperties.STAGE2.number,
-          defaultTransforms: [
-            'STAGE2PRIZE0',
-            'STAGE2PRIZE1',
-            'STAGE2PRIZE2',
-            'STAGE2PRIZE3',
-            'STAGE2MINORSTRUCTURE',
-            'STAGE2MINORSTRUCTUREA',
-            'STAGE2MINORSTRUCTUREB',
-            'STAGE2MINORSTRUCTUREROTATION',
-            'STAGE2MINORSTRUCTUREROTATIONA',
-            'STAGE2MINORSTRUCTUREROTATIONB',
-            'STAGE2MINORSTRUCTUREROTATIONC'
-          ],
-          transforms: {
-            'STAGE2PRIZE0': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE2PRIZE1': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE2PRIZE2': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE2PRIZE3': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE2MINORSTRUCTURE': { r: { x: 0, y: 0, z: -.01 } },
-            'STAGE2MINORSTRUCTUREA': { r: { x: 0, y: 0, z: .0025 } },
-            'STAGE2MINORSTRUCTUREB': { r: { x: 0, y: 0, z: .0025 } },
-            'STAGE2MINORSTRUCTUREROTATION': { r: { x: 0, y: 0, z: -.0025 } },
-            'STAGE2MINORSTRUCTUREROTATIONA': { r: { x: 0, y: 0, z: -.0025 } },
-            'STAGE2MINORSTRUCTUREROTATIONB': { r: { x: 0, y: 0, z: -.0025 } },
-            'STAGE2MINORSTRUCTUREROTATIONC': { r: { x: 0, y: 0, z: -.0025 } }
-          },
-          teardown: () => {
-            teardownStage('STAGE2')
-            window.appConfig.stages.STAGE2.data.started = false
-          },
-          initBackground: () => {
-            const createBackgroundAnimation = () => {
-              const bgGroup = new THREE.Group()
-              bgGroup.name = 'STAGE2BGGROUP'
-              const elementGeometry = new THREE.CylinderGeometry(
-                1,
-                1,
-                1,
-                Math.ceil(Math.random() * 16 + 2)
-              )
-              const elementMaterials = [
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE2.backgroundColors[0], transparent: true, opacity: .25 }),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE2.backgroundColors[1], transparent: true, opacity: .25 }),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE2.backgroundColors[2], transparent: true, opacity: .25 }),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE2.backgroundColors[3], transparent: true, opacity: .25 }),
-              ]
+            name: stageProperties.STAGE2.name,
+              number: stageProperties.STAGE2.number,
+                defaultTransforms: [
+                  'STAGE2PRIZE0',
+                  'STAGE2PRIZE1',
+                  'STAGE2PRIZE2',
+                  'STAGE2PRIZE3',
+                  'STAGE2MINORSTRUCTURE',
+                  'STAGE2MINORSTRUCTUREA',
+                  'STAGE2MINORSTRUCTUREB',
+                  'STAGE2MINORSTRUCTUREROTATION',
+                  'STAGE2MINORSTRUCTUREROTATIONA',
+                  'STAGE2MINORSTRUCTUREROTATIONB',
+                  'STAGE2MINORSTRUCTUREROTATIONC'
+                ],
+                  transforms: {
+        'STAGE2PRIZE0': { r: { x: .005, y: .005, z: .005 } },
+        'STAGE2PRIZE1': { r: { x: .005, y: .005, z: .005 } },
+        'STAGE2PRIZE2': { r: { x: .005, y: .005, z: .005 } },
+        'STAGE2PRIZE3': { r: { x: .005, y: .005, z: .005 } },
+        'STAGE2MINORSTRUCTURE': { r: { x: 0, y: 0, z: -.01 } },
+        'STAGE2MINORSTRUCTUREA': { r: { x: 0, y: 0, z: .0025 } },
+        'STAGE2MINORSTRUCTUREB': { r: { x: 0, y: 0, z: .0025 } },
+        'STAGE2MINORSTRUCTUREROTATION': { r: { x: 0, y: 0, z: -.0025 } },
+        'STAGE2MINORSTRUCTUREROTATIONA': { r: { x: 0, y: 0, z: -.0025 } },
+        'STAGE2MINORSTRUCTUREROTATIONB': { r: { x: 0, y: 0, z: -.0025 } },
+        'STAGE2MINORSTRUCTUREROTATIONC': { r: { x: 0, y: 0, z: -.0025 } }
+      },
+      teardown: () => {
+        teardownStage('STAGE2')
+        window.appConfig.stages.STAGE2.data.started = false
+      },
+        initBackground: () => {
+          const createBackgroundAnimation = () => {
+            const bgGroup = new THREE.Group()
+            bgGroup.name = 'STAGE2BGGROUP'
+            const elementGeometry = new THREE.CylinderGeometry(
+              1,
+              1,
+              1,
+              Math.ceil(Math.random() * 16 + 2)
+            )
+            const elementMaterials = [
+              new THREE.MeshPhongMaterial({ color: stageProperties.STAGE2.backgroundColors[0], transparent: true, opacity: .25 }),
+              new THREE.MeshPhongMaterial({ color: stageProperties.STAGE2.backgroundColors[1], transparent: true, opacity: .25 }),
+              new THREE.MeshPhongMaterial({ color: stageProperties.STAGE2.backgroundColors[2], transparent: true, opacity: .25 }),
+              new THREE.MeshPhongMaterial({ color: stageProperties.STAGE2.backgroundColors[3], transparent: true, opacity: .25 }),
+            ]
 
-              const numberOfElements = 50
-              let elementI = 0
-              for (elementI; elementI < numberOfElements; elementI++) {
-                bgGroup.add(new THREE.Mesh(elementGeometry, elementMaterials[elementI % elementMaterials.length]))
-              }
-              scene.add(bgGroup)
-              bgGroup.position.set(0, 0, -10)
-              bgGroup.children.forEach(c => {
-                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -20 + Math.random() * -30)
-                const bgElementScale = 1 + Math.random() * 10
-                c.scale.set(bgElementScale, bgElementScale, bgElementScale)
-                c.rotation.z = (Math.random() * 2) * Math.PI
-              })
-              bgGroup.activeCallback = () => {
-                if (bgGroup) {
-                  bgGroup.children.forEach((c, ci) => {
-                    c.position.y += .005 * ci / 2
-                    c.rotation.y += .005
-                    if (c.position.y > 125) {
-                      c.position.y = -125
-                    }
-                  })
-                }
-              }
-              bgGroup.activeCallback()
-              window.appConfig.stages['STAGE2'].bgGroupActiveCallback = bgGroup.activeCallback
+            const numberOfElements = 50
+            let elementI = 0
+            for (elementI; elementI < numberOfElements; elementI++) {
+              bgGroup.add(new THREE.Mesh(elementGeometry, elementMaterials[elementI % elementMaterials.length]))
             }
+            scene.add(bgGroup)
+            bgGroup.position.set(0, 0, -10)
+            bgGroup.children.forEach(c => {
+              c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -20 + Math.random() * -30)
+              const bgElementScale = 1 + Math.random() * 10
+              c.scale.set(bgElementScale, bgElementScale, bgElementScale)
+              c.rotation.z = (Math.random() * 2) * Math.PI
+            })
+            bgGroup.activeCallback = () => {
+              if (bgGroup) {
+                bgGroup.children.forEach((c, ci) => {
+                  c.position.y += .005 * ci / 2
+                  c.rotation.y += .005
+                  if (c.position.y > 125) {
+                    c.position.y = -125
+                  }
+                })
+              }
+            }
+            bgGroup.activeCallback()
+            window.appConfig.stages['STAGE2'].bgGroupActiveCallback = bgGroup.activeCallback
+          }
 
-            createBackgroundAnimation()
-          },
+          createBackgroundAnimation()
+        },
           init: () => {
             const createSwitchBeamWall = window.appConfig.stages.components.createSwitchBeamWall
             const createRemoteSwitch = window.appConfig.stages.components.createRemoteSwitch
@@ -4893,123 +4940,123 @@
 
             window.appConfig.stages.STAGE2.data.started = true
           }
-        },
-        STAGE3: {
-          data: {
-            started: false,
-            xAdj: -60,
+    },
+    STAGE3: {
+      data: {
+        started: false,
+          xAdj: -60,
             vAdj: -70,
-            sAdj: 2,
-            startingPosition: window.appConfig.originVector,
-            sapphirePortalPosition: { x: 148.75, y: 25, z: -5 }
-          },
-          backgroundColors: stageProperties.STAGE3.backgroundColors,
-          basicColors: stageProperties.STAGE3.basicColors,
+              sAdj: 2,
+                startingPosition: window.appConfig.originVector,
+                  sapphirePortalPosition: { x: 148.75, y: 25, z: -5 }
+      },
+      backgroundColors: stageProperties.STAGE3.backgroundColors,
+        basicColors: stageProperties.STAGE3.basicColors,
           sounds: stageProperties.STAGE3.sounds,
-          name: stageProperties.STAGE3.name,
-          number: stageProperties.STAGE3.number,
-          defaultTransforms: [
-            'STAGE3PRIZE0',
-            'STAGE3PRIZE1',
-            'STAGE3PRIZE2',
-            'STAGE3PRIZE3',
-            'STAGE3MAINSTRUCTURE',
-            'STAGE3MAINSTRUCTUREA',
-            'STAGE3MAINSTRUCTUREB',
-            'STAGE3MAINSTRUCTUREC',
-            'STAGE3MAINSTRUCTURED',
-            'STAGE3MAINSTRUCTUREE',
-            'STAGE3CROSSBEAMSTRUCTURE',
-            'STAGE3CROSSBEAMSTRUCTUREA',
-            'STAGE3CROSSBEAMSTRUCTUREB',
-            'STAGE3CROSSBEAMSTRUCTUREC',
-            'STAGE3CROSSBEAMSTRUCTURE1',
-            'STAGE3CROSSBEAMSTRUCTURE1A',
-            'STAGE3CROSSBEAMSTRUCTURE1B',
-            'STAGE3CROSSBEAMSTRUCTURE1C',
-            'STAGE3CROSSBEAMSTRUCTURE2',
-            'STAGE3CROSSBEAMSTRUCTURE2A',
-            'STAGE3CROSSBEAMSTRUCTURE2B',
-            'STAGE3CROSSBEAMSTRUCTURE2C',
-            'STAGE3CROSSBEAMSTRUCTURE3',
-            'STAGE3CROSSBEAMSTRUCTURE3A',
-            'STAGE3CROSSBEAMSTRUCTURE3B',
-            'STAGE3CROSSBEAMSTRUCTURE3C'
-          ],
-          transforms: {
-            'STAGE3PRIZE0': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE3PRIZE1': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE3PRIZE2': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE3PRIZE3': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE3MAINSTRUCTURE': { r: { x: 0, y: 0, z: -.005 } },
-            'STAGE3MAINSTRUCTUREA': { r: { x: 0, y: 0, z: -.005 } },
-            'STAGE3MAINSTRUCTUREB': { r: { x: 0, y: 0, z: -.005 } },
-            'STAGE3MAINSTRUCTUREC': { r: { x: 0, y: 0, z: -.005 } },
-            'STAGE3MAINSTRUCTURED': { r: { x: 0, y: 0, z: .005 } },
-            'STAGE3MAINSTRUCTUREE': { r: { x: 0, y: 0, z: .005 } },
-            'STAGE3CROSSBEAMSTRUCTURE': { r: { x: 0, y: 0, z: .01 } },
-            'STAGE3CROSSBEAMSTRUCTUREA': { r: { x: 0, y: 0, z: -.01 } },
-            'STAGE3CROSSBEAMSTRUCTUREB': { r: { x: 0, y: 0, z: .01 } },
-            'STAGE3CROSSBEAMSTRUCTUREC': { r: { x: 0, y: 0, z: -.01 } },
-            'STAGE3CROSSBEAMSTRUCTURE1': { r: { x: 0, y: 0, z: .01 } },
-            'STAGE3CROSSBEAMSTRUCTURE1A': { r: { x: 0, y: 0, z: -.01 } },
-            'STAGE3CROSSBEAMSTRUCTURE1B': { r: { x: 0, y: 0, z: .01 } },
-            'STAGE3CROSSBEAMSTRUCTURE1C': { r: { x: 0, y: 0, z: -.01 } },
-            'STAGE3CROSSBEAMSTRUCTURE2': { r: { x: 0, y: 0, z: .01 } },
-            'STAGE3CROSSBEAMSTRUCTURE2A': { r: { x: 0, y: 0, z: -.01 } },
-            'STAGE3CROSSBEAMSTRUCTURE2B': { r: { x: 0, y: 0, z: .01 } },
-            'STAGE3CROSSBEAMSTRUCTURE2C': { r: { x: 0, y: 0, z: -.01 } },
-            'STAGE3CROSSBEAMSTRUCTURE3': { r: { x: 0, y: 0, z: .01 } },
-            'STAGE3CROSSBEAMSTRUCTURE3A': { r: { x: 0, y: 0, z: -.01 } },
-            'STAGE3CROSSBEAMSTRUCTURE3B': { r: { x: 0, y: 0, z: .01 } },
-            'STAGE3CROSSBEAMSTRUCTURE3C': { r: { x: 0, y: 0, z: -.01 } }
-          },
-          teardown: () => {
-            teardownStage('STAGE3')
-            window.appConfig.stages.STAGE3.data.started = false
-          },
-          initBackground: () => {
-            const createBackgroundAnimation = () => {
-              const bgGroup = new THREE.Group()
-              bgGroup.name = 'STAGE3BGGROUP'
-              const elementGeometry = new THREE.TetrahedronGeometry(1)
-              const elementMaterials = [
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE3.backgroundColors[0], transparent: true, opacity: .25 }),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE3.backgroundColors[1], transparent: true, opacity: .25 }),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE3.backgroundColors[2], transparent: true, opacity: .25 }),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE3.backgroundColors[3], transparent: true, opacity: .25 }),
-              ]
+            name: stageProperties.STAGE3.name,
+              number: stageProperties.STAGE3.number,
+                defaultTransforms: [
+                  'STAGE3PRIZE0',
+                  'STAGE3PRIZE1',
+                  'STAGE3PRIZE2',
+                  'STAGE3PRIZE3',
+                  'STAGE3MAINSTRUCTURE',
+                  'STAGE3MAINSTRUCTUREA',
+                  'STAGE3MAINSTRUCTUREB',
+                  'STAGE3MAINSTRUCTUREC',
+                  'STAGE3MAINSTRUCTURED',
+                  'STAGE3MAINSTRUCTUREE',
+                  'STAGE3CROSSBEAMSTRUCTURE',
+                  'STAGE3CROSSBEAMSTRUCTUREA',
+                  'STAGE3CROSSBEAMSTRUCTUREB',
+                  'STAGE3CROSSBEAMSTRUCTUREC',
+                  'STAGE3CROSSBEAMSTRUCTURE1',
+                  'STAGE3CROSSBEAMSTRUCTURE1A',
+                  'STAGE3CROSSBEAMSTRUCTURE1B',
+                  'STAGE3CROSSBEAMSTRUCTURE1C',
+                  'STAGE3CROSSBEAMSTRUCTURE2',
+                  'STAGE3CROSSBEAMSTRUCTURE2A',
+                  'STAGE3CROSSBEAMSTRUCTURE2B',
+                  'STAGE3CROSSBEAMSTRUCTURE2C',
+                  'STAGE3CROSSBEAMSTRUCTURE3',
+                  'STAGE3CROSSBEAMSTRUCTURE3A',
+                  'STAGE3CROSSBEAMSTRUCTURE3B',
+                  'STAGE3CROSSBEAMSTRUCTURE3C'
+                ],
+                  transforms: {
+        'STAGE3PRIZE0': { r: { x: .005, y: .005, z: .005 } },
+        'STAGE3PRIZE1': { r: { x: .005, y: .005, z: .005 } },
+        'STAGE3PRIZE2': { r: { x: .005, y: .005, z: .005 } },
+        'STAGE3PRIZE3': { r: { x: .005, y: .005, z: .005 } },
+        'STAGE3MAINSTRUCTURE': { r: { x: 0, y: 0, z: -.005 } },
+        'STAGE3MAINSTRUCTUREA': { r: { x: 0, y: 0, z: -.005 } },
+        'STAGE3MAINSTRUCTUREB': { r: { x: 0, y: 0, z: -.005 } },
+        'STAGE3MAINSTRUCTUREC': { r: { x: 0, y: 0, z: -.005 } },
+        'STAGE3MAINSTRUCTURED': { r: { x: 0, y: 0, z: .005 } },
+        'STAGE3MAINSTRUCTUREE': { r: { x: 0, y: 0, z: .005 } },
+        'STAGE3CROSSBEAMSTRUCTURE': { r: { x: 0, y: 0, z: .01 } },
+        'STAGE3CROSSBEAMSTRUCTUREA': { r: { x: 0, y: 0, z: -.01 } },
+        'STAGE3CROSSBEAMSTRUCTUREB': { r: { x: 0, y: 0, z: .01 } },
+        'STAGE3CROSSBEAMSTRUCTUREC': { r: { x: 0, y: 0, z: -.01 } },
+        'STAGE3CROSSBEAMSTRUCTURE1': { r: { x: 0, y: 0, z: .01 } },
+        'STAGE3CROSSBEAMSTRUCTURE1A': { r: { x: 0, y: 0, z: -.01 } },
+        'STAGE3CROSSBEAMSTRUCTURE1B': { r: { x: 0, y: 0, z: .01 } },
+        'STAGE3CROSSBEAMSTRUCTURE1C': { r: { x: 0, y: 0, z: -.01 } },
+        'STAGE3CROSSBEAMSTRUCTURE2': { r: { x: 0, y: 0, z: .01 } },
+        'STAGE3CROSSBEAMSTRUCTURE2A': { r: { x: 0, y: 0, z: -.01 } },
+        'STAGE3CROSSBEAMSTRUCTURE2B': { r: { x: 0, y: 0, z: .01 } },
+        'STAGE3CROSSBEAMSTRUCTURE2C': { r: { x: 0, y: 0, z: -.01 } },
+        'STAGE3CROSSBEAMSTRUCTURE3': { r: { x: 0, y: 0, z: .01 } },
+        'STAGE3CROSSBEAMSTRUCTURE3A': { r: { x: 0, y: 0, z: -.01 } },
+        'STAGE3CROSSBEAMSTRUCTURE3B': { r: { x: 0, y: 0, z: .01 } },
+        'STAGE3CROSSBEAMSTRUCTURE3C': { r: { x: 0, y: 0, z: -.01 } }
+      },
+      teardown: () => {
+        teardownStage('STAGE3')
+        window.appConfig.stages.STAGE3.data.started = false
+      },
+        initBackground: () => {
+          const createBackgroundAnimation = () => {
+            const bgGroup = new THREE.Group()
+            bgGroup.name = 'STAGE3BGGROUP'
+            const elementGeometry = new THREE.TetrahedronGeometry(1)
+            const elementMaterials = [
+              new THREE.MeshPhongMaterial({ color: stageProperties.STAGE3.backgroundColors[0], transparent: true, opacity: .25 }),
+              new THREE.MeshPhongMaterial({ color: stageProperties.STAGE3.backgroundColors[1], transparent: true, opacity: .25 }),
+              new THREE.MeshPhongMaterial({ color: stageProperties.STAGE3.backgroundColors[2], transparent: true, opacity: .25 }),
+              new THREE.MeshPhongMaterial({ color: stageProperties.STAGE3.backgroundColors[3], transparent: true, opacity: .25 }),
+            ]
 
-              const numberOfElements = 50
-              let elementI = 0
-              for (elementI; elementI < numberOfElements; elementI++) {
-                bgGroup.add(new THREE.Mesh(elementGeometry, elementMaterials[elementI % elementMaterials.length]))
-              }
-              scene.add(bgGroup)
-              bgGroup.position.set(0, 0, -10)
-              bgGroup.children.forEach(c => {
-                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -20 + Math.random() * -30)
-                const bgElementScale = 1 + Math.random() * 10
-                c.scale.set(bgElementScale, bgElementScale, bgElementScale)
-                c.rotation.z = (Math.random() * 2) * Math.PI
-              })
-              bgGroup.activeCallback = () => {
-                if (bgGroup) {
-                  bgGroup.children.forEach((c, ci) => {
-                    c.position.y += .005 * ci / 2
-                    c.rotation.y += .005
-                    if (c.position.y > 125) {
-                      c.position.y = -125
-                    }
-                  })
-                }
-              }
-              bgGroup.activeCallback()
-              window.appConfig.stages['STAGE3'].bgGroupActiveCallback = bgGroup.activeCallback
+            const numberOfElements = 50
+            let elementI = 0
+            for (elementI; elementI < numberOfElements; elementI++) {
+              bgGroup.add(new THREE.Mesh(elementGeometry, elementMaterials[elementI % elementMaterials.length]))
             }
+            scene.add(bgGroup)
+            bgGroup.position.set(0, 0, -10)
+            bgGroup.children.forEach(c => {
+              c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -20 + Math.random() * -30)
+              const bgElementScale = 1 + Math.random() * 10
+              c.scale.set(bgElementScale, bgElementScale, bgElementScale)
+              c.rotation.z = (Math.random() * 2) * Math.PI
+            })
+            bgGroup.activeCallback = () => {
+              if (bgGroup) {
+                bgGroup.children.forEach((c, ci) => {
+                  c.position.y += .005 * ci / 2
+                  c.rotation.y += .005
+                  if (c.position.y > 125) {
+                    c.position.y = -125
+                  }
+                })
+              }
+            }
+            bgGroup.activeCallback()
+            window.appConfig.stages['STAGE3'].bgGroupActiveCallback = bgGroup.activeCallback
+          }
 
-            createBackgroundAnimation()
-          },
+          createBackgroundAnimation()
+        },
           init: () => {
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
@@ -5601,136 +5648,136 @@
 
             window.appConfig.stages.STAGE3.data.started = true
           }
-        },
-        STAGE4: {
-          data: {
-            started: false,
-            xAdj: -60,
+    },
+    STAGE4: {
+      data: {
+        started: false,
+          xAdj: -60,
             vAdj: -70,
-            sAdj: 2,
-            startingPosition: window.appConfig.originVector,
-            sapphirePortalPosition: { x: 120, y: 0, z: -5 }
-          },
-          number: stageProperties.STAGE4.number,
-          backgroundColors: stageProperties.STAGE4.backgroundColors,
+              sAdj: 2,
+                startingPosition: window.appConfig.originVector,
+                  sapphirePortalPosition: { x: 120, y: 0, z: -5 }
+      },
+      number: stageProperties.STAGE4.number,
+        backgroundColors: stageProperties.STAGE4.backgroundColors,
           basicColors: stageProperties.STAGE4.basicColors,
-          sounds: stageProperties.STAGE4.sounds,
-          name: stageProperties.STAGE4.name,
-          defaultTransforms: [
-            'STAGE4PRIZE0',
-            'STAGE4PRIZE1',
-            'STAGE4PRIZE2',
-            'STAGE4PRIZE3',
-            'STAGE4MAINSTRUCTURE1',
-            'STAGE4MAINSTRUCTURE2',
-            'STAGE4CROSSBEAMSTRUCTURE',
-            'STAGE4CROSSBEAMSTRUCTUREA',
-            'STAGE4CROSSBEAMSTRUCTUREB',
-            'STAGE4CROSSBEAMSTRUCTUREC',
-            'STAGE4CROSSBEAMSTRUCTURED',
-            'STAGE4MAINSTRUCTURE3',
-            'STAGE4MAINSTRUCTURE4',
-            'STAGE4CROSSBEAMSTRUCTURE1',
-            'STAGE4CROSSBEAMSTRUCTURE1A',
-            'STAGE4CROSSBEAMSTRUCTURE1B',
-            'STAGE4CROSSBEAMSTRUCTURE1C',
-            'STAGE4CROSSBEAMSTRUCTURE1D',
-            'STAGE4MAINSTRUCTURE5',
-            'STAGE4MAINSTRUCTURE6',
-            'STAGE4CROSSBEAMSTRUCTURE2',
-            'STAGE4CROSSBEAMSTRUCTURE2A',
-            'STAGE4CROSSBEAMSTRUCTURE2B',
-            'STAGE4CROSSBEAMSTRUCTURE2C',
-            'STAGE4CROSSBEAMSTRUCTURE2D',
-            'STAGE4MAINSTRUCTURE7',
-            'STAGE4MAINSTRUCTURE8',
-            'STAGE4CROSSBEAMSTRUCTURE3',
-            'STAGE4CROSSBEAMSTRUCTURE3A',
-            'STAGE4CROSSBEAMSTRUCTURE3B',
-            'STAGE4CROSSBEAMSTRUCTURE3C',
-            'STAGE4CROSSBEAMSTRUCTURE3D'
-          ],
-          transforms: {
-            'STAGE4PRIZE0': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE4PRIZE1': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE4PRIZE2': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE4PRIZE3': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE4MAINSTRUCTURE1': { r: { x: 0, y: 0, z: -.005 } },//
-            'STAGE4MAINSTRUCTURE2': { r: { x: 0, y: 0, z: .005 } },//
-            'STAGE4CROSSBEAMSTRUCTURE': { r: { x: 0, y: 0, z: .01 } },//
-            'STAGE4CROSSBEAMSTRUCTUREA': { r: { x: 0, y: 0, z: -.01 } },//
-            'STAGE4CROSSBEAMSTRUCTUREB': { r: { x: 0, y: 0, z: .01 } },//
-            'STAGE4CROSSBEAMSTRUCTUREC': { r: { x: 0, y: 0, z: -.01 } },//
-            'STAGE4CROSSBEAMSTRUCTURED': { r: { x: 0, y: 0, z: .01 } },//
-            'STAGE4MAINSTRUCTURE3': { r: { x: 0, y: 0, z: -.005 } },//
-            'STAGE4MAINSTRUCTURE4': { r: { x: 0, y: 0, z: .005 } },//
-            'STAGE4CROSSBEAMSTRUCTURE1': { r: { x: 0, y: 0, z: .01 } },//
-            'STAGE4CROSSBEAMSTRUCTURE1A': { r: { x: 0, y: 0, z: -.01 } },//
-            'STAGE4CROSSBEAMSTRUCTURE1B': { r: { x: 0, y: 0, z: .01 } },//
-            'STAGE4CROSSBEAMSTRUCTURE1C': { r: { x: 0, y: 0, z: -.01 } },//
-            'STAGE4CROSSBEAMSTRUCTURE1D': { r: { x: 0, y: 0, z: .01 } },//
-            'STAGE4MAINSTRUCTURE5': { r: { x: 0, y: 0, z: -.005 } },//
-            'STAGE4MAINSTRUCTURE6': { r: { x: 0, y: 0, z: .005 } },//
-            'STAGE4CROSSBEAMSTRUCTURE2': { r: { x: 0, y: 0, z: .01 } },//
-            'STAGE4CROSSBEAMSTRUCTURE2A': { r: { x: 0, y: 0, z: -.01 } },//
-            'STAGE4CROSSBEAMSTRUCTURE2B': { r: { x: 0, y: 0, z: .01 } },//
-            'STAGE4CROSSBEAMSTRUCTURE2C': { r: { x: 0, y: 0, z: -.01 } },//
-            'STAGE4CROSSBEAMSTRUCTURE2D': { r: { x: 0, y: 0, z: .01 } },//
-            'STAGE4MAINSTRUCTURE7': { r: { x: 0, y: 0, z: -.005 } },//
-            'STAGE4MAINSTRUCTURE8': { r: { x: 0, y: 0, z: .005 } },//
-            'STAGE4CROSSBEAMSTRUCTURE3': { r: { x: 0, y: 0, z: .01 } },//
-            'STAGE4CROSSBEAMSTRUCTURE3A': { r: { x: 0, y: 0, z: -.01 } },//
-            'STAGE4CROSSBEAMSTRUCTURE3B': { r: { x: 0, y: 0, z: .01 } },//
-            'STAGE4CROSSBEAMSTRUCTURE3C': { r: { x: 0, y: 0, z: -.01 } },//
-            'STAGE4CROSSBEAMSTRUCTURE3D': { r: { x: 0, y: 0, z: .01 } }//
+            sounds: stageProperties.STAGE4.sounds,
+              name: stageProperties.STAGE4.name,
+                defaultTransforms: [
+                  'STAGE4PRIZE0',
+                  'STAGE4PRIZE1',
+                  'STAGE4PRIZE2',
+                  'STAGE4PRIZE3',
+                  'STAGE4MAINSTRUCTURE1',
+                  'STAGE4MAINSTRUCTURE2',
+                  'STAGE4CROSSBEAMSTRUCTURE',
+                  'STAGE4CROSSBEAMSTRUCTUREA',
+                  'STAGE4CROSSBEAMSTRUCTUREB',
+                  'STAGE4CROSSBEAMSTRUCTUREC',
+                  'STAGE4CROSSBEAMSTRUCTURED',
+                  'STAGE4MAINSTRUCTURE3',
+                  'STAGE4MAINSTRUCTURE4',
+                  'STAGE4CROSSBEAMSTRUCTURE1',
+                  'STAGE4CROSSBEAMSTRUCTURE1A',
+                  'STAGE4CROSSBEAMSTRUCTURE1B',
+                  'STAGE4CROSSBEAMSTRUCTURE1C',
+                  'STAGE4CROSSBEAMSTRUCTURE1D',
+                  'STAGE4MAINSTRUCTURE5',
+                  'STAGE4MAINSTRUCTURE6',
+                  'STAGE4CROSSBEAMSTRUCTURE2',
+                  'STAGE4CROSSBEAMSTRUCTURE2A',
+                  'STAGE4CROSSBEAMSTRUCTURE2B',
+                  'STAGE4CROSSBEAMSTRUCTURE2C',
+                  'STAGE4CROSSBEAMSTRUCTURE2D',
+                  'STAGE4MAINSTRUCTURE7',
+                  'STAGE4MAINSTRUCTURE8',
+                  'STAGE4CROSSBEAMSTRUCTURE3',
+                  'STAGE4CROSSBEAMSTRUCTURE3A',
+                  'STAGE4CROSSBEAMSTRUCTURE3B',
+                  'STAGE4CROSSBEAMSTRUCTURE3C',
+                  'STAGE4CROSSBEAMSTRUCTURE3D'
+                ],
+                  transforms: {
+        'STAGE4PRIZE0': { r: { x: .005, y: .005, z: .005 } },
+        'STAGE4PRIZE1': { r: { x: .005, y: .005, z: .005 } },
+        'STAGE4PRIZE2': { r: { x: .005, y: .005, z: .005 } },
+        'STAGE4PRIZE3': { r: { x: .005, y: .005, z: .005 } },
+        'STAGE4MAINSTRUCTURE1': { r: { x: 0, y: 0, z: -.005 } },//
+        'STAGE4MAINSTRUCTURE2': { r: { x: 0, y: 0, z: .005 } },//
+        'STAGE4CROSSBEAMSTRUCTURE': { r: { x: 0, y: 0, z: .01 } },//
+        'STAGE4CROSSBEAMSTRUCTUREA': { r: { x: 0, y: 0, z: -.01 } },//
+        'STAGE4CROSSBEAMSTRUCTUREB': { r: { x: 0, y: 0, z: .01 } },//
+        'STAGE4CROSSBEAMSTRUCTUREC': { r: { x: 0, y: 0, z: -.01 } },//
+        'STAGE4CROSSBEAMSTRUCTURED': { r: { x: 0, y: 0, z: .01 } },//
+        'STAGE4MAINSTRUCTURE3': { r: { x: 0, y: 0, z: -.005 } },//
+        'STAGE4MAINSTRUCTURE4': { r: { x: 0, y: 0, z: .005 } },//
+        'STAGE4CROSSBEAMSTRUCTURE1': { r: { x: 0, y: 0, z: .01 } },//
+        'STAGE4CROSSBEAMSTRUCTURE1A': { r: { x: 0, y: 0, z: -.01 } },//
+        'STAGE4CROSSBEAMSTRUCTURE1B': { r: { x: 0, y: 0, z: .01 } },//
+        'STAGE4CROSSBEAMSTRUCTURE1C': { r: { x: 0, y: 0, z: -.01 } },//
+        'STAGE4CROSSBEAMSTRUCTURE1D': { r: { x: 0, y: 0, z: .01 } },//
+        'STAGE4MAINSTRUCTURE5': { r: { x: 0, y: 0, z: -.005 } },//
+        'STAGE4MAINSTRUCTURE6': { r: { x: 0, y: 0, z: .005 } },//
+        'STAGE4CROSSBEAMSTRUCTURE2': { r: { x: 0, y: 0, z: .01 } },//
+        'STAGE4CROSSBEAMSTRUCTURE2A': { r: { x: 0, y: 0, z: -.01 } },//
+        'STAGE4CROSSBEAMSTRUCTURE2B': { r: { x: 0, y: 0, z: .01 } },//
+        'STAGE4CROSSBEAMSTRUCTURE2C': { r: { x: 0, y: 0, z: -.01 } },//
+        'STAGE4CROSSBEAMSTRUCTURE2D': { r: { x: 0, y: 0, z: .01 } },//
+        'STAGE4MAINSTRUCTURE7': { r: { x: 0, y: 0, z: -.005 } },//
+        'STAGE4MAINSTRUCTURE8': { r: { x: 0, y: 0, z: .005 } },//
+        'STAGE4CROSSBEAMSTRUCTURE3': { r: { x: 0, y: 0, z: .01 } },//
+        'STAGE4CROSSBEAMSTRUCTURE3A': { r: { x: 0, y: 0, z: -.01 } },//
+        'STAGE4CROSSBEAMSTRUCTURE3B': { r: { x: 0, y: 0, z: .01 } },//
+        'STAGE4CROSSBEAMSTRUCTURE3C': { r: { x: 0, y: 0, z: -.01 } },//
+        'STAGE4CROSSBEAMSTRUCTURE3D': { r: { x: 0, y: 0, z: .01 } }//
 
-          },
-          teardown: () => {
-            teardownStage('STAGE4')
-            window.appConfig.stages.STAGE4.data.started = false
-          },
-          initBackground: () => {
-            const createBackgroundAnimation = () => {
-              const bgGroup = new THREE.Group()
-              bgGroup.name = 'STAGE4BGGROUP'
-              const elementGeometry = new THREE.TetrahedronGeometry(3)
-              const elementMaterials = [
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE4.backgroundColors[0], transparent: true, opacity: .25 }),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE4.backgroundColors[1], transparent: true, opacity: .25 }),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE4.backgroundColors[2], transparent: true, opacity: .25 }),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE4.backgroundColors[3], transparent: true, opacity: .25 }),
-              ]
+      },
+      teardown: () => {
+        teardownStage('STAGE4')
+        window.appConfig.stages.STAGE4.data.started = false
+      },
+        initBackground: () => {
+          const createBackgroundAnimation = () => {
+            const bgGroup = new THREE.Group()
+            bgGroup.name = 'STAGE4BGGROUP'
+            const elementGeometry = new THREE.TetrahedronGeometry(3)
+            const elementMaterials = [
+              new THREE.MeshPhongMaterial({ color: stageProperties.STAGE4.backgroundColors[0], transparent: true, opacity: .25 }),
+              new THREE.MeshPhongMaterial({ color: stageProperties.STAGE4.backgroundColors[1], transparent: true, opacity: .25 }),
+              new THREE.MeshPhongMaterial({ color: stageProperties.STAGE4.backgroundColors[2], transparent: true, opacity: .25 }),
+              new THREE.MeshPhongMaterial({ color: stageProperties.STAGE4.backgroundColors[3], transparent: true, opacity: .25 }),
+            ]
 
-              const numberOfElements = 50
-              let elementI = 0
-              for (elementI; elementI < numberOfElements; elementI++) {
-                bgGroup.add(new THREE.Mesh(elementGeometry, elementMaterials[elementI % elementMaterials.length]))
-              }
-              scene.add(bgGroup)
-              bgGroup.position.set(0, 0, -10)
-              bgGroup.children.forEach(c => {
-                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -20 + Math.random() * -30)
-                const bgElementScale = 1 + Math.random() * 10
-                c.scale.set(bgElementScale, bgElementScale, bgElementScale)
-                c.rotation.z = (Math.random() * 2) * Math.PI
-              })
-              bgGroup.activeCallback = () => {
-                if (bgGroup) {
-                  bgGroup.children.forEach((c, ci) => {
-                    c.position.y += .005 * ci / 2
-                    c.rotation.y += .005
-                    if (c.position.y > 125) {
-                      c.position.y = -125
-                    }
-                  })
-                }
-              }
-              bgGroup.activeCallback()
-              window.appConfig.stages['STAGE4'].bgGroupActiveCallback = bgGroup.activeCallback
+            const numberOfElements = 50
+            let elementI = 0
+            for (elementI; elementI < numberOfElements; elementI++) {
+              bgGroup.add(new THREE.Mesh(elementGeometry, elementMaterials[elementI % elementMaterials.length]))
             }
+            scene.add(bgGroup)
+            bgGroup.position.set(0, 0, -10)
+            bgGroup.children.forEach(c => {
+              c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -20 + Math.random() * -30)
+              const bgElementScale = 1 + Math.random() * 10
+              c.scale.set(bgElementScale, bgElementScale, bgElementScale)
+              c.rotation.z = (Math.random() * 2) * Math.PI
+            })
+            bgGroup.activeCallback = () => {
+              if (bgGroup) {
+                bgGroup.children.forEach((c, ci) => {
+                  c.position.y += .005 * ci / 2
+                  c.rotation.y += .005
+                  if (c.position.y > 125) {
+                    c.position.y = -125
+                  }
+                })
+              }
+            }
+            bgGroup.activeCallback()
+            window.appConfig.stages['STAGE4'].bgGroupActiveCallback = bgGroup.activeCallback
+          }
 
-            createBackgroundAnimation()
-          },
+          createBackgroundAnimation()
+        },
           init: () => {
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
@@ -6484,99 +6531,99 @@
 
             window.appConfig.stages.STAGE4.data.started = true
           }
-        },
-        STAGE5: {
-          data: {
-            started: false,
-            xAdj: -60,
+    },
+    STAGE5: {
+      data: {
+        started: false,
+          xAdj: -60,
             vAdj: -70,
-            sAdj: 2,
-            startingPosition: window.appConfig.originVector,
-            sapphirePortalPosition: { x: 0, y: -137.5, z: -5 }
-          },
-          backgroundColors: stageProperties.STAGE5.backgroundColors,
-          basicColors: stageProperties.STAGE5.basicColors,
+              sAdj: 2,
+                startingPosition: window.appConfig.originVector,
+                  sapphirePortalPosition: { x: 0, y: -137.5, z: -5 }
+      },
+      backgroundColors: stageProperties.STAGE5.backgroundColors,
+        basicColors: stageProperties.STAGE5.basicColors,
           sounds: stageProperties.STAGE5.sounds,
-          name: stageProperties.STAGE5.name,
-          number: stageProperties.STAGE5.number,
-          defaultTransforms: [
-            'STAGE5PRIZE0',
-            'STAGE5PRIZE1',
-            'STAGE5PRIZE2',
-            'STAGE5PRIZE3',
-            'STAGE5CROSSBEAMSTRUCTURE',
-            'STAGE5CROSSBEAMSTRUCTUREA',
-            'STAGE5CROSSBEAMSTRUCTUREB',
-            'STAGE5CROSSBEAMSTRUCTUREC',
-            'STAGE5MINORSTRUCTURE',
-            'STAGE5MINORSTRUCTUREA',
-            'STAGE5MINORSTRUCTUREB',
-            'STAGE5MINORSTRUCTUREC'
-          ],
-          transforms: {
-            'STAGE5PRIZE0': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE5PRIZE1': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE5PRIZE2': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE5PRIZE3': { r: { x: .005, y: .005, z: .005 } },
-            'STAGE5MAINSTRUCTURE1': { r: { x: 0, y: 0, z: -.005 } },
+            name: stageProperties.STAGE5.name,
+              number: stageProperties.STAGE5.number,
+                defaultTransforms: [
+                  'STAGE5PRIZE0',
+                  'STAGE5PRIZE1',
+                  'STAGE5PRIZE2',
+                  'STAGE5PRIZE3',
+                  'STAGE5CROSSBEAMSTRUCTURE',
+                  'STAGE5CROSSBEAMSTRUCTUREA',
+                  'STAGE5CROSSBEAMSTRUCTUREB',
+                  'STAGE5CROSSBEAMSTRUCTUREC',
+                  'STAGE5MINORSTRUCTURE',
+                  'STAGE5MINORSTRUCTUREA',
+                  'STAGE5MINORSTRUCTUREB',
+                  'STAGE5MINORSTRUCTUREC'
+                ],
+                  transforms: {
+        'STAGE5PRIZE0': { r: { x: .005, y: .005, z: .005 } },
+        'STAGE5PRIZE1': { r: { x: .005, y: .005, z: .005 } },
+        'STAGE5PRIZE2': { r: { x: .005, y: .005, z: .005 } },
+        'STAGE5PRIZE3': { r: { x: .005, y: .005, z: .005 } },
+        'STAGE5MAINSTRUCTURE1': { r: { x: 0, y: 0, z: -.005 } },
 
-            'STAGE5CROSSBEAMSTRUCTURE': { r: { x: 0, y: 0, z: .01 } },
-            'STAGE5CROSSBEAMSTRUCTUREA': { r: { x: 0, y: 0, z: -.01 } },
-            'STAGE5MINORSTRUCTURE': { r: { x: 0, y: 0, z: .01 } },
-            'STAGE5MINORSTRUCTUREA': { r: { x: 0, y: 0, z: .01 } },
+        'STAGE5CROSSBEAMSTRUCTURE': { r: { x: 0, y: 0, z: .01 } },
+        'STAGE5CROSSBEAMSTRUCTUREA': { r: { x: 0, y: 0, z: -.01 } },
+        'STAGE5MINORSTRUCTURE': { r: { x: 0, y: 0, z: .01 } },
+        'STAGE5MINORSTRUCTUREA': { r: { x: 0, y: 0, z: .01 } },
 
-            'STAGE5CROSSBEAMSTRUCTUREB': { r: { x: 0, y: 0, z: -.01 } },
-            'STAGE5CROSSBEAMSTRUCTUREC': { r: { x: 0, y: 0, z: .01 } },
-            'STAGE5MINORSTRUCTUREB': { r: { x: 0, y: 0, z: -.01 } },
-            'STAGE5MINORSTRUCTUREC': { r: { x: 0, y: 0, z: -.01 } }
+        'STAGE5CROSSBEAMSTRUCTUREB': { r: { x: 0, y: 0, z: -.01 } },
+        'STAGE5CROSSBEAMSTRUCTUREC': { r: { x: 0, y: 0, z: .01 } },
+        'STAGE5MINORSTRUCTUREB': { r: { x: 0, y: 0, z: -.01 } },
+        'STAGE5MINORSTRUCTUREC': { r: { x: 0, y: 0, z: -.01 } }
 
-          },
-          teardown: () => {
-            teardownStage('STAGE5')
-            window.appConfig.stages.STAGE5.data.started = false
-          },
-          initBackground: () => {
-            const createBackgroundAnimation = () => {
-              const bgGroup = new THREE.Group()
-              bgGroup.name = 'STAGE5BGGROUP'
-              const elementGeometry = new THREE.IcosahedronGeometry(1, 0)
-              const elementMaterials = [
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE5.backgroundColors[0], transparent: true, opacity: .25 }),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE5.backgroundColors[1], transparent: true, opacity: .25 }),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE5.backgroundColors[2], transparent: true, opacity: .25 }),
-                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE5.backgroundColors[3], transparent: true, opacity: .25 }),
-              ]
+      },
+      teardown: () => {
+        teardownStage('STAGE5')
+        window.appConfig.stages.STAGE5.data.started = false
+      },
+        initBackground: () => {
+          const createBackgroundAnimation = () => {
+            const bgGroup = new THREE.Group()
+            bgGroup.name = 'STAGE5BGGROUP'
+            const elementGeometry = new THREE.IcosahedronGeometry(1, 0)
+            const elementMaterials = [
+              new THREE.MeshPhongMaterial({ color: stageProperties.STAGE5.backgroundColors[0], transparent: true, opacity: .25 }),
+              new THREE.MeshPhongMaterial({ color: stageProperties.STAGE5.backgroundColors[1], transparent: true, opacity: .25 }),
+              new THREE.MeshPhongMaterial({ color: stageProperties.STAGE5.backgroundColors[2], transparent: true, opacity: .25 }),
+              new THREE.MeshPhongMaterial({ color: stageProperties.STAGE5.backgroundColors[3], transparent: true, opacity: .25 }),
+            ]
 
-              const numberOfElements = 50
-              let elementI = 0
-              for (elementI; elementI < numberOfElements; elementI++) {
-                bgGroup.add(new THREE.Mesh(elementGeometry, elementMaterials[elementI % elementMaterials.length]))
-              }
-              scene.add(bgGroup)
-              bgGroup.position.set(0, 0, -10)
-              bgGroup.children.forEach(c => {
-                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -20 + Math.random() * -30)
-                const bgElementScale = 1 + Math.random() * 10
-                c.scale.set(bgElementScale, bgElementScale, bgElementScale)
-                c.rotation.z = (Math.random() * 2) * Math.PI
-              })
-              bgGroup.activeCallback = () => {
-                if (bgGroup) {
-                  bgGroup.children.forEach((c, ci) => {
-                    c.position.y += .005 * ci / 2
-                    c.rotation.y += .005
-                    if (c.position.y > 125) {
-                      c.position.y = -125
-                    }
-                  })
-                }
-              }
-              bgGroup.activeCallback()
-              window.appConfig.stages['STAGE5'].bgGroupActiveCallback = bgGroup.activeCallback
+            const numberOfElements = 50
+            let elementI = 0
+            for (elementI; elementI < numberOfElements; elementI++) {
+              bgGroup.add(new THREE.Mesh(elementGeometry, elementMaterials[elementI % elementMaterials.length]))
             }
+            scene.add(bgGroup)
+            bgGroup.position.set(0, 0, -10)
+            bgGroup.children.forEach(c => {
+              c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -20 + Math.random() * -30)
+              const bgElementScale = 1 + Math.random() * 10
+              c.scale.set(bgElementScale, bgElementScale, bgElementScale)
+              c.rotation.z = (Math.random() * 2) * Math.PI
+            })
+            bgGroup.activeCallback = () => {
+              if (bgGroup) {
+                bgGroup.children.forEach((c, ci) => {
+                  c.position.y += .005 * ci / 2
+                  c.rotation.y += .005
+                  if (c.position.y > 125) {
+                    c.position.y = -125
+                  }
+                })
+              }
+            }
+            bgGroup.activeCallback()
+            window.appConfig.stages['STAGE5'].bgGroupActiveCallback = bgGroup.activeCallback
+          }
 
-            createBackgroundAnimation()
-          },
+          createBackgroundAnimation()
+        },
           init: () => {
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
@@ -7248,33 +7295,33 @@
 
             window.appConfig.stages.STAGE5.data.started = true
           }
-        }
+    }
       }
 
-      window.appConfig.stages.components.stageInit()
-      window.appConfig.stages[window.appConfig.currentStage].init()
+    window.appConfig.stages.components.stageInit()
+    window.appConfig.stages[window.appConfig.currentStage].init()
 
-      initGame();
+    initGame();
 
-      if (window.appConfig.vr === true) {
-        renderer.setAnimationLoop(render)
-      } else {
-        requestAnimationFrame(render);
-      }
+    if (window.appConfig.vr === true) {
+      renderer.setAnimationLoop(render)
+    } else {
+      requestAnimationFrame(render);
+    }
 
-      scene.simulate();
-      window.appConfig.easyTimerLength = 60
-      const timer = new easytimer.Timer({ countdown: true, startValues: { seconds: window.appConfig.easyTimerLength }, precision: "secondTenths" });
-      window.appConfig.timer = timer
-      timer.addEventListener("secondTenthsUpdated", function (e) {
-        window.appConfig.selectors.timer.childNodes[0].data = `${timer
-          .getTimeValues()
-          .toString(["minutes", "seconds", "secondTenths"])}`;
-      });
-      timer.addEventListener("targetAchieved", function (e) {
-        startStageEnd()
-      })
-      window.appConfig.selectors.curtain.classList.add("opacity-0");
+    scene.simulate();
+    window.appConfig.easyTimerLength = 60
+    const timer = new easytimer.Timer({ countdown: true, startValues: { seconds: window.appConfig.easyTimerLength }, precision: "secondTenths" });
+    window.appConfig.timer = timer
+    timer.addEventListener("secondTenthsUpdated", function (e) {
+      window.appConfig.selectors.timer.childNodes[0].data = `${timer
+        .getTimeValues()
+        .toString(["minutes", "seconds", "secondTenths"])}`;
+    });
+    timer.addEventListener("targetAchieved", function (e) {
+      startStageEnd()
+    })
+    window.appConfig.selectors.curtain.classList.add("opacity-0");
     };
 
     initGame = (function () {
@@ -7795,14 +7842,14 @@
           name: name,
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
-            if(Math.round(percentComplete) % 5 === 0) {
+            if (Math.round(percentComplete) % 5 === 0) {
               window.appConfig.coins.forEach(c => {
                 try {
-                  if(c && c.coinValue && c.coinValue > 0) {
+                  if (c && c.coinValue && c.coinValue > 0) {
                     // console.log(c)
                     c.position.lerp(window.appConfig.sphere.position, 0.0005)
                   }
-                } catch (err) {}
+                } catch (err) { }
               })
 
             }
@@ -8506,18 +8553,18 @@
               appConfig.gameModeFunctions.requestFullscreen()
             }
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.showTransitionFX())
-            
+
             if (config && config.updateName) {
-            let displayName = config.updateName.split(' ')
-            if (displayName[0] !== undefined) {
-              window.appConfig.selectors.stageNameTitle0.childNodes[0].data = displayName[0]
-            }
-            if (displayName[1] !== undefined) {
-              window.appConfig.selectors.stageNameTitle1.childNodes[0].data = displayName[1]
-              window.appConfig.selectors.stageNameTitle1.classList.remove("hide")
-            } else {
-              window.appConfig.selectors.stageNameTitle1.classList.add("hide")
-            }
+              let displayName = config.updateName.split(' ')
+              if (displayName[0] !== undefined) {
+                window.appConfig.selectors.stageNameTitle0.childNodes[0].data = displayName[0]
+              }
+              if (displayName[1] !== undefined) {
+                window.appConfig.selectors.stageNameTitle1.childNodes[0].data = displayName[1]
+                window.appConfig.selectors.stageNameTitle1.classList.remove("hide")
+              } else {
+                window.appConfig.selectors.stageNameTitle1.classList.add("hide")
+              }
             }
             showStageCountDownName()
             if (config && config.ballPosition) {
@@ -9647,7 +9694,7 @@
 
         /* View in fullscreen */
         function openFullscreen() {
-          if(!document.fullscreenElement) {
+          if (!document.fullscreenElement) {
             if (window.appConfig.selectors.html.requestFullscreen) {
               window.appConfig.selectors.html.requestFullscreen();
               window.appConfig.requestFullscreenResult = true
@@ -9676,10 +9723,10 @@
         }
 
         try {
-          if(window.appConfig.requestFullscreenResult !== false) {
+          if (window.appConfig.requestFullscreenResult !== false) {
             openFullscreen()
           }
-        } catch(err) {
+        } catch (err) {
           closeFullscreen()
         }
       }
