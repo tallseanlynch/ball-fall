@@ -5,6 +5,8 @@
 <head>
   <meta name="viewport" content="initial-scale = 1, user-scalable = no">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icon.png">
   <title>Ballsinki</title>
   <link rel="icon" type="image/png" href="icon.png">
   <style>
@@ -1064,6 +1066,8 @@
           gltf.scene.children[0].name = 'CRYSTAL_GLTF'
           window.appConfig.crystalGLTF = gltf.scene.children[0]
           window.appConfig.meshComponents.dematerialize.geometries.push(gltf.scene.children[1].geometry)
+          window.appConfig.meshComponents.dematerialize.geometries.push(gltf.scene.children[2].geometry)
+          window.appConfig.meshComponents.dematerialize.geometries.push(gltf.scene.children[3].geometry)
           initScene()
         },
         function (xhr) {
@@ -2590,14 +2594,14 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
               theDSpriteMaterial
             )
         }
-
+          let randomScaleAdj = 1 + ((Math.random()*.2) - .1)
           let i = 1;
           for (i; i < ellipseGeometry.vertices.length; i++) {
             let id = window.appConfig.currentStage + '_DMESH_SPRITE_' + Math.round(Math.random() * 100000)
             let theSprite = spritePlane()
-            theSprite.scale.x = dMesh.scale.x * scaleAdj
-            theSprite.scale.y = dMesh.scale.y * scaleAdj
-            theSprite.scale.z = dMesh.scale.z * scaleAdj
+            theSprite.scale.x = dMesh.scale.x * scaleAdj * randomScaleAdj
+            theSprite.scale.y = dMesh.scale.y * scaleAdj * randomScaleAdj
+            theSprite.scale.z = dMesh.scale.z * scaleAdj * randomScaleAdj
             theSprite.position.x = dMesh.position.x + ellipseGeometry.vertices[i].x * s
             theSprite.position.y = dMesh.position.y + ellipseGeometry.vertices[i].y * s
             theSprite.position.z = dMesh.position.z + ellipseGeometry.vertices[i].z * s
