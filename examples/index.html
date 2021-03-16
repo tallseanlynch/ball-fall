@@ -121,6 +121,13 @@
       pause: false,
       defaultSphereMass: 4.188790683884756,
       defaultSceneGravity: -10,
+      meshComponents: {
+        dematerialize: {
+          geometries: []
+        },
+        sapphire: {
+        }
+      },
       itemAmounts: {
         crystalCross: 0,
         crystalLine: 0,
@@ -1052,9 +1059,11 @@
       crystalLoader.load(
         'models/crystal.gltf',
         function (gltf) {
-          const crystal = gltf.scene.children[0]
-          crystal.name = 'CRYSTAL_GLTF'
-          window.appConfig.crystalGLTF = crystal
+          console.dir(gltf)
+          const crystal = 
+          gltf.scene.children[0].name = 'CRYSTAL_GLTF'
+          window.appConfig.crystalGLTF = gltf.scene.children[0]
+          window.appConfig.meshComponents.dematerialize.geometries.push(gltf.scene.children[1].geometry)
           initScene()
         },
         function (xhr) {
@@ -2033,7 +2042,7 @@
           })
         }
       ]
-      window.appConfig.meshComponents = {}
+
       const createBumper = (name = "NO_NAME", size = 0, p = { x: 0, y: 0, z: 0 }, sides = 5, bounce = 2, weight = 0, scale = 1, collisionCallback = () => { }, color) => {
         const bumperGeo = new THREE.CylinderGeometry((2 + size) * (2 / 3), 3 + size, 1, sides)
 
@@ -2552,10 +2561,10 @@
 
 
 
-window.appConfig.meshComponents.dematerialize = {}
-window.appConfig.meshComponents.dematerialize.geometries = {}
-window.appConfig.meshComponents.dematerialize.geometries.ellipse = new THREE.CircleGeometry(1, 4)
-window.appConfig.meshComponents.dematerialize.geometries.plane = new THREE.PlaneGeometry(.25, .25, 1, 1)
+window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.CircleGeometry(.25, 3))
+window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.CircleGeometry(.175, 16))
+window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeometry(.25, .25, 1, 1))
+
 
 
       // const theSpritePlaneGeometry = new THREE.PlaneGeometry(.25, .25, 1, 1)
@@ -2574,11 +2583,13 @@ window.appConfig.meshComponents.dematerialize.geometries.plane = new THREE.Plane
           let spriteGroup = new THREE.Group()
 
           var ellipseGeometry = new THREE.CircleGeometry(s, n)
-
-          let spritePlane = () => new THREE.Mesh(
-            window.appConfig.meshComponents.dematerialize.geometries.plane,
-            theDSpriteMaterial
-          )
+          let spritePlane = () => {
+          let randomNum = Math.floor(Math.random() * window.appConfig.meshComponents.dematerialize.geometries.length)
+            return new THREE.Mesh(
+              window.appConfig.meshComponents.dematerialize.geometries[randomNum],
+              theDSpriteMaterial
+            )
+        }
 
           let i = 1;
           for (i; i < ellipseGeometry.vertices.length; i++) {
