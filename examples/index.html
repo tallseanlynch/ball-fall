@@ -5,7 +5,7 @@
 <head>
   <meta name="viewport" content="initial-scale = 1, user-scalable = no">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <link rel="apple-touch-icon" href="icon.png">
   <title>Ballsinki</title>
   <link rel="icon" type="image/png" href="icon.png">
@@ -142,6 +142,7 @@
       currentStageIndex: hasPerformanceReport ? 0 : 5,
       musicTurnedOn: true,
       sfxTurnedOn: true,
+      superballs: [],
       howlSounds: {
         init: false,
         coins: {
@@ -1061,8 +1062,6 @@
       crystalLoader.load(
         'models/crystal.gltf',
         function (gltf) {
-          console.dir(gltf)
-          const crystal = 
           gltf.scene.children[0].name = 'CRYSTAL_GLTF'
           window.appConfig.crystalGLTF = gltf.scene.children[0]
           window.appConfig.meshComponents.dematerialize.geometries.push(gltf.scene.children[1].geometry)
@@ -1071,14 +1070,9 @@
           initScene()
         },
         function (xhr) {
-
-          console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-
         },
         function (error) {
-          console.log(error)
-          console.log('An error happened');
-
+          console.log("error loading model", error)
         }
       );
 
@@ -2047,7 +2041,7 @@
         }
       ]
 
-      const createBumper = (name = "NO_NAME", size = 0, p = { x: 0, y: 0, z: 0 }, sides = 5, bounce = 2, weight = 0, scale = 1, collisionCallback = () => { }, color) => {
+      const createBumper = (name = "NO_NAME", size = 0, p = { x: 0, y: 0, z: 0 }, sides = 5, bounce = 1.5, weight = 0, scale = 1, collisionCallback = () => { }, color) => {
         const bumperGeo = new THREE.CylinderGeometry((2 + size) * (2 / 3), 3 + size, 1, sides)
 
         let bumperColor
@@ -2651,13 +2645,13 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
                 // coin.coinRemovalIndex = coinIndex
                 window.appConfig.coins.splice(potentiallyGrabbedCoin.coinRemovalIndex, 1);
                 window.appConfig.gameModeFunctions.updateGameScore({ score: window.appConfig.score.coins })
-                if (potentiallyGrabbedCoin.coinType === 'single' && window.appConfig.sfxTurnedOn) {
+                if (potentiallyGrabbedCoin.coinType === 'single' && window.appConfig.sfxTurnedOn && window.appConfig.userHasEnded === false) {
                   window.appConfig.howlSounds.coins.sCoin[Math.floor(Math.random() * 2.99)].play()
                 }
-                if (potentiallyGrabbedCoin.coinType === 'double' && window.appConfig.sfxTurnedOn) {
+                if (potentiallyGrabbedCoin.coinType === 'double' && window.appConfig.sfxTurnedOn && window.appConfig.userHasEnded === false) {
                   window.appConfig.howlSounds.coins.mCoin[Math.floor(Math.random() * 2.99)].play()
                 }
-                if (potentiallyGrabbedCoin.coinType === 'triple' && window.appConfig.sfxTurnedOn) {
+                if (potentiallyGrabbedCoin.coinType === 'triple' && window.appConfig.sfxTurnedOn && window.appConfig.userHasEnded === false) {
                   window.appConfig.howlSounds.coins.lCoin[Math.floor(Math.random() * 2.99)].play()
                 }
 
@@ -2786,6 +2780,7 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
             window.appConfig.stages[window.appConfig.currentStage].data.remotes = []
             window.appConfig.stages[window.appConfig.currentStage].data.portals = []
             window.appConfig.stages[window.appConfig.currentStage].data.gemSuperBalls = 0
+            window.appConfig.superballs = []
             window.appConfig.isBlueIsland = false
             window.appConfig.stages[window.appConfig.currentStage].data.sapphires = 0
             window.appConfig.stages[window.appConfig.currentStage].data.blackHoles = []
@@ -7468,7 +7463,7 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
       }
 
       window.appConfig.superBallHandleCollision = function (other_object, the_object) {
-        if (other_object.name === 'SPHERE0') {
+        if (other_object.name === 'SPHERE0' && window.appConfig.userHasEnded === false && window.appConfig.pause === false) {
           if (window.appConfig.sfxTurnedOn) {
             window.appConfig.howlSounds.superball.play()
           }
@@ -7565,6 +7560,9 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
           scene.add(sphere);
           if (!config) {
             window.appConfig.sphere = sphere
+          }
+          if (config !== undefined) {
+            window.appConfig.superballs.push(sphere)
           }
         }
 
@@ -7801,7 +7799,6 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
     }
 
     window.appConfig.superBallMaterial.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
-
     const timers = {
       handleFinalStageBumperOut: (bumper) => {
         const name = 'BUMPER_OUT_' + Math.round(Math.random() * 10000)
@@ -7834,6 +7831,7 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
       moveCoinsToSphere: () => {
         const name = 'MOVE_COINS_TO_SPHERE' + Math.round(Math.random() * 10000)
         const dMeshLfoAdj = Math.round(Math.random() * 1000)
+        const timerId = Math.round(Math.random() * 10000)
         return {
           started: 0,
           ended: 0,
@@ -7842,20 +7840,21 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
           timeLeft: 0,
           currentTime: 0,
           name: name,
-          id: Math.round(Math.random() * 10000),
+          id: timerId,
           activeCallback: (percentComplete) => {
-            if(Math.round(percentComplete) % 5 === 0) {
-              window.appConfig.coins.forEach(c => {
-                try {
-                  if(c && c.coinValue && c.coinValue > 0) {
-                    // console.log(c)
-                    c.position.lerp(window.appConfig.sphere.position, 0.0005)
-                  }
-                } catch (err) {}
-              })
-
+            if (window.appConfig.userHasEnded === false) {
+              if(Math.round(percentComplete) % 5 === 0) {
+                window.appConfig.coins.forEach(c => {
+                  try {
+                    if(c && c.coinValue && c.coinValue > 0) {
+                      // console.log(c)
+                      c.position.lerp(window.appConfig.sphere.position, 0.0005)
+                    }
+                  } catch (err) {}
+                })
+              }
             }
-          },
+          }
         }
       },
       dematerializeMesh: (dMesh) => {
@@ -9053,6 +9052,14 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
     }
 
     window.appConfig.timers = timers
+    window.appConfig.recursiveTimerRemove = (string) => {
+      const removableIndex = window.appConfig.timers.activeTimers.findIndex(el => el.name.indexOf(string) > -1)
+      if (removableIndex > -1) {
+        window.appConfig.timers.activeTimers.splice(removableIndex, 1)
+        console.log('removing timer match: ' + string + ':' + removableIndex)
+        window.appConfig.recursiveTimerRemove(string)
+      }
+    }
     window.appConfig.timers.pauseTimers = false
     const appTimers = window.appConfig.timers
     window.appConfig.coinFrameCheckNumber = 0
@@ -9388,7 +9395,6 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
       }
 
       // window.appConfig.coinIndexToRemove = undefined
-
       window.appConfig.stages.components.handleCoinRemoval(window.appConfig.stages.components.findCoinsToRemove())
 
       window.appConfig.sprites.forEach(sprite => {
@@ -9438,6 +9444,7 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
 
     const startStageEnd = () => {
       window.appConfig.userHasEnded = true
+      window.appConfig.recursiveTimerRemove('MOVE_COINS_TO_SPHERE')
 
       scene.setGravity(window.appConfig.originVector);
       window.appConfig.sphere.mass = 0
