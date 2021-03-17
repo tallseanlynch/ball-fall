@@ -2587,8 +2587,15 @@
         if (config && config.dMesh) {
           config.scaleAdj === undefined ? config.scaleAdj = 2 : null
           config.spriteTypes === undefined ? config.spriteTypes = ['square'] : null
+
+          let dematColor 
+          if (config.dMesh.material && config.dMesh.material.color) {
+            dematColor = new THREE.Color().copy(config.dMesh.material.color)
+          } else {
+            dematColor = new THREE.Color().copy(config.dMesh.children[0].material.color)
+          }
           let theDSpriteMaterial = new THREE.MeshPhongMaterial({
-            color: new THREE.Color().copy(config.dMesh.material.color),
+            color:  dematColor,
             transparent: true,
             opacity: 1
           })
