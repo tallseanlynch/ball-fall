@@ -344,8 +344,8 @@
         window.appConfig.loadingInterval.clearInterval()
         toggleMainLoading()
       }
-      
-   }
+
+    }
 
   </script>
   <style>
@@ -764,7 +764,7 @@
     window.appConfig.coinsToRemove = []
     window.appConfig.colorLightnessLfoColor = new THREE.Color(0x000000)
     // appConfig single constants
-    
+
     const stageProperties = {
       STAGE0: {
         backgroundColors: [
@@ -1064,9 +1064,25 @@
         function (gltf) {
           gltf.scene.children[0].name = 'CRYSTAL_GLTF'
           window.appConfig.crystalGLTF = gltf.scene.children[0]
-          window.appConfig.meshComponents.dematerialize.geometries.push(gltf.scene.children[1].geometry)
-          window.appConfig.meshComponents.dematerialize.geometries.push(gltf.scene.children[2].geometry)
-          window.appConfig.meshComponents.dematerialize.geometries.push(gltf.scene.children[3].geometry)
+          gltf.scene.children.forEach(mesh => {
+            switch (mesh.name) {
+              case "crystal":
+                window.appConfig.crystalGLTF = mesh
+                break
+              case "fiveStar":
+                window.appConfig.meshComponents.dematerialize.fiveStar = mesh.geometry
+                break
+              case "fourStar":
+                window.appConfig.meshComponents.dematerialize.fourStar = mesh.geometry
+                break
+              case "chevron":
+                window.appConfig.meshComponents.dematerialize.chevron = mesh.geometry
+                break
+              case "kite":
+                window.appConfig.meshComponents.dematerialize.kite = mesh.geometry
+                break
+            }
+          })
           initScene()
         },
         function (xhr) {
@@ -2250,7 +2266,7 @@
                   scene.add(blueCoin)
                 }, biSounds * 50)
               }
-              window.appConfig.stages.components.dematerializeMesh(sapphire, 5)
+              window.appConfig.stages.components.dematerializeMesh({ dMesh: sapphire, scaleAdj: 5, spriteTypes: ['square'] })
               window.appConfig.stages[window.appConfig.currentStage].data.sapphires++
             }
           }
@@ -2559,56 +2575,60 @@
 
 
 
-window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.CircleGeometry(.25, 3))
-window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.CircleGeometry(.175, 16))
-window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeometry(.25, .25, 1, 1))
+      window.appConfig.meshComponents.dematerialize.triangle = new THREE.CircleGeometry(.25, 3)
+      window.appConfig.meshComponents.dematerialize.circle = new THREE.CircleGeometry(.175, 16)
+      window.appConfig.meshComponents.dematerialize.square = new THREE.PlaneGeometry(.25, .25, 1, 1)
 
 
 
       // const theSpritePlaneGeometry = new THREE.PlaneGeometry(.25, .25, 1, 1)
 
-      const dematerializeMesh = (dMesh, scaleAdj = 2) => {
-        let theDSpriteMaterial = new THREE.MeshPhongMaterial({
-          color: new THREE.Color().copy(dMesh.material.color),
-          transparent: true,
-          opacity: 1
-        })
-        const createSpriteCircles = (
-          s,
-          n = 4
-        ) => {
+      const dematerializeMesh = (config) => {
+        if (config && config.dMesh) {
+          config.scaleAdj === undefined ? config.scaleAdj = 2 : null
+          config.spriteTypes === undefined ? config.spriteTypes = ['square'] : null
+          let theDSpriteMaterial = new THREE.MeshPhongMaterial({
+            color: new THREE.Color().copy(config.dMesh.material.color),
+            transparent: true,
+            opacity: 1
+          })
+          const createSpriteCircles = (
+            s,
+            n = 4
+          ) => {
 
-          let spriteGroup = new THREE.Group()
+            let spriteGroup = new THREE.Group()
 
-          var ellipseGeometry = new THREE.CircleGeometry(s, n)
-          let spritePlane = () => {
-          let randomNum = Math.floor(Math.random() * window.appConfig.meshComponents.dematerialize.geometries.length)
-            return new THREE.Mesh(
-              window.appConfig.meshComponents.dematerialize.geometries[randomNum],
-              theDSpriteMaterial
+            var ellipseGeometry = new THREE.CircleGeometry(s, n)
+            let spritePlane = () => {
+              let randomNum = Math.floor(Math.random() * config.spriteTypes.length)
+              return new THREE.Mesh(
+                window.appConfig.meshComponents.dematerialize[config.spriteTypes[randomNum]],
+                theDSpriteMaterial
+              )
+            }
+            let randomScaleAdj = 1 + ((Math.random() * .2) - .1)
+            let i = 1;
+            for (i; i < ellipseGeometry.vertices.length; i++) {
+              let id = window.appConfig.currentStage + '_DMESH_SPRITE_' + Math.round(Math.random() * 100000)
+              let theSprite = spritePlane()
+              theSprite.scale.x = config.dMesh.scale.x * config.scaleAdj * randomScaleAdj
+              theSprite.scale.y = config.dMesh.scale.y * config.scaleAdj * randomScaleAdj
+              theSprite.scale.z = config.dMesh.scale.z * config.scaleAdj * randomScaleAdj
+              theSprite.position.x = config.dMesh.position.x + ellipseGeometry.vertices[i].x * s
+              theSprite.position.y = config.dMesh.position.y + ellipseGeometry.vertices[i].y * s
+              theSprite.position.z = config.dMesh.position.z + ellipseGeometry.vertices[i].z * s
+              theSprite.name = id
+              spriteGroup.add(theSprite)
+            }
+
+            scene.add(spriteGroup)
+            window.appConfig.timers.activeTimers.push(
+              window.appConfig.timers.dematerializeMesh(spriteGroup)
             )
-        }
-          let randomScaleAdj = 1 + ((Math.random()*.2) - .1)
-          let i = 1;
-          for (i; i < ellipseGeometry.vertices.length; i++) {
-            let id = window.appConfig.currentStage + '_DMESH_SPRITE_' + Math.round(Math.random() * 100000)
-            let theSprite = spritePlane()
-            theSprite.scale.x = dMesh.scale.x * scaleAdj * randomScaleAdj
-            theSprite.scale.y = dMesh.scale.y * scaleAdj * randomScaleAdj
-            theSprite.scale.z = dMesh.scale.z * scaleAdj * randomScaleAdj
-            theSprite.position.x = dMesh.position.x + ellipseGeometry.vertices[i].x * s
-            theSprite.position.y = dMesh.position.y + ellipseGeometry.vertices[i].y * s
-            theSprite.position.z = dMesh.position.z + ellipseGeometry.vertices[i].z * s
-            theSprite.name = id
-            spriteGroup.add(theSprite)
           }
-
-          scene.add(spriteGroup)
-          window.appConfig.timers.activeTimers.push(
-            window.appConfig.timers.dematerializeMesh(spriteGroup)
-          )
+          createSpriteCircles(1, 4)
         }
-        createSpriteCircles(1, 4)
       }
 
 
@@ -2617,45 +2637,132 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
         components: {
           handleCoinRemoval: (coinsToRemove, all = false) => {
 
-          coinsToRemove.reverse()
-          if(coinsToRemove.length > 0) {
-            coinsToRemove.forEach(potentiallyGrabbedCoin => {
+            coinsToRemove.reverse()
+            if (coinsToRemove.length > 0) {
+              coinsToRemove.forEach(potentiallyGrabbedCoin => {
 
-              const coinValue = potentiallyGrabbedCoin.coinValue
-              const prizeValue = potentiallyGrabbedCoin.prizeValue
-              if (potentiallyGrabbedCoin.spriteFetching) {
-                potentiallyGrabbedCoin.spriteFetching.fetchData = {}
-                potentiallyGrabbedCoin.spriteFetching.isFetchingCoin = false
-                const foundTimerIndex = window.appConfig.timers.activeTimers.findIndex((timer, timerIndex) => {
-                  return timer.name === `SPRITEFETCH${potentiallyGrabbedCoin.spriteFetching.num}`
-                })
-                if (foundTimerIndex > -1) {
-                  window.appConfig.timers.activeTimers.splice(foundTimerIndex, 1)
+                const coinValue = potentiallyGrabbedCoin.coinValue
+                const prizeValue = potentiallyGrabbedCoin.prizeValue
+                if (potentiallyGrabbedCoin.spriteFetching) {
+                  potentiallyGrabbedCoin.spriteFetching.fetchData = {}
+                  potentiallyGrabbedCoin.spriteFetching.isFetchingCoin = false
+                  const foundTimerIndex = window.appConfig.timers.activeTimers.findIndex((timer, timerIndex) => {
+                    return timer.name === `SPRITEFETCH${potentiallyGrabbedCoin.spriteFetching.num}`
+                  })
+                  if (foundTimerIndex > -1) {
+                    window.appConfig.timers.activeTimers.splice(foundTimerIndex, 1)
+                  }
+                  potentiallyGrabbedCoin.spriteFetching.isReturning = true
+                  window.appConfig.timers.activeTimers.push(window.appConfig.timers[`spriteReturn${potentiallyGrabbedCoin.spriteFetching.num}`](potentiallyGrabbedCoin.spriteFetching))
+                  potentiallyGrabbedCoin.spriteFetching.returnData = {
+                    startingPosition: potentiallyGrabbedCoin.spriteFetching.mesh.position.clone()
+                  }
                 }
-                potentiallyGrabbedCoin.spriteFetching.isReturning = true
-                window.appConfig.timers.activeTimers.push(window.appConfig.timers[`spriteReturn${potentiallyGrabbedCoin.spriteFetching.num}`](potentiallyGrabbedCoin.spriteFetching))
-                potentiallyGrabbedCoin.spriteFetching.returnData = {
-                  startingPosition: potentiallyGrabbedCoin.spriteFetching.mesh.position.clone()
-                }
-              }
-              if (coinValue > 0) {
-                window.appConfig.score.coins += potentiallyGrabbedCoin.coinValue;
-                window.appConfig.stages.components.dematerializeMesh(potentiallyGrabbedCoin)
-                potentiallyGrabbedCoin.visible = false
-                // coin.coinRemovalIndex = coinIndex
-                window.appConfig.coins.splice(potentiallyGrabbedCoin.coinRemovalIndex, 1);
-                window.appConfig.gameModeFunctions.updateGameScore({ score: window.appConfig.score.coins })
-                if (potentiallyGrabbedCoin.coinType === 'single' && window.appConfig.sfxTurnedOn && window.appConfig.userHasEnded === false) {
-                  window.appConfig.howlSounds.coins.sCoin[Math.floor(Math.random() * 2.99)].play()
-                }
-                if (potentiallyGrabbedCoin.coinType === 'double' && window.appConfig.sfxTurnedOn && window.appConfig.userHasEnded === false) {
-                  window.appConfig.howlSounds.coins.mCoin[Math.floor(Math.random() * 2.99)].play()
-                }
-                if (potentiallyGrabbedCoin.coinType === 'triple' && window.appConfig.sfxTurnedOn && window.appConfig.userHasEnded === false) {
-                  window.appConfig.howlSounds.coins.lCoin[Math.floor(Math.random() * 2.99)].play()
+                if (coinValue > 0) {
+                  window.appConfig.score.coins += potentiallyGrabbedCoin.coinValue;
+                  if (potentiallyGrabbedCoin.featureType === "COIN") {
+                  window.appConfig.stages.components.dematerializeMesh({ dMesh: potentiallyGrabbedCoin, spriteTypes: ['triangle', 'circle'] })
+
+                  }
+                  potentiallyGrabbedCoin.visible = false
+                  // coin.coinRemovalIndex = coinIndex
+                  window.appConfig.coins.splice(potentiallyGrabbedCoin.coinRemovalIndex, 1);
+                  window.appConfig.gameModeFunctions.updateGameScore({ score: window.appConfig.score.coins })
+                  if (potentiallyGrabbedCoin.coinType === 'single' && window.appConfig.sfxTurnedOn && window.appConfig.userHasEnded === false) {
+                    window.appConfig.howlSounds.coins.sCoin[Math.floor(Math.random() * 2.99)].play()
+                  }
+                  if (potentiallyGrabbedCoin.coinType === 'double' && window.appConfig.sfxTurnedOn && window.appConfig.userHasEnded === false) {
+                    window.appConfig.howlSounds.coins.mCoin[Math.floor(Math.random() * 2.99)].play()
+                  }
+                  if (potentiallyGrabbedCoin.coinType === 'triple' && window.appConfig.sfxTurnedOn && window.appConfig.userHasEnded === false) {
+                    window.appConfig.howlSounds.coins.lCoin[Math.floor(Math.random() * 2.99)].play()
+                  }
+
+                  if (potentiallyGrabbedCoin.capturedCallback && all === true) {
+                    potentiallyGrabbedCoin.capturedCallback()
+                    setTimeout(() => {
+                      scene.remove(potentiallyGrabbedCoin)
+                    }, 500)
+                  } else {
+                    scene.remove(potentiallyGrabbedCoin)
+                  }
+
+
+                  if (all === false) {
+                    if (potentiallyGrabbedCoin.name.indexOf('RUBY') > -1) {
+                  window.appConfig.stages.components.dematerializeMesh({ dMesh: potentiallyGrabbedCoin, spriteTypes: ['circle', 'fiveStar', 'fourStar'] })
+
+                      let rubyIndicator = scene.children.find(c => c.name.indexOf('R_INDICATOR') > -1)
+                      window.appConfig.timers.activeTimers.push(
+                        window.appConfig.timers.activatePortalIndicator(rubyIndicator)
+                      )
+                    }
+
+                    if (potentiallyGrabbedCoin.name.indexOf('EMERALD') > -1) {
+                  window.appConfig.stages.components.dematerializeMesh({ dMesh: potentiallyGrabbedCoin, spriteTypes: ['circle', 'fiveStar', 'fourStar'] })
+                      let emeraldIndicator = scene.children.find(c => c.name.indexOf('E_INDICATOR') > -1)
+                      window.appConfig.timers.activeTimers.push(
+                        window.appConfig.timers.activatePortalIndicator(emeraldIndicator)
+                      )
+                    }
+
+                    if (potentiallyGrabbedCoin.name.indexOf('DIAMOND') > -1) {
+                  window.appConfig.stages.components.dematerializeMesh({ dMesh: potentiallyGrabbedCoin, spriteTypes: ['circle', 'fiveStar', 'fourStar'] })
+                      let diamondIndicator = scene.children.find(c => c.name.indexOf('D_INDICATOR') > -1)
+                      window.appConfig.timers.activeTimers.push(
+                        window.appConfig.timers.activatePortalIndicator(diamondIndicator)
+                      )
+                    }
+
+                    if (potentiallyGrabbedCoin.name.indexOf('SAPPHIRE') > -1 && (potentiallyGrabbedCoin.isBlueIsland === false || potentiallyGrabbedCoin.isBlueIsland === undefined || !potentiallyGrabbedCoin.isBlueIsland)) {
+                      let theIndicator = scene.children.find(cf => cf.name.indexOf('S_INDICATOR') > -1 && cf.indicatorActive === undefined)
+                      theIndicator.indicatorActive = true
+                      window.appConfig.timers.activeTimers.push(
+                        window.appConfig.timers.activatePortalIndicator(theIndicator)
+                      )
+                    }
+                  }
+
+                } else if (prizeValue > 0 && all === false) {
+                  window.appConfig.stages.components.dematerializeMesh({ dMesh: potentiallyGrabbedCoin, spriteTypes: ['circle','fourStar'] })
+                  if (window.appConfig.sfxTurnedOn) {
+                    window.appConfig.howlSounds.prize.play()
+                  }
+                  window.appConfig.score.coins += potentiallyGrabbedCoin.prizeValue;
+                  potentiallyGrabbedCoin.visible = false
+                  window.appConfig.coins.splice(potentiallyGrabbedCoin.coinRemovalIndex, 1);
+                  if (window.appConfig.coinScoreThrottle === false) {
+                    window.appConfig.coinScoreThrottle = true
+                    setTimeout(() => {
+                      window.appConfig.coinScoreThrottle = false
+                    }, 250)
+                    window.appConfig.gameModeFunctions.updateGameScore({ score: window.appConfig.score.coins })
+                  }
+                  const currentTime = window.appConfig.timer.getTimeValues()
+                  const newTimer = new easytimer.Timer({ countdown: true, startValues: { minutes: currentTime.minutes, seconds: currentTime.seconds + 15, secondTenths: currentTime.secondTenths }, precision: "secondTenths" });
+                  window.appConfig.stageTotalTimePlayed += 15
+                  window.appConfig.timer.stop()
+                  window.appConfig.timer.removeEventListener("secondTenthsUpdated", function (e) {
+                    window.appConfig.selectors.timer.childNodes[0].data = `${window.appConfig.timer
+                      .getTimeValues()
+                      .toString(["minutes", "seconds", "secondTenths"])}`;
+                  });
+                  window.appConfig.timer.removeEventListener("targetAchieved", function (e) {
+                    startStageEnd()
+                  })
+                  window.appConfig.timer = newTimer
+                  newTimer.start()
+                  newTimer.addEventListener("secondTenthsUpdated", function (e) {
+                    window.appConfig.selectors.timer.childNodes[0].data = `${window.appConfig.timer
+                      .getTimeValues()
+                      .toString(["minutes", "seconds", "secondTenths"])}`;
+                  });
+                  newTimer.addEventListener("targetAchieved", function (e) {
+                    startStageEnd()
+                  })
                 }
 
-                if (potentiallyGrabbedCoin.capturedCallback && all === true) {
+                if (potentiallyGrabbedCoin.capturedCallback) {
                   potentiallyGrabbedCoin.capturedCallback()
                   setTimeout(() => {
                     scene.remove(potentiallyGrabbedCoin)
@@ -2663,85 +2770,6 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
                 } else {
                   scene.remove(potentiallyGrabbedCoin)
                 }
-
-
-                if(all === false) {
-                  if (potentiallyGrabbedCoin.name.indexOf('RUBY') > -1) {
-                    let rubyIndicator = scene.children.find(c => c.name.indexOf('R_INDICATOR') > -1)
-                    window.appConfig.timers.activeTimers.push(
-                      window.appConfig.timers.activatePortalIndicator(rubyIndicator)
-                    )
-                  }
-
-                  if (potentiallyGrabbedCoin.name.indexOf('EMERALD') > -1) {
-                    let emeraldIndicator = scene.children.find(c => c.name.indexOf('E_INDICATOR') > -1)
-                    window.appConfig.timers.activeTimers.push(
-                      window.appConfig.timers.activatePortalIndicator(emeraldIndicator)
-                    )
-                  }
-
-                  if (potentiallyGrabbedCoin.name.indexOf('DIAMOND') > -1) {
-                    let diamondIndicator = scene.children.find(c => c.name.indexOf('D_INDICATOR') > -1)
-                    window.appConfig.timers.activeTimers.push(
-                      window.appConfig.timers.activatePortalIndicator(diamondIndicator)
-                    )
-                  }
-
-                  if (potentiallyGrabbedCoin.name.indexOf('SAPPHIRE') > -1 && (potentiallyGrabbedCoin.isBlueIsland === false || potentiallyGrabbedCoin.isBlueIsland === undefined || !potentiallyGrabbedCoin.isBlueIsland)) {
-                    let theIndicator = scene.children.find(cf => cf.name.indexOf('S_INDICATOR') > -1 && cf.indicatorActive === undefined)
-                    theIndicator.indicatorActive = true
-                    window.appConfig.timers.activeTimers.push(
-                      window.appConfig.timers.activatePortalIndicator(theIndicator)
-                    )
-                  }
-                }
-
-              } else if (prizeValue > 0 && all === false) {
-                if (window.appConfig.sfxTurnedOn) {
-                  window.appConfig.howlSounds.prize.play()
-                }
-                window.appConfig.score.coins += potentiallyGrabbedCoin.prizeValue;
-                potentiallyGrabbedCoin.visible = false
-                window.appConfig.coins.splice(potentiallyGrabbedCoin.coinRemovalIndex, 1);
-                if (window.appConfig.coinScoreThrottle === false) {
-                  window.appConfig.coinScoreThrottle = true
-                  setTimeout(() => {
-                    window.appConfig.coinScoreThrottle = false
-                  }, 250)
-                  window.appConfig.gameModeFunctions.updateGameScore({ score: window.appConfig.score.coins })
-                }
-                const currentTime = window.appConfig.timer.getTimeValues()
-                const newTimer = new easytimer.Timer({ countdown: true, startValues: { minutes: currentTime.minutes, seconds: currentTime.seconds + 15, secondTenths: currentTime.secondTenths }, precision: "secondTenths" });
-                window.appConfig.stageTotalTimePlayed += 15
-                window.appConfig.timer.stop()
-                window.appConfig.timer.removeEventListener("secondTenthsUpdated", function (e) {
-                  window.appConfig.selectors.timer.childNodes[0].data = `${window.appConfig.timer
-                    .getTimeValues()
-                    .toString(["minutes", "seconds", "secondTenths"])}`;
-                });
-                window.appConfig.timer.removeEventListener("targetAchieved", function (e) {
-                  startStageEnd()
-                })
-                window.appConfig.timer = newTimer
-                newTimer.start()
-                newTimer.addEventListener("secondTenthsUpdated", function (e) {
-                  window.appConfig.selectors.timer.childNodes[0].data = `${window.appConfig.timer
-                    .getTimeValues()
-                    .toString(["minutes", "seconds", "secondTenths"])}`;
-                });
-                newTimer.addEventListener("targetAchieved", function (e) {
-                  startStageEnd()
-                })
-              }
-
-              if (potentiallyGrabbedCoin.capturedCallback) {
-                potentiallyGrabbedCoin.capturedCallback()
-                setTimeout(() => {
-                  scene.remove(potentiallyGrabbedCoin)
-                }, 500)
-              } else {
-                scene.remove(potentiallyGrabbedCoin)
-              }
 
 
 
@@ -2766,8 +2794,8 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
                     Math.abs(coin.position.x - window.appConfig.sphere.position.x) <
                     coin.scale.x * xCoinMod &&
                     Math.abs(coin.position.y - window.appConfig.sphere.position.y) < coin.scale.x * yCoinMod) {
-                      coin.coinRemovalIndex = coinIndex
-                      window.appConfig.coinsToRemove.push(coin)
+                    coin.coinRemovalIndex = coinIndex
+                    window.appConfig.coinsToRemove.push(coin)
                   }
                 }
               }
@@ -3356,15 +3384,15 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
                 bumper.coinThrottle = false
               }
               if (otherObject.name === 'SPHERE0' && window.appConfig.pause === false) {
-                window.appConfig.stages.components.dematerializeMesh(bumper, 5)
-                if(bumper.bumps === undefined) {
+                window.appConfig.stages.components.dematerializeMesh({ dMesh: bumper, scaleAdj: 5, spriteTypes: ['circle', 'fiveStar'] })
+                if (bumper.bumps === undefined) {
                   bumper.bumps = 0
                 }
                 if (bumper.coinThrottle === false) {
                   bumper.bumps++
                   bumper.coinThrottle = true
 
-                  if(bumper.bumps % 15 === 0) {
+                  if (bumper.bumps % 15 === 0) {
                     // let name = window.appConfig.currentStage + '_SPHERECOIN_' + Math.round(Math.random() * 10000)
                     // window.appConfig.createSphere({
                     // bounce: 1,
@@ -3375,32 +3403,32 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
                     //   z: 0
                     // },
                     // handleCollision: (c) => window.appConfig.superBallHandleCollision(c, name)
-                  // })
+                    // })
 
 
 
 
-                  for(let fsb = 0; fsb < 1; fsb++) {
-                  // for(let fsb = 0; fsb < 5; fsb++) {
-                    let name = window.appConfig.currentStage + '_SPHERECOIN_FSB_' + fsb + '_' + Math.round(Math.random() * 10000)
-                    window.appConfig.createSphere({
-                      bounce: 1,
-                      name: name,
-                      position: {
-                        x: (Math.random() * 20) -10 ,
-                        y: (Math.random() * 20) -10,
-                        z: 0
-                      },
-                      // handleCollision: (c) => window.appConfig.superBallHandleCollision(c, name)
-                      handleCollision: (c) => {
-                        window.appConfig.superBallHandleCollision(c, name)
-                        window.appConfig.timers.activeTimers.push(
-                          window.appConfig.timers.moveCoinsToSphere()
-                        )
-                        setTimeout(() => scene.remove(sc), 10000)
-                      }                      
-                    })
-                  }
+                    for (let fsb = 0; fsb < 1; fsb++) {
+                      // for(let fsb = 0; fsb < 5; fsb++) {
+                      let name = window.appConfig.currentStage + '_SPHERECOIN_FSB_' + fsb + '_' + Math.round(Math.random() * 10000)
+                      window.appConfig.createSphere({
+                        bounce: 1,
+                        name: name,
+                        position: {
+                          x: (Math.random() * 20) - 10,
+                          y: (Math.random() * 20) - 10,
+                          z: 0
+                        },
+                        // handleCollision: (c) => window.appConfig.superBallHandleCollision(c, name)
+                        handleCollision: (c) => {
+                          window.appConfig.superBallHandleCollision(c, name)
+                          window.appConfig.timers.activeTimers.push(
+                            window.appConfig.timers.moveCoinsToSphere()
+                          )
+                          setTimeout(() => scene.remove(sc), 10000)
+                        }
+                      })
+                    }
 
 
 
@@ -3561,7 +3589,7 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
                   ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0)
                 }))
                 let theSphere = window.appConfig.sphere
-                window.appConfig.stages.components.dematerializeMesh(theSphere)
+                window.appConfig.stages.components.dematerializeMesh({ dMesh: theSphere , spriteTypes: ['circle']})
                 window.appConfig.howlSounds.backgroundMusic.changeSrc(window.appConfig.stages[window.appConfig.currentStage].sounds.backgroundMusic, true)
               },
               portalConfig: {
@@ -7471,7 +7499,7 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
             window.appConfig.stages[window.appConfig.currentStage].data.gemSuperBalls++
           }
           window.appConfig.timers.activeTimers.push(window.appConfig.timers.superBallTeleport(the_object))
-          window.appConfig.stages.components.dematerializeMesh(other_object, 5)
+          window.appConfig.stages.components.dematerializeMesh({ dMesh: other_object, scaleAdj: 5, spriteTypes: ['fiveStar'] })
           for (let superSounds = 0; superSounds < 20; superSounds++) {
             setTimeout(() => {
               if (window.appConfig.sfxTurnedOn) {
@@ -7792,7 +7820,7 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
           theSphere.setLinearVelocity(newVelocity)
         }
         if (currentTimeAdj % 10 === 0) {
-          window.appConfig.stages.components.dematerializeMesh(bh, Math.random() * .5)
+          window.appConfig.stages.components.dematerializeMesh({ dMesh: bh, scaleAdj: Math.random() * .5, spriteTypes: ['triangle', 'circle', 'square', 'fiveStar', 'fourStar'] })
         }
         bh.material.opacity = .98 + (lfo(500) * .2)
       }
@@ -7815,14 +7843,14 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
           id: Math.round(Math.random() * 10000),
           startedCallback: () => {
             bumper.scored === true
-            window.appConfig.stages.components.dematerializeMesh(bumper, Math.random() * 5)
+            window.appConfig.stages.components.dematerializeMesh({ dMesh: bumper, scaleAdj: Math.random() * 5 , spriteTypes: ['fourStar']})
           },
           activeCallback: (percentComplete) => {
             let currentTime = Math.random()
             bumper.position.lerp(camera.position, 0.05)
             bumper.__dirtyPosition = true
-            if(currentTime < .25) {
-              window.appConfig.stages.components.dematerializeMesh(bumper, Math.random() * 10)
+            if (currentTime < .25) {
+              window.appConfig.stages.components.dematerializeMesh({ dMesh: bumper, scaleAdj: Math.random() * 10, spriteTypes: ['fourStar'] })
             }
           }
           // completedCallback: completedCallback
@@ -7843,14 +7871,14 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
           id: timerId,
           activeCallback: (percentComplete) => {
             if (window.appConfig.userHasEnded === false) {
-              if(Math.round(percentComplete) % 5 === 0) {
+              if (Math.round(percentComplete) % 5 === 0) {
                 window.appConfig.coins.forEach(c => {
                   try {
-                    if(c && c.coinValue && c.coinValue > 0) {
+                    if (c && c.coinValue && c.coinValue > 0) {
                       // console.log(c)
                       c.position.lerp(window.appConfig.sphere.position, 0.0005)
                     }
-                  } catch (err) {}
+                  } catch (err) { }
                 })
               }
             }
@@ -8329,7 +8357,7 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
               window.appConfig.loadingPhysi.registerMesh(newPhysiObj)
               newPhysiObj.addEventListener('collision', function (other_object) {
                 if (other_object.name === 'SPHERE0' && window.appConfig.pause === false) {
-                  window.appConfig.stages.components.dematerializeMesh(newPhysiObj, 5)
+                  window.appConfig.stages.components.dematerializeMesh({ dMesh: newPhysiObj, scaleAdj: 5, spriteTypes: ['triangle', 'kite', 'square'] })
                   let divisions = Math.round(Math.random() * ((bgObj.scale.x + bgObj.scale.y + bgObj.scale.z)) / 2)
                   let bgObjectScale = Math.ceil((bgObj.scale.x + bgObj.scale.y + bgObj.scale.z) / 3)
                   for (let div = 0; div < divisions; div++) {
@@ -8351,12 +8379,12 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
                       newPhysiObjCol.rotation.y = Math.random() * Math.PI
                       newPhysiObjCol.rotation.z = Math.random() * Math.PI
                       newPhysiObjCol.material.opacity = 1
-                      window.appConfig.stages.components.dematerializeMesh(newPhysiObjCol, (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)))
+                      window.appConfig.stages.components.dematerializeMesh({ dMesh: newPhysiObjCol, scaleAdj: (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)), spriteTypes: ['triangle', 'kite', 'square'] })
 
                       window.appConfig.loadingPhysi.registerMesh(newPhysiObjCol)
                       newPhysiObjCol.addEventListener('collision', function (other_object2) {
                         if (other_object2.name === 'SPHERE0' && window.appConfig.pause === false) {
-                          window.appConfig.stages.components.dematerializeMesh(newPhysiObjCol, (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)))
+                          window.appConfig.stages.components.dematerializeMesh({ dMesh: newPhysiObjCol, scaleAdj: (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)), spriteTypes: ['fiveStar'] })
                           scene.remove(newPhysiObjCol)
                         }
                       })
@@ -8531,8 +8559,8 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
           id: Math.round(Math.random() * 10000),
           activeCallback: (percentComplete) => {
             if (percentComplete % 4 < 2) {
-              window.appConfig.stages.components.dematerializeMesh(camera, Math.random() * 15)
-              window.appConfig.stages.components.dematerializeMesh(camera, Math.random() * 5)
+              window.appConfig.stages.components.dematerializeMesh({ dMesh: camera, scaleAdj: Math.random() * 15, spriteTypes: ['circle'] })
+              window.appConfig.stages.components.dematerializeMesh({ dMesh: camera, scaleAdj: Math.random() * 5, spriteTypes: ['circle'] })
             }
           }
         }
@@ -8554,18 +8582,18 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
               appConfig.gameModeFunctions.requestFullscreen()
             }
             window.appConfig.timers.activeTimers.push(window.appConfig.timers.showTransitionFX())
-            
+
             if (config && config.updateName) {
-            let displayName = config.updateName.split(' ')
-            if (displayName[0] !== undefined) {
-              window.appConfig.selectors.stageNameTitle0.childNodes[0].data = displayName[0]
-            }
-            if (displayName[1] !== undefined) {
-              window.appConfig.selectors.stageNameTitle1.childNodes[0].data = displayName[1]
-              window.appConfig.selectors.stageNameTitle1.classList.remove("hide")
-            } else {
-              window.appConfig.selectors.stageNameTitle1.classList.add("hide")
-            }
+              let displayName = config.updateName.split(' ')
+              if (displayName[0] !== undefined) {
+                window.appConfig.selectors.stageNameTitle0.childNodes[0].data = displayName[0]
+              }
+              if (displayName[1] !== undefined) {
+                window.appConfig.selectors.stageNameTitle1.childNodes[0].data = displayName[1]
+                window.appConfig.selectors.stageNameTitle1.classList.remove("hide")
+              } else {
+                window.appConfig.selectors.stageNameTitle1.classList.add("hide")
+              }
             }
             showStageCountDownName()
             if (config && config.ballPosition) {
@@ -9708,7 +9736,7 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
 
         /* View in fullscreen */
         function openFullscreen() {
-          if(!document.fullscreenElement) {
+          if (!document.fullscreenElement) {
             if (window.appConfig.selectors.html.requestFullscreen) {
               window.appConfig.selectors.html.requestFullscreen();
               window.appConfig.requestFullscreenResult = true
@@ -9737,10 +9765,10 @@ window.appConfig.meshComponents.dematerialize.geometries.push(new THREE.PlaneGeo
         }
 
         try {
-          if(window.appConfig.requestFullscreenResult !== false) {
+          if (window.appConfig.requestFullscreenResult !== false) {
             openFullscreen()
           }
-        } catch(err) {
+        } catch (err) {
           closeFullscreen()
         }
       }
