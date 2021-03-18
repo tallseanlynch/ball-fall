@@ -1131,10 +1131,17 @@
           physics_stats.update();
         }
       });
-      window.appConfig.cameraRenderLoopCallback = () => {        
-        camera.position.x = window.appConfig.sphere.position.x;
-        camera.position.y = window.appConfig.sphere.position.y;
 
+      window.appConfig.deviceOrientation = {
+        cameraXAdj: 0,
+        cameraYAdj: 0
+      }
+
+      window.appConfig.cameraRenderLoopCallback = () => {
+        camera.position.x = window.appConfig.sphere.position.x// + window.appConfig.deviceOrientation.cameraXAdj;
+        camera.position.y = window.appConfig.sphere.position.y// + window.appConfig.deviceOrientation.cameraYAdj;
+        camera.rotation.x = window.appConfig.deviceOrientation.cameraXAdj
+        camera.rotation.y = window.appConfig.deviceOrientation.cameraYAdj
 
         if (!window.appConfig.debug || window.appConfig.debug.previousCameraZToggle === false) {
           camera.position.z =
@@ -1144,49 +1151,13 @@
             window.appConfig.timers.data.stageReset.percentComplete * 5;
         }
       }
-      window.appConfig.deviceOrientationRenderLoopCallback = () => {
-        window.appConfig.deviceOrientation.diff.gamma.push(window.appConfig.deviceOrientation.last.gamma - event.gamma)
-        window.appConfig.deviceOrientation.diff.alpha.push(window.appConfig.deviceOrientation.last.alpha - event.alpha)
-        window.appConfig.deviceOrientation.diff.beta.push(window.appConfig.deviceOrientation.last.beta - event.beta)
-        window.appConfig.deviceOrientation.last.gamma = event.gamma
-        window.appConfig.deviceOrientation.last.alpha = event.alpha
-        window.appConfig.deviceOrientation.last.beta = event.beta
-        if (window.appConfig.deviceOrientation.diff.gamma.length > 5) {
-          window.appConfig.deviceOrientation.diff.gamma.shift()
-        }
-        if (window.appConfig.deviceOrientation.diff.alpha.length > 5) {
-          window.appConfig.deviceOrientation.diff.alpha.shift()
-        }
-        if (window.appConfig.deviceOrientation.diff.beta.length > 5) {
-          window.appConfig.deviceOrientation.diff.beta.shift()
-        }
-        window.appConfig.deviceOrientation.sum.gamma = 0
-        window.appConfig.deviceOrientation.sum.alpha = 0
-        window.appConfig.deviceOrientation.sum.beta = 0
-        window.appConfig.deviceOrientation.diff.gamma.forEach(val => window.appConfig.deviceOrientation.sum.gamma += val)
-        window.appConfig.deviceOrientation.diff.alpha.forEach(val => window.appConfig.deviceOrientation.sum.alpha += val)
-        window.appConfig.deviceOrientation.diff.beta.forEach(val => window.appConfig.deviceOrientation.sum.beta += val)
-        console.log (window.appConfig.deviceOrientation.sum)
+
+      window.appConfig.deviceOrientationEventCallback = (event) => {
+        window.appConfig.deviceOrientation.cameraYAdj = event.beta /90
+        window.appConfig.deviceOrientation.cameraXAdj = event.gamma /90
       }
-      window.appConfig.deviceOrientation = {
-        loop: 0,
-        last: {
-          gamma: 0,
-          alpha: 0,
-          beta: 0
-        },
-        diff: {
-          gamma: [],
-          alpha: [],
-          beta: []
-        },
-        sum: {
-          gamma: 0,
-          alpha: 0,
-          beta: 0
-        }
-      }
-      window.addEventListener("deviceorientation", window.appConfig.deviceOrientationRenderLoopCallback );
+
+      window.addEventListener("deviceorientation", (e)=>window.appConfig.deviceOrientationEventCallback(e) );
 
       window.appConfig.lighting = {
         hemisphereLight: new THREE.HemisphereLight(
