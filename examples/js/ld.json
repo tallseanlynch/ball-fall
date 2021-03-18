@@ -1,0 +1,77 @@
+{
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "Ballsinki",
+    "url": "http://ballsinki.com",
+    "inLanguage": [
+        "English"
+    ],
+    "author": [
+        {
+            "@type": "Organization",
+            "name": "Brakli",
+            "url": "http://www.brakli.com/",
+            "founder": "Sean Lynch",
+            "foundingDate": "2013",
+            "@id": "#brakli"
+        },
+        {
+            "@type": "Person",
+            "name": "Sean Lynch",
+            "url": "http://seanlynchperson.com",
+            "@id": "#sean"
+        },
+        {
+            "@type": "Person",
+            "name": "Haley Rheinhart",
+            "@id": "#haley"
+        },
+        {
+            "@type": "Person",
+            "name": "Ian Lynch",
+            "url": "http://ianblynch.com",
+            "@id": "#ian"
+        }
+    ],
+    "publisher": {
+        "@id": "#brakli"
+    },
+    "musicBy": {
+        "@id": "#haley"
+    },
+    "playMode": "single-player",
+    "genre": [
+        "indie game",
+        "pinball game"
+    ],
+    "keywords": [
+        "ballsinki",
+        "pinball",
+        "swipe",
+        "mobile game",
+        "3D game",
+        "Brakli",
+        "cool",
+        "gamers",
+        "relax",
+        "chill",
+        "joyful"
+    ],
+    "audience": {
+        "@type": "PeopleAudience",
+        "description": [
+            "cool",
+            "gamers",
+            "relax",
+            "chill",
+            "joyful"
+        ]
+    },
+    "gameLocation": [
+        "Natural Wonder",
+        "Proxima",
+        "Blanket Fort",
+        "Hidden Hollow",
+        "Starling"
+    ]
+}
