@@ -137,9 +137,9 @@
         bumperGroup: 0,
         prize: 0
       },
-      currentStage: hasPerformanceReport ? 'STAGE0' : 'STAGE5',
+      currentStage: hasPerformanceReport ? 'STAGE5' : 'STAGE5',
       stagesArray: ['STAGE0', 'STAGE1', 'STAGE2', 'STAGE3', 'STAGE4', 'STAGE5'],
-      currentStageIndex: hasPerformanceReport ? 0 : 5,
+      currentStageIndex: hasPerformanceReport ? 5 : 5,
       musicTurnedOn: true,
       sfxTurnedOn: true,
       superballs: [],
@@ -298,6 +298,7 @@
     }
 
     const allElements = [
+      // "landing-page",
       "sounds",
       // "start-menu",
       "pause-menu",
@@ -423,11 +424,25 @@
     .debug {
       z-index: 3000;
     }
+
+    #landing-page {
+      z-index: 9000;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+    }
+
   </style>
   <link rel="stylesheet" href="./ballsinki.css">
 </head>
 
 <body>
+  <div id="landing-page" class="scrolling-section margin-bottom-2 menu-container">
+    <div id="main-menu-title" class="margin-bottom-3 title">BALLSINKI</div>
+    <div id="start-button-container">
+      <button id="start-button" onClick="landingPageToMainMenu()">PLAY NOW</button>
+    </div>
+  </div>
   <div id="main-loading">
     <div id="loading-label">LOADING</div>
   </div>
@@ -1141,7 +1156,8 @@
             10 +
             80 * window.appConfig.timers.data.initialBallZoom.percentComplete -
             window.appConfig.timers.data.stageResultsBallZoom.percentComplete * 80 -
-            window.appConfig.timers.data.stageReset.percentComplete * 5;
+            window.appConfig.timers.data.stageReset.percentComplete * 5 +
+            ((1 - window.appConfig.timers.data.landingPageZoom.percentComplete) * 250)
         }
       }
       window.appConfig.deviceOrientationRenderLoopCallback = () => {
@@ -8092,38 +8108,33 @@
     }
 
     window.appConfig.superBallMaterial.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
+    window.appConfig.landingPage = true
+    setTimeout(() => {
+      window.appConfig.activeTransforms = window.appConfig.stages[window.appConfig.currentStage].defaultTransforms
+    }, 1000)
+    showHTMLElements([])
+
     const timers = {
 
-      // scaleMeshPositionVector: (mesh) => {
-      //   const name = 'SCALE_MESH_POSITION_VECTOR_' + Math.round(Math.random() * 10000)
-      //   const scalePositionVector = new THREE.Vector3(1,1,1)
-      //   return {
-      //     started: 0,
-      //     ended: 0,
-      //     percentComplete: 0,
-      //     time: 2500,
-      //     timeLeft: 0,
-      //     currentTime: 0,
-      //     name: name,
-      //     id: Math.round(Math.random() * 10000),
-      //     // startedCallback: () => {
-      //     //   bumper.scored === true
-      //     //   window.appConfig.stages.components.dematerializeMesh({ dMesh: bumper, scaleAdj: Math.random() * 5 , spriteTypes: ['fourStar']})
-      //     // },
-      //     activeCallback: (percentComplete) => {
-      //       mesh.children.forEach(mc => {
-      //         scalePositionVector.set(
-      //           (1 + percentComplete/500),
-      //           (1 + percentComplete/500),
-      //           0
-      //         )
-      //         mc.position.multiply(scalePositionVector)
-      //         mc.__dirtyPosition = true
-      //       })
-      //     }
-      //     // completedCallback: completedCallback
-      //   }
-      // },
+      landingPageZoom: () => {
+        window.appConfig.timers.data.landingPageZoom.percentComplete = 0
+        return {
+          started: 0,
+          ended: 0,
+          percentComplete: 0,
+          time: 2500,
+          timeLeft: 0,
+          currentTime: 0,
+          name: name,
+          id: Math.round(Math.random() * 10000),
+          activeCallback: (percentComplete) => {
+            window.appConfig.timers.data.landingPageZoom.percentComplete = percentComplete
+          },
+          completedCallback: () => {
+            window.appConfig.landingPage = false
+          }
+        }
+      },
       removeAndDemeshWalls: (mesh) => {
         const name = 'REMOVE_AND_DEMESH_WALLS_' + Math.round(Math.random() * 10000)
         const removeAndDemeshVector = new THREE.Vector3(0,0,0)
@@ -8136,10 +8147,6 @@
           currentTime: 0,
           name: name,
           id: Math.round(Math.random() * 10000),
-          // startedCallback: () => {
-          //   bumper.scored === true
-          //   window.appConfig.stages.components.dematerializeMesh({ dMesh: bumper, scaleAdj: Math.random() * 5 , spriteTypes: ['fourStar']})
-          // },
           activeCallback: () => {
             mesh.children.forEach(beam => {
               // beam.children.forEach(beamChild => {
@@ -9375,6 +9382,11 @@
     }
 
     window.appConfig.timers = timers
+
+    window.appConfig.timers.data.landingPageZoom = {
+      percentComplete: 0
+    }
+
     window.appConfig.recursiveTimerRemove = (string) => {
       const removableIndex = window.appConfig.timers.activeTimers.findIndex(el => el.name.indexOf(string) > -1)
       if (removableIndex > -1) {
@@ -9396,7 +9408,7 @@
         window.appConfig.stages.components.stageInit()
         window.appConfig.stages[window.appConfig.currentStage].init()
       } else {
-        if (window.appConfig.performanceLevel > 0 && !window.appConfig.pause && !window.appConfig.userHasEnded) {
+        if (window.appConfig.landingPage === true || (!window.appConfig.pause && !window.appConfig.userHasEnded)) {
           window.appConfig.activeTransforms.length > 0 && window.appConfig.activeTransforms.forEach(t => {
             if (window.appConfig.stages[window.appConfig.currentStage].transforms[t].r && window.appConfig.stages[window.appConfig.currentStage][t]) {
               window.appConfig.stages[window.appConfig.currentStage][t].rotation.x += window.appConfig.stages[window.appConfig.currentStage].transforms[t].r.x
@@ -9819,6 +9831,14 @@
 
       window.appConfig.selectors.pauseButton.disabled = true;
 
+    }
+
+    const landingPageToMainMenu = () => {
+      document.querySelector('#landing-page').classList.add('hide')
+      window.appConfig.timers.activeTimers.push(
+        window.appConfig.timers.landingPageZoom()
+      )
+      showStart()
     }
 
     const countdown = () => {
