@@ -163,8 +163,8 @@
         'easytimer.js',
         'howler.js',
         // 'features.js',
-        'event-handlers.js'
-        // 'debug.js'
+        'event-handlers.js',
+        'debug.js'
         // 'VRButton.js'
       ],
       loadedScripts: [],
@@ -725,7 +725,7 @@
   <!-- <script onLoad="scriptLoaded('features.js')" type="text/javascript" src="./features.js"></script> -->
   <script onLoad="scriptLoaded('event-handlers.js')" type="text/javascript" src="./event-handlers.js"></script>
   <!-- <script onLoad="scriptLoaded('VRButton.js')" type="text/javascript" src="./VRButton.js"></script> -->
-  <!-- <script onLoad="scriptLoaded('debug.js')" type="text/javascript" src="./debug.js"></script> -->
+  <script onLoad="scriptLoaded('debug.js')" type="text/javascript" src="./debug.js"></script>
   <script onLoad="scriptLoaded('GLTFLoader.js')" type="text/javascript" src="js/GLTFLoader.js"></script>
 
   <script onLoad="scriptLoaded('main')" type="text/javascript">
@@ -1673,6 +1673,9 @@
         prize0Group.prizeValue = 1000
 
         window.appConfig.coins.push(prize0Group);
+        prize0Group.material = {
+          color: new THREE.Color(0xffffff)
+        }
 
       }
       window.appConfig.prize = prize
@@ -1776,7 +1779,7 @@
             parent.geometry.dispose()
             processedGeos++
           }
-          if (parent.material !== undefined) {
+          if (parent.material !== undefined && parent.material.dispose !== undefined) {
             parent.material.dispose()
             processedMats++
           }
@@ -2635,8 +2638,86 @@
 
       window.appConfig.stages = {
         components: {
-          handleCoinRemoval: (coinsToRemove, all = false) => {
+          physiRock: (bgObj, pVec = 1, randomX = 0, randomY = 0, timeBonus = true) => {
+            // if(timeBonus === false) {
+            //   debugger
+            // }
+            let distanceClamp = 50
+            const newPhysiObj = new Physijs.ConvexMesh(
+              new THREE.IcosahedronGeometry((Math.abs(bgObj.scale.x) + Math.abs(bgObj.scale.y) + Math.abs(bgObj.scale.z)) / 3, 0),
+              Physijs.createMaterial(
+                bgObj.material.clone(),
+                0.6, // medium friction
+                0.6 // low restitution
+              ),
+              0 // mass
+            )
+            newPhysiObj.name = window.appConfig.currentStage + '_BGPHYSI_' + Math.round(Math.random() * 1000)
+            newPhysiObj.position.x = (bgObj.position.x * pVec + randomX)//Math.abs(bgObj.position.x * pVec + randomX) > distanceClamp ? distanceClamp : (bgObj.position.x * pVec + randomX)
+            newPhysiObj.position.y = (bgObj.position.y * pVec + randomY)//Math.abs(bgObj.position.y * pVec + randomY) > distanceClamp ? distanceClamp : (bgObj.position.y * pVec + randomY)
+            newPhysiObj.position.z = 1.5
+            newPhysiObj.rotation.x = bgObj.rotation.x
+            newPhysiObj.rotation.y = bgObj.rotation.y
+            newPhysiObj.rotation.z = bgObj.rotation.z
+            newPhysiObj.material.opacity = 1
+            window.appConfig.loadingPhysi.registerMesh(newPhysiObj)
+            newPhysiObj.addEventListener('collision', function (other_object) {
+              if (other_object.name === 'SPHERE0' && window.appConfig.pause === false) {
+                window.appConfig.stages.components.dematerializeMesh({ dMesh: newPhysiObj, scaleAdj: 5, spriteTypes: ['triangle'] })
+                let divisions = Math.round(Math.random() * ((bgObj.scale.x + bgObj.scale.y + bgObj.scale.z)) / 2)
+                let bgObjectScale = Math.ceil((bgObj.scale.x + bgObj.scale.y + bgObj.scale.z) / 3)
+                for (let div = 0; div < divisions; div++) {
+                  let newPhysiObjCol = new Physijs.ConvexMesh(
+                    new THREE.TetrahedronGeometry(.5 + Math.random() * 2.5, 0),
+                    Physijs.createMaterial(
+                      bgObj.material.clone(),
+                      0.6, // medium friction
+                      0.6 // low restitution
+                    ),
+                    0
+                  )
+                  newPhysiObjCol.name = window.appConfig.currentStage + '_BGPHYSI_COL' + Math.round(Math.random() * 1000)
+                  newPhysiObjCol.position.x = newPhysiObj.position.x + ((Math.random() * 25) - 12.5)
+                  newPhysiObjCol.position.y = newPhysiObj.position.y + ((Math.random() * 25) - 12.5)
+                  if (newPhysiObjCol.position.distanceTo(other_object.position) > 5) {
+                    newPhysiObjCol.position.z = 1.5
+                    newPhysiObjCol.rotation.x = Math.random() * Math.PI
+                    newPhysiObjCol.rotation.y = Math.random() * Math.PI
+                    newPhysiObjCol.rotation.z = Math.random() * Math.PI
+                    newPhysiObjCol.material.opacity = 1
+                    window.appConfig.stages.components.dematerializeMesh({ dMesh: newPhysiObjCol, scaleAdj: (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)), spriteTypes: ['triangle'] })
 
+                    window.appConfig.loadingPhysi.registerMesh(newPhysiObjCol)
+                    newPhysiObjCol.addEventListener('collision', function (other_object2) {
+                      if (other_object2.name === 'SPHERE0' && window.appConfig.pause === false) {
+                        window.appConfig.stages.components.dematerializeMesh({ dMesh: newPhysiObjCol, scaleAdj: (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)), spriteTypes: ['triangle'] })
+                        scene.remove(newPhysiObjCol)
+                      }
+                    })
+                    scene.add(newPhysiObjCol)
+                    if (timeBonus === true && Math.random() < .05) {
+                      window.appConfig.prize(window.appConfig.currentStageIndex, Math.round(Math.random() * 10000), { x: newPhysiObj.position.x, y: newPhysiObj.position.y, z: 0 })
+                    }
+                    for (let superSounds = 0; superSounds < 4; superSounds++) {
+                      setTimeout(() => {
+                        if (window.appConfig.sfxTurnedOn) {
+                          window.appConfig.coinSounds[Math.round(Math.random() * (window.appConfig.coinSounds.length - 1))].play()
+                        }
+                        scene.add(window.appConfig.stages.components.crystal(superSounds % 3, { x: other_object.position.x + ((Math.random() * 25) - 12.5), y: other_object.position.y + ((Math.random() * 20) - 10), z: 0 }))
+                      }, superSounds * 50)
+                    }
+
+                  }
+                }
+
+                if (newPhysiObj) {
+                  newPhysiObj && scene.remove(newPhysiObj)
+                }
+              }
+            })
+            return newPhysiObj
+          },
+          handleCoinRemoval: (coinsToRemove, all = false) => {
             coinsToRemove.reverse()
             if (coinsToRemove.length > 0) {
               coinsToRemove.forEach(potentiallyGrabbedCoin => {
@@ -3318,7 +3399,56 @@
             })
           },
           createFinalStage: () => {
+            // window.appConfig.timers.activeTimers.push(window.appConfig.timers.backgroundToPhysi(true))
+            window.appConfig.stages.components.createBlackHole({ position: { x: -40, y: 40, z: 0 }, scale: { x: 2, y: 2, z: 2 } })
+            window.appConfig.stages.components.createBlackHole({ position: { x: 40, y: 40, z: 0 }, scale: { x: 2, y: 2, z: 2 } })
+            window.appConfig.stages.components.createBlackHole({ position: { x: -40, y: -40, z: 0 }, scale: { x: 2, y: 2, z: 2 } })
+            window.appConfig.stages.components.createBlackHole({ position: { x: 40, y: -40, z: 0 }, scale: { x: 2, y: 2, z: 2 } })
+
+            const createCircleRocks = (s, n) => {
+
+              var ellipseGeometry = new THREE.CircleGeometry(s, n * 2)
+
+              let i = 1;
+              // let geos = []
+              for (i; i < ellipseGeometry.vertices.length; i++) {
+                let rockProps = {
+                  position: new THREE.Vector3(ellipseGeometry.vertices[i].x * s, ellipseGeometry.vertices[i].y * s, 0),
+                  scale: new THREE.Vector3(3 + Math.random() * 15, 3 + Math.random() * 15, 0),
+                  material: new THREE.MeshPhongMaterial({ color: stageProperties.STAGE0.backgroundColors[Math.floor(Math.random() * 3.99)], transparent: true, opacity: .25 }),
+                  rotation: new THREE.Vector3(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI)
+                }
+                scene.add(window.appConfig.stages.components.physiRock(rockProps, 1.25, (Math.random() * 50) - 25, (Math.random() * 50) - 25, false))
+
+                // geos.push.add(crystal(size, { x: ellipseGeometry.vertices[i].x * s + t.x, y: ellipseGeometry.vertices[i].y * s + t.y, z: 0 }));
+              }
+
+
+            }
+            createCircleRocks(6, 12)
+            // createCircleRocks(7, 12)
+            createCircleRocks(8, 12)
+            // scene.add(crystalCircle)
+
             window.appConfig.finalStageActiveTransforms = true
+
+
+            createCrystalCircle('STAGE0', 6.25, { x: 0, y: 0 }, 0, 16)
+            createCrystalCircle('STAGE0', 6.5, { x: 0, y: 0 }, 1, 16)
+            createCrystalCircle('STAGE0', 6.75, { x: 0, y: 0 }, 2, 16)
+            createCrystalCircle('STAGE0', 7, { x: 0, y: 0 }, 1, 16)
+            createCrystalCircle('STAGE0', 7.25, { x: 0, y: 0 }, 2, 16)
+            createCrystalCircle('STAGE0', 7.5, { x: 0, y: 0 }, 1, 16)
+            createCrystalCircle('STAGE0', 7.75, { x: 0, y: 0 }, 2, 16)
+
+            createCrystalCircle('STAGE0', 8.5, { x: 0, y: 0 }, 0, 32)
+            createCrystalCircle('STAGE0', 8.75, { x: 0, y: 0 }, 1, 32)
+            createCrystalCircle('STAGE0', 9, { x: 0, y: 0 }, 2, 32)
+            createCrystalCircle('STAGE0', 9.25, { x: 0, y: 0 }, 1, 32)
+            createCrystalCircle('STAGE0', 9.5, { x: 0, y: 0 }, 2, 32)
+            // createCrystalCircle('STAGE0', 8.825, { x: 0, y: 0 }, 1, 32)
+            // createCrystalCircle('STAGE0', 9, { x: 0, y: 0 }, 2, 32)
+
 
             const finalStageWalls0 = window.appConfig.stages.components.createStage0MainBeamStructure(
               4,
@@ -3333,7 +3463,7 @@
 
             const finalStageWalls1 = window.appConfig.stages.components.createStage0MainBeamStructure(
               4,
-              -.415,
+              -.7,
               window.appConfig.currentStage + "_FINAL_STAGE_WALLS_1",
               { x: 0, y: 0, z: 0 },
               [0, 0, 0, 0],
@@ -3363,6 +3493,67 @@
             );
             scene.add(finalStageWalls3);
 
+            const finalStageWalls4 = window.appConfig.stages.components.createStage0MainBeamStructure(
+              8,
+              -.7,
+              window.appConfig.currentStage + "_FINAL_STAGE_WALLS_4",
+              { x: 0, y: 0, z: 0 },
+              [0, 0, 0, 0],
+              true
+            );
+            finalStageWalls4.rotation.z = .25 * Math.PI
+            scene.add(finalStageWalls4);
+
+            const finalStageWalls5 = window.appConfig.stages.components.createStage0MainBeamStructure(
+              8,
+              -.35,
+              window.appConfig.currentStage + "_FINAL_STAGE_WALLS_5",
+              { x: 0, y: 0, z: 0 },
+              [0, 0, 0, 0],
+              true
+            );
+            scene.add(finalStageWalls5);
+
+
+            const finalStageWalls6 = window.appConfig.stages.components.createStage0MainBeamStructure(
+              12,
+              -.35,
+              window.appConfig.currentStage + "_FINAL_STAGE_WALLS_6",
+              { x: 0, y: 0, z: 0 },
+              [0, 0, 0, 0],
+              true
+            );
+            finalStageWalls6.rotation.z = .25 * Math.PI
+            scene.add(finalStageWalls6);
+
+            const finalStageWalls7 = window.appConfig.stages.components.createStage0MainBeamStructure(
+              12,
+              -.35,
+              window.appConfig.currentStage + "_FINAL_STAGE_WALLS_7",
+              { x: 0, y: 0, z: 0 },
+              [0, 0, 0, 0],
+              true
+            );
+            scene.add(finalStageWalls7);
+
+
+            window.appConfig.stages[window.appConfig.currentStage].FINALSTAGEWALLS6 = finalStageWalls6
+            window.appConfig.stages[window.appConfig.currentStage].transforms.FINALSTAGEWALLS6 = { r: { x: 0, y: 0, z: -.001 } }
+            window.appConfig.activeTransforms.push('FINALSTAGEWALLS6')
+
+            window.appConfig.stages[window.appConfig.currentStage].FINALSTAGEWALLS7 = finalStageWalls7
+            window.appConfig.stages[window.appConfig.currentStage].transforms.FINALSTAGEWALLS7 = { r: { x: 0, y: 0, z: -.001 } }
+            window.appConfig.activeTransforms.push('FINALSTAGEWALLS7')
+
+
+            window.appConfig.stages[window.appConfig.currentStage].FINALSTAGEWALLS4 = finalStageWalls4
+            window.appConfig.stages[window.appConfig.currentStage].transforms.FINALSTAGEWALLS4 = { r: { x: 0, y: 0, z: .005 } }
+            window.appConfig.activeTransforms.push('FINALSTAGEWALLS4')
+
+            window.appConfig.stages[window.appConfig.currentStage].FINALSTAGEWALLS5 = finalStageWalls5
+            window.appConfig.stages[window.appConfig.currentStage].transforms.FINALSTAGEWALLS5 = { r: { x: 0, y: 0, z: .005 } }
+            window.appConfig.activeTransforms.push('FINALSTAGEWALLS5')
+
             window.appConfig.stages[window.appConfig.currentStage].FINALSTAGEWALLS3 = finalStageWalls3
             window.appConfig.stages[window.appConfig.currentStage].transforms.FINALSTAGEWALLS3 = { r: { x: 0, y: 0, z: .01 } }
             window.appConfig.activeTransforms.push('FINALSTAGEWALLS3')
@@ -3383,7 +3574,7 @@
               if (bumper.coinThrottle === undefined) {
                 bumper.coinThrottle = false
               }
-              if (otherObject.name === 'SPHERE0' && window.appConfig.pause === false) {
+              if (otherObject.name === 'SPHERE0' && window.appConfig.pause === false && window.appConfig.userIsOnMainMenu === false) {
                 window.appConfig.stages.components.dematerializeMesh({ dMesh: bumper, scaleAdj: 5, spriteTypes: ['circle', 'fiveStar'] })
                 if (bumper.bumps === undefined) {
                   bumper.bumps = 0
@@ -3408,27 +3599,27 @@
 
 
 
-                    for (let fsb = 0; fsb < 1; fsb++) {
-                      // for(let fsb = 0; fsb < 5; fsb++) {
-                      let name = window.appConfig.currentStage + '_SPHERECOIN_FSB_' + fsb + '_' + Math.round(Math.random() * 10000)
-                      window.appConfig.createSphere({
-                        bounce: 1,
-                        name: name,
-                        position: {
-                          x: (Math.random() * 20) - 10,
-                          y: (Math.random() * 20) - 10,
-                          z: 0
-                        },
-                        // handleCollision: (c) => window.appConfig.superBallHandleCollision(c, name)
-                        handleCollision: (c) => {
-                          window.appConfig.superBallHandleCollision(c, name)
-                          window.appConfig.timers.activeTimers.push(
-                            window.appConfig.timers.moveCoinsToSphere()
-                          )
-                          setTimeout(() => scene.remove(sc), 10000)
-                        }
-                      })
-                    }
+                    // for (let fsb = 0; fsb < 1; fsb++) {
+                    //   // for(let fsb = 0; fsb < 5; fsb++) {
+                    //   let name = window.appConfig.currentStage + '_SPHERECOIN_FSB_' + fsb + '_' + Math.round(Math.random() * 10000)
+                    //   window.appConfig.createSphere({
+                    //     bounce: 1,
+                    //     name: name,
+                    //     position: {
+                    //       x: (Math.random() * 20) - 10,
+                    //       y: (Math.random() * 20) - 10,
+                    //       z: 0
+                    //     },
+                    //     // handleCollision: (c) => window.appConfig.superBallHandleCollision(c, name)
+                    //     handleCollision: (c) => {
+                    //       window.appConfig.superBallHandleCollision(c, name)
+                    //       window.appConfig.timers.activeTimers.push(
+                    //         window.appConfig.timers.moveCoinsToSphere()
+                    //       )
+                    //       setTimeout(() => scene.remove(sc), 10000)
+                    //     }
+                    //   })
+                    // }
 
 
 
@@ -3455,10 +3646,14 @@
             window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "_FINALSTAGE_BUMPER1", bumperSize, { x: -10, y: 0, z: 0 }, 6, bumperBounce, bumperWeight, bumperScale, handleBumperCollision)
             window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "_FINALSTAGE_BUMPER2", bumperSize, { x: 0, y: -10, z: 0 }, 6, bumperBounce, bumperWeight, bumperScale, handleBumperCollision)
             window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "_FINALSTAGE_BUMPER3", bumperSize, { x: 0, y: 10, z: 0 }, 6, bumperBounce, bumperWeight, bumperScale, handleBumperCollision)
-            window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "_FINALSTAGE_BUMPER4", bumperSize2, { x: 10, y: 10, z: 0 }, 6, bumperBounce, bumperWeight, bumperScale, handleBumperCollision)
-            window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "_FINALSTAGE_BUMPER5", bumperSize2, { x: -10, y: 10, z: 0 }, 6, bumperBounce, bumperWeight, bumperScale, handleBumperCollision)
-            window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "_FINALSTAGE_BUMPER6", bumperSize2, { x: 10, y: -10, z: 0 }, 6, bumperBounce, bumperWeight, bumperScale, handleBumperCollision)
-            window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "_FINALSTAGE_BUMPER7", bumperSize2, { x: -10, y: -10, z: 0 }, 6, bumperBounce, bumperWeight, bumperScale, handleBumperCollision)
+            window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "_FINALSTAGE_BUMPER4", bumperSize2, { x: 40, y: 40, z: 0 }, 8, bumperBounce, bumperWeight, bumperScale, handleBumperCollision)
+            window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "_FINALSTAGE_BUMPER5", bumperSize2, { x: -40, y: 40, z: 0 }, 8, bumperBounce, bumperWeight, bumperScale, handleBumperCollision)
+            window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "_FINALSTAGE_BUMPER6", bumperSize2, { x: 40, y: -40, z: 0 }, 8, bumperBounce, bumperWeight, bumperScale, handleBumperCollision)
+            window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "_FINALSTAGE_BUMPER7", bumperSize2, { x: -40, y: -40, z: 0 }, 8, bumperBounce, bumperWeight, bumperScale, handleBumperCollision)
+            window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "_FINALSTAGE_BUMPER8", bumperSize2, { x: 40, y: 0, z: 0 }, 8, bumperBounce, bumperWeight, bumperScale, handleBumperCollision)
+            window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "_FINALSTAGE_BUMPER9", bumperSize2, { x: -40, y: 0, z: 0 }, 8, bumperBounce, bumperWeight, bumperScale, handleBumperCollision)
+            window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "_FINALSTAGE_BUMPER10", bumperSize2, { x: 0, y: -40, z: 0 }, 8, bumperBounce, bumperWeight, bumperScale, handleBumperCollision)
+            window.appConfig.stages.components.createBumper(window.appConfig.currentStage + "_FINALSTAGE_BUMPER11", bumperSize2, { x: 0, y: 40, z: 0 }, 8, bumperBounce, bumperWeight, bumperScale, handleBumperCollision)
 
             setTimeout(() => {
               window.appConfig.finalStageActiveTransforms = false
@@ -3740,7 +3935,8 @@
             createBackgroundAnimation()
           },
           init: () => {
-            window.appConfig.stages.components.createFinalStage()
+            // window.appConfig.stages.components.createFinalStage()
+
             window.appConfig.timers.activeTimers.push(
               window.appConfig.timers.addPortalToStage({ x: 95, y: -95, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
                 window.appConfig.stages.components.gemPortalConfig())
@@ -3769,26 +3965,26 @@
             window.appConfig.stages.components.setUpPortalIndicators(createStage0Portals)
 
 
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER0", 1, { x: -70, y: -72.5, z: 0 }, 5)
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER1", 1, { x: 70, y: -72.5, z: 0 }, 5)
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER2", 1, { x: -70, y: 72.5, z: 0 }, 5)
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER3", 1, { x: 70, y: 72.5, z: 0 }, 5)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER0", 1, { x: -70, y: -72.5, z: 0 }, 5)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER1", 1, { x: 70, y: -72.5, z: 0 }, 5)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER2", 1, { x: -70, y: 72.5, z: 0 }, 5)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER3", 1, { x: 70, y: 72.5, z: 0 }, 5)
 
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER6", 1, { x: 87.5, y: -30, z: 0 }, 3, 1)
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER7", 1, { x: 77.5, y: -40, z: 0 }, 3, 1)
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER8", 1, { x: 97.5, y: -40, z: 0 }, 3, 1)
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER9", 1, { x: 87.5, y: -50, z: 0 }, 3, 1)
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER10", 1, { x: 77.5, y: -60, z: 0 }, 3, 1)
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER11", 1, { x: 97.5, y: -60, z: 0 }, 3, 1)
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER12", 1, { x: 87.5, y: -70, z: 0 }, 3, 1)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER6", 1, { x: 87.5, y: -30, z: 0 }, 3, 1)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER7", 1, { x: 77.5, y: -40, z: 0 }, 3, 1)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER8", 1, { x: 97.5, y: -40, z: 0 }, 3, 1)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER9", 1, { x: 87.5, y: -50, z: 0 }, 3, 1)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER10", 1, { x: 77.5, y: -60, z: 0 }, 3, 1)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER11", 1, { x: 97.5, y: -60, z: 0 }, 3, 1)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER12", 1, { x: 87.5, y: -70, z: 0 }, 3, 1)
 
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER13", 1, { x: 87.5, y: 30, z: 0 }, 3, 1)
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER14", 1, { x: 77.5, y: 40, z: 0 }, 3, 1)
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER15", 1, { x: 97.5, y: 40, z: 0 }, 3, 1)
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER16", 1, { x: 87.5, y: 50, z: 0 }, 3, 1)
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER17", 1, { x: 77.5, y: 60, z: 0 }, 3, 1)
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER18", 1, { x: 97.5, y: 60, z: 0 }, 3, 1)
-            // window.appConfig.stages.components.createBumper("STAGE0BUMPER19", 1, { x: 87.5, y: 70, z: 0 }, 3, 1)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER13", 1, { x: 87.5, y: 30, z: 0 }, 3, 1)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER14", 1, { x: 77.5, y: 40, z: 0 }, 3, 1)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER15", 1, { x: 97.5, y: 40, z: 0 }, 3, 1)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER16", 1, { x: 87.5, y: 50, z: 0 }, 3, 1)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER17", 1, { x: 77.5, y: 60, z: 0 }, 3, 1)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER18", 1, { x: 97.5, y: 60, z: 0 }, 3, 1)
+            window.appConfig.stages.components.createBumper("STAGE0BUMPER19", 1, { x: 87.5, y: 70, z: 0 }, 3, 1)
 
             window.appConfig.stages.components.createSapphire({ x: 0, y: -10, z: 0 }, false)
             window.appConfig.stages.components.createSapphire({ x: 20, y: 30, z: 0 }, false)
@@ -3807,224 +4003,224 @@
             const createSwitchBeamWall = window.appConfig.stages.components.createSwitchBeamWall
             const createRemoteSwitch = window.appConfig.stages.components.createRemoteSwitch
 
-            // createCrystalCircle('STAGE0', 3.5, { x: -97, y: 0 }, 0, 16)
-            // createCrystalCircle('STAGE0', 3.25, { x: -97, y: 0 }, 1, 8)
-            // createCrystalCircle('STAGE0', 2.75, { x: -97, y: 0 }, 2, 8)
+            createCrystalCircle('STAGE0', 3.5, { x: -97, y: 0 }, 0, 16)
+            createCrystalCircle('STAGE0', 3.25, { x: -97, y: 0 }, 1, 8)
+            createCrystalCircle('STAGE0', 2.75, { x: -97, y: 0 }, 2, 8)
 
-            // createCrystalCircle('STAGE0', 3.75, { x: -57, y: 0 }, 0, 16)
-            // createCrystalCircle('STAGE0', 3.5, { x: -57, y: 0 }, 1, 8)
-            // createCrystalCircle('STAGE0', 3, { x: -57, y: 0 }, 2, 8)
+            createCrystalCircle('STAGE0', 3.75, { x: -57, y: 0 }, 0, 16)
+            createCrystalCircle('STAGE0', 3.5, { x: -57, y: 0 }, 1, 8)
+            createCrystalCircle('STAGE0', 3, { x: -57, y: 0 }, 2, 8)
 
-            // createCrystalCircle('STAGE0', 3.75, { x: 87.5, y: 0 }, 0, 16)
-            // createCrystalCircle('STAGE0', 3.5, { x: 87.5, y: 0 }, 1, 8)
-            // createCrystalCircle('STAGE0', 3, { x: 87.5, y: 0 }, 2, 8)
+            createCrystalCircle('STAGE0', 3.75, { x: 87.5, y: 0 }, 0, 16)
+            createCrystalCircle('STAGE0', 3.5, { x: 87.5, y: 0 }, 1, 8)
+            createCrystalCircle('STAGE0', 3, { x: 87.5, y: 0 }, 2, 8)
 
-            // window.appConfig.createSphere({
-            //   bounce: 1,
-            //   name: window.appConfig.currentStage + '_SPHERECOINA',
-            //   position: {
-            //     x: -55,
-            //     y: 0,
-            //     z: 0
-            //   },
-            //   handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINA')
-            // })
-            // window.appConfig.createSphere({
-            //   bounce: 1,
-            //   name: window.appConfig.currentStage + '_SPHERECOINB',
-            //   position: {
-            //     x: -55,
-            //     y: 0,
-            //     z: 0
-            //   },
-            //   handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINB')
-            // })
-            // window.appConfig.createSphere({
-            //   bounce: 1,
-            //   name: window.appConfig.currentStage + '_SPHERECOINC',
-            //   position: {
-            //     x: -55,
-            //     y: 0,
-            //     z: 0
-            //   },
-            //   handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINC')
-            // })
-            // window.appConfig.createSphere({
-            //   bounce: 1,
-            //   name: window.appConfig.currentStage + '_SPHERECOIND',
-            //   position: {
-            //     x: -55,
-            //     y: 0,
-            //     z: 0
-            //   },
-            //   handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIND')
-            // })
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINA',
+              position: {
+                x: -55,
+                y: 0,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINA')
+            })
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINB',
+              position: {
+                x: -55,
+                y: 0,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINB')
+            })
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOINC',
+              position: {
+                x: -55,
+                y: 0,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINC')
+            })
+            window.appConfig.createSphere({
+              bounce: 1,
+              name: window.appConfig.currentStage + '_SPHERECOIND',
+              position: {
+                x: -55,
+                y: 0,
+                z: 0
+              },
+              handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIND')
+            })
 
-            // createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: 20, z: 0 } })
-            // createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: -20, z: 0 } })
+            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: 20, z: 0 } })
+            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: 72.5, y: -20, z: 0 } })
 
-            // createRemoteSwitch({
-            //   transmitter: {
-            //     p: { x: -95, y: -95, z: 0 }
-            //   },
-            //   receiver: {
-            //     p: { x: -55, y: -20, z: 0 },
-            //     name: 'STAGE0RECEIVER_A'
-            //   }
-            // })
+            createRemoteSwitch({
+              transmitter: {
+                p: { x: -95, y: -95, z: 0 }
+              },
+              receiver: {
+                p: { x: -55, y: -20, z: 0 },
+                name: 'STAGE0RECEIVER_A'
+              }
+            })
 
-            // createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: -71.2, y: -20, z: 0 }, receiver: { name: 'STAGE0RECEIVER_A' } })
+            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: -71.2, y: -20, z: 0 }, receiver: { name: 'STAGE0RECEIVER_A' } })
 
-            // createRemoteSwitch({
-            //   transmitter: {
-            //     p: { x: -95, y: 95, z: 0 }
-            //   },
-            //   receiver: {
-            //     p: { x: -55, y: 20, z: 0 },
-            //     name: 'STAGE0RECEIVER_B'
-            //   }
-            // })
+            createRemoteSwitch({
+              transmitter: {
+                p: { x: -95, y: 95, z: 0 }
+              },
+              receiver: {
+                p: { x: -55, y: 20, z: 0 },
+                name: 'STAGE0RECEIVER_B'
+              }
+            })
 
-            // createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: -71.2, y: 20, z: 0 }, receiver: { name: 'STAGE0RECEIVER_B' } })
+            createSwitchBeamWall({ s: 4.6, dir: 'x', p: { x: -71.2, y: 20, z: 0 }, receiver: { name: 'STAGE0RECEIVER_B' } })
 
-            // const stage0MainBeamStructure = createStage0MainBeamStructure(
-            //   2,
-            //   0,
-            //   "STAGE0MAINSTRUCTURE"
-            // );
-            // scene.add(stage0MainBeamStructure);
-            // const stage0MainBeamStructure1 = createStage0MainBeamStructure(
-            //   4,
-            //   0,
-            //   "STAGE0MAINSTRUCTURE1"
-            // );
-            // scene.add(stage0MainBeamStructure1);
-            // const stage0MainBeamStructure2 = createStage0MainBeamStructure(
-            //   8,
-            //   0.525,
-            //   "STAGE0MAINSTRUCTURE2",
-            //   { x: 0, y: 0 },
-            //   [0, 1, 0, 0]
-            // );
-            // scene.add(stage0MainBeamStructure2);
+            const stage0MainBeamStructure = createStage0MainBeamStructure(
+              2,
+              0,
+              "STAGE0MAINSTRUCTURE"
+            );
+            scene.add(stage0MainBeamStructure);
+            const stage0MainBeamStructure1 = createStage0MainBeamStructure(
+              4,
+              0,
+              "STAGE0MAINSTRUCTURE1"
+            );
+            scene.add(stage0MainBeamStructure1);
+            const stage0MainBeamStructure2 = createStage0MainBeamStructure(
+              8,
+              0.525,
+              "STAGE0MAINSTRUCTURE2",
+              { x: 0, y: 0 },
+              [0, 1, 0, 0]
+            );
+            scene.add(stage0MainBeamStructure2);
 
-            // const stage0MainBeamStructure3 = createStage0MainBeamStructure(
-            //   10,
-            //   0.55,
-            //   "STAGE0MAINSTRUCTURE3",
-            //   { x: 0, y: 0 },
-            //   [0, 0, 1, 0]
-            //   // [bottom, left, right, top]
-            // );
-            // scene.add(stage0MainBeamStructure3);
+            const stage0MainBeamStructure3 = createStage0MainBeamStructure(
+              10,
+              0.55,
+              "STAGE0MAINSTRUCTURE3",
+              { x: 0, y: 0 },
+              [0, 0, 1, 0]
+              // [bottom, left, right, top]
+            );
+            scene.add(stage0MainBeamStructure3);
 
-            // const stage0MainBeamStructure4 = createStage0MainBeamStructure(
-            //   14,
-            //   0.575,
-            //   "STAGE0MAINSTRUCTURE4_ZONE-WALL"
-            // );
-            // scene.add(stage0MainBeamStructure4);
+            const stage0MainBeamStructure4 = createStage0MainBeamStructure(
+              14,
+              0.575,
+              "STAGE0MAINSTRUCTURE4_ZONE-WALL"
+            );
+            scene.add(stage0MainBeamStructure4);
 
-            // const stage0MinorBeamStructure = createStage0MainBeamStructure(
-            //   1,
-            //   -0.5,
-            //   "STAGE0MINORSTRUCTURE",
-            //   { x: 45, y: 45 }
-            // );
-            // scene.add(stage0MinorBeamStructure);
-            // const stage0MinorBeamStructure1 = createStage0MainBeamStructure(
-            //   1,
-            //   -0.5,
-            //   "STAGE0MINORSTRUCTURE1",
-            //   { x: 45, y: -45 }
-            // );
-            // scene.add(stage0MinorBeamStructure1);
-            // const stage0MinorBeamStructure2 = createStage0MainBeamStructure(
-            //   1,
-            //   -0.5,
-            //   "STAGE0MINORSTRUCTURE2",
-            //   { x: -45, y: -45 }
-            // );
-            // scene.add(stage0MinorBeamStructure2);
-            // const stage0MinorBeamStructure3 = createStage0MainBeamStructure(
-            //   1,
-            //   -0.5,
-            //   "STAGE0MINORSTRUCTURE3",
-            //   { x: -45, y: 45 }
-            // );
-            // scene.add(stage0MinorBeamStructure3);
+            const stage0MinorBeamStructure = createStage0MainBeamStructure(
+              1,
+              -0.5,
+              "STAGE0MINORSTRUCTURE",
+              { x: 45, y: 45 }
+            );
+            scene.add(stage0MinorBeamStructure);
+            const stage0MinorBeamStructure1 = createStage0MainBeamStructure(
+              1,
+              -0.5,
+              "STAGE0MINORSTRUCTURE1",
+              { x: 45, y: -45 }
+            );
+            scene.add(stage0MinorBeamStructure1);
+            const stage0MinorBeamStructure2 = createStage0MainBeamStructure(
+              1,
+              -0.5,
+              "STAGE0MINORSTRUCTURE2",
+              { x: -45, y: -45 }
+            );
+            scene.add(stage0MinorBeamStructure2);
+            const stage0MinorBeamStructure3 = createStage0MainBeamStructure(
+              1,
+              -0.5,
+              "STAGE0MINORSTRUCTURE3",
+              { x: -45, y: 45 }
+            );
+            scene.add(stage0MinorBeamStructure3);
 
-            // prize(0, 0, { x: 45, y: 45, z: 0 })
-            // prize(0, 1, { x: 45, y: -45, z: 0 })
-            // prize(0, 2, { x: -45, y: -45, z: 0 })
-            // prize(0, 3, { x: -45, y: 45, z: 0 })
+            prize(0, 0, { x: 45, y: 45, z: 0 })
+            prize(0, 1, { x: 45, y: -45, z: 0 })
+            prize(0, 2, { x: -45, y: -45, z: 0 })
+            prize(0, 3, { x: -45, y: 45, z: 0 })
 
-            // prize(0, 4, { x: -75, y: 15, z: 0 })
-            // prize(0, 5, { x: -75, y: -15, z: 0 })
-            // prize(0, 6, { x: -40, y: 15, z: 0 })
-            // prize(0, 7, { x: -40, y: -15, z: 0 })
+            prize(0, 4, { x: -75, y: 15, z: 0 })
+            prize(0, 5, { x: -75, y: -15, z: 0 })
+            prize(0, 6, { x: -40, y: 15, z: 0 })
+            prize(0, 7, { x: -40, y: -15, z: 0 })
 
-            // prize(0, 8, { x: 70, y: 15, z: 0 })
-            // prize(0, 9, { x: 70, y: -15, z: 0 })
-            // prize(0, 10, { x: 105, y: 15, z: 0 })
-            // prize(0, 11, { x: 105, y: -15, z: 0 })
+            prize(0, 8, { x: 70, y: 15, z: 0 })
+            prize(0, 9, { x: 70, y: -15, z: 0 })
+            prize(0, 10, { x: 105, y: 15, z: 0 })
+            prize(0, 11, { x: 105, y: -15, z: 0 })
 
-            // prize(0, 12, { x: 95, y: 80, z: 0 })
-            // prize(0, 13, { x: 95, y: -80, z: 0 })
+            prize(0, 12, { x: 95, y: 80, z: 0 })
+            prize(0, 13, { x: 95, y: -80, z: 0 })
 
-            // createCrystalCross('STAGE0', 5);
-            // createCrystalCross('STAGE0', 10);
-            // createCrystalCross('STAGE0', 5, { x: 20, y: 20 }, 1);
-            // createCrystalCross('STAGE0', 5, { x: -20, y: 20 }, 1);
-            // createCrystalCross('STAGE0', 5, { x: -20, y: -20 }, 1);
-            // createCrystalCross('STAGE0', 5, { x: 20, y: -20 }, 1);
-            // createCrystalCross('STAGE0', 3, { x: 55, y: 55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 35, y: 55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 35, y: 35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 55, y: 35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 55, y: -55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 35, y: -55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 35, y: -35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: 55, y: -35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -55, y: -55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -35, y: -55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -35, y: -35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -55, y: -35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -55, y: 55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -35, y: 55 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -35, y: 35 }, 0);
-            // createCrystalCross('STAGE0', 3, { x: -55, y: 35 }, 0);
-            // createCrystalLine('STAGE0', 5, { x: 54.5, y: -22 }, 0, 10, "y");
-            // createCrystalLine('STAGE0', 5, { x: 40.5, y: -22.5 }, 0, 10, "y");
-            // createCrystalLine('STAGE0', 10, { x: 47.5, y: -20 }, 2, 5, "y");
-            // createCrystalLine('STAGE0', 10, { x: -20, y: -47.5 }, 2, 5, "x");
-            // createCrystalLine('STAGE0', 5, { x: -22.5, y: -40 }, 0, 10, "x");
-            // createCrystalLine('STAGE0', 5, { x: -22.5, y: -54.5 }, 0, 10, "x");
-            // createCrystalLine('STAGE0', 10, { x: -20, y: 47.5 }, 2, 5, "x");
-            // createCrystalLine('STAGE0', 5, { x: -22.5, y: 40 }, 0, 10, "x");
-            // createCrystalLine('STAGE0', 5, { x: -22.5, y: 54.5 }, 0, 10, "x");
+            createCrystalCross('STAGE0', 5);
+            createCrystalCross('STAGE0', 10);
+            createCrystalCross('STAGE0', 5, { x: 20, y: 20 }, 1);
+            createCrystalCross('STAGE0', 5, { x: -20, y: 20 }, 1);
+            createCrystalCross('STAGE0', 5, { x: -20, y: -20 }, 1);
+            createCrystalCross('STAGE0', 5, { x: 20, y: -20 }, 1);
+            createCrystalCross('STAGE0', 3, { x: 55, y: 55 }, 0);
+            createCrystalCross('STAGE0', 3, { x: 35, y: 55 }, 0);
+            createCrystalCross('STAGE0', 3, { x: 35, y: 35 }, 0);
+            createCrystalCross('STAGE0', 3, { x: 55, y: 35 }, 0);
+            createCrystalCross('STAGE0', 3, { x: 55, y: -55 }, 0);
+            createCrystalCross('STAGE0', 3, { x: 35, y: -55 }, 0);
+            createCrystalCross('STAGE0', 3, { x: 35, y: -35 }, 0);
+            createCrystalCross('STAGE0', 3, { x: 55, y: -35 }, 0);
+            createCrystalCross('STAGE0', 3, { x: -55, y: -55 }, 0);
+            createCrystalCross('STAGE0', 3, { x: -35, y: -55 }, 0);
+            createCrystalCross('STAGE0', 3, { x: -35, y: -35 }, 0);
+            createCrystalCross('STAGE0', 3, { x: -55, y: -35 }, 0);
+            createCrystalCross('STAGE0', 3, { x: -55, y: 55 }, 0);
+            createCrystalCross('STAGE0', 3, { x: -35, y: 55 }, 0);
+            createCrystalCross('STAGE0', 3, { x: -35, y: 35 }, 0);
+            createCrystalCross('STAGE0', 3, { x: -55, y: 35 }, 0);
+            createCrystalLine('STAGE0', 5, { x: 54.5, y: -22 }, 0, 10, "y");
+            createCrystalLine('STAGE0', 5, { x: 40.5, y: -22.5 }, 0, 10, "y");
+            createCrystalLine('STAGE0', 10, { x: 47.5, y: -20 }, 2, 5, "y");
+            createCrystalLine('STAGE0', 10, { x: -20, y: -47.5 }, 2, 5, "x");
+            createCrystalLine('STAGE0', 5, { x: -22.5, y: -40 }, 0, 10, "x");
+            createCrystalLine('STAGE0', 5, { x: -22.5, y: -54.5 }, 0, 10, "x");
+            createCrystalLine('STAGE0', 10, { x: -20, y: 47.5 }, 2, 5, "x");
+            createCrystalLine('STAGE0', 5, { x: -22.5, y: 40 }, 0, 10, "x");
+            createCrystalLine('STAGE0', 5, { x: -22.5, y: 54.5 }, 0, 10, "x");
 
-            // createCrystalLine('STAGE0--00', 8, { x: -90.5, y: -75 }, 0, 8, "y");
-            // createCrystalLine('STAGE0--01', 8, { x: -97.5, y: -75 }, 1, 8, "y");
-            // createCrystalLine('STAGE0--02', 8, { x: -104.5, y: -75 }, 2, 8, "y");
+            createCrystalLine('STAGE0--00', 8, { x: -90.5, y: -75 }, 0, 8, "y");
+            createCrystalLine('STAGE0--01', 8, { x: -97.5, y: -75 }, 1, 8, "y");
+            createCrystalLine('STAGE0--02', 8, { x: -104.5, y: -75 }, 2, 8, "y");
 
-            // createCrystalLine('STAGE0--0', 8, { x: -90.5, y: 20 }, 0, 8, "y");
-            // createCrystalLine('STAGE0--1', 8, { x: -97.5, y: 20 }, 1, 8, "y");
-            // createCrystalLine('STAGE0--2', 8, { x: -104.5, y: 20 }, 2, 8, "y");
+            createCrystalLine('STAGE0--0', 8, { x: -90.5, y: 20 }, 0, 8, "y");
+            createCrystalLine('STAGE0--1', 8, { x: -97.5, y: 20 }, 1, 8, "y");
+            createCrystalLine('STAGE0--2', 8, { x: -104.5, y: 20 }, 2, 8, "y");
 
-            // createCrystalLine('STAGE0--3', 8, { y: -90.5, x: -75 }, 0, 20, "x");
-            // createCrystalLine('STAGE0--4', 8, { y: -97.5, x: -75 }, 1, 20, "x");
-            // createCrystalLine('STAGE0--5', 8, { y: -104.5, x: -75 }, 2, 20, "x");
+            createCrystalLine('STAGE0--3', 8, { y: -90.5, x: -75 }, 0, 20, "x");
+            createCrystalLine('STAGE0--4', 8, { y: -97.5, x: -75 }, 1, 20, "x");
+            createCrystalLine('STAGE0--5', 8, { y: -104.5, x: -75 }, 2, 20, "x");
 
-            // createCrystalLine('STAGE0--6', 8, { y: 90.5, x: -75 }, 0, 20, "x");
-            // createCrystalLine('STAGE0--7', 8, { y: 97.5, x: -75 }, 1, 20, "x");
-            // createCrystalLine('STAGE0--8', 8, { y: 104.5, x: -75 }, 2, 20, "x");
+            createCrystalLine('STAGE0--6', 8, { y: 90.5, x: -75 }, 0, 20, "x");
+            createCrystalLine('STAGE0--7', 8, { y: 97.5, x: -75 }, 1, 20, "x");
+            createCrystalLine('STAGE0--8', 8, { y: 104.5, x: -75 }, 2, 20, "x");
 
-            // createCrystalLine('STAGE0--9', 6, { y: 70, x: -57.5 }, 1, 20, "x");
-            // createCrystalLine('STAGE0--10', 6, { y: 75, x: -57.5 }, 0, 20, "x");
+            createCrystalLine('STAGE0--9', 6, { y: 70, x: -57.5 }, 1, 20, "x");
+            createCrystalLine('STAGE0--10', 6, { y: 75, x: -57.5 }, 0, 20, "x");
 
-            // createCrystalLine('STAGE0--9', 6, { y: -70, x: -57.5 }, 1, 20, "x");
-            // createCrystalLine('STAGE0--10', 6, { y: -75, x: -57.5 }, 0, 20, "x");
+            createCrystalLine('STAGE0--9', 6, { y: -70, x: -57.5 }, 1, 20, "x");
+            createCrystalLine('STAGE0--10', 6, { y: -75, x: -57.5 }, 0, 20, "x");
 
             window.appConfig.stages.STAGE0.STAGE0PRIZE0 = scene.children.find((obj) => obj.name === "STAGE0PRIZE0")
             window.appConfig.stages.STAGE0.STAGE0PRIZE1 = scene.children.find((obj) => obj.name === "STAGE0PRIZE1")
@@ -7795,42 +7991,113 @@
     ]
 
     window.appConfig.handleBlackHole = (bh, bhIndex) => {
-      let theSphere = window.appConfig.sphere
-      let bhSprites = bh.children[0].children
-      bhSprites.forEach((bhSprite, bhi) => {
-        bhSprite.position.x = lfo(2500 + (bhi * 75)) * (.4 + lfo(bhi * 1000))
-        bhSprite.position.y = lfo(1777 + (bhi * 75)) * (.4 + lfo(bhi * 1000))
-      })
-      let distMod = .1
-      if (typeof theSphere.position.x === "number") {
-        bh.position.lerp(theSphere.position, .001 * Math.random() * 2)
-        bh.position.lerp(anchors[bhIndex], .00075)
-        bh.scale.x += .001
-        bh.scale.y += .001
-        bh.scale.z += .001
-        let distanceToSphere = bh.position.distanceTo(theSphere.position)
-        let currentTimeAdj = new Date().getTime()
-        if (distanceToSphere < (25 + (bh.scale.x * .1)) && currentTimeAdj % 5 === 0) {
-          let sphereLinearVelocity = theSphere._physijs.linearVelocity
-          let velocityRise = bh.position.y - theSphere.position.y
-          let velocityRun = bh.position.x - theSphere.position.x
-          window.appConfig.blackHoleVector.set(velocityRun, velocityRise, 0)
-          let velocityAdj = window.appConfig.blackHoleVector.normalize().multiplyScalar(distanceToSphere / 4)
-          let newVelocity = sphereLinearVelocity.add(velocityAdj)
-          theSphere.setLinearVelocity(newVelocity)
+      try {
+        let theSphere = window.appConfig.sphere
+        let bhSprites = bh.children[0].children
+        bhSprites.forEach((bhSprite, bhi) => {
+          bhSprite.position.x = lfo(2500 + (bhi * 75)) * (.4 + lfo(bhi * 1000))
+          bhSprite.position.y = lfo(1777 + (bhi * 75)) * (.4 + lfo(bhi * 1000))
+        })
+        let distMod = .1
+        if (typeof theSphere.position.x === "number") {
+          bh.position.lerp(theSphere.position, .001 * Math.random() * 2)
+          bh.position.lerp(anchors[bhIndex], .00075)
+          bh.scale.x += .001
+          bh.scale.y += .001
+          bh.scale.z += .001
+          let distanceToSphere = bh.position.distanceTo(theSphere.position)
+          let currentTimeAdj = new Date().getTime()
+          if (distanceToSphere < (25 + (bh.scale.x * .1)) && currentTimeAdj % 5 === 0) {
+            let sphereLinearVelocity = theSphere._physijs.linearVelocity
+            let velocityRise = bh.position.y - theSphere.position.y
+            let velocityRun = bh.position.x - theSphere.position.x
+            window.appConfig.blackHoleVector.set(velocityRun, velocityRise, 0)
+            let velocityAdj = window.appConfig.blackHoleVector.normalize().multiplyScalar(distanceToSphere / 4)
+            let newVelocity = sphereLinearVelocity.add(velocityAdj)
+            theSphere.setLinearVelocity(newVelocity)
+          }
+          if (currentTimeAdj % 10 === 0) {
+            window.appConfig.stages.components.dematerializeMesh({ dMesh: bh, scaleAdj: Math.random() * .5, spriteTypes: ['triangle', 'circle', 'square', 'fiveStar', 'fourStar'] })
+          }
+          bh.material.opacity = .98 + (lfo(500) * .2)
         }
-        if (currentTimeAdj % 10 === 0) {
-          window.appConfig.stages.components.dematerializeMesh({ dMesh: bh, scaleAdj: Math.random() * .5, spriteTypes: ['triangle', 'circle', 'square', 'fiveStar', 'fourStar'] })
-        }
-        bh.material.opacity = .98 + (lfo(500) * .2)
+      } catch (err) {
+        console.log('BLACK HOLE ERROR')
       }
     }
 
     window.appConfig.superBallMaterial.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
     const timers = {
+
+      // scaleMeshPositionVector: (mesh) => {
+      //   const name = 'SCALE_MESH_POSITION_VECTOR_' + Math.round(Math.random() * 10000)
+      //   const scalePositionVector = new THREE.Vector3(1,1,1)
+      //   return {
+      //     started: 0,
+      //     ended: 0,
+      //     percentComplete: 0,
+      //     time: 2500,
+      //     timeLeft: 0,
+      //     currentTime: 0,
+      //     name: name,
+      //     id: Math.round(Math.random() * 10000),
+      //     // startedCallback: () => {
+      //     //   bumper.scored === true
+      //     //   window.appConfig.stages.components.dematerializeMesh({ dMesh: bumper, scaleAdj: Math.random() * 5 , spriteTypes: ['fourStar']})
+      //     // },
+      //     activeCallback: (percentComplete) => {
+      //       mesh.children.forEach(mc => {
+      //         scalePositionVector.set(
+      //           (1 + percentComplete/500),
+      //           (1 + percentComplete/500),
+      //           0
+      //         )
+      //         mc.position.multiply(scalePositionVector)
+      //         mc.__dirtyPosition = true
+      //       })
+      //     }
+      //     // completedCallback: completedCallback
+      //   }
+      // },
+      removeAndDemeshWalls: (mesh) => {
+        const name = 'REMOVE_AND_DEMESH_WALLS_' + Math.round(Math.random() * 10000)
+        const removeAndDemeshVector = new THREE.Vector3(0,0,0)
+        return {
+          started: 0,
+          ended: 0,
+          percentComplete: 0,
+          time: 2500,
+          timeLeft: 0,
+          currentTime: 0,
+          name: name,
+          id: Math.round(Math.random() * 10000),
+          // startedCallback: () => {
+          //   bumper.scored === true
+          //   window.appConfig.stages.components.dematerializeMesh({ dMesh: bumper, scaleAdj: Math.random() * 5 , spriteTypes: ['fourStar']})
+          // },
+          activeCallback: () => {
+            mesh.children.forEach(beam => {
+              // beam.children.forEach(beamChild => {
+//                beam.getWorldPosition(removeAndDemeshVector)
+                if(Math.random() < .2) {
+                  window.appConfig.stages.components.dematerializeMesh({ dMesh: beam, scaleAdj: 5 + Math.random() * 5 , spriteTypes: ['fourStar', 'circle', 'square', 'fiveStar']})
+                }
+              // })
+              // console.log(removeAndDemeshVector)
+              // scalePositionVector.set(
+              //   (1 + percentComplete/500),
+              //   (1 + percentComplete/500),
+              //   0
+              // )
+              // mc.position.multiply(scalePositionVector)
+              // mc.__dirtyPosition = true
+            })
+          }
+          // completedCallback: completedCallback
+        }
+      },
       handleFinalStageBumperOut: (bumper) => {
         const name = 'BUMPER_OUT_' + Math.round(Math.random() * 10000)
-        const dMeshLfoAdj = Math.round(Math.random() * 1000)
 
         return {
           started: 0,
@@ -7858,7 +8125,6 @@
       },
       moveCoinsToSphere: () => {
         const name = 'MOVE_COINS_TO_SPHERE' + Math.round(Math.random() * 10000)
-        const dMeshLfoAdj = Math.round(Math.random() * 1000)
         const timerId = Math.round(Math.random() * 10000)
         return {
           started: 0,
@@ -8307,8 +8573,8 @@
           }
         }
       },
-      backgroundToPhysi: () => {
-        if (window.appConfig.performanceLevel === 0) {
+      backgroundToPhysi: (createBg = false) => {
+        if (createBg === true) {
           window.appConfig.stages[window.appConfig.currentStage].initBackground()
         }
 
@@ -8333,91 +8599,16 @@
           },
           completedCallback: () => {
             let theBgObjects = []
-            theBg.children.forEach(bgObj => {
-              let newPhysiObj = new Physijs.ConvexMesh(
-                new THREE.IcosahedronGeometry((Math.abs(bgObj.scale.x) + Math.abs(bgObj.scale.y) + Math.abs(bgObj.scale.z)) / 3, 0),
-                Physijs.createMaterial(
-                  bgObj.material.clone(),
-                  0.6, // medium friction
-                  0.6 // low restitution
-                ),
-                0 // mass
-              )
-              newPhysiObj.name = window.appConfig.currentStage + '_BGPHYSI_' + Math.round(Math.random() * 1000)
-              newPhysiObj.position.x = bgObj.position.x
-              newPhysiObj.position.y = bgObj.position.y
-              newPhysiObj.position.z = 1.5
-              newPhysiObj.rotation.x = bgObj.rotation.x
-              newPhysiObj.rotation.y = bgObj.rotation.y
-              newPhysiObj.rotation.z = bgObj.rotation.z
-              newPhysiObj.material.opacity = 1
-              theBgObjects.push(
-                newPhysiObj
-              )
-              window.appConfig.loadingPhysi.registerMesh(newPhysiObj)
-              newPhysiObj.addEventListener('collision', function (other_object) {
-                if (other_object.name === 'SPHERE0' && window.appConfig.pause === false) {
-                  window.appConfig.stages.components.dematerializeMesh({ dMesh: newPhysiObj, scaleAdj: 5, spriteTypes: ['triangle', 'kite', 'square'] })
-                  let divisions = Math.round(Math.random() * ((bgObj.scale.x + bgObj.scale.y + bgObj.scale.z)) / 2)
-                  let bgObjectScale = Math.ceil((bgObj.scale.x + bgObj.scale.y + bgObj.scale.z) / 3)
-                  for (let div = 0; div < divisions; div++) {
-                    let newPhysiObjCol = new Physijs.ConvexMesh(
-                      new THREE.TetrahedronGeometry(.5 + Math.random() * 2.5, 0),
-                      Physijs.createMaterial(
-                        bgObj.material.clone(),
-                        0.6, // medium friction
-                        0.6 // low restitution
-                      ),
-                      0
-                    )
-                    newPhysiObjCol.name = window.appConfig.currentStage + '_BGPHYSI_COL' + Math.round(Math.random() * 1000)
-                    newPhysiObjCol.position.x = newPhysiObj.position.x + ((Math.random() * 25) - 12.5)
-                    newPhysiObjCol.position.y = newPhysiObj.position.y + ((Math.random() * 25) - 12.5)
-                    if (newPhysiObjCol.position.distanceTo(other_object.position) > 5) {
-                      newPhysiObjCol.position.z = 1.5
-                      newPhysiObjCol.rotation.x = Math.random() * Math.PI
-                      newPhysiObjCol.rotation.y = Math.random() * Math.PI
-                      newPhysiObjCol.rotation.z = Math.random() * Math.PI
-                      newPhysiObjCol.material.opacity = 1
-                      window.appConfig.stages.components.dematerializeMesh({ dMesh: newPhysiObjCol, scaleAdj: (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)), spriteTypes: ['triangle', 'kite', 'square'] })
-
-                      window.appConfig.loadingPhysi.registerMesh(newPhysiObjCol)
-                      newPhysiObjCol.addEventListener('collision', function (other_object2) {
-                        if (other_object2.name === 'SPHERE0' && window.appConfig.pause === false) {
-                          window.appConfig.stages.components.dematerializeMesh({ dMesh: newPhysiObjCol, scaleAdj: (bgObjectScale / 2) + (Math.random() * (bgObjectScale / 2)), spriteTypes: ['fiveStar'] })
-                          scene.remove(newPhysiObjCol)
-                        }
-                      })
-                      scene.add(newPhysiObjCol)
-                      if (Math.random() < .05) {
-                        window.appConfig.prize(window.appConfig.currentStageIndex, Math.round(Math.random() * 10000), { x: newPhysiObj.position.x, y: newPhysiObj.position.y, z: 0 })
-                      }
-                      for (let superSounds = 0; superSounds < 4; superSounds++) {
-                        setTimeout(() => {
-                          if (window.appConfig.sfxTurnedOn) {
-                            window.appConfig.coinSounds[Math.round(Math.random() * (window.appConfig.coinSounds.length - 1))].play()
-                          }
-                          scene.add(window.appConfig.stages.components.crystal(superSounds % 3, { x: other_object.position.x + ((Math.random() * 25) - 12.5), y: other_object.position.y + ((Math.random() * 20) - 10), z: 0 }))
-                        }, superSounds * 50)
-                      }
-
-                    }
-                  }
-
-                  if (newPhysiObj) {
-                    newPhysiObj && scene.remove(newPhysiObj)
-                  }
-                }
-              });
-            })
-            scene.remove(theBg)
-            const gemStageWalls = window.appConfig.stages.components.createStage0MainBeamStructure(
-              8,
-              0.5275,
-              window.appConfig.currentStage + "_GEM_STAGE_WALLS"
-            );
-            scene.add(gemStageWalls);
+            if(createBg === false) {
+              theBg.children.forEach(bgObj => {
+                theBgObjects.push(window.appConfig.stages.components.physiRock(bgObj))
+              })
+            } 
+            // if(createBg === true) {
+            //   gemStageWalls.rotation.z = Math.PI * .25
+            // }
             const originCoor = window.appConfig.originVector
+            const multiplyVector = new THREE.Vector3(10, 10, 1)
             theBgObjects.forEach(bgO => {
               if (bgO.position.distanceTo(originCoor) < 25) {
                 bgO.position.x = bgO.position.x * 2
@@ -8433,6 +8624,36 @@
               }
               scene.add(bgO)
             })
+
+            if(createBg === true) {
+              theBg.children.forEach(bgObj => {
+                // scene.add(window.appConfig.stages.components.physiRock(bgObj, -1.2))
+                scene.add(
+                  window.appConfig.stages.components.physiRock(bgObj, -1.2, (Math.random() * 50) - 25, (Math.random() * 50) - 25)
+                )
+                // scene.add(window.appConfig.stages.components.physiRock(bgObj, 1.25))
+                // scene.add(window.appConfig.stages.components.physiRock(bgObj, 1.35))
+              })
+            }
+
+            // theBgObjects.forEach(bgO => {
+            //   let bgOclone = new Physijs.Mesh().clone(bgO)
+            //   bgOclone.position.set(150 + Math.random() * 50, 150 + Math.random() * 50, 0)
+            //   bgOclone.material.color = new THREE.Color(0xff0000)
+            //   scene.add(bgOclone)
+            //   console.log(bgOclone)
+            // })
+
+
+            scene.remove(theBg)
+            if(createBg === false) {
+              const gemStageWalls = window.appConfig.stages.components.createStage0MainBeamStructure(
+                8,
+                0.5275,
+                window.appConfig.currentStage + "_GEM_STAGE_WALLS"
+              );
+              scene.add(gemStageWalls);
+            }
 
             const createGemSuperballs = (
               s,
@@ -8456,11 +8677,13 @@
                   handleCollision: (c) => {
                     if (c.name === 'SPHERE0' && window.appConfig.pause === false) {
                       window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN_GEM' + id)
-                      let theIndicator = scene.children.find(cf => cf.name.indexOf('SB_INDICATOR') > -1 && cf.indicatorActive === undefined)
-                      theIndicator.indicatorActive = true
-                      window.appConfig.timers.activeTimers.push(
-                        window.appConfig.timers.activatePortalIndicator(theIndicator)
-                      )
+                      if(createBg === false) {
+                        let theIndicator = scene.children.find(cf => cf.name.indexOf('SB_INDICATOR') > -1 && cf.indicatorActive === undefined)
+                        theIndicator.indicatorActive = true
+                        window.appConfig.timers.activeTimers.push(
+                          window.appConfig.timers.activatePortalIndicator(theIndicator)
+                        )
+                      }
                     }
                   },
                   isIndicator: indicator,
@@ -8469,18 +8692,25 @@
 
               }
             }
-            createGemSuperballs(15, 4)
 
-            setTimeout(() => {
-              window.appConfig.timers.activeTimers.push(
-                window.appConfig.timers.addPortalToStage({ x: 0, y: 0, z: -5 }, 'PORTAL_TO_FINAL_STAGE', { x: 0, y: 0, z: 0 },
-                  window.appConfig.stages.components.finalPortalConfig())
-              )
-            }, 1000)
+            if(createBg === false) {
+              createGemSuperballs(15, 4)
+              setTimeout(() => {
+                window.appConfig.timers.activeTimers.push(
+                  window.appConfig.timers.addPortalToStage({ x: 0, y: 0, z: -5 }, 'PORTAL_TO_FINAL_STAGE', { x: 0, y: 0, z: 0 },
+                    window.appConfig.stages.components.finalPortalConfig())
+                )
+              }, 1000)
 
-            setTimeout(() => {
-              createGemSuperballs(4.5, 4, { x: 0, y: 0, z: 0 }, true, 'PORTAL_TO_FINAL_STAGE')
-            }, 1500)
+              setTimeout(() => {
+                createGemSuperballs(4.5, 4, { x: 0, y: 0, z: 0 }, true, 'PORTAL_TO_FINAL_STAGE')
+              }, 1500)
+
+            } else {
+              createGemSuperballs(60, 8)
+              createGemSuperballs(80, 8)
+
+            }
           }
         }
       },
@@ -9352,15 +9582,15 @@
         })
       }
 
-      if (window.appConfig.performanceLevel > 0 && currentTime % 5 < 1) {
-        const percentFinished = Math.abs(window.appConfig.sphere.position.y) / 375;
-        window.appConfig.percentFinished = percentFinished;
-        document.body.style.background =
-          window.appConfig.stages.components.background(
-            percentFinished,
-            window.appConfig.stages[window.appConfig.currentStage].backgroundColors
-          )
-      }
+      // if (window.appConfig.performanceLevel > 0 && currentTime % 5 < 1) {
+      //   const percentFinished = Math.abs(window.appConfig.sphere.position.y) / 375;
+      //   window.appConfig.percentFinished = percentFinished;
+      //   document.body.style.background =
+      //     window.appConfig.stages.components.background(
+      //       percentFinished,
+      //       window.appConfig.stages[window.appConfig.currentStage].backgroundColors
+      //     )
+      // }
 
       if (window.appConfig.stages[window.appConfig.currentStage].data.remotes) {
         window.appConfig.stages[window.appConfig.currentStage].data.remotes.forEach((r, ri) => {
