@@ -304,7 +304,7 @@
       "pause-menu",
       "level-select",
       "game-scoreboard",
-      // "main-menu-title",
+      "main-menu-title",
       "credits",
       // "start-button-container",
       "pause-button",
@@ -437,10 +437,13 @@
 </head>
 
 <body>
-  <div id="landing-page" class="scrolling-section margin-bottom-2 menu-container">
-    <div id="main-menu-title" class="margin-bottom-3 title">BALLSINKI</div>
-    <div id="start-button-container">
+  <div id="landing-page" class="scrolling-section margin-bottom-2">
+    <div id="" class="title">BALLSINKI</div>
+    <!-- <div id="start-button-container"> -->
       <button id="start-button" onClick="landingPageToMainMenu()">PLAY NOW</button>
+    <!-- </div> -->
+    <div style="background-image: url('images/__Ballsinki--HIDDEN_HOLLOW.jpg')">
+      Chill out while collecting gems, opening doors and unlocking secret portals in the first 3D pinball-inspired adventure by Brakli!
     </div>
   </div>
   <div id="main-loading">
@@ -1157,7 +1160,8 @@
             80 * window.appConfig.timers.data.initialBallZoom.percentComplete -
             window.appConfig.timers.data.stageResultsBallZoom.percentComplete * 80 -
             window.appConfig.timers.data.stageReset.percentComplete * 5 +
-            ((1 - window.appConfig.timers.data.landingPageZoom.percentComplete) * 250)
+            ((1 - window.appConfig.timers.data.landingPageZoom.percentComplete) * 250) + 
+            lfoPositive(5000) * (20 + (1 - window.appConfig.timers.data.landingPageZoom.percentComplete) * 20)
         }
       }
       window.appConfig.deviceOrientationRenderLoopCallback = () => {
@@ -8127,11 +8131,15 @@
           currentTime: 0,
           name: name,
           id: Math.round(Math.random() * 10000),
+          startedCallback: () => {c
+            showHTMLElements(['main-menu-title'])
+          },
           activeCallback: (percentComplete) => {
             window.appConfig.timers.data.landingPageZoom.percentComplete = percentComplete
           },
           completedCallback: () => {
             window.appConfig.landingPage = false
+            showStart()
           }
         }
       },
@@ -9838,7 +9846,6 @@
       window.appConfig.timers.activeTimers.push(
         window.appConfig.timers.landingPageZoom()
       )
-      showStart()
     }
 
     const countdown = () => {
