@@ -9,6 +9,8 @@
   <link rel="apple-touch-icon" href="icon.png">
   <title>Ballsinki</title>
   <link rel="icon" type="image/png" href="icon.png">
+<!-- TO GET LD: image, description -->
+  <!-- <script type="application/ld+json" src="js/ls.json"></script> -->
   <style>
     * {
       user-select: none;
@@ -42,6 +44,7 @@
 
     body {
       background: linear-gradient(180deg, rgb(2, 0, 36) 0%, rgba(121, 9, 117, 1) 0%, rgba(252, 231, 183, 1) 24%, rgba(0, 212, 255, 1) 72%);
+      /* background: #00ff00; */
     }
 
     #play-button {
@@ -76,6 +79,7 @@
         "%, " + colors[3] + " " +
         Math.round((1.25 - percentFinished / 2) * 100) +
         "%)";
+        // return '00ff00'
     }
 
     const lfoPositive = (t = 1000) => {
@@ -263,7 +267,7 @@
       "pause-menu",
       "level-select",
       "game-scoreboard",
-      "main-menu-title",
+      // "main-menu-title",
       "credits",
       // "start-button-container",
       "pause-button",
@@ -781,10 +785,10 @@
     </button>
   </div>
 
-  <div id="main-menu-container" class="menu-container">
+  <div id="main-menu-container" class="menu-container hide">
     <div id="main-menu-title" class="margin-bottom-3 title">BALLSINKI</div>
     <div id="start-button-container">
-      <button id="start-button" onClick="countdown()"> START</button>
+      <button id="start-button" onClick="reset({action:'reset', autoStart: true})"> START</button>
     </div>
     <div id="start-menu">
       <button id="start-level-select-button" class="start-menu-button font-b" onClick="showLevelSelect()">
@@ -1296,10 +1300,9 @@
           physics_stats.update();
         }
       });
-      window.appConfig.cameraRenderLoopCallback = () => {        
+      window.appConfig.cameraRenderLoopCallback = () => {     
         camera.position.x = window.appConfig.sphere.position.x;
         camera.position.y = window.appConfig.sphere.position.y;
-
 
         if (!window.appConfig.debug || window.appConfig.debug.previousCameraZToggle === false) {
           camera.position.z =
@@ -1312,28 +1315,27 @@
         }
       }
       window.appConfig.deviceOrientationRenderLoopCallback = () => {
-        window.appConfig.deviceOrientation.diff.gamma.push(window.appConfig.deviceOrientation.last.gamma - event.gamma)
-        window.appConfig.deviceOrientation.diff.alpha.push(window.appConfig.deviceOrientation.last.alpha - event.alpha)
-        window.appConfig.deviceOrientation.diff.beta.push(window.appConfig.deviceOrientation.last.beta - event.beta)
-        window.appConfig.deviceOrientation.last.gamma = event.gamma
-        window.appConfig.deviceOrientation.last.alpha = event.alpha
-        window.appConfig.deviceOrientation.last.beta = event.beta
-        if (window.appConfig.deviceOrientation.diff.gamma.length > 5) {
-          window.appConfig.deviceOrientation.diff.gamma.shift()
-        }
-        if (window.appConfig.deviceOrientation.diff.alpha.length > 5) {
-          window.appConfig.deviceOrientation.diff.alpha.shift()
-        }
-        if (window.appConfig.deviceOrientation.diff.beta.length > 5) {
-          window.appConfig.deviceOrientation.diff.beta.shift()
-        }
-        window.appConfig.deviceOrientation.sum.gamma = 0
-        window.appConfig.deviceOrientation.sum.alpha = 0
-        window.appConfig.deviceOrientation.sum.beta = 0
-        window.appConfig.deviceOrientation.diff.gamma.forEach(val => window.appConfig.deviceOrientation.sum.gamma += val)
-        window.appConfig.deviceOrientation.diff.alpha.forEach(val => window.appConfig.deviceOrientation.sum.alpha += val)
-        window.appConfig.deviceOrientation.diff.beta.forEach(val => window.appConfig.deviceOrientation.sum.beta += val)
-        console.log (window.appConfig.deviceOrientation.sum)
+        // window.appConfig.deviceOrientation.diff.gamma.push(window.appConfig.deviceOrientation.last.gamma - event.gamma)
+        // window.appConfig.deviceOrientation.diff.alpha.push(window.appConfig.deviceOrientation.last.alpha - event.alpha)
+        // window.appConfig.deviceOrientation.diff.beta.push(window.appConfig.deviceOrientation.last.beta - event.beta)
+        // window.appConfig.deviceOrientation.last.gamma = event.gamma
+        // window.appConfig.deviceOrientation.last.alpha = event.alpha
+        // window.appConfig.deviceOrientation.last.beta = event.beta
+        // if (window.appConfig.deviceOrientation.diff.gamma.length > 5) {
+        //   window.appConfig.deviceOrientation.diff.gamma.shift()
+        // }
+        // if (window.appConfig.deviceOrientation.diff.alpha.length > 5) {
+        //   window.appConfig.deviceOrientation.diff.alpha.shift()
+        // }
+        // if (window.appConfig.deviceOrientation.diff.beta.length > 5) {
+        //   window.appConfig.deviceOrientation.diff.beta.shift()
+        // }
+        // window.appConfig.deviceOrientation.sum.gamma = 0
+        // window.appConfig.deviceOrientation.sum.alpha = 0
+        // window.appConfig.deviceOrientation.sum.beta = 0
+        // window.appConfig.deviceOrientation.diff.gamma.forEach(val => window.appConfig.deviceOrientation.sum.gamma += val)
+        // window.appConfig.deviceOrientation.diff.alpha.forEach(val => window.appConfig.deviceOrientation.sum.alpha += val)
+        // window.appConfig.deviceOrientation.diff.beta.forEach(val => window.appConfig.deviceOrientation.sum.beta += val)
       }
       window.appConfig.deviceOrientation = {
         loop: 0,
@@ -3421,6 +3423,7 @@
               "%, " + colors[3] + " " +
               Math.round((1 - percentFinished) * 100) +
               "%)";
+            // return '00ff00'
           },
           createSwitchBeamWall: (config) => {
             const performanceAdj = window.appConfig.performanceLevel === 0 ? .25 : 0
@@ -8279,7 +8282,7 @@
           name: name,
           id: Math.round(Math.random() * 10000),
           startedCallback: () => {c
-            showHTMLElements(['main-menu-title', 'tinted-overlay'])
+            showHTMLElements(['main-menu-container', 'tinted-overlay'])
           },
           activeCallback: (percentComplete) => {
             window.appConfig.timers.data.landingPageZoom.percentComplete = percentComplete
@@ -9258,6 +9261,11 @@
             if (action && action.autoStart === false) {
               showStart()
             }
+      document.body.style.background =
+        window.appConfig.stages.components.background(
+          .5,
+          window.appConfig.stages[window.appConfig.currentStage].backgroundColors
+        )
             scene.setGravity(window.appConfig.originVector);
             window.appConfig.sphere.mass = 0
             window.appConfig.selectors.stageNumber.childNodes[0].data = 'ZONE ' + window.appConfig.stages[window.appConfig.currentStage].number
@@ -10271,6 +10279,7 @@
     };
     const showPauseMenu = () => {
       showHTMLElements(["play-button", "pause-menu", "game-scoreboard", "tinted-overlay"]);
+      // showHTMLElements(["play-button"]);
     };
 
     const showStageCountDownName = () => {
