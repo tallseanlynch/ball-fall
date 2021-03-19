@@ -532,12 +532,61 @@ button:focus {
   display: block;
   padding-top: 5%;
   padding-bottom: 5%;
-  font-size: 11vw;
+  font-size: 10.5vw;
   font-family: "Aadhunik";
   font-weight: 900;
   opacity: 1;
   background-color: rgba(0, 0, 0, 0);
   color: #ffffff;
+}
+
+.landing-title-text {
+  display: inline-block;
+  top: 33%;
+  position: relative;
+}
+
+.landing-title {
+  font-size: 14vw;
+  font-family: "Aadhunik";
+  font-weight: 900;
+  background-color: rgba(0, 0, 0, 0);
+  color: #ffffff;
+}
+
+.section-container {
+  height: 33%;  
+  text-align: center;
+  display: block;
+}
+
+.play-now {
+  position: relative;
+  top: 33%;
+  font-size: 8vw !important;
+}
+
+.margin-top {
+  margin-top: 175px;
+}
+
+.copy-section-container {
+  filter: saturate(2);
+  background-size: cover;
+  text-align: center;
+  padding-top: 15%;
+  padding-bottom: 15%;
+}
+
+.copy-section {
+  font-family: "Coves Light";
+  font-size: 4vw;
+  /* padding: 15%; */
+  max-width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  height: auto !important;
+  color: white;
 }
 
 @media only screen and (max-width: 500px) {

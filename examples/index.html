@@ -254,48 +254,48 @@
 
     localStorageInit()
 
-    const startLoadingInterval = () => {
+    // const startLoadingInterval = () => {
 
-      let loadingInterval = setInterval(() => {
-        document.querySelector('#circle0').style.left = (lfoPositive(3000) * 80 + 10) + '%'
-        document.querySelector('#circle0').style.top = (lfoPositive(1111) * 70 + 15) + '%'
-        document.querySelector('#circle1').style.left = (lfoPositive(2000) * 80 + 10) + '%'
-        document.querySelector('#circle1').style.top = (lfoPositive(3111) * 70 + 15) + '%'
-        document.querySelector('#circle2').style.left = (lfoPositive(900) * 80 + 10) + '%'
-        document.querySelector('#circle2').style.top = (lfoPositive(2111) * 70 + 15) + '%'
-        document.querySelector('#circle3').style.left = (lfoPositive(3500) * 80 + 10) + '%'
-        document.querySelector('#circle3').style.top = (lfoPositive(1715) * 70 + 15) + '%'
-        document.querySelector('#circle4').style.left = (lfoPositive(2330) * 80 + 10) + '%'
-        document.querySelector('#circle4').style.top = (lfoPositive(1121) * 70 + 15) + '%'
-        document.querySelector('#circle5').style.left = (lfoPositive(1920) * 80 + 10) + '%'
-        document.querySelector('#circle5').style.top = (lfoPositive(2139) * 70 + 15) + '%'
-        document.querySelector('#loading-gradient-curtain').style.background = generateBackground(
-          .5 + (lfoPositive(1250) / 2), [
-          "rgba(2,0,36,0)",
-          "rgba(121,9,117,1)",
-          "rgba(252,231,183,1)",
-          "rgba(0,212,255,1)"
-        ]
-        )
-      }, 1000 / 60)
-      window.appConfig.loadingInterval.clearInterval = () => {
-        clearInterval(loadingInterval)
-        document.querySelector('#circle0') && document.body.removeChild(document.querySelector('#circle0'))
-        document.querySelector('#circle1') && document.body.removeChild(document.querySelector('#circle1'))
-        document.querySelector('#circle2') && document.body.removeChild(document.querySelector('#circle2'))
-        document.querySelector('#circle3') && document.body.removeChild(document.querySelector('#circle3'))
-        document.querySelector('#circle4') && document.body.removeChild(document.querySelector('#circle4'))
-        document.querySelector('#circle5') && document.body.removeChild(document.querySelector('#circle5'))
-        document.querySelector('#loading-gradient-curtain') && document.body.removeChild(document.querySelector('#loading-gradient-curtain'))
-      }
-    }
+    //   let loadingInterval = setInterval(() => {
+    //     document.querySelector('#circle0').style.left = (lfoPositive(3000) * 80 + 10) + '%'
+    //     document.querySelector('#circle0').style.top = (lfoPositive(1111) * 70 + 15) + '%'
+    //     document.querySelector('#circle1').style.left = (lfoPositive(2000) * 80 + 10) + '%'
+    //     document.querySelector('#circle1').style.top = (lfoPositive(3111) * 70 + 15) + '%'
+    //     document.querySelector('#circle2').style.left = (lfoPositive(900) * 80 + 10) + '%'
+    //     document.querySelector('#circle2').style.top = (lfoPositive(2111) * 70 + 15) + '%'
+    //     document.querySelector('#circle3').style.left = (lfoPositive(3500) * 80 + 10) + '%'
+    //     document.querySelector('#circle3').style.top = (lfoPositive(1715) * 70 + 15) + '%'
+    //     document.querySelector('#circle4').style.left = (lfoPositive(2330) * 80 + 10) + '%'
+    //     document.querySelector('#circle4').style.top = (lfoPositive(1121) * 70 + 15) + '%'
+    //     document.querySelector('#circle5').style.left = (lfoPositive(1920) * 80 + 10) + '%'
+    //     document.querySelector('#circle5').style.top = (lfoPositive(2139) * 70 + 15) + '%'
+    //     document.querySelector('#loading-gradient-curtain').style.background = generateBackground(
+    //       .5 + (lfoPositive(1250) / 2), [
+    //       "rgba(2,0,36,0)",
+    //       "rgba(121,9,117,1)",
+    //       "rgba(252,231,183,1)",
+    //       "rgba(0,212,255,1)"
+    //     ]
+    //     )
+    //   }, 1000 / 60)
+    //   window.appConfig.loadingInterval.clearInterval = () => {
+    //     clearInterval(loadingInterval)
+    //     document.querySelector('#circle0') && document.body.removeChild(document.querySelector('#circle0'))
+    //     document.querySelector('#circle1') && document.body.removeChild(document.querySelector('#circle1'))
+    //     document.querySelector('#circle2') && document.body.removeChild(document.querySelector('#circle2'))
+    //     document.querySelector('#circle3') && document.body.removeChild(document.querySelector('#circle3'))
+    //     document.querySelector('#circle4') && document.body.removeChild(document.querySelector('#circle4'))
+    //     document.querySelector('#circle5') && document.body.removeChild(document.querySelector('#circle5'))
+    //     document.querySelector('#loading-gradient-curtain') && document.body.removeChild(document.querySelector('#loading-gradient-curtain'))
+    //   }
+    // }
 
-    startLoadingInterval()
+    // startLoadingInterval()
 
-    const toggleMainLoading = () => {
-      document.querySelector('#main-loading').style.visibility = 'hidden'
-      document.querySelector('#main-loading').style.display = 'none'
-    }
+    // const toggleMainLoading = () => {
+    //   document.querySelector('#main-loading').style.visibility = 'hidden'
+    //   document.querySelector('#main-loading').style.display = 'none'
+    // }
 
     const allElements = [
       // "landing-page",
@@ -342,8 +342,8 @@
         window.appConfig.healthCheck.healthChecked = true
         // window.appConfig.performanceLevel = JSON.parse(window.localStorage.getItem('performanceLevel')).performanceLevel
         window.appConfig.performanceLevel = 2
-        window.appConfig.loadingInterval.clearInterval()
-        toggleMainLoading()
+        // window.appConfig.loadingInterval.clearInterval()
+        // toggleMainLoading()
       }
 
     }
@@ -432,29 +432,42 @@
       position: absolute;
     }
 
+    #viewport {
+      filter: saturate(1.2)    
+    }
+
   </style>
   <link rel="stylesheet" href="./ballsinki.css">
 </head>
 
 <body>
   <div id="landing-page" class="scrolling-section margin-bottom-2">
-    <div id="" class="title">BALLSINKI</div>
-    <!-- <div id="start-button-container"> -->
-      <button id="start-button" onClick="landingPageToMainMenu()">PLAY NOW</button>
-    <!-- </div> -->
-    <div style="background-image: url('images/__Ballsinki--HIDDEN_HOLLOW.jpg')">
-      Chill out while collecting gems, opening doors and unlocking secret portals in the first 3D pinball-inspired adventure by Brakli!
+    <div class="section-container landing-title">
+      <div class="landing-title-text">BALLSINKI</div>
+    </div>
+    <div class="section-container">
+      <button id="start-button" class="play-now" onClick="landingPageToMainMenu()">PLAY NOW</button>
+    </div>
+    <div class="copy-section-container margin-top" style="background-image: url('images/__Ballsinki--HIDDEN_HOLLOW.jpg')">
+      <div class="copy-section">
+        Chill out while collecting gems, opening doors and unlocking secret portals in the first 3D pinball-inspired adventure by BRAKLI!
+      </div>
+    </div>
+    <div class="copy-section-container" style="background-image: url('images/__Ballsinki--NATURAL_WONDER.jpg')">
+      <div class="copy-section">
+        Explore the Ballsinki world by visiting different zones to collect gems and prizes of all kinds. The more you collect the more points you earn.
+      </div>
     </div>
   </div>
-  <div id="main-loading">
+  <!-- <div id="main-loading">
     <div id="loading-label">LOADING</div>
-  </div>
-  <div id="circle0" class="circle"></div>
+  </div> -->
+  <!-- <div id="circle0" class="circle"></div>
   <div id="circle1" class="circle"></div>
   <div id="circle2" class="circle"></div>
   <div id="circle3" class="circle"></div>
   <div id="circle4" class="circle"></div>
-  <div id="circle5" class="circle"></div>
+  <div id="circle5" class="circle"></div> -->
 
   <div id="viewport"></div>
   <div id="tinted-overlay"></div>
@@ -668,7 +681,7 @@
     </div>
   </div>
 
-  <div id="loading-gradient-curtain"></div>
+  <!-- <div id="loading-gradient-curtain"></div> -->
 
   <div id="stage-name-container" class="hide menu-container">
     <div id="stage-number">ZONE 1</div>
@@ -1160,8 +1173,8 @@
             80 * window.appConfig.timers.data.initialBallZoom.percentComplete -
             window.appConfig.timers.data.stageResultsBallZoom.percentComplete * 80 -
             window.appConfig.timers.data.stageReset.percentComplete * 5 +
-            ((1 - window.appConfig.timers.data.landingPageZoom.percentComplete) * 250) + 
-            lfoPositive(5000) * (20 + (1 - window.appConfig.timers.data.landingPageZoom.percentComplete) * 20)
+            ((1 - window.appConfig.timers.data.landingPageZoom.percentComplete) * 125) + 
+            lfoPositive(5000) * (20 + (1 - window.appConfig.timers.data.landingPageZoom.percentComplete) * 125)
         }
       }
       window.appConfig.deviceOrientationRenderLoopCallback = () => {
@@ -8116,7 +8129,7 @@
     setTimeout(() => {
       window.appConfig.activeTransforms = window.appConfig.stages[window.appConfig.currentStage].defaultTransforms
     }, 1000)
-    showHTMLElements([])
+    showHTMLElements(["tinted-overlay"])
 
     const timers = {
 
@@ -8132,7 +8145,7 @@
           name: name,
           id: Math.round(Math.random() * 10000),
           startedCallback: () => {c
-            showHTMLElements(['main-menu-title'])
+            showHTMLElements(['main-menu-title', 'tinted-overlay'])
           },
           activeCallback: (percentComplete) => {
             window.appConfig.timers.data.landingPageZoom.percentComplete = percentComplete
