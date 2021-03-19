@@ -17,6 +17,7 @@
       -webkit-user-select: none;
       -o-user-select: none;
       overscroll-behavior: none;
+      box-sizing: border-box;
     }
 
     body,
@@ -26,6 +27,7 @@
       height: 100%;
       width: 100%;
       overflow: hidden;
+      background-color: black;
     }
 
     html {
@@ -254,49 +256,6 @@
 
     localStorageInit()
 
-    // const startLoadingInterval = () => {
-
-    //   let loadingInterval = setInterval(() => {
-    //     document.querySelector('#circle0').style.left = (lfoPositive(3000) * 80 + 10) + '%'
-    //     document.querySelector('#circle0').style.top = (lfoPositive(1111) * 70 + 15) + '%'
-    //     document.querySelector('#circle1').style.left = (lfoPositive(2000) * 80 + 10) + '%'
-    //     document.querySelector('#circle1').style.top = (lfoPositive(3111) * 70 + 15) + '%'
-    //     document.querySelector('#circle2').style.left = (lfoPositive(900) * 80 + 10) + '%'
-    //     document.querySelector('#circle2').style.top = (lfoPositive(2111) * 70 + 15) + '%'
-    //     document.querySelector('#circle3').style.left = (lfoPositive(3500) * 80 + 10) + '%'
-    //     document.querySelector('#circle3').style.top = (lfoPositive(1715) * 70 + 15) + '%'
-    //     document.querySelector('#circle4').style.left = (lfoPositive(2330) * 80 + 10) + '%'
-    //     document.querySelector('#circle4').style.top = (lfoPositive(1121) * 70 + 15) + '%'
-    //     document.querySelector('#circle5').style.left = (lfoPositive(1920) * 80 + 10) + '%'
-    //     document.querySelector('#circle5').style.top = (lfoPositive(2139) * 70 + 15) + '%'
-    //     document.querySelector('#loading-gradient-curtain').style.background = generateBackground(
-    //       .5 + (lfoPositive(1250) / 2), [
-    //       "rgba(2,0,36,0)",
-    //       "rgba(121,9,117,1)",
-    //       "rgba(252,231,183,1)",
-    //       "rgba(0,212,255,1)"
-    //     ]
-    //     )
-    //   }, 1000 / 60)
-    //   window.appConfig.loadingInterval.clearInterval = () => {
-    //     clearInterval(loadingInterval)
-    //     document.querySelector('#circle0') && document.body.removeChild(document.querySelector('#circle0'))
-    //     document.querySelector('#circle1') && document.body.removeChild(document.querySelector('#circle1'))
-    //     document.querySelector('#circle2') && document.body.removeChild(document.querySelector('#circle2'))
-    //     document.querySelector('#circle3') && document.body.removeChild(document.querySelector('#circle3'))
-    //     document.querySelector('#circle4') && document.body.removeChild(document.querySelector('#circle4'))
-    //     document.querySelector('#circle5') && document.body.removeChild(document.querySelector('#circle5'))
-    //     document.querySelector('#loading-gradient-curtain') && document.body.removeChild(document.querySelector('#loading-gradient-curtain'))
-    //   }
-    // }
-
-    // startLoadingInterval()
-
-    // const toggleMainLoading = () => {
-    //   document.querySelector('#main-loading').style.visibility = 'hidden'
-    //   document.querySelector('#main-loading').style.display = 'none'
-    // }
-
     const allElements = [
       // "landing-page",
       "sounds",
@@ -430,12 +389,143 @@
       width: 100%;
       height: 100%;
       position: absolute;
+      text-align: center;
     }
 
     #viewport {
       filter: saturate(1.2)    
     }
 
+    .phone-image-0 {
+      width: 60%;
+    }
+
+    .phone-image-0-container {
+      /* padding: 15%; */
+      /* top:-15%; */
+      text-align: center;
+      margin-top: 15%;
+      margin-bottom: 15%;
+    }
+
+    .relative {
+      position: relative;
+    }
+
+    .absolute {
+      position: absolute;
+    }
+
+    .landing-title-text {
+      display: inline-block;
+      top: 33%;
+      position: relative;
+    }
+
+    .landing-title {
+      font-size: 14vw;
+      font-family: "Aadhunik";
+      font-weight: 900;
+      background-color: rgba(0, 0, 0, 0);
+      color: #ffffff;
+    }
+
+    .section-container {
+      height: 33%;  
+      text-align: center;
+      display: block;
+    }
+
+    .play-now {
+      position: relative;
+      top: 33%;
+      font-size: 8vw !important;
+    }
+
+    .margin-top {
+      margin-top: 175px;
+    }
+
+    .copy-section-container {
+      filter: saturate(2);
+      background-size: cover;
+      text-align: center;
+      padding-top: 15%;
+      padding-bottom: 15%;
+      /* max-width: 800px; */
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .copy-section {
+      font-family: "Coves Light";
+      font-size: 4vw;
+      /* padding: 15%; */
+      max-width: 50%;
+      margin-left: auto;
+      margin-right: auto;
+      height: auto !important;
+      color: white;
+    }
+
+    .instructions-text {
+      font-family: "Coves Light";
+      font-size: 4vw;
+      color: white;
+      display: table-cell;
+      vertical-align: middle;
+      width: 66%;
+    }
+
+    /* @media only screen and (min-width: 800px) {
+      .copy-section, .features {
+        font-size: 3vw !important;
+      }
+    } */
+
+    .table-display {
+      display: table;
+      max-width: 60%;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 5%;
+    }
+
+    .table-thumbnail {
+      display: table-cell;
+      width: 32%;
+      display: inline-block;
+      padding: 2%;
+    }
+
+    .features {
+      margin-bottom: 10%;
+      font-size: 8vw;
+    }
+
+    .landing-instruction {
+      width: 60%;
+      vertical-align: middle;
+    }
+
+    .landing-instructions-image {
+      max-width: 76px;
+      display: table-cell;
+    }
+
+    .landing-gallery-container {
+      /* background-color: rgba(0, 0, 0, .6); */
+      background-image: linear-gradient(to bottom, rgba(0,0,0,.9), rgba(0,0,0,.6));
+    }
+
+    .black-grad-bg {
+      background-image: linear-gradient(to bottom, rgba(0,0,0,.6), rgba(0,0,0,0));
+    }
+
+    .thumb {
+      margin-bottom: 1% !important;
+    }
   </style>
   <link rel="stylesheet" href="./ballsinki.css">
 </head>
@@ -448,16 +538,60 @@
     <div class="section-container">
       <button id="start-button" class="play-now" onClick="landingPageToMainMenu()">PLAY NOW</button>
     </div>
-    <div class="copy-section-container margin-top" style="background-image: url('images/__Ballsinki--HIDDEN_HOLLOW.jpg')">
+    <div class="copy-section-container" style="background-image: url('images/__Ballsinki--merged.jpg')">
       <div class="copy-section">
         Chill out while collecting gems, opening doors and unlocking secret portals in the first 3D pinball-inspired adventure by BRAKLI!
       </div>
-    </div>
-    <div class="copy-section-container" style="background-image: url('images/__Ballsinki--NATURAL_WONDER.jpg')">
+      <div class="phone-image-0-container" style="z-index:1">
+        <img class="phone-image-0" src="images/optimized-landscape-phone.png">
+      </div>
       <div class="copy-section">
         Explore the Ballsinki world by visiting different zones to collect gems and prizes of all kinds. The more you collect the more points you earn.
       </div>
     </div>
+    <div class="copy-section-container landing-gallery-container">
+      <div class="copy-section features">
+        Gallery
+      </div>
+      <div class="table-display thumb">
+        <img class="table-thumbnail" src="images/thumb1@2x.png">
+        <img class="table-thumbnail" src="images/thumb2@2x.png">
+        <img class="table-thumbnail" src="images/thumb3@2x.png">
+      </div>
+      <div class="table-display thumb">
+        <img class="table-thumbnail" src="images/thumb4@2x.png">
+        <img class="table-thumbnail" src="images/thumb5@2x.png">
+        <img class="table-thumbnail" src="images/thumb6@2x.png">
+      </div>
+      <div class="table-display thumb">
+        <img class="table-thumbnail" src="images/thumb7@2x.png">
+        <img class="table-thumbnail" src="images/thumb8@2x.png">
+        <img class="table-thumbnail" src="images/thumb9@2x.png">
+      </div>
+    </div>
+
+    <div class="copy-section-container black-grad-bg">
+      <div class="copy-section features">
+        Features
+      </div>
+      <div class="table-display">
+        <img class="landing-instructions-image" src="images/Gems@2x.png">
+        <div class="instructions-text">Collect crystals to score as many points as possible!</div>
+      </div>
+      <div class="table-display">
+        <img class="landing-instructions-image" src="images/time bonus@2x.png">
+        <div class="instructions-text">Pick up time bonuses to extend your gameplay.</div>
+      </div>
+      <div class="table-display">
+        <img class="landing-instructions-image" src="images/ball sprites@2x.png">
+        <div class="instructions-text">Sprites are here to help! They hover near the ball to collect extra items as you navigate the zone.</div>
+      </div>
+      <div class="table-display">
+        <img class="landing-instructions-image" src="images/superball-halo.png">
+        <div class="instructions-text">Smash into a superball for an explosion of gems!</div>
+      </div>
+    </div>
+
   </div>
   <!-- <div id="main-loading">
     <div id="loading-label">LOADING</div>
