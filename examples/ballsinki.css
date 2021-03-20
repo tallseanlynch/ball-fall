@@ -348,6 +348,12 @@ button:focus {
   width: 100%;
   height: 100%;
   opacity: .3;
+  /* animation: tint-in .25s; */
+}
+@keyframes tint-in {
+  
+  0%   { opacity: 0; }
+  100% { opacity: .3; }
 }
 
 @keyframes flux-tint {
@@ -508,7 +514,6 @@ button:focus {
   position: absolute;
   left: 0px;
   top: 0px;
-  background: rgba(125, 125, 125, .25);
   z-index: 1000;
   box-sizing: border-box;
   display: inline-block;
@@ -547,11 +552,14 @@ button:focus {
 }
 
 .landing-title {
+  width: 100%;
   font-size: 14vw;
   font-family: "Aadhunik";
   font-weight: 900;
   background-color: rgba(0, 0, 0, 0);
   color: #ffffff;
+  position: absolute;
+  z-index: 100000000;
 }
 
 .section-container {
