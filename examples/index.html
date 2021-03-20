@@ -311,6 +311,45 @@
 
     }
 
+    window.appConfig.imageViewer = false
+    window.appConfig.galleryImageIndex = 0
+
+    const toggleImageViewer = () => {
+      window.appConfig.imageViewer = !window.appConfig.imageViewer
+      if(window.appConfig.imageViewer === false) {
+        document.querySelector('#image-viewer').classList.add('hide')
+      }
+      if(window.appConfig.imageViewer === true) {
+        document.querySelector('#image-viewer').classList.remove('hide')
+      }
+    }
+
+    const showImage = (e, toggle = true) => {
+      if(toggle === true) {
+        toggleImageViewer()
+      }
+      window.appConfig.galleryImageIndex = e
+      if(window.appConfig && window.appConfig.selectors) {
+        window.appConfig.selectors.galleryImage0.src = 'images/' + (Number(e) + 1) + '.png'
+      }
+    }
+
+    const incrementImageIndex = () => {
+      window.appConfig.galleryImageIndex ++
+      if(window.appConfig.galleryImageIndex > 8) {
+        window.appConfig.galleryImageIndex = 0
+      }
+      showImage(window.appConfig.galleryImageIndex, false)
+    }
+
+    const decrementImageIndex = () => {
+      window.appConfig.galleryImageIndex --
+      if(window.appConfig.galleryImageIndex < 0) {
+        window.appConfig.galleryImageIndex = 8
+      }
+      showImage(window.appConfig.galleryImageIndex, false)
+    }
+
   </script>
   <style>
     #loading-gradient-curtain {
@@ -400,10 +439,6 @@
       filter: saturate(1.2)    
     }
 
-    .phone-image-0 {
-      width: 60%;
-    }
-
     .phone-image-0-container {
       /* padding: 15%; */
       /* top:-15%; */
@@ -440,6 +475,10 @@
       display: block;
     }
 
+    .play-now-container {
+      height: 50% !important;
+    }
+
     .play-now {
       position: relative;
       top: 33%;
@@ -466,11 +505,15 @@
       font-family: "Coves Light";
       font-size: 4vw;
       /* padding: 15%; */
-      max-width: 50%;
       margin-left: auto;
       margin-right: auto;
       height: auto !important;
       color: white;
+    }
+
+    .copy-section, .table-display {
+      width: 50%;
+      max-width: 600px;
     }
 
     .instructions-text {
@@ -514,7 +557,7 @@
     }
 
     .landing-instructions-image {
-      max-width: 76px;
+      max-width: 100px;
       display: table-cell;
     }
 
@@ -542,16 +585,78 @@
     .footer-copy {
       padding: 10%;
     }
+
+    #image-viewer {
+      z-index: 10000;
+      text-align: center;
+      background-color: rgba(0, 0, 0, .5);
+    }
+
+    .image-left {
+      position: absolute;
+      top: 50%;
+      left: 5%;
+      font-family: "Coves Light";
+      font-size: 20vw;
+      color: white;
+    }
+
+    .image-right {
+      position: absolute;
+      top: 50%;
+      right: 5%;
+      font-family: "Coves Light";
+      font-size: 20vw;
+      color: white;
+    }
+
+    .image-x {
+      position: absolute;
+      left: 25px;
+      top: 25px;
+      font-family: "Coves Light";
+      font-size: 10vw;
+      color: white;
+      font-weight: bold;
+    }
+
+    .exit-trigger {
+      width: 100%;
+      height: 100%;
+      position:absolute;
+      top: 0px;
+      left: 0px;
+    }
+
+    .phone-image-0 {
+      width: 60%;
+    }
+
+    .gallery-image-0 {
+      height: 80%;
+      margin-top: 10%;
+      padding: 32px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
   </style>
   <link rel="stylesheet" href="./ballsinki.css">
 </head>
 
 <body>
+  <div id="image-viewer" class="hide menu-container">
+    <div class="image-left" onClick="decrementImageIndex()"><</div>
+    <div class="image-right" onClick="incrementImageIndex()">></div>
+    <div class="image-x" onClick="toggleImageViewer()">X</div>
+    <img class="gallery-image-0" src="images/1.png">
+    <!-- <div class="exit-trigger" onClick="toggleImageViewer()"></div> -->
+  </div>
   <div id="landing-page" class="scrolling-section margin-bottom-2">
     <div class="section-container landing-title">
       <div class="landing-title-text">BALLSINKI</div>
     </div>
-    <div class="section-container">
+    <div class="section-container play-now-container">
       <button id="start-button" class="play-now" onClick="landingPageToMainMenu()">PLAY NOW</button>
     </div>
     <div class="copy-section-container" style="background-image: url('images/__Ballsinki--merged.jpg')">
@@ -570,19 +675,19 @@
         Gallery
       </div>
       <div class="table-display thumb">
-        <img class="table-thumbnail" src="images/thumb1@2x.png">
-        <img class="table-thumbnail" src="images/thumb2@2x.png">
-        <img class="table-thumbnail" src="images/thumb3@2x.png">
+        <img class="table-thumbnail" onClick="showImage(0)" src="images/thumb1@2x.png">
+        <img class="table-thumbnail" onClick="showImage(1)" src="images/thumb2@2x.png">
+        <img class="table-thumbnail" onClick="showImage(2)" src="images/thumb3@2x.png">
       </div>
       <div class="table-display thumb">
-        <img class="table-thumbnail" src="images/thumb4@2x.png">
-        <img class="table-thumbnail" src="images/thumb5@2x.png">
-        <img class="table-thumbnail" src="images/thumb6@2x.png">
+        <img class="table-thumbnail" onClick="showImage(3)" src="images/thumb4@2x.png">
+        <img class="table-thumbnail" onClick="showImage(4)" src="images/thumb5@2x.png">
+        <img class="table-thumbnail" onClick="showImage(5)" src="images/thumb6@2x.png">
       </div>
       <div class="table-display thumb">
-        <img class="table-thumbnail" src="images/thumb7@2x.png">
-        <img class="table-thumbnail" src="images/thumb8@2x.png">
-        <img class="table-thumbnail" src="images/thumb9@2x.png">
+        <img class="table-thumbnail" onClick="showImage(6)" src="images/thumb7@2x.png">
+        <img class="table-thumbnail" onClick="showImage(7)" src="images/thumb8@2x.png">
+        <img class="table-thumbnail" onClick="showImage(8)" src="images/thumb9@2x.png">
       </div>
     </div>
 
@@ -3686,21 +3791,19 @@
             window.appConfig.finalStageActiveTransforms = true
 
 
-            createCrystalCircle('STAGE0', 6.25, { x: 0, y: 0 }, 0, 16)
-            createCrystalCircle('STAGE0', 6.5, { x: 0, y: 0 }, 1, 16)
-            createCrystalCircle('STAGE0', 6.75, { x: 0, y: 0 }, 2, 16)
-            createCrystalCircle('STAGE0', 7, { x: 0, y: 0 }, 1, 16)
-            createCrystalCircle('STAGE0', 7.25, { x: 0, y: 0 }, 2, 16)
-            createCrystalCircle('STAGE0', 7.5, { x: 0, y: 0 }, 1, 16)
-            createCrystalCircle('STAGE0', 7.75, { x: 0, y: 0 }, 2, 16)
+            createCrystalCircle(window.appConfig.currentStage, 6.25, { x: 0, y: 0 }, 0, 16)
+            createCrystalCircle(window.appConfig.currentStage, 6.5, { x: 0, y: 0 }, 1, 16)
+            createCrystalCircle(window.appConfig.currentStage, 6.75, { x: 0, y: 0 }, 2, 16)
+            createCrystalCircle(window.appConfig.currentStage, 7, { x: 0, y: 0 }, 1, 16)
+            createCrystalCircle(window.appConfig.currentStage, 7.25, { x: 0, y: 0 }, 2, 16)
+            createCrystalCircle(window.appConfig.currentStage, 7.5, { x: 0, y: 0 }, 1, 16)
+            createCrystalCircle(window.appConfig.currentStage, 7.75, { x: 0, y: 0 }, 2, 16)
 
-            createCrystalCircle('STAGE0', 8.5, { x: 0, y: 0 }, 0, 32)
-            createCrystalCircle('STAGE0', 8.75, { x: 0, y: 0 }, 1, 32)
-            createCrystalCircle('STAGE0', 9, { x: 0, y: 0 }, 2, 32)
-            createCrystalCircle('STAGE0', 9.25, { x: 0, y: 0 }, 1, 32)
-            createCrystalCircle('STAGE0', 9.5, { x: 0, y: 0 }, 2, 32)
-            // createCrystalCircle('STAGE0', 8.825, { x: 0, y: 0 }, 1, 32)
-            // createCrystalCircle('STAGE0', 9, { x: 0, y: 0 }, 2, 32)
+            createCrystalCircle(window.appConfig.currentStage, 8.5, { x: 0, y: 0 }, 0, 32)
+            createCrystalCircle(window.appConfig.currentStage, 8.75, { x: 0, y: 0 }, 1, 32)
+            createCrystalCircle(window.appConfig.currentStage, 9, { x: 0, y: 0 }, 2, 32)
+            createCrystalCircle(window.appConfig.currentStage, 9.25, { x: 0, y: 0 }, 1, 32)
+            createCrystalCircle(window.appConfig.currentStage, 9.5, { x: 0, y: 0 }, 2, 32)
 
 
             const finalStageWalls0 = window.appConfig.stages.components.createStage0MainBeamStructure(
@@ -10130,6 +10233,7 @@
       window.appConfig.activeTransforms = []
     };
     window.appConfig.selectors = {
+      galleryImage0: document.querySelector(".gallery-image-0"),
       scoreHundreds: document.querySelector("#score-hundreds-text"),
       scoreThousands: document.querySelector("#score-thousands-text"),
       scoreMillions: document.querySelector("#score-millions-text"),
