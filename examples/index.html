@@ -9,7 +9,7 @@
   <link rel="apple-touch-icon" href="icon.png">
   <title>Ballsinki</title>
   <link rel="icon" type="image/png" href="icon.png">
-<!-- TO GET LD: image, description -->
+  <!-- TO GET LD: image, description -->
   <!-- <script type="application/ld+json" src="js/ls.json"></script> -->
   <style>
     * {
@@ -79,7 +79,7 @@
         "%, " + colors[3] + " " +
         Math.round((1.25 - percentFinished / 2) * 100) +
         "%)";
-        // return '00ff00'
+      // return '00ff00'
     }
 
     const lfoPositive = (t = 1000) => {
@@ -96,6 +96,7 @@
     };
 
     window.appConfig = {
+      isLandingPage: true,
       finalStageActiveTransforms: false,
       isPortalStart: false,
       pauseSuperballs: false,
@@ -259,36 +260,46 @@
     }
 
     localStorageInit()
-
-    const allElements = [
-      // "landing-page",
-      "sounds",
-      // "start-menu",
-      "pause-menu",
-      "level-select",
-      "game-scoreboard",
-      // "main-menu-title",
-      "credits",
-      // "start-button-container",
-      "pause-button",
-      "play-button",
-      "tinted-overlay",
-      "report",
-      "stage-name-container",
-      "stage-countdown-3-container",
-      "stage-countdown-2-container",
-      "stage-countdown-1-container",
-      "stage-countdown-start-container",
-      // "main-loading",
-      "instructions",
-      "main-menu-container"
+    
+window.appConfig.allElements = [
+      { id: "sounds", hidden: undefined, landingPage: false },
+      { id: "pause-menu", hidden: undefined, landingPage: false },
+      { id: "level-select", hidden: undefined, landingPage: false },
+      { id: "game-scoreboard", hidden: undefined, landingPage: false },
+      { id: "credits", hidden: undefined, landingPage: false },
+      { id: "pause-button", hidden: undefined, landingPage: false },
+      { id: "play-button", hidden: undefined, landingPage: false },
+      { id: "tinted-overlay", hidden: undefined, landingPage: false },
+      { id: "report", hidden: undefined, landingPage: false },
+      { id: "stage-name-container", hidden: undefined, landingPage: false },
+      { id: "stage-countdown-3-container", hidden: undefined, landingPage: false },
+      { id: "stage-countdown-2-container", hidden: undefined, landingPage: false },
+      { id: "stage-countdown-1-container", hidden: undefined, landingPage: false },
+      { id: "stage-countdown-start-container", hidden: undefined, landingPage: false },
+      { id: "instructions", hidden: undefined, landingPage: false },
+      { id: "main-menu-container", hidden: undefined, landingPage: false },
+      { id: "landing-title-section", hidden: undefined, landingPage: true },
+      { id: "landing-page", hidden: undefined, landingPage: false}
     ];
-    const showHTMLElements = (elements) => {
-      allElements.forEach((el) => {
-        document.getElementById(el).classList.add("hide");
-      });
+    window.appConfig.registerDOMElements = (elements) => {
       elements.forEach((el) => {
-        document.getElementById(el).classList.remove("hide");
+        el.selector = document.getElementById(el.id)
+        Array.from(el.selector.classList).indexOf('hide') > -1 ? el.hidden = true : el.hidden = false
+      });
+    }
+
+    const showHTMLElements = (elements) => {
+      window.appConfig.allElements.forEach((el) => {
+        if (elements.indexOf(el.id) > -1 && el.hidden === true) {
+          el.selector.classList.remove('hide')
+          el.hidden = false
+        }
+        if (elements.indexOf(el.id) === -1 && el.hidden === false) {
+          if (window.appConfig.isLandingPage === false || (window.appConfig.isLandingPage === true && el.landingPage === false)) {
+            el.selector.classList.add('hide')
+            el.hidden = true
+          }
+        }
       });
     };
 
@@ -436,7 +447,7 @@
     }
 
     #viewport {
-      filter: saturate(1.2)    
+      filter: saturate(1.2)
     }
 
     .phone-image-0-container {
@@ -681,10 +692,11 @@
     <img class="gallery-image-0" src="images/1.png">
     <!-- <div class="exit-trigger" onClick="toggleImageViewer()"></div> -->
   </div>
-  <div id="landing-page" class="scrolling-section margin-bottom-2">
-    <div class="section-container landing-title">
+  <div id="landing-page-wrapper" class="scrolling-section">
+    <div id="landing-title-section" class="section-container landing-title">
       <div class="landing-title-text">BALLSINKI</div>
     </div>
+  <div id="landing-page" class="margin-bottom-2">
     <div class="section-container play-now-container">
       <button id="start-button" class="play-now" onClick="landingPageToMainMenu()">PLAY NOW</button>
     </div>
@@ -748,8 +760,7 @@
         <img class="brakli-logo" src="images/brakli logo@2x.png">
       </div>
     </div>
-
-
+  </div>
   </div>
   <!-- <div id="main-loading">
     <div id="loading-label">LOADING</div>
@@ -940,7 +951,7 @@
   </div>
 
   <div id="main-menu-container" class="menu-container hide">
-    <div id="main-menu-title" class="margin-bottom-3 title">BALLSINKI</div>
+    <!-- <div id="main-menu-title" class="margin-bottom-3 title">BALLSINKI</div> -->
     <div id="start-button-container">
       <button id="start-button" onClick="reset({action:'reset', autoStart: true})"> START</button>
     </div>
@@ -1288,13 +1299,17 @@
     }
 
     const loadSound = (options) => {
-      const { src, type, onplay } = options;
+      const { src, type, onplay, onstop, onpause, onend, onplayerror } = options;
       const sound = new Howl({
         src: [src],
         autoPlay: false,
         loop: type === "backgroundMusic" ? true : false,
         volume: type === "backgroundMusic" ? .3 : .1,
-        onplay: onplay !== undefined ? onplay : () => { }
+        onplay: onplay !== undefined ? onplay : () => { },
+        onstop: onstop !== undefined ? onstop : () => { },
+        onpause: onpause !== undefined ? onpause : () => { },
+        onend: onend !== undefined ? onend : () => { },
+        onplayerror: onplayerror !== undefined ? onplayerror : () => { }
       }).once("load", () => {
         if (type === "backgroundMusic") {
           window.appConfig.howlSounds.backgroundMusic = sound;
@@ -1418,6 +1433,7 @@
     }
 
     initScene = function () {
+      window.appConfig.registerDOMElements(window.appConfig.allElements)
       window.appConfig.soundsBackDestination = "";
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -1454,7 +1470,7 @@
           physics_stats.update();
         }
       });
-      window.appConfig.cameraRenderLoopCallback = () => {     
+      window.appConfig.cameraRenderLoopCallback = () => {
         camera.position.x = window.appConfig.sphere.position.x;
         camera.position.y = window.appConfig.sphere.position.y;
 
@@ -1464,7 +1480,7 @@
             80 * window.appConfig.timers.data.initialBallZoom.percentComplete -
             window.appConfig.timers.data.stageResultsBallZoom.percentComplete * 80 -
             window.appConfig.timers.data.stageReset.percentComplete * 5 +
-            ((1 - window.appConfig.timers.data.landingPageZoom.percentComplete) * 125) + 
+            ((1 - window.appConfig.timers.data.landingPageZoom.percentComplete) * 125) +
             lfoPositive(5000) * (20 + (1 - window.appConfig.timers.data.landingPageZoom.percentComplete) * 125)
         }
       }
@@ -1509,7 +1525,7 @@
           beta: 0
         }
       }
-      window.addEventListener("deviceorientation", window.appConfig.deviceOrientationRenderLoopCallback );
+      window.addEventListener("deviceorientation", window.appConfig.deviceOrientationRenderLoopCallback);
 
       window.appConfig.lighting = {
         hemisphereLight: new THREE.HemisphereLight(
@@ -2226,7 +2242,22 @@
 
           howlSounds.backgroundMusic = loadSound({
             src: stageSounds.backgroundMusic,
-            type: "backgroundMusic"
+            type: "backgroundMusic",
+            onplay: () => {
+              "playing bgMusic"
+            },
+            onstop: () => {
+              "stopping bgMusic"
+            },
+            onpause: () => {
+              "pausing bgMusic"
+            },
+            onend: () => {
+              "ending bgMusic"
+            },
+            onplayerror: () => {
+              "error playing bgMusic"
+            }
           })
           howlSounds.circuitLine = loadSound({
             src: "sounds/Sound FX/sfx-Circuit-Line.mp3",
@@ -2970,14 +3001,17 @@
           config.scaleAdj === undefined ? config.scaleAdj = 2 : null
           config.spriteTypes === undefined ? config.spriteTypes = ['square'] : null
 
-          let dematColor 
-          if (config.dMesh.material && config.dMesh.material.color) {
+          let dematColor
+          if (config.dMesh.dematColor) {
+            dematColor = config.dMesh.dematColor
+          }else if (config.dMesh.material && config.dMesh.material.color) {
             dematColor = new THREE.Color().copy(config.dMesh.material.color)
           } else {
             dematColor = new THREE.Color().copy(config.dMesh.children[0].material.color)
           }
+
           let theDSpriteMaterial = new THREE.MeshPhongMaterial({
-            color:  dematColor,
+            color: dematColor,
             transparent: true,
             opacity: 1
           })
@@ -3128,7 +3162,7 @@
                 if (coinValue > 0) {
                   window.appConfig.score.coins += potentiallyGrabbedCoin.coinValue;
                   if (potentiallyGrabbedCoin.featureType === "COIN") {
-                  window.appConfig.stages.components.dematerializeMesh({ dMesh: potentiallyGrabbedCoin, spriteTypes: ['triangle', 'circle'] })
+                    window.appConfig.stages.components.dematerializeMesh({ dMesh: potentiallyGrabbedCoin, spriteTypes: ['triangle', 'circle'] })
 
                   }
                   potentiallyGrabbedCoin.visible = false
@@ -3157,7 +3191,7 @@
 
                   if (all === false) {
                     if (potentiallyGrabbedCoin.name.indexOf('RUBY') > -1) {
-                  window.appConfig.stages.components.dematerializeMesh({ dMesh: potentiallyGrabbedCoin, spriteTypes: ['circle', 'fiveStar', 'fourStar'] })
+                      window.appConfig.stages.components.dematerializeMesh({ dMesh: potentiallyGrabbedCoin, spriteTypes: ['circle', 'fiveStar', 'fourStar'] })
 
                       let rubyIndicator = scene.children.find(c => c.name.indexOf('R_INDICATOR') > -1)
                       window.appConfig.timers.activeTimers.push(
@@ -3166,7 +3200,7 @@
                     }
 
                     if (potentiallyGrabbedCoin.name.indexOf('EMERALD') > -1) {
-                  window.appConfig.stages.components.dematerializeMesh({ dMesh: potentiallyGrabbedCoin, spriteTypes: ['circle', 'fiveStar', 'fourStar'] })
+                      window.appConfig.stages.components.dematerializeMesh({ dMesh: potentiallyGrabbedCoin, spriteTypes: ['circle', 'fiveStar', 'fourStar'] })
                       let emeraldIndicator = scene.children.find(c => c.name.indexOf('E_INDICATOR') > -1)
                       window.appConfig.timers.activeTimers.push(
                         window.appConfig.timers.activatePortalIndicator(emeraldIndicator)
@@ -3174,7 +3208,7 @@
                     }
 
                     if (potentiallyGrabbedCoin.name.indexOf('DIAMOND') > -1) {
-                  window.appConfig.stages.components.dematerializeMesh({ dMesh: potentiallyGrabbedCoin, spriteTypes: ['circle', 'fiveStar', 'fourStar'] })
+                      window.appConfig.stages.components.dematerializeMesh({ dMesh: potentiallyGrabbedCoin, spriteTypes: ['circle', 'fiveStar', 'fourStar'] })
                       let diamondIndicator = scene.children.find(c => c.name.indexOf('D_INDICATOR') > -1)
                       window.appConfig.timers.activeTimers.push(
                         window.appConfig.timers.activatePortalIndicator(diamondIndicator)
@@ -3191,7 +3225,7 @@
                   }
 
                 } else if (prizeValue > 0 && all === false) {
-                  window.appConfig.stages.components.dematerializeMesh({ dMesh: potentiallyGrabbedCoin, spriteTypes: ['circle','fourStar'] })
+                  window.appConfig.stages.components.dematerializeMesh({ dMesh: potentiallyGrabbedCoin, spriteTypes: ['circle', 'fourStar'] })
                   if (window.appConfig.sfxTurnedOn) {
                     window.appConfig.howlSounds.prize.play()
                   }
@@ -4169,7 +4203,7 @@
                   ballPosition: new THREE.Vector3(thePortalMesh.portalTarget.x, thePortalMesh.portalTarget.y, 0)
                 }))
                 let theSphere = window.appConfig.sphere
-                window.appConfig.stages.components.dematerializeMesh({ dMesh: theSphere , spriteTypes: ['circle']})
+                window.appConfig.stages.components.dematerializeMesh({ dMesh: theSphere, spriteTypes: ['circle'] })
                 window.appConfig.howlSounds.backgroundMusic.changeSrc(window.appConfig.stages[window.appConfig.currentStage].sounds.backgroundMusic, true)
               },
               portalConfig: {
@@ -8048,7 +8082,7 @@
         theSpaceSphere.scale.y = 0
         theSpaceSphere.scale.z = 0
         theSpaceSphere.name = 'THE_SPACE_SPHERE'
-
+        theSpaceSphere.dematColor = whiteColor
         theMesh.add(theSpaceSphere)
         let theSpritePoints = []
         theMesh.geometry.vertices.forEach((p, pi) => {
@@ -8418,7 +8452,7 @@
     setTimeout(() => {
       window.appConfig.activeTransforms = window.appConfig.stages[window.appConfig.currentStage].defaultTransforms
     }, 1000)
-    showHTMLElements(["tinted-overlay"])
+    showHTMLElements(["tinted-overlay", "landing-page", "landing-title-section"])
 
     const timers = {
 
@@ -8433,8 +8467,8 @@
           currentTime: 0,
           name: name,
           id: Math.round(Math.random() * 10000),
-          startedCallback: () => {c
-            showHTMLElements(['main-menu-container', 'tinted-overlay'])
+          startedCallback: () => {
+            showHTMLElements(["landing-title-section", "tinted-overlay"])
           },
           activeCallback: (percentComplete) => {
             window.appConfig.timers.data.landingPageZoom.percentComplete = percentComplete
@@ -8447,7 +8481,7 @@
       },
       removeAndDemeshWalls: (mesh) => {
         const name = 'REMOVE_AND_DEMESH_WALLS_' + Math.round(Math.random() * 10000)
-        const removeAndDemeshVector = new THREE.Vector3(0,0,0)
+        const removeAndDemeshVector = new THREE.Vector3(0, 0, 0)
         return {
           started: 0,
           ended: 0,
@@ -8460,10 +8494,10 @@
           activeCallback: () => {
             mesh.children.forEach(beam => {
               // beam.children.forEach(beamChild => {
-//                beam.getWorldPosition(removeAndDemeshVector)
-                if(Math.random() < .2) {
-                  window.appConfig.stages.components.dematerializeMesh({ dMesh: beam, scaleAdj: 5 + Math.random() * 5 , spriteTypes: ['fourStar', 'circle', 'square', 'fiveStar']})
-                }
+              //                beam.getWorldPosition(removeAndDemeshVector)
+              if (Math.random() < .2) {
+                window.appConfig.stages.components.dematerializeMesh({ dMesh: beam, scaleAdj: 5 + Math.random() * 5, spriteTypes: ['fourStar', 'circle', 'square', 'fiveStar'] })
+              }
               // })
               // console.log(removeAndDemeshVector)
               // scalePositionVector.set(
@@ -8492,7 +8526,7 @@
           id: Math.round(Math.random() * 10000),
           startedCallback: () => {
             bumper.scored === true
-            window.appConfig.stages.components.dematerializeMesh({ dMesh: bumper, scaleAdj: Math.random() * 5 , spriteTypes: ['fourStar']})
+            window.appConfig.stages.components.dematerializeMesh({ dMesh: bumper, scaleAdj: Math.random() * 5, spriteTypes: ['fourStar'] })
           },
           activeCallback: (percentComplete) => {
             let currentTime = Math.random()
@@ -8981,11 +9015,11 @@
           },
           completedCallback: () => {
             let theBgObjects = []
-            if(createBg === false) {
+            if (createBg === false) {
               theBg.children.forEach(bgObj => {
                 theBgObjects.push(window.appConfig.stages.components.physiRock(bgObj))
               })
-            } 
+            }
             // if(createBg === true) {
             //   gemStageWalls.rotation.z = Math.PI * .25
             // }
@@ -9007,7 +9041,7 @@
               scene.add(bgO)
             })
 
-            if(createBg === true) {
+            if (createBg === true) {
               theBg.children.forEach(bgObj => {
                 // scene.add(window.appConfig.stages.components.physiRock(bgObj, -1.2))
                 scene.add(
@@ -9028,7 +9062,7 @@
 
 
             scene.remove(theBg)
-            if(createBg === false) {
+            if (createBg === false) {
               const gemStageWalls = window.appConfig.stages.components.createStage0MainBeamStructure(
                 8,
                 0.5275,
@@ -9059,7 +9093,7 @@
                   handleCollision: (c) => {
                     if (c.name === 'SPHERE0' && window.appConfig.pause === false) {
                       window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOIN_GEM' + id)
-                      if(createBg === false) {
+                      if (createBg === false) {
                         let theIndicator = scene.children.find(cf => cf.name.indexOf('SB_INDICATOR') > -1 && cf.indicatorActive === undefined)
                         theIndicator.indicatorActive = true
                         window.appConfig.timers.activeTimers.push(
@@ -9075,7 +9109,7 @@
               }
             }
 
-            if(createBg === false) {
+            if (createBg === false) {
               createGemSuperballs(15, 4)
               setTimeout(() => {
                 window.appConfig.timers.activeTimers.push(
@@ -9413,11 +9447,11 @@
             if (action && action.autoStart === false) {
               showStart()
             }
-      document.body.style.background =
-        window.appConfig.stages.components.background(
-          .5,
-          window.appConfig.stages[window.appConfig.currentStage].backgroundColors
-        )
+            document.body.style.background =
+              window.appConfig.stages.components.background(
+                .5,
+                window.appConfig.stages[window.appConfig.currentStage].backgroundColors
+              )
             scene.setGravity(window.appConfig.originVector);
             window.appConfig.sphere.mass = 0
             window.appConfig.selectors.stageNumber.childNodes[0].data = 'ZONE ' + window.appConfig.stages[window.appConfig.currentStage].number
@@ -10149,6 +10183,7 @@
     }
 
     const landingPageToMainMenu = () => {
+      window.appConfig.isLandingPage = false
       document.querySelector('#landing-page').classList.add('hide')
       window.appConfig.timers.activeTimers.push(
         window.appConfig.timers.landingPageZoom()
@@ -10428,7 +10463,7 @@
     };
 
     const showStart = () => {
-      showHTMLElements(["main-menu-container", "tinted-overlay"]);
+      showHTMLElements(["main-menu-container", "tinted-overlay", "landing-title-section"]);
     };
     const showPauseMenu = () => {
       showHTMLElements(["play-button", "pause-menu", "game-scoreboard", "tinted-overlay"]);
