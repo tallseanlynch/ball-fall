@@ -508,7 +508,6 @@ button:focus {
   position: absolute;
   left: 0px;
   top: 0px;
-  background: rgba(125, 125, 125, .25);
   z-index: 1000;
   box-sizing: border-box;
   display: inline-block;

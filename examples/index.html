@@ -479,10 +479,10 @@
       height: 50% !important;
     }
 
-    .play-now {
+    button.play-now {
       position: relative;
       top: 33%;
-      font-size: 8vw !important;
+      font-size: 8vw;
     }
 
     .margin-top {
@@ -525,11 +525,38 @@
       width: 66%;
     }
 
-    /* @media only screen and (min-width: 800px) {
-      .copy-section, .features {
-        font-size: 3vw !important;
+    @media only screen and (min-width: 800px) {
+      .copy-section, .instructions-text {
+        font-size: 2vw !important;
       }
-    } */
+
+      .copy-section-container {
+        padding-top: 5%;
+        padding-bottom: 5%;
+      }
+
+      .phone-image-0-container {
+        margin-top: 5%;
+        margin-bottom: 5%;
+      }
+
+      .landing-title {
+        font-size: 12vw;
+      }
+
+      .play-now {
+        font-size: 5vw !important;
+      }
+
+      .landing-instructions-image {
+        max-width: 150px !important;
+      }
+
+      .features {
+        margin-bottom: 5% !important;
+        font-size: 5vw !important;
+      }
+    }
 
     .table-display {
       display: table;
@@ -557,7 +584,7 @@
     }
 
     .landing-instructions-image {
-      max-width: 100px;
+      max-width: 75px;
       display: table-cell;
     }
 
@@ -630,6 +657,7 @@
 
     .phone-image-0 {
       width: 60%;
+      max-width: 600px;
     }
 
     .gallery-image-0 {
