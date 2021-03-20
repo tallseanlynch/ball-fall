@@ -319,7 +319,8 @@ window.appConfig.allElements = [
       { id: "stage-countdown-start-container", hidden: undefined, landingPage: false },
       { id: "instructions", hidden: undefined, landingPage: false },
       { id: "main-menu-container", hidden: undefined, landingPage: false },
-      { id: "landing-title-section", hidden: undefined, landingPage: true }
+      { id: "landing-title-section", hidden: undefined, landingPage: true },
+      { id: "landing-page", hidden: undefined, landingPage: false}
     ];
     window.appConfig.registerDOMElements = (elements) => {
       elements.forEach((el) => {
@@ -454,25 +455,26 @@ window.appConfig.allElements = [
 </head>
 
 <body>
-  <div id="landing-title-section" class="section-container landing-title">
-    <div class="landing-title-text">BALLSINKI</div>
-  </div>
-  <div id="landing-page" class="scrolling-section margin-bottom-2">
-    <div class="section-container"></div>
-    <div class="section-container">
-      <button id="start-button" class="play-now" onClick="landingPageToMainMenu()">PLAY NOW</button>
+  <div id="landing-page-wrapper" class="scrolling-section">
+    <div id="landing-title-section" class="section-container landing-title">
+      <div class="landing-title-text">BALLSINKI</div>
     </div>
-    <div class="copy-section-container margin-top"
-      style="background-image: url('images/__Ballsinki--HIDDEN_HOLLOW.jpg')">
-      <div class="copy-section">
-        Chill out while collecting gems, opening doors and unlocking secret portals in the first 3D pinball-inspired
-        adventure by BRAKLI!
+    <div id="landing-page" class="margin-bottom-2">
+      <div class="section-container">
+        <button id="start-button" class="play-now" onClick="landingPageToMainMenu()">PLAY NOW</button>
       </div>
-    </div>
-    <div class="copy-section-container" style="background-image: url('images/__Ballsinki--NATURAL_WONDER.jpg')">
-      <div class="copy-section">
-        Explore the Ballsinki world by visiting different zones to collect gems and prizes of all kinds. The more you
-        collect the more points you earn.
+      <div class="copy-section-container margin-top"
+        style="background-image: url('images/__Ballsinki--HIDDEN_HOLLOW.jpg')">
+        <div class="copy-section">
+          Chill out while collecting gems, opening doors and unlocking secret portals in the first 3D pinball-inspired
+          adventure by BRAKLI!
+        </div>
+      </div>
+      <div class="copy-section-container" style="background-image: url('images/__Ballsinki--NATURAL_WONDER.jpg')">
+        <div class="copy-section">
+          Explore the Ballsinki world by visiting different zones to collect gems and prizes of all kinds. The more you
+          collect the more points you earn.
+        </div>
       </div>
     </div>
   </div>
@@ -8168,7 +8170,7 @@ window.appConfig.allElements = [
     setTimeout(() => {
       window.appConfig.activeTransforms = window.appConfig.stages[window.appConfig.currentStage].defaultTransforms
     }, 1000)
-    showHTMLElements(["tinted-overlay"])
+    showHTMLElements(["tinted-overlay", "landing-page", "landing-title-section"])
 
     const timers = {
 
