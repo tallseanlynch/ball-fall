@@ -1,0 +1,25 @@
+{
+  "name": "ballsinki",
+  "version": "1.0.0",
+  "description": "Physijs\r =======\r #### Physics plugin for [three.js](https://github.com/mrdoob/three.js)",
+  "main": "index.html",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tallseanlynch/ball-fall.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tallseanlynch/ball-fall/issues"
+  },
+  "homepage": "https://github.com/tallseanlynch/ball-fall#readme",
+  "devDependencies": {
+    "javascript-obfuscator": "^2.11.0"
+  }
+}
