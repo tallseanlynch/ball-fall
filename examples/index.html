@@ -9,7 +9,6 @@
   <link rel="apple-touch-icon" href="icon.png">
   <title>Ballsinki</title>
   <link rel="icon" type="image/png" href="icon.png">
-  <!-- TO GET LD: image, description -->
   <!-- <script type="application/ld+json" src="js/ls.json"></script> -->
   <style>
     * {
@@ -44,7 +43,6 @@
 
     body {
       background: linear-gradient(180deg, rgb(2, 0, 36) 0%, rgba(121, 9, 117, 1) 0%, rgba(252, 231, 183, 1) 24%, rgba(0, 212, 255, 1) 72%);
-      /* background: #00ff00; */
     }
 
     #play-button {
@@ -153,8 +151,6 @@
     }
 
     .phone-image-0-container {
-      /* padding: 15%; */
-      /* top:-15%; */
       text-align: center;
       margin-top: 15%;
       margin-bottom: 15%;
@@ -168,10 +164,15 @@
       position: absolute;
     }
 
-    .landing-title-text {
+    .landing-title-text, h1 {
       display: inline-block;
       top: 33%;
       position: relative;
+      margin: 0;
+      font-size: 14vw;
+      font-family: "Aadhunik";
+      font-weight: 900;
+      color: #ffffff;
     }
 
     .landing-title {
@@ -208,7 +209,6 @@
       text-align: center;
       padding-top: 15%;
       padding-bottom: 15%;
-      /* max-width: 800px; */
       width: 100%;
       margin-left: auto;
       margin-right: auto;
@@ -217,7 +217,6 @@
     .copy-section {
       font-family: "Coves Light";
       font-size: 4vw;
-      /* padding: 15%; */
       margin-left: auto;
       margin-right: auto;
       height: auto !important;
@@ -235,7 +234,6 @@
       color: white;
       display: table-cell;
       vertical-align: middle;
-      /* width: 66%; */
       padding-left: 5%;
     }
 
@@ -266,7 +264,8 @@
         max-width: 150px !important;
       }
 
-      .features {
+      .features, h2 {
+        font-weight: normal;
         margin-bottom: 5% !important;
         font-size: 5vw !important;
       }
@@ -287,7 +286,8 @@
       padding: 2%;
     }
 
-    .features {
+    .features, h2 {
+      font-weight: normal;
       margin-bottom: 10%;
       font-size: 8vw;
     }
@@ -303,7 +303,6 @@
     }
 
     .landing-gallery-container {
-      /* background-color: rgba(0, 0, 0, .6); */
       background-image: linear-gradient(to bottom, rgba(0,0,0,.9), rgba(0,0,0,.6));
     }
 
@@ -387,94 +386,83 @@
 </head>
 
 <body>
-  <div id="image-viewer" class="hide menu-container">
+  <section id="image-viewer" aria-label="image-viewer" class="hide menu-container">
     <div class="image-left" onClick="decrementImageIndex()"><</div>
     <div class="image-right" onClick="incrementImageIndex()">></div>
     <div class="image-x" onClick="toggleImageViewer()">X</div>
     <img class="gallery-image-0" src="images/1.png">
-    <!-- <div class="exit-trigger" onClick="toggleImageViewer()"></div> -->
-  </div>
-  <div id="landing-page-wrapper" class="scrolling-section">
-    <div id="landing-title-section" class="section-container landing-title">
-      <div class="landing-title-text">BALLSINKI</div>
-    </div>
-  <div id="landing-page" class="margin-bottom-2">
-    <div class="section-container play-now-container">
-      <button id="start-button" class="play-now" onClick="landingPageToMainMenu()">PLAY NOW</button>
-    </div>
-    <div class="copy-section-container" style="background-image: url('images/__Ballsinki--merged.jpg')">
-      <div class="copy-section">
-        Chill out while collecting gems, opening doors and unlocking secret portals in the first 3D pinball-inspired adventure by BRAKLI!
+  </section>
+  <article id="landing-page-wrapper" class="scrolling-section">
+    <header id="landing-title-section" class="section-container landing-title">
+      <h1 class="landing-title-text">BALLSINKI</h1>
+    </header>
+    <div id="landing-page" class="margin-bottom-2">
+      <div class="section-container play-now-container">
+        <button id="start-button" class="play-now" onClick="landingPageToMainMenu()">PLAY NOW</button>
       </div>
-      <div class="phone-image-0-container" style="z-index:1">
-        <img class="phone-image-0" src="images/optimized-landscape-phone.png">
-      </div>
-      <div class="copy-section">
-        Explore the Ballsinki world by visiting different zones to collect gems and prizes of all kinds. The more you collect the more points you earn.
-      </div>
-    </div>
-    <div class="copy-section-container landing-gallery-container">
-      <div class="copy-section features">
-        Gallery
-      </div>
-      <div class="table-display thumb">
-        <img class="table-thumbnail" onClick="showImage(0)" src="images/thumb1@2x.png">
-        <img class="table-thumbnail" onClick="showImage(1)" src="images/thumb2@2x.png">
-        <img class="table-thumbnail" onClick="showImage(2)" src="images/thumb3@2x.png">
-      </div>
-      <div class="table-display thumb">
-        <img class="table-thumbnail" onClick="showImage(3)" src="images/thumb4@2x.png">
-        <img class="table-thumbnail" onClick="showImage(4)" src="images/thumb5@2x.png">
-        <img class="table-thumbnail" onClick="showImage(5)" src="images/thumb6@2x.png">
-      </div>
-      <div class="table-display thumb">
-        <img class="table-thumbnail" onClick="showImage(6)" src="images/thumb7@2x.png">
-        <img class="table-thumbnail" onClick="showImage(7)" src="images/thumb8@2x.png">
-        <img class="table-thumbnail" onClick="showImage(8)" src="images/thumb9@2x.png">
-      </div>
-    </div>
+      <section class="copy-section-container" aria-label="description" style="background-image: url('images/__Ballsinki--merged.jpg')">
+        <section class="copy-section">
+          Chill out while collecting gems, opening doors and unlocking secret portals in the first 3D pinball-inspired adventure by BRAKLI!
+        </section>
+        <div class="phone-image-0-container" style="z-index:1">
+          <img class="phone-image-0" src="images/optimized-landscape-phone.png">
+        </div>
+        <section class="copy-section">
+          Explore the Ballsinki world by visiting different zones to collect gems and prizes of all kinds. The more you collect the more points you earn.
+        </section>
+      </section>
+      <section class="copy-section-container landing-gallery-container">
+        <h2 class="copy-section features">
+          Gallery
+        </h2>
+        <div class="table-display thumb">
+          <img class="table-thumbnail" onClick="showImage(0)" src="images/thumb1@2x.png">
+          <img class="table-thumbnail" onClick="showImage(1)" src="images/thumb2@2x.png">
+          <img class="table-thumbnail" onClick="showImage(2)" src="images/thumb3@2x.png">
+        </div>
+        <div class="table-display thumb">
+          <img class="table-thumbnail" onClick="showImage(3)" src="images/thumb4@2x.png">
+          <img class="table-thumbnail" onClick="showImage(4)" src="images/thumb5@2x.png">
+          <img class="table-thumbnail" onClick="showImage(5)" src="images/thumb6@2x.png">
+        </div>
+        <div class="table-display thumb">
+          <img class="table-thumbnail" onClick="showImage(6)" src="images/thumb7@2x.png">
+          <img class="table-thumbnail" onClick="showImage(7)" src="images/thumb8@2x.png">
+          <img class="table-thumbnail" onClick="showImage(8)" src="images/thumb9@2x.png">
+        </div>
+      </section>
 
-    <div class="copy-section-container black-grad-bg">
-      <div class="copy-section features">
-        Features
-      </div>
-      <div class="table-display">
-        <img class="landing-instructions-image" src="images/Gems@2x.png">
-        <div class="instructions-text">Collect crystals to score as many points as possible!</div>
-      </div>
-      <div class="table-display">
-        <img class="landing-instructions-image" src="images/time bonus@2x.png">
-        <div class="instructions-text">Pick up time bonuses to extend your gameplay.</div>
-      </div>
-      <div class="table-display">
-        <img class="landing-instructions-image" src="images/ball sprites@2x.png">
-        <div class="instructions-text">Sprites are here to help! They hover near the ball to collect extra items as you navigate the zone.</div>
-      </div>
-      <div class="table-display">
-        <img class="landing-instructions-image" src="images/superball-halo.png">
-        <div class="instructions-text">Smash into a superball for an explosion of gems!</div>
-      </div>
-    </div>
+      <section class="copy-section-container black-grad-bg">
+        <h2 class="copy-section features">
+          Features
+        </h2>
+        <div class="table-display">
+          <img class="landing-instructions-image" src="images/Gems@2x.png">
+          <div class="instructions-text">Collect crystals to score as many points as possible!</div>
+        </div>
+        <div class="table-display">
+          <img class="landing-instructions-image" src="images/time bonus@2x.png">
+          <div class="instructions-text">Pick up time bonuses to extend your gameplay.</div>
+        </div>
+        <div class="table-display">
+          <img class="landing-instructions-image" src="images/ball sprites@2x.png">
+          <div class="instructions-text">Sprites are here to help! They hover near the ball to collect extra items as you navigate the zone.</div>
+        </div>
+        <div class="table-display">
+          <img class="landing-instructions-image" src="images/superball-halo.png">
+          <div class="instructions-text">Smash into a superball for an explosion of gems!</div>
+        </div>
+      </section>
 
-    <div class="copy-section-container">
-      <div class="copy-section footer">
-        <div class="footer-copy">A game by BRAKLI &copy;2021</div>
-        <img class="brakli-logo" src="images/brakli logo@2x.png">
-      </div>
+      <footer class="copy-section-container">
+        <div class="copy-section footer">
+          <div class="footer-copy">A game by BRAKLI &copy;2021</div>
+          <img class="brakli-logo" src="images/brakli logo@2x.png">
+        </div>
+      </footer>
     </div>
-  </div>
-  </div>
-  <!-- <div id="main-loading">
-    <div id="loading-label">LOADING</div>
-  </div> -->
-  <!-- <div id="circle0" class="circle"></div>
-  <div id="circle1" class="circle"></div>
-  <div id="circle2" class="circle"></div>
-  <div id="circle3" class="circle"></div>
-  <div id="circle4" class="circle"></div>
-  <div id="circle5" class="circle"></div> -->
-
-  <div id="viewport"></div>
+  </article>
+  <article aria-label="ballsinki game" id="viewport"></article>
   <div id="tinted-overlay"></div>
   <div id="game-scoreboard" class="hide">
     <div id="timer"></div>
@@ -503,23 +491,6 @@
             </div>
           </div>
         </div>
-        <!-- <div class="margin-bottom-2">
-          <div class="sound-menu-key font-a">Performance</div>
-          <div class="sound-menu-values-container">
-            <div class="sound-menu-value-third font-b">
-              <button class="sound-menu-button font-b" id="performance-toggle-button-low"
-                onClick="togglePerformanceButton({value:0})">LOW</button>
-            </div>
-            <div class="sound-menu-value-third font-b">
-              <button class="sound-menu-button font-b" id="performance-toggle-button-med"
-                onClick="togglePerformanceButton({value:1})">MED</button>
-            </div>
-            <div class="sound-menu-value-third font-b">
-              <button class="sound-menu-button font-b" id="performance-toggle-button-high"
-                onClick="togglePerformanceButton({value:2})">HIGH</button>
-            </div>
-          </div>
-        </div> -->
       </div>
       <div id="sound-right">
         <div class="margin-bottom-2">
@@ -653,7 +624,6 @@
   </div>
 
   <div id="main-menu-container" class="menu-container hide">
-    <!-- <div id="main-menu-title" class="margin-bottom-3 title">BALLSINKI</div> -->
     <div id="start-button-container">
       <button id="start-button" onClick="reset({action:'reset', autoStart: true})"> START</button>
     </div>
@@ -685,9 +655,6 @@
       <button class="start-menu-button font-b" onClick="goBack()">Back</button>
     </div>
   </div>
-
-  <!-- <div id="loading-gradient-curtain"></div> -->
-
   <div id="stage-name-container" class="hide menu-container">
     <div id="stage-number">ZONE 1</div>
     <div id="stage-name">
@@ -749,32 +716,26 @@
   <div class="debug-timers hide" style="z-index: 10000;">
   </div>
 </body>
+<script onLoad="scriptLoaded('ammo.js')" type="text/javascript" src="js/ammo.min.js"></script>
+<script onLoad="scriptLoaded('three.js')" type="text/javascript" src="js/three-121.min.js"></script>
+<script onLoad="scriptLoaded('stats.js')" type="text/javascript" src="js/stats.min.js"></script>
+<script onLoad="scriptLoaded('physi.js')" type="text/javascript" src="js/physi.min.js"></script>
+<script onLoad="scriptLoaded('physijs_worker.js')" type="text/javascript" src="js/physijs_worker.min.js"></script>
+<script onLoad="scriptLoaded('easytimer.js')" type="text/javascript" src="js/easytimer.min.js"></script>
+<script onLoad="scriptLoaded('howler.js')" type="text/javascript" src="js/howler.min.js"></script>
+<script onLoad="scriptLoaded('event-handlers.js')" type="text/javascript" src="./event-handlers.min.js"></script>
+<!-- <script onLoad="scriptLoaded('VRButton.js')" type="text/javascript" src="./VRButton.js"></script> -->
+<script onLoad="scriptLoaded('debug.js')" type="text/javascript" src="./debug.min.js"></script>
+<script onLoad="scriptLoaded('GLTFLoader.js')" type="text/javascript" src="js/GLTFLoader.min.js"></script>
 
-<footer>
-  <script onLoad="scriptLoaded('ammo.js')" type="text/javascript" src="js/ammo.min.js"></script>
-  <script onLoad="scriptLoaded('three.js')" type="text/javascript" src="js/three-121.min.js"></script>
-  <script onLoad="scriptLoaded('stats.js')" type="text/javascript" src="js/stats.min.js"></script>
-  <script onLoad="scriptLoaded('physi.js')" type="text/javascript" src="js/physi.min.js"></script>
-  <script onLoad="scriptLoaded('physijs_worker.js')" type="text/javascript" src="js/physijs_worker.min.js"></script>
-  <script onLoad="scriptLoaded('easytimer.js')" type="text/javascript" src="js/easytimer.min.js"></script>
-  <script onLoad="scriptLoaded('howler.js')" type="text/javascript" src="js/howler.min.js"></script>
-  <!-- <script onLoad="scriptLoaded('features.js')" type="text/javascript" src="./features.js"></script> -->
-  <script onLoad="scriptLoaded('event-handlers.js')" type="text/javascript" src="./event-handlers.min.js"></script>
-  <!-- <script onLoad="scriptLoaded('VRButton.js')" type="text/javascript" src="./VRButton.js"></script> -->
-  <script onLoad="scriptLoaded('debug.js')" type="text/javascript" src="./debug.min.js"></script>
-  <script onLoad="scriptLoaded('GLTFLoader.js')" type="text/javascript" src="js/GLTFLoader.min.js"></script>
+<script onLoad="scriptLoaded('main')" src="main.min.js" type="text/javascript"></script>
 
-  <script onLoad="scriptLoaded('main')" src="main.min.js" type="text/javascript"></script>
-
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PGJYVH2VWT"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-PGJYVH2VWT');
-  </script>
-
-</footer>
-
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PGJYVH2VWT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'G-PGJYVH2VWT');
+</script>
 </html>
