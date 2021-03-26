@@ -31,6 +31,7 @@
     };
 
     window.appConfig = {
+      env: 'web',
       isLandingPage: true,
       finalStageActiveTransforms: false,
       isPortalStart: false,

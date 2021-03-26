@@ -6871,6 +6871,10 @@
         startStageEnd()
       })
       window.appConfig.selectors.curtain.classList.add("opacity-0");
+
+      if(window.appConfig.env === 'app') {
+        landingPageToMainMenu()
+      }
     };
 
     initGame = (function () {
@@ -7382,12 +7386,13 @@
       }
     }
 
+    // window.appConfig.env = 'app'
     window.appConfig.superBallMaterial.color = window.appConfig.colors[window.appConfig.superballMaterialIncrement % 15][0]
     window.appConfig.landingPage = true
     setTimeout(() => {
       window.appConfig.activeTransforms = window.appConfig.stages[window.appConfig.currentStage].defaultTransforms
     }, 1000)
-    showHTMLElements(["tinted-overlay", "landing-page", "landing-title-section"])
+    showHTMLElements(["tinted-overlay", "landing-page", "landing-title-section"])  
 
     const timers = {
 

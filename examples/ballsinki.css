@@ -7,6 +7,10 @@
   src: url("./fonts/Coves Light.otf") format("opentype");
 }
 
+.pointer {
+  cursor: pointer;
+}
+
 button:focus {
   outline: none;
   box-shadow: none;
@@ -33,6 +37,58 @@ button:focus {
   animation-name: flux-start-button;
   animation-direction: alternate;
   animation-iteration-count: infinite;
+}
+
+.bouncing-v {
+  transform: scaleY(.25);
+	font-size: 3rem;
+  font-weight: 900;
+  display: inline-block;
+  /* animation-duration: 5s;
+  animation-name: bouncing-arrow;
+  animation-direction: alternate;
+  animation-iteration-count: infinite; */
+}
+
+.learn-more {
+  animation-duration: 5s;
+  animation-name: bouncing-learn-more;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+}
+
+.learn-more-text {
+  font-size: 1rem;
+}
+
+
+
+@keyframes bouncing-learn-more {
+  0%, 100% { 
+    opacity: .3;
+    top: -30px;
+    /* letter-spacing: 3px; */
+  }
+  50% {
+    opacity: 1;
+    top: 0px;
+    /* letter-spacing: 7px; */
+  }
+
+}
+
+@keyframes bouncing-arrow {
+  0%, 100% { 
+    opacity: .3;
+    /* padding-bottom: 30px; */
+    /* letter-spacing: 3px; */
+  }
+  50% {
+    opacity: 1;
+    /* padding-bottom: 0px; */
+    /* letter-spacing: 7px; */
+  }
+
 }
 
 @keyframes flux-start-button {
@@ -479,10 +535,10 @@ button:focus {
 }
 
 #instructions-list img {
-  width: 49%;
-  max-height: 200px;
+  /* width: 49%; */
+  max-height: 100px;
   display: inline-block;
-  padding: 3% 0;
+  /* padding: 3% 0; */
 }
 
 #instructions-list {
@@ -526,6 +582,27 @@ button:focus {
   overflow-y: scroll;
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
+}
+
+@media only screen and (min-width: 800px) {
+  .scrolling-section {
+    height: 60%;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  #instructions .table-display {
+    display: block;
+    padding: 5% 0%;
+  }
+
+  .landing-instructions-image {
+    display: inline-block;
+  }
+
+  .section-features .table-display {
+    display: block;
+  }
 }
 
 ::-webkit-scrollbar {
