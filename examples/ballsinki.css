@@ -766,3 +766,21 @@ button:focus {
 .gray {
   opacity: .5;
 }
+.fb-share-button {
+  font-family: Helvetica;
+  color: white;
+  background: #3b5998;
+  border-radius: 5px;
+  font-weight: 300;
+  padding: 5px 8px;
+  display: inline-block;
+  position: static;
+}
+#fb-svg {
+  height: .8rem;
+}
+
+.fb-xfbml-parse-ignore:link, .fb-xfbml-parse-ignore:visited, .fb-xfbml-parse-ignore:hover, .fb-xfbml-parse-ignore:active {
+  color: white;
+  text-decoration: none;
+}
