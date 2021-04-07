@@ -769,8 +769,12 @@ button:focus {
 
 
 
-.sharing-container {
+.sharing-container-0 {
   margin-top: 2rem;
+  display: block;
+}
+.sharing-container-1 {
+  
 }
 /* sharing styles */
 .resp-sharing-button__link,
