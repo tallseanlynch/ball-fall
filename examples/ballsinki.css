@@ -767,7 +767,10 @@ button:focus {
   opacity: .5;
 }
 
-
+.copy-section, .copy-section:hover, .copy-section:focus, .copy-section:active {
+  color: #ffffff;
+  text-decoration: none;
+}
 
 .sharing-container-0 {
   display: block;
