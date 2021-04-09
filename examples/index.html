@@ -501,9 +501,11 @@
       <h1 class="landing-title-text">BALLSINKI</h1>
     </header>
     <div id="landing-page" class="margin-bottom-2 hide">
-      <script>if (window.appConfig.env !== 'app') {
+      <script>
+        if (window.appConfig.env !== 'app') {
           document.querySelector('#landing-page').classList.remove('hide')
-        }</script>
+        }
+      </script>
       <div class="section-container play-now-container">
         <button id="start-button" class="play-now" onClick="landingPageToMainMenu()">PLAY NOW</button>
       </div>
@@ -570,7 +572,7 @@
       </section>
 
       <footer class="copy-section-container">
-        
+
         <div class="sharing-container-0">
           <!-- Sharingbutton Facebook -->
           <a class="resp-sharing-button__link"
@@ -999,16 +1001,19 @@
 <script onLoad="scriptLoaded('debug.js')" type="text/javascript" src="./debug.min.js"></script>
 <script onLoad="scriptLoaded('GLTFLoader.js')" type="text/javascript" src="js/GLTFLoader.min.js"></script>
 
-<script onLoad="scriptLoaded('main')" src="main.js" type="text/javascript"></script>
-<!-- <script onLoad="scriptLoaded('main')" src="main.min.js" type="text/javascript"></script> -->
-
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-PGJYVH2VWT"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
-  function gtag() { dataLayer.push(arguments); }
+  function gtag() {
+    dataLayer.push(arguments);
+  }
   gtag('js', new Date());
   gtag('config', 'G-PGJYVH2VWT');
 </script>
+
+<!-- <script onLoad="scriptLoaded('main')" src="main.js" type="text/javascript"></script> -->
+<script onLoad="scriptLoaded('main')" src="main.min.js" type="text/javascript"></script>
+
 
 </html>

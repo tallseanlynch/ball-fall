@@ -9123,6 +9123,12 @@
     }
 
     const landingPageToMainMenu = () => {
+      gtag('event', 'PLAY_NOW_CLICKED', {
+        'event_category' : 'BALLSINKI_EVENTS',
+        'event_label' : 'PLAY_NOW_CLICKED',
+        'event_action' : 'PLAY_NOW_CLICKED',
+        'action' : 'PLAY_NOW_CLICKED'
+      });
       window.appConfig.isLandingPage = false
       document.querySelector('#landing-page').classList.add('hide')
       window.appConfig.timers.activeTimers.push(
