@@ -9136,6 +9136,35 @@
       )
     }
 
+    const handleHighScoreApiCall = async (options) => {
+      console.log(options)
+      let callOptions = {}
+      
+      if (options && options.method != null) {
+        callOptions.method = options.method
+        if (options.method === "POST") {
+          
+        //   callOptions.body = JSON.stringify({
+        //     zone: 0,
+        //     score: 29033,
+        //     name: "OBL",
+        //     seconds: 200
+        //   })
+        // }
+          callOptions.body = JSON.stringify("{\"zone\":0,\"score\":29033,\"name\":\"OBL\",\"seconds\":160}")
+        }
+      }
+      
+      let jsonData
+      await fetch('https://63qnzzjym0.execute-api.us-east-1.amazonaws.com/items', callOptions)
+        .then(res=> res.json())
+        .then(data => {
+          jsonData = data
+          console.log(jsonData)
+        })
+      
+    }
+
     const countdown = () => {
       window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName())
       document.body.style.background =
