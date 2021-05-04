@@ -2,9 +2,9 @@
 
 setTimeout(() => {
 
-    // const gridHelper = new THREE.GridHelper( 200, 40 );
-    // scene.add( gridHelper );
-    // gridHelper.rotation.x = .5 * Math.PI
+    const gridHelper = new THREE.GridHelper( 200, 40 );
+    scene.add( gridHelper );
+    gridHelper.rotation.x = .5 * Math.PI
 
     window.appConfig.debug = {
         toggleGravity: false,
@@ -148,7 +148,7 @@ setTimeout(() => {
         const toggleDebugCamera = () => {
             if(window.appConfig.debug.previousCameraZToggle === false) {
                 window.appConfig.debug.previousCameraZ = camera.position.z
-                camera.position.z = 400
+                camera.position.z = 500
                 console.log(camera.position.z)
                 window.appConfig.debug.previousCameraZToggle = true                    
             } else {
