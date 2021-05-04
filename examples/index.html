@@ -61,7 +61,6 @@
     }
   </style>
 
-<!-- <script onLoad="scriptLoaded('initial.js')" type="text/javascript" src="js/initial.min.js"></script> -->
 <script onLoad="scriptLoaded('initial.js')" type="text/javascript" src="js/initial.js"></script>
   <style>
     #loading-gradient-curtain {
@@ -605,6 +604,8 @@
         CASTLE</button>
       <button class="level-select-button stage-5 margin-bottom-2 font-d"
         onClick="reset({action:'levelSelect', level: 5, autoStart: true})">STARLING</button>
+      <button class="level-select-button stage-6 margin-bottom-2 font-d"
+        onClick="reset({action:'levelSelect', level: 6, autoStart: true})">NEW STAGE 6</button>
     </div>
     <div id="back-button" class="margin-top-2 font-b">
       <button class="start-menu-button font-b" onClick="goBack()">Back</button>
@@ -781,11 +782,10 @@
 <script onLoad="scriptLoaded('howler.js')" type="text/javascript" src="js/howler.min.js"></script>
 <script onLoad="scriptLoaded('event-handlers.js')" type="text/javascript" src="./event-handlers.min.js"></script>
 <!-- <script onLoad="scriptLoaded('VRButton.js')" type="text/javascript" src="./VRButton.js"></script> -->
-<script onLoad="scriptLoaded('debug.js')" type="text/javascript" src="./debug.min.js"></script>
+<script onLoad="scriptLoaded('debug.js')" type="text/javascript" src="./debug.js"></script>
 <script onLoad="scriptLoaded('GLTFLoader.js')" type="text/javascript" src="js/GLTFLoader.min.js"></script>
 
-<script onLoad="scriptLoaded('main')" src="main.js" type="text/javascript"></script> -->
-<!-- <script onLoad="scriptLoaded('main')" src="main.min.js" type="text/javascript"></script> -->
+<script onLoad="scriptLoaded('main')" src="main.js" type="text/javascript"></script>
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-PGJYVH2VWT"></script>
@@ -795,4 +795,9 @@
   gtag('js', new Date());
   gtag('config', 'G-PGJYVH2VWT');
 </script>
+<style>
+  body {
+    v: 4;
+  }
+</style>
 </html>

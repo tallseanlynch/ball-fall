@@ -80,9 +80,9 @@
         bumperGroup: 0,
         prize: 0
       },
-      currentStage: hasPerformanceReport ? 'STAGE5' : 'STAGE5',
-      stagesArray: ['STAGE0', 'STAGE1', 'STAGE2', 'STAGE3', 'STAGE4', 'STAGE5'],
-      currentStageIndex: hasPerformanceReport ? 5 : 5,
+      currentStage: hasPerformanceReport ? 'STAGE6' : 'STAGE6',
+      stagesArray: ['STAGE0', 'STAGE1', 'STAGE2', 'STAGE3', 'STAGE4', 'STAGE5', 'STAGE6'],
+      currentStageIndex: hasPerformanceReport ? 6 : 6,
       musicTurnedOn: true,
       sfxTurnedOn: true,
       superballs: [],
@@ -147,6 +147,9 @@
           highscores: []
         },
         STAGE5: {
+          highscores: []
+        },
+        STAGE6: {
           highscores: []
         },
       }

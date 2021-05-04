@@ -230,6 +230,35 @@
           prize: "sounds/Sound FX/PRIZE_1.mp3",
           backgroundMusic: "sounds/STARLING.mp3"
         }
+      },
+      STAGE6: {
+        name: "NEW STAGE 6",
+        number: 7,
+        backgroundColors: [
+          "rgba(2,0,36)",
+          "#23a373",
+          "#26797d",
+          "#f542b0"
+        ],
+        basicColors: [
+          new THREE.Color(0x42eff5),
+          new THREE.Color(0x00aeef)
+        ],
+        sounds: {
+          coins: coinProperties,
+          beams: [
+            "sounds/Sound FX/BALL FALL fx a1.mp3",
+            "sounds/Sound FX/BALL FALL fx a2.mp3",
+            "sounds/Sound FX/BALL FALL fx a3.mp3",
+            "sounds/Sound FX/BALL FALL fx a4.mp3",
+            "sounds/Sound FX/BALL FALL fx a5.mp3",
+            "sounds/Sound FX/BALL FALL fx a6.mp3",
+            "sounds/Sound FX/BALL FALL fx a7.mp3",
+            "sounds/Sound FX/BALL FALL fx a8.mp3"
+          ],
+          prize: "sounds/Sound FX/PRIZE_1.mp3",
+          backgroundMusic: "sounds/STARLING.mp3"
+        }
       }
     }
 
@@ -245,14 +274,15 @@
         onpause: onpause !== undefined ? onpause : () => { },
         onend: onend !== undefined ? onend : () => { },
         onplayerror: onplayerror !== undefined ? onplayerror : () => { }
-      }).once("load", () => {
-        if (type === "backgroundMusic") {
-          window.appConfig.howlSounds.backgroundMusic = sound;
-          if (window.appConfig.start === false && window.appConfig.musicTurnedOn === true) {
-            sound.play()
-          }
-        }
-      });
+      })
+      // .once("load", () => {
+      //   if (type === "backgroundMusic") {
+      //     window.appConfig.howlSounds.backgroundMusic = sound;
+      //     if (window.appConfig.start === false && window.appConfig.musicTurnedOn === true) {
+      //       sound.play()
+      //     }
+      //   }
+      // });
       return sound;
     };
 
@@ -6844,6 +6874,511 @@
 
             window.appConfig.stages.STAGE5.data.started = true
           }
+        },
+        STAGE6: {
+          data: {
+            started: false,
+            xAdj: -60,
+            vAdj: -70,
+            sAdj: 2,
+            startingPosition: window.appConfig.originVector,
+            sapphirePortalPosition: { x: -100, y: 75, z: -5 }
+          },
+          backgroundColors: stageProperties.STAGE6.backgroundColors,
+          basicColors: stageProperties.STAGE6.basicColors,
+          sounds: stageProperties.STAGE6.sounds,
+          name: stageProperties.STAGE6.name,
+          number: stageProperties.STAGE6.number,
+          defaultTransforms: [
+            // 'STAGE5PRIZE0',
+            // 'STAGE5PRIZE1',
+            // 'STAGE5PRIZE2',
+            // 'STAGE5PRIZE3',
+            // 'STAGE5CROSSBEAMSTRUCTURE',
+            // 'STAGE5CROSSBEAMSTRUCTUREA',
+            // 'STAGE5CROSSBEAMSTRUCTUREB',
+            // 'STAGE5CROSSBEAMSTRUCTUREC',
+            'STAGE6MINORSTRUCTURE',
+            'STAGE6MINORSTRUCTUREA',
+            'STAGE6MINORSTRUCTUREB',
+            'STAGE6MINORSTRUCTUREC',
+            'STAGE6MINORSTRUCTURED',
+            'STAGE6MINORSTRUCTUREE'
+          ],
+          transforms: {
+            // 'STAGE5PRIZE0': { r: { x: .005, y: .005, z: .005 } },
+            // 'STAGE5PRIZE1': { r: { x: .005, y: .005, z: .005 } },
+            // 'STAGE5PRIZE2': { r: { x: .005, y: .005, z: .005 } },
+            // 'STAGE5PRIZE3': { r: { x: .005, y: .005, z: .005 } },
+            // 'STAGE5MAINSTRUCTURE1': { r: { x: 0, y: 0, z: -.005 } },
+
+            // 'STAGE5CROSSBEAMSTRUCTURE': { r: { x: 0, y: 0, z: .01 } },
+            // 'STAGE5CROSSBEAMSTRUCTUREA': { r: { x: 0, y: 0, z: -.01 } },
+            'STAGE6MINORSTRUCTURE': { r: { x: 0, y: 0, z: .01 } },
+            'STAGE6MINORSTRUCTUREA': { r: { x: 0, y: 0, z: .01 } },
+            'STAGE6MINORSTRUCTUREB': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE6MINORSTRUCTUREC': { r: { x: 0, y: 0, z: -.005 } },
+            'STAGE6MINORSTRUCTURED': { r: { x: 0, y: 0, z: .0025 } },
+            'STAGE6MINORSTRUCTUREE': { r: { x: 0, y: 0, z: .0025 } },
+
+            // 'STAGE5CROSSBEAMSTRUCTUREB': { r: { x: 0, y: 0, z: -.01 } },
+            // 'STAGE5CROSSBEAMSTRUCTUREC': { r: { x: 0, y: 0, z: .01 } },
+            // 'STAGE5MINORSTRUCTUREB': { r: { x: 0, y: 0, z: -.01 } },
+            // 'STAGE5MINORSTRUCTUREC': { r: { x: 0, y: 0, z: -.01 } }
+          },
+          teardown: () => {
+            teardownStage('STAGE6')
+            window.appConfig.stages.STAGE6.data.started = false
+          },
+          initBackground: () => {
+            const createBackgroundAnimation = () => {
+              const bgGroup = new THREE.Group()
+              bgGroup.name = 'STAGE6BGGROUP'
+              const elementGeometry = new THREE.IcosahedronGeometry(1, 0)
+              const elementMaterials = [
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE6.backgroundColors[0], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE6.backgroundColors[1], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE6.backgroundColors[2], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE6.backgroundColors[3], transparent: true, opacity: .25 }),
+              ]
+
+              const numberOfElements = 50
+              let elementI = 0
+              for (elementI; elementI < numberOfElements; elementI++) {
+                bgGroup.add(new THREE.Mesh(elementGeometry, elementMaterials[elementI % elementMaterials.length]))
+              }
+              scene.add(bgGroup)
+              bgGroup.position.set(0, 0, -10)
+              bgGroup.children.forEach(c => {
+                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -20 + Math.random() * -30)
+                const bgElementScale = 1 + Math.random() * 10
+                c.scale.set(bgElementScale, bgElementScale, bgElementScale)
+                c.rotation.z = (Math.random() * 2) * Math.PI
+              })
+              bgGroup.activeCallback = () => {
+                if (bgGroup) {
+                  bgGroup.children.forEach((c, ci) => {
+                    c.position.y += .005 * ci / 2
+                    c.rotation.y += .005
+                    if (c.position.y > 125) {
+                      c.position.y = -125
+                    }
+                  })
+                }
+              }
+              bgGroup.activeCallback()
+              window.appConfig.stages['STAGE6'].bgGroupActiveCallback = bgGroup.activeCallback
+            }
+
+            createBackgroundAnimation()
+          },
+          init: () => {
+            // const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
+            // const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
+            // const createStage3CrossBeamStructure = window.appConfig.stages.components.createStage3CrossBeamStructure
+            // const createStage4PlinkoStructure = window.appConfig.stages.components.createStage4PlinkoStructure
+
+            const createSwitchBeamWall = window.appConfig.stages.components.createSwitchBeamWall
+            const createRemoteSwitch = window.appConfig.stages.components.createRemoteSwitch
+
+            // portal
+            window.appConfig.timers.activeTimers.push(
+              window.appConfig.timers.addPortalToStage({ x: -75, y: 100, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
+                window.appConfig.stages.components.gemPortalConfig())
+            )
+
+            window.appConfig.timers.activeTimers.push(
+              window.appConfig.timers.addPortalToStage({ x: -100, y: 75, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
+                window.appConfig.stages.components.sapphirePortalConfig())
+            )
+
+            const createStage6Portals = () => {
+              window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
+              window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
+              window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
+              let ellipseGeometry = new THREE.CircleGeometry(4.125, 5)
+              ellipseGeometry.rotateZ((2 * Math.PI) / 20)
+
+              let i = 1;
+              for (i; i < ellipseGeometry.vertices.length; i++) {
+                window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
+              }
+            }
+
+            window.appConfig.stages.components.setUpPortalIndicators(createStage6Portals)
+
+            createCrystalCircle('STAGE6', 3, { x: -75, y: 100 }, 0, 8)
+            createCrystalCircle('STAGE6', 3.5, { x: -75, y: 100 }, 1, 16)
+            createCrystalCircle('STAGE6', 4, { x: -75, y: 100 }, 2, 16)
+
+            createCrystalCircle('STAGE6', 3, { x: -100, y: 75 }, 0, 8)
+            createCrystalCircle('STAGE6', 3.5, { x: -100, y: 75 }, 1, 16)
+            createCrystalCircle('STAGE6', 4, { x: -100, y: 75 }, 2, 16)
+
+
+            const stage6MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure(
+              1,
+              0,
+              "STAGE6MINORSTRUCTURE",
+              { x: 0, y: 0 }
+            );
+            // stage6MainBeamStructure.rotation.z = .25 * Math.PI
+            scene.add(stage6MinorBeamStructure);
+
+            const stage6MinorBeamStructureA = window.appConfig.stages.components.createStage1MinorBeamStructure(
+              1,
+              0,
+              "STAGE6MINORSTRUCTUREA",
+              { x: 0, y: 0 }
+            );
+            stage6MinorBeamStructureA.rotation.z = .25 * Math.PI
+            scene.add(stage6MinorBeamStructureA);
+
+            const stage6MinorBeamStructureB = window.appConfig.stages.components.createStage1MinorBeamStructure(
+              2,
+              -.5,
+              "STAGE6MINORSTRUCTUREB",
+              { x: 0, y: 0 }
+            );
+            // stage6MainBeamStructure.rotation.z = .25 * Math.PI
+            scene.add(stage6MinorBeamStructureB);
+
+            const stage6MinorBeamStructureC = window.appConfig.stages.components.createStage1MinorBeamStructure(
+              2,
+              -.5,
+              "STAGE6MINORSTRUCTUREC",
+              { x: 0, y: 0 }
+            );
+            stage6MinorBeamStructureC.rotation.z = .25 * Math.PI
+            scene.add(stage6MinorBeamStructureC);
+
+
+
+            const stage6MinorBeamStructureD = window.appConfig.stages.components.createStage1MinorBeamStructure(
+              3,
+              -.75,
+              "STAGE6MINORSTRUCTURED",
+              { x: 0, y: 0 }
+            );
+            // stage6MainBeamStructure.rotation.z = .25 * Math.PI
+            scene.add(stage6MinorBeamStructureD);
+
+            const stage6MinorBeamStructureE = window.appConfig.stages.components.createStage1MinorBeamStructure(
+              3,
+              -.75,
+              "STAGE6MINORSTRUCTUREE",
+              { x: 0, y: 0 }
+            );
+            stage6MinorBeamStructureE.rotation.z = .25 * Math.PI
+            scene.add(stage6MinorBeamStructureE);
+
+
+
+
+
+            const stage6MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure(
+              15.5,
+              0.57,
+              "STAGE6MAINSTRUCTURE",
+              { x: 0, y: 0 }
+              // [0, 0, 0, 1]
+              // [bottom, left, right, top]
+            );
+            // stage6MainBeamStructure.rotation.z = .25 * Math.PI
+            scene.add(stage6MainBeamStructure);
+
+            const stage6MainBeamStructureA = window.appConfig.stages.components.createStage0MainBeamStructure(
+              12,
+              -0.57,
+              "STAGE6MAINSTRUCTUREA",
+              { x: 0, y: 0 }
+              // [0, 0, 0, 1]
+              // [bottom, left, right, top]
+            );
+            stage6MainBeamStructureA.rotation.z = .25 * Math.PI
+            scene.add(stage6MainBeamStructureA);
+
+            // const stage6MainBeamStructureB = window.appConfig.stages.components.createStage0MainBeamStructure(
+            //   8.5,
+            //   -0.28,
+            //   "STAGE6MAINSTRUCTUREB",
+            //   { x: 0, y: 0 }
+            // );
+            // scene.add(stage6MainBeamStructureB);
+
+
+            createCrystalCircle('STAGE6', 2.5, { x: 0, y: 0 }, 0, 4)
+            createCrystalCircle('STAGE6', 3, { x: 0, y: 0 }, 1, 4)
+            createCrystalCircle('STAGE6', 3.5, { x: 0, y: 0 }, 0, 8)
+            createCrystalCircle('STAGE6', 4, { x: 0, y: 0 }, 1, 8)
+            createCrystalCircle('STAGE6', 4.5, { x: 0, y: 0 }, 1, 8)
+            createCrystalCircle('STAGE6', 5, { x: 0, y: 0 }, 0, 16)
+            createCrystalCircle('STAGE6', 5.5, { x: 0, y: 0 }, 1, 16)
+            createCrystalCircle('STAGE6', 6, { x: 0, y: 0 }, 2, 16)
+            createCrystalCircle('STAGE6', 6.5, { x: 0, y: 0 }, 1, 16)
+            createCrystalCircle('STAGE6', 7, { x: 0, y: 0 }, 1, 16)
+            createCrystalCircle('STAGE6', 7.5, { x: 0, y: 0 }, 2, 24)
+            createCrystalCircle('STAGE6', 8, { x: 0, y: 0 }, 1, 24)
+            // createCrystalCircle('STAGE6', 8.5, { x: 0, y: 0 }, 1, 24)
+
+
+
+            createCrystalCircle('STAGE6', 2.5, { x: 0, y: 97.5 }, 2, 4)
+            createCrystalCircle('STAGE6', 3, { x: 0, y: 97.5 }, 0, 8)
+            createCrystalCircle('STAGE6', 3.5, { x: 0, y: 97.5 }, 1, 8)
+            createCrystalCircle('STAGE6', 4, { x: 0, y: 97.5 }, 2, 16)
+            createCrystalCircle('STAGE6', 4.5, { x: 0, y: 97.5 }, 1, 16)
+
+            createCrystalCircle('STAGE6', 1.5, { x: 30, y: 85 }, 1, 2)
+            createCrystalCircle('STAGE6', 2.5, { x: 30, y: 85 }, 0, 8)
+
+            createCrystalCircle('STAGE6', 1.5, { x: -30, y: 85 }, 1, 2)
+            createCrystalCircle('STAGE6', 2.5, { x: -30, y: 85 }, 0, 8)
+
+            createCrystalCircle('STAGE6', 1.5, { x: 30, y: 110 }, 2, 2)
+            createCrystalCircle('STAGE6', 2.5, { x: 30, y: 110 }, 1, 8)
+
+            createCrystalCircle('STAGE6', 1.5, { x: -30, y: 110 }, 2, 2)
+            createCrystalCircle('STAGE6', 2.5, { x: -30, y: 110 }, 1, 8)
+
+
+            createRemoteSwitch({
+              transmitter: {
+                p: { x: 0, y: 97.5, z: 0 }
+              },
+              receiver: {
+                p: { x: -55, y: -20, z: 0 },
+                name: 'STAGE6_RECEIVER_A'
+              }
+            })
+
+            createSwitchBeamWall({ s: 3.5, dir: 'y', p: { x: -47.5, y: 93.5, z: 0 }, receiver: { name: 'STAGE6_RECEIVER_A' }, switchBeamAdj: 0 })
+
+
+            createRemoteSwitch({
+              transmitter: {
+                p: { x: 0, y: 97.5, z: 0 }
+              },
+              receiver: {
+                p: { x: -55, y: -20, z: 0 },
+                name: 'STAGE6_RECEIVER_B'
+              }
+            })
+
+            createSwitchBeamWall({ s: 3.5, dir: 'y', p: { x: 47.5, y: 93.5, z: 0 }, receiver: { name: 'STAGE6_RECEIVER_B' }, switchBeamAdj: 0 })
+
+            createCrystalCircle('STAGE6', 2.5, { x: 97.5, y: 0 }, 2, 4)
+            createCrystalCircle('STAGE6', 3, { x: 97.5, y: 0 }, 0, 8)
+            createCrystalCircle('STAGE6', 3.5, { x: 97.5, y: 0 }, 1, 8)
+            createCrystalCircle('STAGE6', 4, { x: 97.5, y: 0 }, 2, 16)
+            createCrystalCircle('STAGE6', 4.5, { x: 97.5, y: 0 }, 1, 16)
+
+            createCrystalCircle('STAGE6', 1.5, { x: 85, y: 30 }, 1, 2)
+            createCrystalCircle('STAGE6', 2.5, { x: 85, y: 30 }, 0, 8)
+
+            createCrystalCircle('STAGE6', 1.5, { x: 85, y: -30 }, 1, 2)
+            createCrystalCircle('STAGE6', 2.5, { x: 85, y: -30 }, 0, 8)
+
+            createCrystalCircle('STAGE6', 1.5, { x: 110, y: 30 }, 2, 2)
+            createCrystalCircle('STAGE6', 2.5, { x: 110, y: 30 }, 1, 8)
+
+            createCrystalCircle('STAGE6', 1.5, { x: 110, y: -30 }, 2, 2)
+            createCrystalCircle('STAGE6', 2.5, { x: 110, y: -30 }, 1, 8)
+
+            createRemoteSwitch({
+              transmitter: {
+                p: { x: 97.5, y: 0, z: 0 }
+              },
+              receiver: {
+                p: { x: -55, y: -20, z: 0 },
+                name: 'STAGE6_RECEIVER_C'
+              }
+            })
+
+            createSwitchBeamWall({ s: 3.5, dir: 'x', p: { x: 93.5, y: 47.5, z: 0 }, receiver: { name: 'STAGE6_RECEIVER_C' }, switchBeamAdj: 0 })
+
+            createRemoteSwitch({
+              transmitter: {
+
+                p: { x: 0, y: -97.5, z: 0 }
+              },
+              receiver: {
+                p: { x: -55, y: -20, z: 0 },
+                name: 'STAGE6_RECEIVER_D'
+              }
+            })
+
+            createSwitchBeamWall({ s: 3.5, dir: 'y', p: { x: 47.5, y: -117, z: 0 }, receiver: { name: 'STAGE6_RECEIVER_D' }, switchBeamAdj: 0 })
+
+            createCrystalCircle('STAGE6', 2.5, { x: 0, y: -97.5 }, 2, 4)
+            createCrystalCircle('STAGE6', 3, { x: 0, y: -97.5 }, 0, 8)
+            createCrystalCircle('STAGE6', 3.5, { x: 0, y: -97.5 }, 1, 8)
+            createCrystalCircle('STAGE6', 4, { x: 0, y: -97.5 }, 2, 16)
+            createCrystalCircle('STAGE6', 4.5, { x: 0, y: -97.5 }, 1, 16)
+
+            createCrystalCircle('STAGE6', 1.5, { x: 30, y: -85 }, 1, 2)
+            createCrystalCircle('STAGE6', 2.5, { x: 30, y: -85 }, 0, 8)
+
+            createCrystalCircle('STAGE6', 1.5, { x: -30, y: -85 }, 1, 2)
+            createCrystalCircle('STAGE6', 2.5, { x: -30, y: -85 }, 0, 8)
+
+            createCrystalCircle('STAGE6', 1.5, { x: 30, y: -110 }, 2, 2)
+            createCrystalCircle('STAGE6', 2.5, { x: 30, y: -110 }, 1, 8)
+
+            createCrystalCircle('STAGE6', 1.5, { x: -30, y: -110 }, 2, 2)
+            createCrystalCircle('STAGE6', 2.5, { x: -30, y: -110 }, 1, 8)
+
+            createRemoteSwitch({
+              transmitter: {
+                p: { x: 97.5, y: 0, z: 0 }
+              },
+              receiver: {
+                p: { x: -55, y: -20, z: 0 },
+                name: 'STAGE6_RECEIVER_E'
+              }
+            })
+
+            createSwitchBeamWall({ s: 3.5, dir: 'x', p: { x: 93.5, y: -47.5, z: 0 }, receiver: { name: 'STAGE6_RECEIVER_E' }, switchBeamAdj: 0 })
+
+            createCrystalCircle('STAGE6', 2.5, { x: -97.5, y: 0 }, 2, 4)
+            createCrystalCircle('STAGE6', 3, { x: -97.5, y: 0 }, 0, 8)
+            createCrystalCircle('STAGE6', 3.5, { x: -97.5, y: 0 }, 1, 8)
+            createCrystalCircle('STAGE6', 4, { x: -97.5, y: 0 }, 2, 16)
+            createCrystalCircle('STAGE6', 4.5, { x: -97.5, y: 0 }, 1, 16)
+
+            createCrystalCircle('STAGE6', 1.5, { x: -85, y: 30 }, 1, 2)
+            createCrystalCircle('STAGE6', 2.5, { x: -85, y: 30 }, 0, 8)
+
+            createCrystalCircle('STAGE6', 1.5, { x: -85, y: -30 }, 1, 2)
+            createCrystalCircle('STAGE6', 2.5, { x: -85, y: -30 }, 0, 8)
+
+            createCrystalCircle('STAGE6', 1.5, { x: -110, y: 30 }, 2, 2)
+            createCrystalCircle('STAGE6', 2.5, { x: -110, y: 30 }, 1, 8)
+
+            createCrystalCircle('STAGE6', 1.5, { x: -110, y: -30 }, 2, 2)
+            createCrystalCircle('STAGE6', 2.5, { x: -110, y: -30 }, 1, 8)
+
+            createRemoteSwitch({
+              transmitter: {
+                p: { x: 0, y: -97.5, z: 0 }
+              },
+              receiver: {
+                p: { x: -55, y: -20, z: 0 },
+                name: 'STAGE6_RECEIVER_F'
+              }
+            })
+
+            createSwitchBeamWall({ s: 3.5, dir: 'y', p: { x: -47.5, y: -117, z: 0 }, receiver: { name: 'STAGE6_RECEIVER_F' }, switchBeamAdj: 0 })
+
+            createRemoteSwitch({
+              transmitter: {
+                p: { x: -97.5, y: 0, z: 0 }
+              },
+              receiver: {
+                p: { x: -55, y: -20, z: 0 },
+                name: 'STAGE6_RECEIVER_G'
+              }
+            })
+
+            createSwitchBeamWall({ s: 3.5, dir: 'x', p: { x: -117, y: -47.5, z: 0 }, receiver: { name: 'STAGE6_RECEIVER_G' }, switchBeamAdj: 0 })
+
+            createRemoteSwitch({
+              transmitter: {
+                p: { x: -97.5, y: 0, z: 0 }
+              },
+              receiver: {
+                p: { x: -55, y: -20, z: 0 },
+                name: 'STAGE6_RECEIVER_H'
+              }
+            })
+
+            createSwitchBeamWall({ s: 3.5, dir: 'x', p: { x: -117, y: 47.5, z: 0 }, receiver: { name: 'STAGE6_RECEIVER_H' }, switchBeamAdj: 0 })
+
+            prize(6, 400, { x: -47.5, y: -67.5, z: 0 })
+            prize(6, 400, { x: -57.5, y: -57.5, z: 0 })
+            prize(6, 400, { x: -67.5, y: -47.5, z: 0 })
+
+            prize(6, 400, { x: 47.5, y: -67.5, z: 0 })
+            prize(6, 400, { x: 57.5, y: -57.5, z: 0 })
+            prize(6, 400, { x: 67.5, y: -47.5, z: 0 })
+
+            prize(6, 400, { x: -47.5, y: 67.5, z: 0 })
+            prize(6, 400, { x: -57.5, y: 57.5, z: 0 })
+            prize(6, 400, { x: -67.5, y: 47.5, z: 0 })
+
+            prize(6, 400, { x: 47.5, y: 67.5, z: 0 })
+            prize(6, 400, { x: 57.5, y: 57.5, z: 0 })
+            prize(6, 400, { x: 67.5, y: 47.5, z: 0 })
+
+            prize(6, 400, { x: -115, y: -115, z: 0 })
+            prize(6, 400, { x: -115, y: 115, z: 0 })
+            prize(6, 400, { x: 115, y: -115, z: 0 })
+            prize(6, 400, { x: 115, y: 115, z: 0 })
+
+            prize(6, 400, { x: -115, y: -70, z: 0 })
+            prize(6, 400, { x: -70, y: -115, z: 0 })
+
+            prize(6, 400, { x: 115, y: -70, z: 0 })
+            prize(6, 400, { x: 70, y: -115, z: 0 })
+
+            prize(6, 400, { x: -115, y: 70, z: 0 })
+            prize(6, 400, { x: -70, y: 115, z: 0 })
+
+            prize(6, 400, { x: 115, y: 70, z: 0 })
+            prize(6, 400, { x: 70, y: 115, z: 0 })
+
+            createCrystalCircle('STAGE6', 2.5, { x: -92.75, y: -93.5 }, 0, 4)
+            createCrystalCircle('STAGE6', 3, { x: -92.75, y: -93.5 }, 1, 4)
+            createCrystalCircle('STAGE6', 3.5, { x: -92.75, y: -93.5 }, 0, 12)
+            createCrystalCircle('STAGE6', 4, { x: -92.75, y: -93.5 }, 1, 16)
+            createCrystalCircle('STAGE6', 4.5, { x: -92.75, y: -93.5 }, 1, 16)
+
+            window.appConfig.stages.components.createRuby({ x: -92.75, y: -95.5, z: 0 })
+
+            createCrystalCircle('STAGE6', 2.5, { x: 92.75, y: 93.5 }, 0, 4)
+            createCrystalCircle('STAGE6', 3, { x: 92.75, y: 93.5 }, 1, 4)
+            createCrystalCircle('STAGE6', 3.5, { x: 92.75, y: 93.5 }, 0, 12)
+            createCrystalCircle('STAGE6', 4, { x: 92.75, y: 93.5 }, 1, 16)
+            createCrystalCircle('STAGE6', 4.5, { x: 92.75, y: 93.5 }, 1, 16)
+
+            window.appConfig.stages.components.createEmerald({ x: 92.75, y: 92.5, z: 0 })
+
+            createCrystalCircle('STAGE6', 2.5, { x: 92.75, y: -93.5 }, 0, 4)
+            createCrystalCircle('STAGE6', 3, { x: 92.75, y: -93.5 }, 1, 4)
+            createCrystalCircle('STAGE6', 3.5, { x: 92.75, y: -93.5 }, 0, 12)
+            createCrystalCircle('STAGE6', 4, { x: 92.75, y: -93.5 }, 1, 16)
+            createCrystalCircle('STAGE6', 4.5, { x: 92.75, y: -93.5 }, 1, 16)
+
+            window.appConfig.stages.components.createDiamond({ x: 92.5, y: -94.5, z: 0 })
+
+            window.appConfig.stages.components.createSapphire({ x: -100, y: -100, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: -110, y: -100, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: -120, y: -100, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: -130, y: 100, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: -140, y: 100, z: 0 })
+
+            window.appConfig.stages.components.createBlueIsland()
+
+            window.appConfig.stages.components.createBumper("STAGE6BUMPER0", 1, { x: -60, y: -100, z: 0 }, 6)
+            window.appConfig.stages.components.createBumper("STAGE6BUMPER0", 1, { x: -100, y: -60, z: 0 }, 6)
+
+            window.appConfig.stages.components.createBumper("STAGE6BUMPER0", 1, { x: 60, y: -100, z: 0 }, 6)
+            window.appConfig.stages.components.createBumper("STAGE6BUMPER0", 1, { x: 100, y: -60, z: 0 }, 6)
+
+            window.appConfig.stages.components.createBumper("STAGE6BUMPER0", 1, { x: 60, y: 100, z: 0 }, 6)
+            window.appConfig.stages.components.createBumper("STAGE6BUMPER0", 1, { x: 100, y: 60, z: 0 }, 6)
+
+            window.appConfig.stages.components.createBumper("STAGE6BUMPER0", 1, { x: -105, y: 105, z: 0 }, 6)
+
+            window.appConfig.stages.STAGE6.STAGE6MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE6MINORSTRUCTURE")
+            window.appConfig.stages.STAGE6.STAGE6MINORSTRUCTUREA = scene.children.find((obj) => obj.name === "STAGE6MINORSTRUCTUREA")
+            window.appConfig.stages.STAGE6.STAGE6MINORSTRUCTUREB = scene.children.find((obj) => obj.name === "STAGE6MINORSTRUCTUREB")
+            window.appConfig.stages.STAGE6.STAGE6MINORSTRUCTUREC = scene.children.find((obj) => obj.name === "STAGE6MINORSTRUCTUREC")
+            window.appConfig.stages.STAGE6.STAGE6MINORSTRUCTURED = scene.children.find((obj) => obj.name === "STAGE6MINORSTRUCTURED")
+            window.appConfig.stages.STAGE6.STAGE6MINORSTRUCTUREE = scene.children.find((obj) => obj.name === "STAGE6MINORSTRUCTUREE")
+
+            window.appConfig.stages.STAGE6.data.started = true
+          }
         }
       }
 
@@ -9332,7 +9867,7 @@
         function openFullscreen() {
           if (!document.fullscreenElement) {
             if (window.appConfig.selectors.html.requestFullscreen) {
-              window.appConfig.selectors.html.requestFullscreen();
+              window.appConfig.selectors.html.requestFullscreen( {navigationUI: "hide"} );
               window.appConfig.requestFullscreenResult = true
             } else if (window.appConfig.selectors.html.webkitRequestFullscreen) { /* Safari */
               window.appConfig.selectors.html.webkitRequestFullscreen();
