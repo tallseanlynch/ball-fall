@@ -81,7 +81,7 @@
         prize: 0
       },
       currentStage: hasPerformanceReport ? 'STAGE7' : 'STAGE7',
-      stagesArray: ['STAGE0', 'STAGE1', 'STAGE2', 'STAGE3', 'STAGE4', 'STAGE5', 'STAGE7'],
+      stagesArray: ['STAGE0', 'STAGE1', 'STAGE2', 'STAGE3', 'STAGE4', 'STAGE5', 'STAGE6', 'STAGE7'],
       currentStageIndex: hasPerformanceReport ? 7 : 7,
       musicTurnedOn: true,
       sfxTurnedOn: true,
@@ -154,7 +154,7 @@
         },
         STAGE7: {
           highscores: []
-        },
+        }
       }
     }
 
@@ -167,6 +167,11 @@
       }
       if (window.appConfig.highscores === undefined) {
         window.appConfig.highscores = { ...localStorageData.stages }
+      }
+      if(window.appConfig.highscores[window.appConfig.currentStage] === undefined) {
+        window.appConfig.highscores[window.appConfig.currentStage] = {
+          highscores: []
+        }
       }
       if (window.appConfig.highscores[window.appConfig.currentStage].highscores.length === 0) {
         window.appConfig.highscores[window.appConfig.currentStage].highscores.push(newScore)

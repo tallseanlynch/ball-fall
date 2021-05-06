@@ -148,7 +148,7 @@ setTimeout(() => {
         const toggleDebugCamera = () => {
             if(window.appConfig.debug.previousCameraZToggle === false) {
                 window.appConfig.debug.previousCameraZ = camera.position.z
-                camera.position.z = 500
+                camera.position.z = 700
                 console.log(camera.position.z)
                 window.appConfig.debug.previousCameraZToggle = true                    
             } else {
