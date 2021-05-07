@@ -153,23 +153,28 @@
     }
 
     const handleHighScore = () => {
+      window.appConfig.highScoreConfig.isLocalHighScore = false
       const newScore = {
         date: new Date().getTime(),
         dateFormattedString: (new Date().getMonth() + 1) + '/' + new Date().getDate() + '/' + new Date().getFullYear().toString().substr(-2),
         lengthPlayed: window.appConfig.stageTotalTimePlayed,
         totalScore: window.appConfig.score.coins
       }
+      window.appConfig.highScoreConfig.newScore = newScore
+      window.appConfig.highScoreConfig.newScoreZone = window.appConfig.currentStageIndex
       if (window.appConfig.highscores === undefined) {
         window.appConfig.highscores = { ...localStorageData.stages }
       }
       if (window.appConfig.highscores[window.appConfig.currentStage].highscores.length === 0) {
         window.appConfig.highscores[window.appConfig.currentStage].highscores.push(newScore)
+        window.appConfig.highScoreConfig.isLocalHighScore = true
       } else {
         let newHighScores = [...window.appConfig.highscores[window.appConfig.currentStage].highscores]
         let stopCheck = false
         window.appConfig.highscores[window.appConfig.currentStage].highscores.forEach((s, si) => {
           if (s.totalScore < newScore.totalScore && stopCheck === false) {
             stopCheck = true
+            window.appConfig.highScoreConfig.isLocalHighScore = true
             newHighScores.splice(si, 0, newScore)
             if (newHighScores.length === 4) {
               newHighScores.pop()
@@ -178,11 +183,11 @@
           }
         })
         if (stopCheck === false && window.appConfig.highscores[window.appConfig.currentStage].highscores.length < 3) {
+          window.appConfig.highScoreConfig.isLocalHighScore = true
           newHighScores.push(newScore)
           window.appConfig.highscores[window.appConfig.currentStage].highscores = newHighScores
         }
       }
-      localStorage.setItem('appConfig', JSON.stringify(window.appConfig.highscores))
     }
     window.appConfig.handleHighScore = handleHighScore
 
@@ -196,7 +201,15 @@
     }
 
     localStorageInit()
-    
+window.appConfig.getShownElements = () => {
+  let shownEls = []
+  window.appConfig.allElements.forEach(el => {
+    if (el.hidden === false) {
+      shownEls.push(el.id)
+    }
+  })
+  return shownEls
+}    
 window.appConfig.allElements = [
       { id: "sounds", hidden: undefined, landingPage: false },
       { id: "pause-menu", hidden: undefined, landingPage: false },
@@ -215,7 +228,9 @@ window.appConfig.allElements = [
       { id: "instructions", hidden: undefined, landingPage: false },
       { id: "main-menu-container", hidden: undefined, landingPage: false },
       { id: "landing-title-section", hidden: undefined, landingPage: true },
-      { id: "landing-page", hidden: undefined, landingPage: false}
+      { id: "landing-page", hidden: undefined, landingPage: false},
+      { id: "high-score-input-modal-curtain", hidden: undefined, landingPage: false}
+      
     ];
     window.appConfig.registerDOMElements = (elements) => {
       elements.forEach((el) => {

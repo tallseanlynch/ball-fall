@@ -8432,6 +8432,10 @@
           completedCallback: () => {
             if (hideReport === false) {
               showReport()
+              if (window.appConfig.highScoreConfig.isLocalHighScore === true) {
+                window.appConfig.highScoreConfig.returnElements = window.appConfig.getShownElements()
+                showHTMLElements(['high-score-input-modal-curtain',...window.appConfig.highScoreConfig.returnElements])
+              }
             }
           }
         }
@@ -9136,35 +9140,6 @@
       )
     }
 
-    const handleHighScoreApiCall = async (options) => {
-      console.log(options)
-      let callOptions = {}
-      
-      if (options && options.method != null) {
-        callOptions.method = options.method
-        if (options.method === "POST") {
-          
-        //   callOptions.body = JSON.stringify({
-        //     zone: 0,
-        //     score: 29033,
-        //     name: "OBL",
-        //     seconds: 200
-        //   })
-        // }
-          callOptions.body = JSON.stringify("{\"zone\":0,\"score\":29033,\"name\":\"OBL\",\"seconds\":160}")
-        }
-      }
-      
-      let jsonData
-      await fetch('https://63qnzzjym0.execute-api.us-east-1.amazonaws.com/items', callOptions)
-        .then(res=> res.json())
-        .then(data => {
-          jsonData = data
-          console.log(jsonData)
-        })
-      
-    }
-
     const countdown = () => {
       window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName())
       document.body.style.background =
@@ -9285,9 +9260,6 @@
       timer: document.querySelector("#timer"),
       controlsToggleClick: document.querySelector("#controls-toggle-button-click"),
       controlsToggleSwipe: document.querySelector("#controls-toggle-button-swipe"),
-      performanceToggleLow: document.querySelector("#performance-toggle-button-low"),
-      performanceToggleMed: document.querySelector("#performance-toggle-button-med"),
-      performanceToggleHigh: document.querySelector("#performance-toggle-button-high"),
       curtain: document.querySelector("#curtain"),
       stageNameTitle0: document.querySelector("#stage-name-title0"),
       stageNameTitle1: document.querySelector("#stage-name-title1"),
@@ -9303,8 +9275,19 @@
       highScore1Sec: document.querySelector("#high-score-1-sec"),
       highScore2Sec: document.querySelector("#high-score-2-sec"),
       highScore3Sec: document.querySelector("#high-score-3-sec"),
+      highScore1InputValue: document.querySelector("#high-score-input-value-1"),
+      highScore2InputValue: document.querySelector("#high-score-input-value-2"),
+      highScore3InputValue: document.querySelector("#high-score-input-value-3"),
+      highScore1InputClickDown: document.querySelector("#high-score-input-click-down-1"),
+      highScore2InputClickDown: document.querySelector("#high-score-input-click-down-2"),
+      highScore3InputClickDown: document.querySelector("#high-score-input-click-down-3"),
+      highScore1InputClickUp: document.querySelector("#high-score-input-click-up-1"),
+      highScore2InputClickUp: document.querySelector("#high-score-input-click-up-2"),
+      highScore3InputClickUp: document.querySelector("#high-score-input-click-up-3"),
       pauseButton: document.querySelector("#pause-button"),
-      html: document.querySelector("html")
+      html: document.querySelector("html"),
+      highScoreSubmitButton: document.querySelector("#high-score-submit-button"),
+      highScoreInputModalCurtain: document.querySelector("#high-score-input-modal-curtain")
     }
     window.appConfig.selectors.scoreHundreds.textContent = "0"
     window.appConfig.selectors.scoreThousands.textContent = " "
@@ -9400,8 +9383,75 @@
         } catch (err) {
           closeFullscreen()
         }
-      }
+      },
+      handleHighScoreApiCall : async (options) => {
+        console.log(options)
+        let callOptions = {}
+        
+        if (options && options.method != null) {
+          callOptions.method = options.method
+          if (options.method === "POST") {
+          if (options.localScore !== undefined) {
+              callOptions.body = JSON.stringify({
+                "date": options.localScore.date,
+                "zone": window.appConfig.currentStageIndex,
+                "score": options.localScore.totalScore,
+                "name": options.localScore.name,
+                "seconds": options.localScore.lengthPlayed
+              })
+          }
+            // callOptions.body = JSON.stringify({"zone":0,"score":29035,"name":"OBL","seconds":160})
+          }
+        }
+        
+        let jsonData
+        try {
+          await fetch('https://63qnzzjym0.execute-api.us-east-1.amazonaws.com/items', callOptions)
+            .then(res=> res.json())
+            .then(data => {
+              jsonData = data
+              console.log(jsonData)
+              // now update leaderboard ui elements
+            })
+        }
+        catch (err) {
+          console.log(err)
+        }
+      },
     }
+    
+
+    window.appConfig.highScoreConfig = {
+      currentName: 'AAA',
+      charactersList: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ',
+      inputNumbers: [1,2,3]
+    }
+
+    window.appConfig.highScoreConfig.inputNumbers.forEach(hsInput => {
+
+      window.appConfig.selectors[`highScore${hsInput}InputClickDown`].addEventListener("click", () => {
+        const letterIndex = window.appConfig.highScoreConfig.charactersList.indexOf(window.appConfig.highScoreConfig.currentName[hsInput-1])
+        let newIndex = letterIndex === 0 ? window.appConfig.highScoreConfig.charactersList.length -1 : letterIndex - 1
+        window.appConfig.highScoreConfig.currentName = window.appConfig.highScoreConfig.currentName.substring(0, hsInput-1) + window.appConfig.highScoreConfig.charactersList[newIndex] + window.appConfig.highScoreConfig.currentName.substring(hsInput-1 + 1);
+        window.appConfig.selectors[`highScore${hsInput}InputValue`].childNodes[0].data = window.appConfig.highScoreConfig.currentName[hsInput-1]
+      } )
+      window.appConfig.selectors[`highScore${hsInput}InputClickUp`].addEventListener("click", () => {
+        const letterIndex = window.appConfig.highScoreConfig.charactersList.indexOf(window.appConfig.highScoreConfig.currentName[hsInput-1])
+        let newIndex = letterIndex === window.appConfig.highScoreConfig.charactersList.length -1 ? 0 : letterIndex + 1
+        window.appConfig.highScoreConfig.currentName = window.appConfig.highScoreConfig.currentName.substring(0, hsInput-1) + window.appConfig.highScoreConfig.charactersList[newIndex] + window.appConfig.highScoreConfig.currentName.substring(hsInput-1 + 1);
+        window.appConfig.selectors[`highScore${hsInput}InputValue`].childNodes[0].data = window.appConfig.highScoreConfig.currentName[hsInput-1]
+      } )
+    })
+    window.appConfig.selectors.highScoreSubmitButton.addEventListener("click", () => {
+      console.log(window.appConfig.highscores[`STAGE${window.appConfig.highScoreConfig.newScoreZone}`])
+      const scoreIndexToUpdate = window.appConfig.highscores[`STAGE${window.appConfig.highScoreConfig.newScoreZone}`].highscores.findIndex(obj => obj.date === window.appConfig.highScoreConfig.newScore.date)
+      console.log("nameToSubmit:",window.appConfig.highScoreConfig.currentName)
+      window.appConfig.highscores[`STAGE${window.appConfig.highScoreConfig.newScoreZone}`].highscores[scoreIndexToUpdate].name = window.appConfig.highScoreConfig.currentName
+      console.log("scoreToUpdate: ", window.appConfig.highscores[`STAGE${window.appConfig.highScoreConfig.newScoreZone}`].highscores[scoreIndexToUpdate])
+      localStorage.setItem('appConfig', JSON.stringify(window.appConfig.highscores))
+      window.appConfig.gameModeFunctions.handleHighScoreApiCall({method:"POST", localScore: window.appConfig.highscores[`STAGE${window.appConfig.highScoreConfig.newScoreZone}`].highscores[scoreIndexToUpdate] })
+      showHTMLElements(window.appConfig.highScoreConfig.returnElements)
+    })
     const colorLightnessLfo = (baseColor, lfoMod) => {
       // const color = new THREE.Color(baseColor)
       let hsl = {}

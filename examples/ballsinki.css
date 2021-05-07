@@ -50,6 +50,17 @@ button:focus {
   animation-iteration-count: infinite; */
 }
 
+.bouncing-v-inverted {
+  transform: scaleY(.25) rotate(0.5turn);
+	font-size: 3rem;
+  font-weight: 900;
+  display: inline-block;
+  /* animation-duration: 5s;
+  animation-name: bouncing-arrow;
+  animation-direction: alternate;
+  animation-iteration-count: infinite; */
+}
+
 .learn-more {
   animation-duration: 5s;
   animation-name: bouncing-learn-more;
@@ -147,33 +158,28 @@ button:focus {
 .font-a {
   font-weight: 100;
   font-family: "Coves Light";
-  font-size: var(--font-size-2);
   color: #ffffff;
   text-transform: uppercase;
 }
 .font-b {
   font-weight: 900;
   font-family: "Coves Light";
-  font-size: var(--font-size-2);
   color: #ffffff;
 }
 .font-c {
   font-weight: 100;
   font-family: "Coves Light";
-  font-size: var(--font-size-1);
   color: #ffffff;
   text-transform: uppercase;
 }
 .font-d {
   font-family: "Aadhunik";
   font-size: 1.5rem;
-  font-size: var(--font-size-2);
   color: #ffffff;
 }
 .font-e {
   font-weight: 100;
   font-family: "Coves Light";
-  font-size: var(--font-size-2);
   color: #ffffff;
   text-transform: uppercase;
   animation-duration: 5s;
@@ -182,23 +188,23 @@ button:focus {
   animation-iteration-count: infinite;
 }
 
-#report td.result-key {
+td.result-key {
   width: 6rem;
   font-size: 1.5rem;
 }
-#report td.result-value {
+td.result-value {
   width: fit-content;
   font-size: 1.5rem;
 }
-#report td.high-score-ordinal {
+td.high-score-ordinal {
   width: 2rem;
   font-size: 1.5rem;
 }
-#report td.high-score-score {
+td.high-score-score {
   width: 7rem;
   font-size: 1.5rem;
 }
-#report td.high-score-sec {
+td.high-score-sec {
   font-size: 1.5rem;
   width: fit-content;
   font-style: italic;
@@ -248,6 +254,7 @@ button:focus {
   bottom: 5%;
 }
 .start-menu-button {
+  font-size: 2rem;
   width: max-content;
   margin: 0 auto;
   margin-top: 10px;

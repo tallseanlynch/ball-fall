@@ -492,18 +492,80 @@
       color: white;
       z-index: 9999999999999;
     }
+    .modal-curtain {
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      background-color: rgba(0,0,0,.5);
+      z-index: 10000;
+    }
+    #high-score-input-modal {
+      z-index: 10001;
+    }
+    #high-scores-input-table {
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .high-score-input-letter {
+      font-size: 4rem;
+      width: 20%;
+      line-height: 5rem;
+      text-align: center;
+    }
+    .high-score-input-arrow {
+      width: 20vw;
+      text-align: center;
+    }
+    
   </style>
   <link rel="stylesheet" href="./ballsinki.css">
 </head>
 
 <body>
-  <div id="high-score-api">
-      <!-- <label for="fname">Route</label><br>
-      <input type="text" id="route-input" name="fname" value="John"><br>
-      <label for="lname">Name:</label><br>
-      <input type="text" id="high-score-name-input"value="Doe"><br><br> -->
-      <!-- <button onClick="handleHighScoreApiCall({method:'GET'})" value="Submit"> Submit </button> -->
-      <button onClick="handleHighScoreApiCall({method:'POST'})" value="Submit"> Submit </button>
+  <div id="high-score-input-modal-curtain" class="hide modal-curtain">
+    <div id="high-score-input-modal" class="menu-container">
+      <div id="high-score-title" class="menu-title-text margin-bottom-2">NEW HIGH SCORE</div>
+      <div id="high-score-input-scrolling-section" class="scrolling-section">
+        <table id="high-scores-input-table" class="margin-bottom-3 table-margin-1">
+          <tr id="high-score-input-1-row">
+            <td id="high-score-input-click-up-1" class="font-b high-score-input-arrow">
+              <div class="bouncing-v-inverted">V</div>
+            </td>
+            <td id="high-score-input-click-up-2" class="font-b high-score-input-arrow">
+              <div class="bouncing-v-inverted">V</div>
+            </td>
+            <td id="high-score-input-click-up-3" class="font-b high-score-input-arrow">
+              <div class="bouncing-v-inverted">V</div>
+            </td>
+          </tr>
+          <tr id="high-score-input-2-row">
+            <td id="high-score-input-value-1" class="font-b high-score-input-letter">A</td>
+            <td id="high-score-input-value-2" class="font-b high-score-input-letter">A</td>
+            <td id="high-score-input-value-3" class="font-b high-score-input-letter">A</td>
+          </tr>
+          <tr id="high-score-input-3-row">
+            <td id="high-score-input-click-down-1" class="font-b high-score-input-arrow">
+              <div class="bouncing-v">V</div>
+            </td>
+            <td id="high-score-input-click-down-2" class="font-b high-score-input-arrow">
+              <div class="bouncing-v">V</div>
+            </td>
+            <td id="high-score-input-click-down-3" class="font-b high-score-input-arrow">
+              <div class="bouncing-v">V</div>
+            </td>
+          </tr>
+        </table>
+        <div class="margin-top-2 font-b">
+          <button id="high-score-submit-button" class="start-menu-button font-b">Submit</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div id="high-score-api" class="hide">
+      <button onClick="window.appConfig.gameModeFunctions.handleHighScoreApiCall({method:'GET'})" value="Submit"> Submit </button>
 
     HIGH SCORE API
   </div>
@@ -525,7 +587,7 @@
         }
       </script>
       <div class="section-container play-now-container">
-        <button id="start-button" class="play-now" onClick="aaaaaaaaa()">PLAY NOW</button>
+        <button id="start-button" class="play-now" onClick="landingPageToMainMenu()">PLAY NOW</button>
       </div>
       <section class="copy-section learn-more">
         <div class="learn-more-text">LEARN MORE</div>
