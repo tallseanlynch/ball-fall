@@ -479,48 +479,6 @@
             lfoPositive(5000) * (20 + (1 - window.appConfig.timers.data.landingPageZoom.percentComplete) * 125)
         }
       }
-      window.appConfig.deviceOrientationRenderLoopCallback = () => {
-        // window.appConfig.deviceOrientation.diff.gamma.push(window.appConfig.deviceOrientation.last.gamma - event.gamma)
-        // window.appConfig.deviceOrientation.diff.alpha.push(window.appConfig.deviceOrientation.last.alpha - event.alpha)
-        // window.appConfig.deviceOrientation.diff.beta.push(window.appConfig.deviceOrientation.last.beta - event.beta)
-        // window.appConfig.deviceOrientation.last.gamma = event.gamma
-        // window.appConfig.deviceOrientation.last.alpha = event.alpha
-        // window.appConfig.deviceOrientation.last.beta = event.beta
-        // if (window.appConfig.deviceOrientation.diff.gamma.length > 5) {
-        //   window.appConfig.deviceOrientation.diff.gamma.shift()
-        // }
-        // if (window.appConfig.deviceOrientation.diff.alpha.length > 5) {
-        //   window.appConfig.deviceOrientation.diff.alpha.shift()
-        // }
-        // if (window.appConfig.deviceOrientation.diff.beta.length > 5) {
-        //   window.appConfig.deviceOrientation.diff.beta.shift()
-        // }
-        // window.appConfig.deviceOrientation.sum.gamma = 0
-        // window.appConfig.deviceOrientation.sum.alpha = 0
-        // window.appConfig.deviceOrientation.sum.beta = 0
-        // window.appConfig.deviceOrientation.diff.gamma.forEach(val => window.appConfig.deviceOrientation.sum.gamma += val)
-        // window.appConfig.deviceOrientation.diff.alpha.forEach(val => window.appConfig.deviceOrientation.sum.alpha += val)
-        // window.appConfig.deviceOrientation.diff.beta.forEach(val => window.appConfig.deviceOrientation.sum.beta += val)
-      }
-      window.appConfig.deviceOrientation = {
-        loop: 0,
-        last: {
-          gamma: 0,
-          alpha: 0,
-          beta: 0
-        },
-        diff: {
-          gamma: [],
-          alpha: [],
-          beta: []
-        },
-        sum: {
-          gamma: 0,
-          alpha: 0,
-          beta: 0
-        }
-      }
-      window.addEventListener("deviceorientation", window.appConfig.deviceOrientationRenderLoopCallback);
 
       window.appConfig.lighting = {
         hemisphereLight: new THREE.HemisphereLight(

@@ -61,7 +61,7 @@
     }
   </style>
 
-<script onLoad="scriptLoaded('initial.js')" type="text/javascript" src="js/initial.js"></script>
+  <script onLoad="scriptLoaded('initial.js')" type="text/javascript" src="js/initial.js"></script>
   <style>
     #loading-gradient-curtain {
       position: fixed;
@@ -195,8 +195,9 @@
 
     button.play-now {
       position: relative;
-      top: 33%;
+      /* top: 33%; */
       font-size: 8vw;
+      /* margin-top: 60px; */
     }
 
     .margin-top {
@@ -381,6 +382,43 @@
       pointer-events: none;
     }
 
+    .new-zone {
+      font-family: "Coves Light";
+      font-size: 1.25rem;
+    }
+
+    .new-zone-sub {
+      font-family: "Coves Light";
+      font-size: .75rem;
+      opacity: .9;
+    }
+
+    .new-zone-title {
+      font-family: "Aadhunik";
+      font-size: 2.5rem;
+      color: white;
+      opacity: .9;
+      margin-bottom: 15px;
+      background-color: #e91e63;
+      padding: 15px 0px;
+    }
+
+    .new-zone-container {
+      background-color: rgba(0,0,0,.5);
+      padding-bottom: 15px;
+    }
+
+    .new-zone-feat-container {
+      background-color: white;
+      color: black;
+      padding: 15px 0px;
+    }
+
+    .play-now-container {
+      cursor: pointer;
+    }
+
+
   </style>
   <link rel="stylesheet" href="./ballsinki.css">
 </head>
@@ -400,9 +438,16 @@
       <script>if(window.appConfig.env !== 'app'){
         document.querySelector('#landing-page').classList.remove('hide')
       } </script>
-      <div class="section-container play-now-container">
-        <button id="start-button" class="play-now" onClick="landingPageToMainMenu()">PLAY NOW</button>
-      </div>
+      <div class="section-container play-now-container" onClick="landingPageToMainMenu()">
+        <div class="new-zone-container">
+          <div class="new-zone-title">AURORA</div>        
+          <button id="start-button" class="play-now">PLAY NOW</button>
+        </div>
+        <div class="new-zone-feat-container">
+          <div class="new-zone-sub">FEATURING MUSIC BY</div>        
+          <div class="new-zone">HALEYHAMMERHAND</div>            
+        </div>
+    </div>
       <section class="copy-section learn-more">
         <div class="learn-more-text">LEARN MORE</div>
         <div class="bouncing-v">V</div>
@@ -606,8 +651,6 @@
         onClick="reset({action:'levelSelect', level: 5, autoStart: true})">STARLING</button>
       <button class="level-select-button stage-6 margin-bottom-2 font-d"
         onClick="reset({action:'levelSelect', level: 6, autoStart: true})">AURORA</button>
-      <button class="level-select-button stage-7 margin-bottom-2 font-d"
-        onClick="reset({action:'levelSelect', level: 7, autoStart: true})">VORTEX</button>
     </div>
     <div id="back-button" class="margin-top-2 font-b">
       <button class="start-menu-button font-b" onClick="goBack()">Back</button>
@@ -702,13 +745,6 @@
         <img class="landing-instructions-image" src="images/new-icons/Diamond.png">
         <div class="instructions-text">The most valuable Gem in the game! Collect this an other valuable Gems to advance to the Gem Zone!</div>
       </div>
-
-
-      <!-- <img src="images/sm-gem.png">        
-      <img src="images/md-gem.png">
-      <img src="images/lg-gem.png">
-      <img src="images/time-bonus.png">
-      <img src="images/sprite-ball.png"> -->
     </div>
     <div id="back-button" class="margin-top-2 font-b">
       <button class="start-menu-button font-b" onClick="goBack()">Back</button>
@@ -784,7 +820,7 @@
 <script onLoad="scriptLoaded('howler.js')" type="text/javascript" src="js/howler.min.js"></script>
 <script onLoad="scriptLoaded('event-handlers.js')" type="text/javascript" src="./event-handlers.min.js"></script>
 <!-- <script onLoad="scriptLoaded('VRButton.js')" type="text/javascript" src="./VRButton.js"></script> -->
-<script onLoad="scriptLoaded('debug.js')" type="text/javascript" src="./debug.js"></script>
+<!-- <script onLoad="scriptLoaded('debug.js')" type="text/javascript" src="./debug.js"></script> -->
 <script onLoad="scriptLoaded('GLTFLoader.js')" type="text/javascript" src="js/GLTFLoader.min.js"></script>
 
 <script onLoad="scriptLoaded('main')" src="main.js" type="text/javascript"></script>
