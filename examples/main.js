@@ -257,21 +257,21 @@
             "sounds/Sound FX/BALL FALL fx a8.mp3"
           ],
           prize: "sounds/Sound FX/PRIZE_1.mp3",
-          backgroundMusic: "sounds/STARLING.mp3"
+          backgroundMusic: "sounds/AURORA.mp3"
         }
       },
       STAGE7: {
         name: "VORTEX",
         number: 8,
         backgroundColors: [
-          "rgba(2,0,36)",
-          "#23a373",
+          "#6dcff6",
+          "#00a651",
           "#26797d",
-          "#f542b0"
+          "#000000"
         ],
         basicColors: [
-          new THREE.Color(0x42eff5),
-          new THREE.Color(0x00aeef)
+          new THREE.Color(0x662d91),
+          new THREE.Color(0x26797d)
         ],
         sounds: {
           coins: coinProperties,
@@ -286,7 +286,7 @@
             "sounds/Sound FX/BALL FALL fx a8.mp3"
           ],
           prize: "sounds/Sound FX/PRIZE_1.mp3",
-          backgroundMusic: "sounds/STARLING.mp3"
+          backgroundMusic: "sounds/VORTEX.mp3"
         }
       }
 
@@ -8438,6 +8438,8 @@
           },
           completedCallback: () => {
             window.appConfig.landingPage = false
+            document.querySelector('#image-viewer').innerHTML = ''
+            document.querySelector('#landing-page').innerHTML = ''
             showStart()
           }
         }

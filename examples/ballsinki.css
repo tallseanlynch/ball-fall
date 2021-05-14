@@ -37,6 +37,7 @@ button:focus {
   animation-name: flux-start-button;
   animation-direction: alternate;
   animation-iteration-count: infinite;
+  cursor: pointer;
 }
 
 .bouncing-v {
