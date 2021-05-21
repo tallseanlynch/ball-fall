@@ -51,6 +51,17 @@ button:focus {
   animation-iteration-count: infinite; */
 }
 
+.bouncing-v-inverted {
+  transform: scaleY(.25) rotate(0.5turn);
+	font-size: 3rem;
+  font-weight: 900;
+  display: inline-block;
+  /* animation-duration: 5s;
+  animation-name: bouncing-arrow;
+  animation-direction: alternate;
+  animation-iteration-count: infinite; */
+}
+
 .learn-more {
   animation-duration: 5s;
   animation-name: bouncing-learn-more;
@@ -125,7 +136,7 @@ button:focus {
 #report {
   background-color: rgba(0, 0, 0, 0);
 }
-#report-options, #report-result-table, #high-scores-table, #high-scores-title {
+#report-options, #report-result-table, #high-scores-table, #high-scores-title, #global-high-scores-table {
   margin-left: auto;
   margin-right: auto;
 }
@@ -145,36 +156,51 @@ button:focus {
   background-color: rgba(0, 0, 0, 0);
   color: #ffffff;
 }
+#high-scores-tab-menu {
+  text-align: center;
+}
+
+.tab-button {
+  font-size: 1rem;
+  width: max-content;
+  /* margin: 0 auto; */
+  margin-top: 10px;
+  display: inline-block;
+  border: 0;
+  border-radius: 5px;
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0);
+  color: #ffffff;
+
+}
+
+
+
 .font-a {
   font-weight: 100;
   font-family: "Coves Light";
-  font-size: var(--font-size-2);
   color: #ffffff;
   text-transform: uppercase;
 }
 .font-b {
   font-weight: 900;
   font-family: "Coves Light";
-  font-size: var(--font-size-2);
   color: #ffffff;
 }
 .font-c {
   font-weight: 100;
   font-family: "Coves Light";
-  font-size: var(--font-size-1);
   color: #ffffff;
   text-transform: uppercase;
 }
 .font-d {
   font-family: "Aadhunik";
   font-size: 1.5rem;
-  font-size: var(--font-size-2);
   color: #ffffff;
 }
 .font-e {
   font-weight: 100;
   font-family: "Coves Light";
-  font-size: var(--font-size-2);
   color: #ffffff;
   text-transform: uppercase;
   animation-duration: 5s;
@@ -183,24 +209,28 @@ button:focus {
   animation-iteration-count: infinite;
 }
 
-#report td.result-key {
+td.result-key {
   width: 6rem;
   font-size: 1.5rem;
 }
-#report td.result-value {
+td.result-value {
   width: fit-content;
   font-size: 1.5rem;
 }
-#report td.high-score-ordinal {
+td.high-score-ordinal {
   width: 2rem;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
-#report td.high-score-score {
+td.high-score-name {
+  width: 3rem;
+  font-size: 1.25rem;
+}
+td.high-score-score {
   width: 7rem;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
-#report td.high-score-sec {
-  font-size: 1.5rem;
+td.high-score-sec {
+  font-size: 1.25rem;
   width: fit-content;
   font-style: italic;
   font-weight: 100 !important;
@@ -249,6 +279,7 @@ button:focus {
   bottom: 5%;
 }
 .start-menu-button {
+  font-size: 2rem;
   width: max-content;
   margin: 0 auto;
   margin-top: 10px;
@@ -580,11 +611,20 @@ button:focus {
   display: block;
   position: relative;
   height: 75%;
-  overflow-y: scroll;
+  overflow-y:scroll;
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+/* .scrolling-section#report-scrolling-section {
+  overflow-y: hidden;
+} */
 
+.high-score-table-container {
+  height: 21vh;
+  overflow-y:scroll;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
 @media only screen and (min-width: 800px) {
   .scrolling-section {
     height: 60%;
@@ -644,7 +684,34 @@ button:focus {
   text-align: center;
   display: block;
 }
+@media (min-height: 700px) and (min-width: 700px) {
+  .scrolling-section {
+    height: 79%;
+  }
+  .scrolling-section#report-scrolling-section, .scrolling-section#sound-scrolling-section {
+    height: 79%;
+    position: relative;
+    top: 43%;
+    transform: translateY(-50%);}
+    .results-left, #report-options {
+      width: 49%;
+      display: inline-block;
+    }
+    .high-score-table-container {
+      height: 25vh;
+    }
+    
+    #report-options {
+      right: 5%;
+      top: 50%;
+      position: absolute;
+      transform: translateY(-50%);
+    }
 
+    #sound-left, #sound-right {
+      display: block;
+    }
+}
 @media (min-aspect-ratio: 10/9) and  (max-height: 700px), (max-height: 500px){
 
   #high-scores-title {
@@ -658,9 +725,15 @@ button:focus {
     transform: translateY(-50%);
   }
 
-  .results-left, #report-options, #sound-left, #sound-right {
+  .high-score-table-container {
+    height: 25vh;
+  }
+  .results-left, #report-options {
     width: 49%;
     display: inline-block;
+  }
+  #sound-left, #sound-right {
+    display: block;
   }
 
   .spacer {
@@ -753,7 +826,7 @@ button:focus {
   .scrolling-section#report-scrolling-section, .scrolling-section#sound-scrolling-section {
     height: 79%;
     position: relative;
-    top: 50%;
+    top: 43%;
     transform: translateY(-50%);}
 
 }
@@ -766,4 +839,230 @@ button:focus {
 }
 .gray {
   opacity: .5;
+}
+
+.copy-section, .copy-section:hover, .copy-section:focus, .copy-section:active {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.sharing-container-0 {
+  display: block;
+}
+.sharing-container-1 {
+
+  margin-bottom: 2rem;
+}
+/* sharing styles */
+.resp-sharing-button__link,
+.resp-sharing-button__icon {
+  display: inline-block
+}
+
+.resp-sharing-button__link {
+  text-decoration: none;
+  color: #fff;
+  margin: 0.5em
+}
+
+.resp-sharing-button {
+  border-radius: 5px;
+  transition: 25ms ease-out;
+  padding: 0.5em 0.75em;
+  font-family: Helvetica Neue,Helvetica,Arial,sans-serif
+}
+
+.resp-sharing-button__icon svg {
+  width: 1em;
+  height: 1em;
+  margin-right: 0.4em;
+  vertical-align: top
+}
+
+.resp-sharing-button--small svg {
+  margin: 0;
+  vertical-align: middle
+}
+
+/* Non solid icons get a stroke */
+.resp-sharing-button__icon {
+  stroke: #fff;
+  fill: none
+}
+
+/* Solid icons get a fill */
+.resp-sharing-button__icon--solid,
+.resp-sharing-button__icon--solidcircle {
+  fill: #fff;
+  stroke: none
+}
+
+.resp-sharing-button--twitter {
+  background-color: #55acee
+}
+
+.resp-sharing-button--twitter:hover {
+  background-color: #2795e9
+}
+
+.resp-sharing-button--pinterest {
+  background-color: #bd081c
+}
+
+.resp-sharing-button--pinterest:hover {
+  background-color: #8c0615
+}
+
+.resp-sharing-button--facebook {
+  background-color: #3b5998
+}
+
+.resp-sharing-button--facebook:hover {
+  background-color: #2d4373
+}
+
+.resp-sharing-button--tumblr {
+  background-color: #35465C
+}
+
+.resp-sharing-button--tumblr:hover {
+  background-color: #222d3c
+}
+
+.resp-sharing-button--reddit {
+  background-color: #5f99cf
+}
+
+.resp-sharing-button--reddit:hover {
+  background-color: #3a80c1
+}
+
+.resp-sharing-button--google {
+  background-color: #dd4b39
+}
+
+.resp-sharing-button--google:hover {
+  background-color: #c23321
+}
+
+.resp-sharing-button--linkedin {
+  background-color: #0077b5
+}
+
+.resp-sharing-button--linkedin:hover {
+  background-color: #046293
+}
+
+.resp-sharing-button--email {
+  background-color: #777
+}
+
+.resp-sharing-button--email:hover {
+  background-color: #5e5e5e
+}
+
+.resp-sharing-button--xing {
+  background-color: #1a7576
+}
+
+.resp-sharing-button--xing:hover {
+  background-color: #114c4c
+}
+
+.resp-sharing-button--whatsapp {
+  background-color: #25D366
+}
+
+.resp-sharing-button--whatsapp:hover {
+  background-color: #1da851
+}
+
+.resp-sharing-button--hackernews {
+background-color: #FF6600
+}
+.resp-sharing-button--hackernews:hover, .resp-sharing-button--hackernews:focus {   background-color: #FB6200 }
+
+.resp-sharing-button--vk {
+  background-color: #507299
+}
+
+.resp-sharing-button--vk:hover {
+  background-color: #43648c
+}
+
+.resp-sharing-button--facebook {
+  background-color: #3b5998;
+  border-color: #3b5998;
+}
+
+.resp-sharing-button--facebook:hover,
+.resp-sharing-button--facebook:active {
+  background-color: #2d4373;
+  border-color: #2d4373;
+}
+
+.resp-sharing-button--twitter {
+  background-color: #55acee;
+  border-color: #55acee;
+}
+
+.resp-sharing-button--twitter:hover,
+.resp-sharing-button--twitter:active {
+  background-color: #2795e9;
+  border-color: #2795e9;
+}
+
+.resp-sharing-button--tumblr {
+  background-color: #35465C;
+  border-color: #35465C;
+}
+
+.resp-sharing-button--tumblr:hover,
+.resp-sharing-button--tumblr:active {
+  background-color: #222d3c;
+  border-color: #222d3c;
+}
+
+.resp-sharing-button--email {
+  background-color: #777777;
+  border-color: #777777;
+}
+
+.resp-sharing-button--email:hover,
+.resp-sharing-button--email:active {
+  background-color: #5e5e5e;
+  border-color: #5e5e5e;
+}
+
+.resp-sharing-button--pinterest {
+  background-color: #bd081c;
+  border-color: #bd081c;
+}
+
+.resp-sharing-button--pinterest:hover,
+.resp-sharing-button--pinterest:active {
+  background-color: #8c0615;
+  border-color: #8c0615;
+}
+
+.resp-sharing-button--linkedin {
+  background-color: #0077b5;
+  border-color: #0077b5;
+}
+
+.resp-sharing-button--linkedin:hover,
+.resp-sharing-button--linkedin:active {
+  background-color: #046293;
+  border-color: #046293;
+}
+
+.resp-sharing-button--reddit {
+  background-color: #5f99cf;
+  border-color: #5f99cf;
+}
+
+.resp-sharing-button--reddit:hover,
+.resp-sharing-button--reddit:active {
+  background-color: #3a80c1;
+  border-color: #3a80c1;
 }
