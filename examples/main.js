@@ -10529,33 +10529,36 @@
 
       },
       updateLocalHighscoreUI: () => {
-        window.appConfig.highscores[window.appConfig.currentStage].highscores.forEach((hs, hsI) => {
-          if (hs.lengthPlayed > 0 && hs.totalScore !== undefined) {
-            window.appConfig.selectors[`highScore${hsI + 1}Score`].innerHTML = hs.totalScore.toLocaleString('en-US').replace(',', comma())
-            window.appConfig.selectors[`highScore${hsI + 1}Sec`].childNodes[0].data = hs.lengthPlayed + " sec"
-            window.appConfig.selectors[`highScore${hsI + 1}Row`].classList.remove("hide")
+        const hsIndexes = [1,2,3]
+        hsIndexes.forEach(hsI => {
+          const hs = window.appConfig.highscores[window.appConfig.currentStage].highscores[hsI - 1]
+          if ( hs !== undefined && hs.lengthPlayed > 0 && hs.totalScore !== undefined) {
+            window.appConfig.selectors[`highScore${hsI}Score`].innerHTML = hs.totalScore.toLocaleString('en-US').replace(',', comma())
+            window.appConfig.selectors[`highScore${hsI}Sec`].childNodes[0].data = hs.lengthPlayed + " sec"
+            window.appConfig.selectors[`highScore${hsI}Row`].classList.remove("hide")
             if (hs.name !== undefined) {
-              window.appConfig.selectors[`highScore${hsI + 1}Name`].childNodes[0].data = hs.name
+              window.appConfig.selectors[`highScore${hsI}Name`].childNodes[0].data = hs.name
             } else {
-              window.appConfig.selectors[`highScore${hsI + 1}Name`].childNodes[0].data = '   '
+              window.appConfig.selectors[`highScore${hsI}Name`].childNodes[0].data = '   '
             }
           } else {
-            window.appConfig.selectors[`highScore${hsI + 1}Row`].classList.add("hide")
+            window.appConfig.selectors[`highScore${hsI}Row`].classList.add("hide")
           }
         })
       },
       updateGlobalHighscoreUI: () => {
-        window.appConfig.globalHighscores[window.appConfig.currentStageIndex].arr.forEach((hs, hsI) => {
-          console.log(hs)
-          if (hs.seconds > 0 && hs.score !== undefined) {
+        const hsIndexes = [1,2,3,4,5,6,7,8,9,10]
+        hsIndexes.forEach( hsI => {
+          const hs = window.appConfig.globalHighscores[window.appConfig.currentStageIndex].arr[hsI - 1]
+          if (hs !== undefined && hs.seconds > 0 && hs.score !== undefined) {
             console.log('adding')
-            window.appConfig.selectors[`globalHighScore${hsI + 1}Score`].innerHTML = hs.score.toLocaleString('en-US').replace(',', comma())
-            window.appConfig.selectors[`globalHighScore${hsI + 1}Sec`].childNodes[0].data = hs.seconds + " sec"
-            window.appConfig.selectors[`globalHighScore${hsI + 1}Row`].classList.remove("hide")
-            window.appConfig.selectors[`globalHighScore${hsI + 1}Name`].childNodes[0].data = hs.name
+            window.appConfig.selectors[`globalHighScore${hsI}Score`].innerHTML = hs.score.toLocaleString('en-US').replace(',', comma())
+            window.appConfig.selectors[`globalHighScore${hsI}Sec`].childNodes[0].data = hs.seconds + " sec"
+            window.appConfig.selectors[`globalHighScore${hsI}Row`].classList.remove("hide")
+            window.appConfig.selectors[`globalHighScore${hsI}Name`].childNodes[0].data = hs.name
           } else {
             console.log('hiding')
-            window.appConfig.selectors[`globalHighScore${hsI + 1}Row`].classList.add("hide")
+            window.appConfig.selectors[`globalHighScore${hsI}Row`].classList.add("hide")
           }
         })
       },
