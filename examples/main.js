@@ -10547,7 +10547,6 @@
             name = name + window.appConfig.highScoreConfig.charactersList[Math.floor(Math.random() * 26)]
           }
           if (window.appConfig.highScoreConfig.badWords.includes(name)){
-            debugger
             return makeName()
           } else {
             return name
