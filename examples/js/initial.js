@@ -240,7 +240,8 @@ window.appConfig.allElements = [
       { id: "main-menu-container", hidden: undefined, landingPage: false },
       { id: "landing-title-section", hidden: undefined, landingPage: true },
       { id: "landing-page", hidden: undefined, landingPage: false},
-      { id: "high-score-input-modal-curtain", hidden: undefined, landingPage: false}
+      { id: "high-score-input-modal-curtain", hidden: undefined, landingPage: false},
+      { id: "high-scores-main-menu", hidden: undefined, landingPage: false}
       
     ];
     window.appConfig.registerDOMElements = (elements) => {

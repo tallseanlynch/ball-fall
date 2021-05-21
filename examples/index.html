@@ -508,7 +508,7 @@
     }
 
     .new-zone-container {
-      background-color: rgba(0,0,0,.5);
+      background-color: rgba(0, 0, 0, .5);
       padding-bottom: 15px;
     }
 
@@ -522,7 +522,7 @@
       cursor: pointer;
     }
 
-    
+
     @media only screen and (max-height: 500px) {
       .new-zone {
         font-size: .5rem;
@@ -551,33 +551,37 @@
       color: white;
       z-index: 9999999999999;
     }
+
     .modal-curtain {
       height: 100%;
       width: 100%;
       position: absolute;
       top: 0px;
       left: 0px;
-      background-color: rgba(0,0,0,.7);
+      background-color: rgba(0, 0, 0, .7);
       z-index: 10000;
     }
+
     #high-score-input-modal {
       z-index: 10001;
     }
+
     #high-scores-input-table {
       margin-left: auto;
       margin-right: auto;
     }
+
     .high-score-input-letter {
       font-size: 4rem;
       width: 20%;
       line-height: 5rem;
       text-align: center;
     }
+
     .high-score-input-arrow {
       width: 20vw;
       text-align: center;
     }
-    
   </style>
   <link rel="stylesheet" href="./ballsinki.css">
 </head>
@@ -624,7 +628,8 @@
     </div>
   </div>
   <div id="high-score-api" class="hide">
-      <button onClick="window.appConfig.gameModeFunctions.handleHighScoreApiCall({method:'POST'})" value="Submit"> Submit </button>
+    <button onClick="window.appConfig.gameModeFunctions.handleHighScoreApiCall({method:'POST'})" value="Submit"> Submit
+    </button>
 
     HIGH SCORE API
   </div>
@@ -640,19 +645,19 @@
       <h1 class="landing-title-text">BALLSINKI</h1>
     </header>
     <div id="landing-page" class="margin-bottom-2 hide">
-      <script>if(window.appConfig.env !== 'app'){
-        document.querySelector('#landing-page').classList.remove('hide')
-      } </script>
+      <script>if (window.appConfig.env !== 'app') {
+          document.querySelector('#landing-page').classList.remove('hide')
+        }</script>
       <div class="section-container play-now-container" onClick="landingPageToMainMenu()">
         <div class="new-zone-container">
-          <div class="new-zone-title">VORTEX</div>        
+          <div class="new-zone-title">VORTEX</div>
           <button id="start-button" class="play-now">PLAY NOW</button>
         </div>
         <div class="new-zone-feat-container">
-          <div class="new-zone-sub">FEATURING MUSIC BY</div>        
-          <div class="new-zone">GEORGE FOLZ</div>            
+          <div class="new-zone-sub">FEATURING MUSIC BY</div>
+          <div class="new-zone">GEORGE FOLZ</div>
         </div>
-    </div>
+      </div>
       <section class="copy-section learn-more">
         <div class="learn-more-text">LEARN MORE</div>
         <div class="bouncing-v">V</div>
@@ -909,19 +914,19 @@
           <table id="high-scores-table" class="table-margin-1 high-score-table">
             <tr id="high-score-1-row">
               <td class="font-a high-score-ordinal">1.</td>
-              <td class="font-b high-score-name" id="high-score-1-name">   </td>
+              <td class="font-b high-score-name" id="high-score-1-name"> </td>
               <td class="font-b high-score-score" id="high-score-1-score">0</td>
               <td class="font-b high-score-sec" id="high-score-1-sec">0 sec</td>
             </tr>
             <tr id="high-score-2-row">
               <td class="font-a high-score-ordinal">2.</td>
-              <td class="font-b high-score-name" id="high-score-2-name">   </td>
+              <td class="font-b high-score-name" id="high-score-2-name"> </td>
               <td class="font-b high-score-score" id="high-score-2-score">0</td>
               <td class="font-b high-score-sec" id="high-score-2-sec">0 sec</td>
             </tr>
             <tr id="high-score-3-row">
               <td class="font-a high-score-ordinal">3.</td>
-              <td class="font-b high-score-name" id="high-score-3-name">   </td>
+              <td class="font-b high-score-name" id="high-score-3-name"> </td>
               <td class="font-b high-score-score" id="high-score-3-score">0</td>
               <td class="font-b high-score-sec" id="high-score-3-sec">0 sec</td>
             </tr>
@@ -929,61 +934,61 @@
           <table id="global-high-scores-table" class="hide table-margin-1 high-score-table">
             <tr id="global-high-score-1-row">
               <td class="font-a high-score-ordinal">1.</td>
-              <td class="font-b high-score-name" id="global-high-score-1-name">   </td>
+              <td class="font-b high-score-name" id="global-high-score-1-name"> </td>
               <td class="font-b high-score-score" id="global-high-score-1-score">0</td>
               <td class="font-b high-score-sec" id="global-high-score-1-sec">0 sec</td>
             </tr>
             <tr id="global-high-score-2-row">
               <td class="font-a high-score-ordinal">2.</td>
-              <td class="font-b high-score-name" id="global-high-score-2-name">   </td>
+              <td class="font-b high-score-name" id="global-high-score-2-name"> </td>
               <td class="font-b high-score-score" id="global-high-score-2-score">0</td>
               <td class="font-b high-score-sec" id="global-high-score-2-sec">0 sec</td>
             </tr>
             <tr id="global-high-score-3-row">
               <td class="font-a high-score-ordinal">3.</td>
-              <td class="font-b high-score-name" id="global-high-score-3-name">   </td>
+              <td class="font-b high-score-name" id="global-high-score-3-name"> </td>
               <td class="font-b high-score-score" id="global-high-score-3-score">0</td>
               <td class="font-b high-score-sec" id="global-high-score-3-sec">0 sec</td>
             </tr>
             <tr id="global-high-score-4-row">
               <td class="font-a high-score-ordinal">4.</td>
-              <td class="font-b high-score-name" id="global-high-score-4-name">   </td>
+              <td class="font-b high-score-name" id="global-high-score-4-name"> </td>
               <td class="font-b high-score-score" id="global-high-score-4-score">0</td>
               <td class="font-b high-score-sec" id="global-high-score-4-sec">0 sec</td>
             </tr>
             <tr id="global-high-score-5-row">
               <td class="font-a high-score-ordinal">5.</td>
-              <td class="font-b high-score-name" id="global-high-score-5-name">   </td>
+              <td class="font-b high-score-name" id="global-high-score-5-name"> </td>
               <td class="font-b high-score-score" id="global-high-score-5-score">0</td>
               <td class="font-b high-score-sec" id="global-high-score-5-sec">0 sec</td>
             </tr>
             <tr id="global-high-score-6-row">
               <td class="font-a high-score-ordinal">6.</td>
-              <td class="font-b high-score-name" id="global-high-score-6-name">   </td>
+              <td class="font-b high-score-name" id="global-high-score-6-name"> </td>
               <td class="font-b high-score-score" id="global-high-score-6-score">0</td>
               <td class="font-b high-score-sec" id="global-high-score-6-sec">0 sec</td>
             </tr>
             <tr id="global-high-score-7-row">
               <td class="font-a high-score-ordinal">7.</td>
-              <td class="font-b high-score-name" id="global-high-score-7-name">   </td>
+              <td class="font-b high-score-name" id="global-high-score-7-name"> </td>
               <td class="font-b high-score-score" id="global-high-score-7-score">0</td>
               <td class="font-b high-score-sec" id="global-high-score-7-sec">0 sec</td>
             </tr>
             <tr id="global-high-score-8-row">
               <td class="font-a high-score-ordinal">8.</td>
-              <td class="font-b high-score-name" id="global-high-score-8-name">   </td>
+              <td class="font-b high-score-name" id="global-high-score-8-name"> </td>
               <td class="font-b high-score-score" id="global-high-score-8-score">0</td>
               <td class="font-b high-score-sec" id="global-high-score-8-sec">0 sec</td>
             </tr>
             <tr id="global-high-score-9-row">
               <td class="font-a high-score-ordinal">9.</td>
-              <td class="font-b high-score-name" id="global-high-score-9-name">   </td>
+              <td class="font-b high-score-name" id="global-high-score-9-name"> </td>
               <td class="font-b high-score-score" id="global-high-score-9-score">0</td>
               <td class="font-b high-score-sec" id="global-high-score-9-sec">0 sec</td>
             </tr>
             <tr id="global-high-score-10-row">
               <td class="font-a high-score-ordinal">10.</td>
-              <td class="font-b high-score-name" id="global-high-score-10-name">   </td>
+              <td class="font-b high-score-name" id="global-high-score-10-name"> </td>
               <td class="font-b high-score-score" id="global-high-score-10-score">0</td>
               <td class="font-b high-score-sec" id="global-high-score-10-sec">0 sec</td>
             </tr>
@@ -1031,7 +1036,7 @@
         onClick="reset({action:'levelSelect', level: 5, autoStart: true})">STARLING</button>
       <button class="level-select-button stage-6 margin-bottom-2 font-d"
         onClick="reset({action:'levelSelect', level: 6, autoStart: true})">AURORA</button>
-        <button class="level-select-button stage-7 margin-bottom-2 font-d"
+      <button class="level-select-button stage-7 margin-bottom-2 font-d"
         onClick="reset({action:'levelSelect', level: 7, autoStart: true})">VORTEX</button>
     </div>
     <div id="back-button" class="margin-top-2 font-b">
@@ -1076,6 +1081,112 @@
       <button id="start-credits-button" class="start-menu-button font-b" onClick="showCredits()">
         Credits
       </button>
+      <button id="start-credits-button" class="start-menu-button font-b" onClick="showHighscoresMainMenu()">
+        High Scores
+      </button>
+    </div>
+  </div>
+  <div id="high-scores-main-menu" class="menu-container hide">
+    <div id="high-scores-main-menu-title" class="menu-title-text margin-bottom-2 font-e">HIGH SCORES</div>
+    <div id="high-scores-zone-menu-main-menu" class="margin-bottom-1">
+      <button id="high-scores-main-menu-left-arrow" class="left-arrow"><</button>
+      <div id="high-scores-main-menu-current-zone" class="level-select-button font-d">Hidden Hollow</div>
+      <button id="high-scores-main-menu-right-arrow" class="right-arrow">></button>
+    </div>
+    <div id="high-scores-tab-menu-main-menu" class="margin-bottom-1">
+      <button class="font-a tab-button" id="high-scores-device-tab-button-main-menu">DEVICE</button>
+      <button class="font-a tab-button gray" id="high-scores-global-tab-button-main-menu">GLOBAL</button>
+    </div>
+    <div class="">
+      <table id="high-scores-table-main-menu" class="table-margin-1 high-score-table">
+        <tr id="high-score-1-row-main-menu">
+          <td class="font-a high-score-ordinal">1.</td>
+          <td class="font-b high-score-name" id="high-score-1-name-main-menu"> </td>
+          <td class="font-b high-score-score" id="high-score-1-score-main-menu">0</td>
+          <td class="font-b high-score-sec" id="high-score-1-sec-main-menu">0 sec</td>
+        </tr>
+        <tr id="high-score-2-row-main-menu">
+          <td class="font-a high-score-ordinal">2.</td>
+          <td class="font-b high-score-name" id="high-score-2-name-main-menu"> </td>
+          <td class="font-b high-score-score" id="high-score-2-score-main-menu">0</td>
+          <td class="font-b high-score-sec" id="high-score-2-sec-main-menu">0 sec</td>
+        </tr>
+        <tr id="high-score-3-row-main-menu">
+          <td class="font-a high-score-ordinal">3.</td>
+          <td class="font-b high-score-name" id="high-score-3-name-main-menu"> </td>
+          <td class="font-b high-score-score" id="high-score-3-score-main-menu">0</td>
+          <td class="font-b high-score-sec" id="high-score-3-sec-main-menu">0 sec</td>
+        </tr>
+      </table>
+      <div id="global-high-scores-table-main-menu-container" class="hide">
+        <table id="global-high-scores-table-main-menu0" class="table-margin-1 high-score-table">
+          <tr id="global-high-score-1-row-main-menu">
+            <td class="font-a high-score-ordinal">1.</td>
+            <td class="font-b high-score-name" id="global-high-score-1-name-main-menu"> </td>
+            <td class="font-b high-score-score" id="global-high-score-1-score-main-menu">0</td>
+            <td class="font-b high-score-sec" id="global-high-score-1-sec-main-menu">0 sec</td>
+          </tr>
+          <tr id="global-high-score-2-row-main-menu">
+            <td class="font-a high-score-ordinal">2.</td>
+            <td class="font-b high-score-name" id="global-high-score-2-name-main-menu"> </td>
+            <td class="font-b high-score-score" id="global-high-score-2-score-main-menu">0</td>
+            <td class="font-b high-score-sec" id="global-high-score-2-sec-main-menu">0 sec</td>
+          </tr>
+          <tr id="global-high-score-3-row-main-menu">
+            <td class="font-a high-score-ordinal">3.</td>
+            <td class="font-b high-score-name" id="global-high-score-3-name-main-menu"> </td>
+            <td class="font-b high-score-score" id="global-high-score-3-score-main-menu">0</td>
+            <td class="font-b high-score-sec" id="global-high-score-3-sec-main-menu">0 sec</td>
+          </tr>
+          <tr id="global-high-score-4-row-main-menu">
+            <td class="font-a high-score-ordinal">4.</td>
+            <td class="font-b high-score-name" id="global-high-score-4-name-main-menu"> </td>
+            <td class="font-b high-score-score" id="global-high-score-4-score-main-menu">0</td>
+            <td class="font-b high-score-sec" id="global-high-score-4-sec-main-menu">0 sec</td>
+          </tr>
+          <tr id="global-high-score-5-row-main-menu">
+            <td class="font-a high-score-ordinal">5.</td>
+            <td class="font-b high-score-name" id="global-high-score-5-name-main-menu"> </td>
+            <td class="font-b high-score-score" id="global-high-score-5-score-main-menu">0</td>
+            <td class="font-b high-score-sec" id="global-high-score-5-sec-main-menu">0 sec</td>
+          </tr>
+        </table>
+        <table id="global-high-scores-table-main-menu1" class="table-margin-1 high-score-table">
+          <tr id="global-high-score-6-row-main-menu">
+            <td class="font-a high-score-ordinal">6.</td>
+            <td class="font-b high-score-name" id="global-high-score-6-name-main-menu"> </td>
+            <td class="font-b high-score-score" id="global-high-score-6-score-main-menu">0</td>
+            <td class="font-b high-score-sec" id="global-high-score-6-sec-main-menu">0 sec</td>
+          </tr>
+          <tr id="global-high-score-7-row-main-menu">
+            <td class="font-a high-score-ordinal">7.</td>
+            <td class="font-b high-score-name" id="global-high-score-7-name-main-menu"> </td>
+            <td class="font-b high-score-score" id="global-high-score-7-score-main-menu">0</td>
+            <td class="font-b high-score-sec" id="global-high-score-7-sec-main-menu">0 sec</td>
+          </tr>
+          <tr id="global-high-score-8-row-main-menu">
+            <td class="font-a high-score-ordinal">8.</td>
+            <td class="font-b high-score-name" id="global-high-score-8-name-main-menu"> </td>
+            <td class="font-b high-score-score" id="global-high-score-8-score-main-menu">0</td>
+            <td class="font-b high-score-sec" id="global-high-score-8-sec-main-menu">0 sec</td>
+          </tr>
+          <tr id="global-high-score-9-row-main-menu">
+            <td class="font-a high-score-ordinal">9.</td>
+            <td class="font-b high-score-name" id="global-high-score-9-name-main-menu"> </td>
+            <td class="font-b high-score-score" id="global-high-score-9-score-main-menu">0</td>
+            <td class="font-b high-score-sec" id="global-high-score-9-sec-main-menu">0 sec</td>
+          </tr>
+          <tr id="global-high-score-10-row-main-menu">
+            <td class="font-a high-score-ordinal">10.</td>
+            <td class="font-b high-score-name" id="global-high-score-10-name-main-menu"> </td>
+            <td class="font-b high-score-score" id="global-high-score-10-score-main-menu">0</td>
+            <td class="font-b high-score-sec" id="global-high-score-10-sec-main-menu">0 sec</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div id="back-button" class="margin-top-2 font-b">
+      <button class="start-menu-button font-b" onClick="goBack()">Back</button>
     </div>
   </div>
   <div id="instructions" class="menu-container hide">
@@ -1227,4 +1338,5 @@
   gtag('js', new Date());
   gtag('config', 'G-PGJYVH2VWT');
 </script>
+
 </html>

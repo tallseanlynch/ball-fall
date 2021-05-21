@@ -10116,6 +10116,7 @@
         stageScore.toLocaleString('en-US').replace(',', comma());
 
       window.appConfig.gameModeFunctions.updateLocalHighscoreUI()
+      window.appConfig.gameModeFunctions.updateLocalHighscoreUIMainMenu()
 
       window.appConfig.selectors.pauseButton.disabled = true;
 
@@ -10329,7 +10330,66 @@
       pauseButton: document.querySelector("#pause-button"),
       html: document.querySelector("html"),
       highScoreSubmitButton: document.querySelector("#high-score-submit-button"),
-      highScoreInputModalCurtain: document.querySelector("#high-score-input-modal-curtain")
+      highScoreInputModalCurtain: document.querySelector("#high-score-input-modal-curtain"),
+      highScore1RowMainMenu: document.querySelector("#high-score-1-row-main-menu"),
+      highScore2RowMainMenu: document.querySelector("#high-score-2-row-main-menu"),
+      highScore3RowMainMenu: document.querySelector("#high-score-3-row-main-menu"),
+      highScore1ScoreMainMenu: document.querySelector("#high-score-1-score-main-menu"),
+      highScore2ScoreMainMenu: document.querySelector("#high-score-2-score-main-menu"),
+      highScore3ScoreMainMenu: document.querySelector("#high-score-3-score-main-menu"),
+      highScore1SecMainMenu: document.querySelector("#high-score-1-sec-main-menu"),
+      highScore2SecMainMenu: document.querySelector("#high-score-2-sec-main-menu"),
+      highScore3SecMainMenu: document.querySelector("#high-score-3-sec-main-menu"),
+      highScore1NameMainMenu: document.querySelector("#high-score-1-name-main-menu"),
+      highScore2NameMainMenu: document.querySelector("#high-score-2-name-main-menu"),
+      highScore3NameMainMenu: document.querySelector("#high-score-3-name-main-menu"),
+      globalHighScore1RowMainMenu: document.querySelector("#global-high-score-1-row-main-menu"),
+      globalHighScore2RowMainMenu: document.querySelector("#global-high-score-2-row-main-menu"),
+      globalHighScore3RowMainMenu: document.querySelector("#global-high-score-3-row-main-menu"),
+      globalHighScore4RowMainMenu: document.querySelector("#global-high-score-4-row-main-menu"),
+      globalHighScore5RowMainMenu: document.querySelector("#global-high-score-5-row-main-menu"),
+      globalHighScore6RowMainMenu: document.querySelector("#global-high-score-6-row-main-menu"),
+      globalHighScore7RowMainMenu: document.querySelector("#global-high-score-7-row-main-menu"),
+      globalHighScore8RowMainMenu: document.querySelector("#global-high-score-8-row-main-menu"),
+      globalHighScore9RowMainMenu: document.querySelector("#global-high-score-9-row-main-menu"),
+      globalHighScore10RowMainMenu: document.querySelector("#global-high-score-10-row-main-menu"),
+      globalHighScore1ScoreMainMenu: document.querySelector("#global-high-score-1-score-main-menu"),
+      globalHighScore2ScoreMainMenu: document.querySelector("#global-high-score-2-score-main-menu"),
+      globalHighScore3ScoreMainMenu: document.querySelector("#global-high-score-3-score-main-menu"),
+      globalHighScore4ScoreMainMenu: document.querySelector("#global-high-score-4-score-main-menu"),
+      globalHighScore5ScoreMainMenu: document.querySelector("#global-high-score-5-score-main-menu"),
+      globalHighScore6ScoreMainMenu: document.querySelector("#global-high-score-6-score-main-menu"),
+      globalHighScore7ScoreMainMenu: document.querySelector("#global-high-score-7-score-main-menu"),
+      globalHighScore8ScoreMainMenu: document.querySelector("#global-high-score-8-score-main-menu"),
+      globalHighScore9ScoreMainMenu: document.querySelector("#global-high-score-9-score-main-menu"),
+      globalHighScore10ScoreMainMenu: document.querySelector("#global-high-score-10-score-main-menu"),
+      globalHighScore1SecMainMenu: document.querySelector("#global-high-score-1-sec-main-menu"),
+      globalHighScore2SecMainMenu: document.querySelector("#global-high-score-2-sec-main-menu"),
+      globalHighScore3SecMainMenu: document.querySelector("#global-high-score-3-sec-main-menu"),
+      globalHighScore4SecMainMenu: document.querySelector("#global-high-score-4-sec-main-menu"),
+      globalHighScore5SecMainMenu: document.querySelector("#global-high-score-5-sec-main-menu"),
+      globalHighScore6SecMainMenu: document.querySelector("#global-high-score-6-sec-main-menu"),
+      globalHighScore7SecMainMenu: document.querySelector("#global-high-score-7-sec-main-menu"),
+      globalHighScore8SecMainMenu: document.querySelector("#global-high-score-8-sec-main-menu"),
+      globalHighScore9SecMainMenu: document.querySelector("#global-high-score-9-sec-main-menu"),
+      globalHighScore10SecMainMenu: document.querySelector("#global-high-score-10-sec-main-menu"),
+      globalHighScore1NameMainMenu: document.querySelector("#global-high-score-1-name-main-menu"),
+      globalHighScore2NameMainMenu: document.querySelector("#global-high-score-2-name-main-menu"),
+      globalHighScore3NameMainMenu: document.querySelector("#global-high-score-3-name-main-menu"),
+      globalHighScore4NameMainMenu: document.querySelector("#global-high-score-4-name-main-menu"),
+      globalHighScore5NameMainMenu: document.querySelector("#global-high-score-5-name-main-menu"),
+      globalHighScore6NameMainMenu: document.querySelector("#global-high-score-6-name-main-menu"),
+      globalHighScore7NameMainMenu: document.querySelector("#global-high-score-7-name-main-menu"),
+      globalHighScore8NameMainMenu: document.querySelector("#global-high-score-8-name-main-menu"),
+      globalHighScore9NameMainMenu: document.querySelector("#global-high-score-9-name-main-menu"),
+      globalHighScore10NameMainMenu: document.querySelector("#global-high-score-10-name-main-menu"),
+      highScoresDeviceTabButtonMainMenu: document.querySelector('#high-scores-device-tab-button-main-menu'),
+      highScoresGlobalTabButtonMainMenu: document.querySelector('#high-scores-global-tab-button-main-menu'),
+      highScoresTableMainMenu: document.querySelector("#high-scores-table-main-menu"),
+      globalHighScoresTableMainMenuContainer: document.querySelector("#global-high-scores-table-main-menu-container"),
+      highScoresMainMenuLeftArrow: document.querySelector('#high-scores-main-menu-left-arrow'),
+      highScoresMainMenuRightArrow: document.querySelector('#high-scores-main-menu-right-arrow'),
+      highScoresMainMenuCurrentZone: document.querySelector('#high-scores-main-menu-current-zone')
     }
     window.appConfig.selectors.scoreHundreds.textContent = "0"
     window.appConfig.selectors.scoreThousands.textContent = " "
@@ -10447,14 +10507,18 @@
             }
             window.appConfig.gameModeFunctions.updateLegacyHighscoreZones()
             let hsInt = 0
-            Object.keys(window.appConfig.highscores).forEach(key => {
-              window.appConfig.highscores[key].highscores.forEach(score => {
-                if (score.name !== undefined && (score.posted === undefined || score.posted === false)) {
-                  callOptions.body.oldScores.push(score)
-                  hsInt++
-                }
+            if (options.oldScores !== undefined) {
+              callOptions.body.oldScores = options.oldScores
+            } else {
+              Object.keys(window.appConfig.highscores).forEach(key => {
+                window.appConfig.highscores[key].highscores.forEach(score => {
+                  if (score.name !== undefined && (score.posted === undefined || score.posted === false)) {
+                    callOptions.body.oldScores.push(score)
+                    hsInt++
+                  }
+                })
               })
-            })
+            }
             console.log(callOptions.body)
             callOptions.body = JSON.stringify(callOptions.body)
           }
@@ -10476,6 +10540,40 @@
           console.log(err)
         }
       },
+      populateOldScores: (zones = [0,1,2,3,4,5,6,7]) => {
+        const makeName = () => {
+          let name = ''
+          for (let i = 0; i < 3; i++) {
+            name = name + window.appConfig.highScoreConfig.charactersList[Math.floor(Math.random() * 26)]
+          }
+          if (window.appConfig.highScoreConfig.badWords.includes(name)){
+            debugger
+            return makeName()
+          } else {
+            return name
+          }
+        }
+        const makeSeconds = () => {
+          return 60 + (Math.floor(Math.random() * 6) * 15)
+        }
+        const makeScore = () => {
+          return 100000 + (Math.floor(Math.random()* 100) * 1000) + (Math.floor(Math.random() * 100) * 100)
+        }
+        let oldScores = []
+        zones.forEach(zone => {
+          for (let i = 0; i < 10; i++) {
+            oldScores.push({
+              "date": Date.now(),
+              "zone": zone,
+              "totalScore": makeScore(),
+              "name": makeName(),
+              "lengthPlayed": makeSeconds()
+            })
+          }
+        })
+        return oldScores
+        //window.appConfig.gameModeFunctions.handleHighScoreApiCall({method:'POST', oldScores: window.appConfig.gameModeFunctions.populateOldScores()})
+      },
       updatePostedHighscores: (data) => {
         if (data !== undefined && data.writeResult !== undefined) {
           data.writeResult.forEach(wr => {
@@ -10483,13 +10581,10 @@
             let foundIt
             if (currentZone !== undefined) {
               foundIt = currentZone.find(cz => {
-                console.log('cz:', cz)
-                console.log(cz.date === wr.date, cz.lengthPlayed === wr.seconds, cz.totalScore === wr.score)
                 return cz.date === wr.date && cz.lengthPlayed === wr.seconds && cz.totalScore === wr.score  
               })
             }
             if (foundIt !== undefined) {
-              console.log('foundit', foundIt)
               foundIt.posted = true
             }
           })
@@ -10499,10 +10594,10 @@
       },
       updateGlobalHighscores: (data) => {
         if (data !== undefined && data.highScores !== undefined && Array.isArray(data.highScores)) {
-          console.log('setting global high score local storage')
           window.appConfig.globalHighscores = data.highScores
           localStorage.setItem('globalHighscores', JSON.stringify(data.highScores))
           window.appConfig.gameModeFunctions.updateGlobalHighscoreUI()
+          window.appConfig.gameModeFunctions.updateGlobalHighscoreUIMainMenu()
         }
       },
       updateLegacyHighscoreNames: (name ) => {
@@ -10531,7 +10626,7 @@
       updateLocalHighscoreUI: () => {
         const hsIndexes = [1,2,3]
         hsIndexes.forEach(hsI => {
-          const hs = window.appConfig.highscores[window.appConfig.currentStage].highscores[hsI - 1]
+          const hs = window.appConfig.highscores[`STAGE${window.appConfig.currentStageIndex}`].highscores[hsI - 1]
           if ( hs !== undefined && hs.lengthPlayed > 0 && hs.totalScore !== undefined) {
             window.appConfig.selectors[`highScore${hsI}Score`].innerHTML = hs.totalScore.toLocaleString('en-US').replace(',', comma())
             window.appConfig.selectors[`highScore${hsI}Sec`].childNodes[0].data = hs.lengthPlayed + " sec"
@@ -10546,19 +10641,49 @@
           }
         })
       },
+      updateLocalHighscoreUIMainMenu: () => {
+        const hsIndexes = [1,2,3]
+        hsIndexes.forEach(hsI => {
+          const hs = window.appConfig.highscores[`STAGE${window.appConfig.highScoreConfig.mainMenuCurrentZoneIndex}`].highscores[hsI - 1]
+          if ( hs !== undefined && hs.lengthPlayed > 0 && hs.totalScore !== undefined) {
+            window.appConfig.selectors[`highScore${hsI}ScoreMainMenu`].innerHTML = hs.totalScore.toLocaleString('en-US').replace(',', comma())
+            window.appConfig.selectors[`highScore${hsI}SecMainMenu`].childNodes[0].data = hs.lengthPlayed + " sec"
+            window.appConfig.selectors[`highScore${hsI}RowMainMenu`].classList.remove("hide")
+            if (hs.name !== undefined) {
+              window.appConfig.selectors[`highScore${hsI}NameMainMenu`].childNodes[0].data = hs.name
+            } else {
+              window.appConfig.selectors[`highScore${hsI}NameMainMenu`].childNodes[0].data = '   '
+            }
+          } else {
+            window.appConfig.selectors[`highScore${hsI}RowMainMenu`].classList.add("hide")
+          }
+        })
+      },
       updateGlobalHighscoreUI: () => {
         const hsIndexes = [1,2,3,4,5,6,7,8,9,10]
         hsIndexes.forEach( hsI => {
           const hs = window.appConfig.globalHighscores[window.appConfig.currentStageIndex].arr[hsI - 1]
           if (hs !== undefined && hs.seconds > 0 && hs.score !== undefined) {
-            console.log('adding')
             window.appConfig.selectors[`globalHighScore${hsI}Score`].innerHTML = hs.score.toLocaleString('en-US').replace(',', comma())
             window.appConfig.selectors[`globalHighScore${hsI}Sec`].childNodes[0].data = hs.seconds + " sec"
             window.appConfig.selectors[`globalHighScore${hsI}Row`].classList.remove("hide")
             window.appConfig.selectors[`globalHighScore${hsI}Name`].childNodes[0].data = hs.name
           } else {
-            console.log('hiding')
             window.appConfig.selectors[`globalHighScore${hsI}Row`].classList.add("hide")
+          }
+        })
+      },
+      updateGlobalHighscoreUIMainMenu: () => {
+        const hsIndexes = [1,2,3,4,5,6,7,8,9,10]
+        hsIndexes.forEach( hsI => {
+          const hs = window.appConfig.globalHighscores[window.appConfig.highScoreConfig.mainMenuCurrentZoneIndex].arr[hsI - 1]
+          if (hs !== undefined && hs.seconds > 0 && hs.score !== undefined) {
+            window.appConfig.selectors[`globalHighScore${hsI}ScoreMainMenu`].innerHTML = hs.score.toLocaleString('en-US').replace(',', comma())
+            window.appConfig.selectors[`globalHighScore${hsI}SecMainMenu`].childNodes[0].data = hs.seconds + " sec"
+            window.appConfig.selectors[`globalHighScore${hsI}RowMainMenu`].classList.remove("hide")
+            window.appConfig.selectors[`globalHighScore${hsI}NameMainMenu`].childNodes[0].data = hs.name
+          } else {
+            window.appConfig.selectors[`globalHighScore${hsI}RowMainMenu`].classList.add("hide")
           }
         })
       },
@@ -10575,13 +10700,13 @@
       }
     }
     
-    window.appConfig.gameModeFunctions.updateLocalHighscoreUI()
-
     window.appConfig.highScoreConfig = {
       currentName: 'AAA',
       charactersList: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ',
       inputNumbers: [1,2,3],
-      regex: new RegExp('[A-Z0-9 ]{3}', 'm')
+      regex: new RegExp('[A-Z0-9 ]{3}', 'm'),
+      badWords: ["ASS","FUC","FUK","FUQ","FUX","FCK","COC","COK","COQ","KOX","KOC","KOK","KOQ","CAC","CAK","CAQ","KAC","KAK","KAQ","DIC","DIK","DIQ","DIX","DCK","PNS","PSY","FAG","FGT","NGR","NIG","CNT","KNT","SHT","DSH","TWT","BCH","CUM","CLT","KUM","KLT","SUC","SUK","SUQ","SCK","LIC","LIK","LIQ","LCK","JIZ","JZZ","GAY","GEY","GEI","GAI","VAG","VGN","SJV","FAP","PRN","LOL","JEW","JOO","GVR","PUS","PIS","PSS","SNM","TIT","FKU","FCU","FQU","HOR","SLT","JAP","WOP","KIK","KYK","KYC","KYQ","DYK","DYQ","DYC","KKK","JYZ","PRK","PRC","PRQ","MIC","MIK","MIQ","MYC","MYK","MYQ","GUC","GUK","GUQ","GIZ","GZZ","SEX","SXX","SXI","SXE","SXY","XXX","WAC","WAK","WAQ","WCK","POT","THC","VAJ","VJN","NUT","STD","LSD","POO","AZN","PCP","DMN","ORL","ANL","ANS","MUF","MFF","PHK","PHC","PHQ","XTC","TOK","TOC","TOQ","MLF","RAC","RAK","RAQ","RCK","SAC","SAK","SAQ","PMS","NAD","NDZ","NDS","WTF","SOL","SOB","FOB","SFU"],
+      mainMenuCurrentZoneIndex: 0,
     }
     if (localStorage.getItem('hsName') !== null && window.appConfig.highScoreConfig.regex.test(localStorage.getItem('hsName'))){
       window.appConfig.highScoreConfig.currentName = localStorage.getItem('hsName')
@@ -10592,9 +10717,26 @@
     if (localStorage.getItem('globalHighscores') !== null) {
       window.appConfig.globalHighscores = JSON.parse(localStorage.getItem('globalHighscores'))
       window.appConfig.gameModeFunctions.updateGlobalHighscoreUI()
+      window.appConfig.gameModeFunctions.updateGlobalHighscoreUIMainMenu()
     }
-
-    const badWords = ["ASS","FUC","FUK","FUQ","FUX","FCK","COC","COK","COQ","KOX","KOC","KOK","KOQ","CAC","CAK","CAQ","KAC","KAK","KAQ","DIC","DIK","DIQ","DIX","DCK","PNS","PSY","FAG","FGT","NGR","NIG","CNT","KNT","SHT","DSH","TWT","BCH","CUM","CLT","KUM","KLT","SUC","SUK","SUQ","SCK","LIC","LIK","LIQ","LCK","JIZ","JZZ","GAY","GEY","GEI","GAI","VAG","VGN","SJV","FAP","PRN","LOL","JEW","JOO","GVR","PUS","PIS","PSS","SNM","TIT","FKU","FCU","FQU","HOR","SLT","JAP","WOP","KIK","KYK","KYC","KYQ","DYK","DYQ","DYC","KKK","JYZ","PRK","PRC","PRQ","MIC","MIK","MIQ","MYC","MYK","MYQ","GUC","GUK","GUQ","GIZ","GZZ","SEX","SXX","SXI","SXE","SXY","XXX","WAC","WAK","WAQ","WCK","POT","THC","VAJ","VJN","NUT","STD","LSD","POO","AZN","PCP","DMN","ORL","ANL","ANS","MUF","MFF","PHK","PHC","PHQ","XTC","TOK","TOC","TOQ","MLF","RAC","RAK","RAQ","RCK","SAC","SAK","SAQ","PMS","NAD","NDZ","NDS","WTF","SOL","SOB","FOB","SFU"]
+    window.appConfig.selectors.highScoresMainMenuLeftArrow.addEventListener("click", () => {
+      window.appConfig.highScoreConfig.mainMenuCurrentZoneIndex = window.appConfig.highScoreConfig.mainMenuCurrentZoneIndex - 1
+      if (window.appConfig.highScoreConfig.mainMenuCurrentZoneIndex < 0) {
+        window.appConfig.highScoreConfig.mainMenuCurrentZoneIndex = window.appConfig.stagesArray.length -1
+      }
+      window.appConfig.selectors.highScoresMainMenuCurrentZone.childNodes[0].data = window.appConfig.stages[`STAGE${window.appConfig.highScoreConfig.mainMenuCurrentZoneIndex}`].name
+      window.appConfig.gameModeFunctions.updateLocalHighscoreUIMainMenu()
+      window.appConfig.gameModeFunctions.updateGlobalHighscoreUIMainMenu()
+    })
+    window.appConfig.selectors.highScoresMainMenuRightArrow.addEventListener("click", () => {
+      window.appConfig.highScoreConfig.mainMenuCurrentZoneIndex = window.appConfig.highScoreConfig.mainMenuCurrentZoneIndex + 1
+      if (window.appConfig.highScoreConfig.mainMenuCurrentZoneIndex > window.appConfig.stagesArray.length -1) {
+        window.appConfig.highScoreConfig.mainMenuCurrentZoneIndex = 0
+      }
+      window.appConfig.selectors.highScoresMainMenuCurrentZone.childNodes[0].data = window.appConfig.stages[`STAGE${window.appConfig.highScoreConfig.mainMenuCurrentZoneIndex}`].name
+      window.appConfig.gameModeFunctions.updateLocalHighscoreUIMainMenu()
+      window.appConfig.gameModeFunctions.updateGlobalHighscoreUIMainMenu()
+    })
     
     window.appConfig.highScoreConfig.inputNumbers.forEach(hsInput => {
       window.appConfig.selectors[`highScore${hsInput}InputClickDown`].addEventListener("click", () => {
@@ -10602,7 +10744,7 @@
         let newIndex = letterIndex === 0 ? window.appConfig.highScoreConfig.charactersList.length -1 : letterIndex - 1
         window.appConfig.highScoreConfig.currentName = window.appConfig.highScoreConfig.currentName.substring(0, hsInput-1) + window.appConfig.highScoreConfig.charactersList[newIndex] + window.appConfig.highScoreConfig.currentName.substring(hsInput-1 + 1);
         window.appConfig.selectors[`highScore${hsInput}InputValue`].childNodes[0].data = window.appConfig.highScoreConfig.currentName[hsInput-1]
-        window.appConfig.selectors.highScoreSubmitButton.disabled = badWords.includes(window.appConfig.highScoreConfig.currentName.toUpperCase())
+        window.appConfig.selectors.highScoreSubmitButton.disabled = window.appConfig.highScoreConfig.badWords.includes(window.appConfig.highScoreConfig.currentName.toUpperCase())
         //then display message to change
       } )
       window.appConfig.selectors[`highScore${hsInput}InputClickUp`].addEventListener("click", () => {
@@ -10610,7 +10752,7 @@
         let newIndex = letterIndex === window.appConfig.highScoreConfig.charactersList.length -1 ? 0 : letterIndex + 1
         window.appConfig.highScoreConfig.currentName = window.appConfig.highScoreConfig.currentName.substring(0, hsInput-1) + window.appConfig.highScoreConfig.charactersList[newIndex] + window.appConfig.highScoreConfig.currentName.substring(hsInput-1 + 1);
         window.appConfig.selectors[`highScore${hsInput}InputValue`].childNodes[0].data = window.appConfig.highScoreConfig.currentName[hsInput-1]
-        window.appConfig.selectors.highScoreSubmitButton.disabled = badWords.includes(window.appConfig.highScoreConfig.currentName.toUpperCase())
+        window.appConfig.selectors.highScoreSubmitButton.disabled = window.appConfig.highScoreConfig.badWords.includes(window.appConfig.highScoreConfig.currentName.toUpperCase())
         //then display message to change
       } )
     })
@@ -10624,6 +10766,7 @@
       localStorage.setItem('hsName', window.appConfig.highScoreConfig.currentName)
       window.appConfig.gameModeFunctions.updateLegacyHighscoreNames(window.appConfig.highScoreConfig.currentName)
       window.appConfig.gameModeFunctions.updateLocalHighscoreUI()
+      window.appConfig.gameModeFunctions.updateLocalHighscoreUIMainMenu()
       window.appConfig.gameModeFunctions.handleHighScoreApiCall({method:"POST", localScore: window.appConfig.highscores[`STAGE${window.appConfig.highScoreConfig.newScoreZone}`].highscores[scoreIndexToUpdate] })
       showHTMLElements(window.appConfig.highScoreConfig.returnElements)
     })
@@ -10643,8 +10786,28 @@
       window.appConfig.selectors.highScoresDeviceTabButton.classList.add('gray')
 
     })
+    
+    window.appConfig.selectors.highScoresDeviceTabButtonMainMenu.addEventListener("click", () => {
+      window.appConfig.selectors.globalHighScoresTableMainMenuContainer.classList.add('hide')
+      window.appConfig.selectors.highScoresTableMainMenu.classList.remove('hide')
+      
+      window.appConfig.selectors.highScoresGlobalTabButtonMainMenu.classList.add('gray')
+      window.appConfig.selectors.highScoresDeviceTabButtonMainMenu.classList.remove('gray')
+
+    })
+    window.appConfig.selectors.highScoresGlobalTabButtonMainMenu.addEventListener("click", () => {
+      window.appConfig.selectors.globalHighScoresTableMainMenuContainer.classList.remove('hide')
+      window.appConfig.selectors.highScoresTableMainMenu.classList.add('hide')
+      
+      window.appConfig.selectors.highScoresGlobalTabButtonMainMenu.classList.remove('gray')
+      window.appConfig.selectors.highScoresDeviceTabButtonMainMenu.classList.add('gray')
+
+    })
+    window.appConfig.gameModeFunctions.updateLocalHighscoreUI()
+    window.appConfig.gameModeFunctions.updateLocalHighscoreUIMainMenu()
 
     window.appConfig.gameModeFunctions.handleHighScoreApiCall({method:'POST'})
+
     const colorLightnessLfo = (baseColor, lfoMod) => {
       // const color = new THREE.Color(baseColor)
       let hsl = {}
@@ -10655,6 +10818,8 @@
     }
     const showReport = () => {
       showHTMLElements(["report", "tinted-overlay"]);
+    window.appConfig.gameModeFunctions.updateLocalHighscoreUI()
+    window.appConfig.gameModeFunctions.updateGlobalHighscoreUI()
     }
     const showLevelSelect = () => {
       if (window.appConfig.requestFullscreenResult !== false) {
@@ -10675,6 +10840,12 @@
     const showCredits = () => {
       showHTMLElements(["credits", "tinted-overlay"]);
     };
+    const showHighscoresMainMenu = () => {
+      window.appConfig.gameModeFunctions.updateLocalHighscoreUIMainMenu()
+      window.appConfig.gameModeFunctions.updateGlobalHighscoreUIMainMenu()
+      showHTMLElements(["high-scores-main-menu", "tinted-overlay"]);
+      window.appConfig.selectors.highScoresMainMenuCurrentZone.childNodes[0].data = window.appConfig.stages[window.appConfig.currentStage].name
+    }
 
     const showInstructions = () => {
       showHTMLElements(["instructions", "tinted-overlay"]);
