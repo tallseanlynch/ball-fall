@@ -135,7 +135,7 @@ button:focus {
 #report {
   background-color: rgba(0, 0, 0, 0);
 }
-#report-options, #report-result-table, #high-scores-table, #high-scores-title {
+#report-options, #report-result-table, #high-scores-table, #high-scores-title, #global-high-scores-table {
   margin-left: auto;
   margin-right: auto;
 }
@@ -155,6 +155,26 @@ button:focus {
   background-color: rgba(0, 0, 0, 0);
   color: #ffffff;
 }
+#high-scores-tab-menu {
+  text-align: center;
+}
+
+.tab-button {
+  font-size: 1rem;
+  width: max-content;
+  /* margin: 0 auto; */
+  margin-top: 10px;
+  display: inline-block;
+  border: 0;
+  border-radius: 5px;
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0);
+  color: #ffffff;
+
+}
+
+
+
 .font-a {
   font-weight: 100;
   font-family: "Coves Light";
@@ -198,14 +218,18 @@ td.result-value {
 }
 td.high-score-ordinal {
   width: 2rem;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
+}
+td.high-score-name {
+  width: 3rem;
+  font-size: 1.25rem;
 }
 td.high-score-score {
   width: 7rem;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
 td.high-score-sec {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   width: fit-content;
   font-style: italic;
   font-weight: 100 !important;
@@ -586,11 +610,20 @@ td.high-score-sec {
   display: block;
   position: relative;
   height: 75%;
-  overflow-y: scroll;
+  overflow-y:scroll;
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+/* .scrolling-section#report-scrolling-section {
+  overflow-y: hidden;
+} */
 
+.high-score-table-container {
+  height: 21vh;
+  overflow-y:scroll;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
 @media only screen and (min-width: 800px) {
   .scrolling-section {
     height: 60%;
@@ -650,7 +683,34 @@ td.high-score-sec {
   text-align: center;
   display: block;
 }
+@media (min-height: 700px) and (min-width: 700px) {
+  .scrolling-section {
+    height: 79%;
+  }
+  .scrolling-section#report-scrolling-section, .scrolling-section#sound-scrolling-section {
+    height: 79%;
+    position: relative;
+    top: 43%;
+    transform: translateY(-50%);}
+    .results-left, #report-options {
+      width: 49%;
+      display: inline-block;
+    }
+    .high-score-table-container {
+      height: 25vh;
+    }
+    
+    #report-options {
+      right: 5%;
+      top: 50%;
+      position: absolute;
+      transform: translateY(-50%);
+    }
 
+    #sound-left, #sound-right {
+      display: block;
+    }
+}
 @media (min-aspect-ratio: 10/9) and  (max-height: 700px), (max-height: 500px){
 
   #high-scores-title {
@@ -664,9 +724,15 @@ td.high-score-sec {
     transform: translateY(-50%);
   }
 
-  .results-left, #report-options, #sound-left, #sound-right {
+  .high-score-table-container {
+    height: 25vh;
+  }
+  .results-left, #report-options {
     width: 49%;
     display: inline-block;
+  }
+  #sound-left, #sound-right {
+    display: block;
   }
 
   .spacer {
@@ -759,7 +825,7 @@ td.high-score-sec {
   .scrolling-section#report-scrolling-section, .scrolling-section#sound-scrolling-section {
     height: 79%;
     position: relative;
-    top: 50%;
+    top: 43%;
     transform: translateY(-50%);}
 
 }
