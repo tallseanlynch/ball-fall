@@ -9420,12 +9420,11 @@
                   "seconds": options.localScore.lengthPlayed
                 }
             }
-            window.appConfig.gameModeFunctions.updateLegacyHighscoreNames(window.appConfig.highScoreConfig.currentName)
             window.appConfig.gameModeFunctions.updateLegacyHighscoreZones()
             let hsInt = 0
             Object.keys(window.appConfig.highscores).forEach(key => {
               window.appConfig.highscores[key].highscores.forEach(score => {
-                if (score.posted === undefined || score.posted === false) {
+                if (score.name !== undefined && (score.posted === undefined || score.posted === false)) {
                   callOptions.body.oldScores.push(score)
                   hsInt++
                 }
@@ -9595,6 +9594,7 @@
       console.log("scoreToUpdate: ", window.appConfig.highscores[`STAGE${window.appConfig.highScoreConfig.newScoreZone}`].highscores[scoreIndexToUpdate])
       localStorage.setItem('appConfig', JSON.stringify(window.appConfig.highscores))
       localStorage.setItem('hsName', window.appConfig.highScoreConfig.currentName)
+      window.appConfig.gameModeFunctions.updateLegacyHighscoreNames(window.appConfig.highScoreConfig.currentName)
       window.appConfig.gameModeFunctions.updateLocalHighscoreUI()
       window.appConfig.gameModeFunctions.handleHighScoreApiCall({method:"POST", localScore: window.appConfig.highscores[`STAGE${window.appConfig.highScoreConfig.newScoreZone}`].highscores[scoreIndexToUpdate] })
       showHTMLElements(window.appConfig.highScoreConfig.returnElements)
