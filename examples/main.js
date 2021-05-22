@@ -10845,6 +10845,7 @@
       showHTMLElements(["high-scores-main-menu", "tinted-overlay"]);
       window.appConfig.selectors.highScoresMainMenuCurrentZone.childNodes[0].data = window.appConfig.stages[window.appConfig.currentStage].name
     }
+    
 
     const showInstructions = () => {
       showHTMLElements(["instructions", "tinted-overlay"]);
