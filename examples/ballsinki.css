@@ -599,16 +599,17 @@ td.high-score-sec {
   z-index: 5;
 }
 
-#instructions-list img {
+#instructions-list img, #instructions-list-main-menu img {
   /* width: 49%; */
   max-height: 100px;
   display: inline-block;
   /* padding: 3% 0; */
 }
 
-#instructions-list {
+#instructions-list, #instructions-list-main-menu {
   text-align:center;
 }
+
 
 #stage-number {
   font-family: "Coves Light";
@@ -719,7 +720,7 @@ td.high-score-sec {
 }
 @media (min-height: 700px) and (min-width: 700px) {
   .scrolling-section {
-    height: 79%;
+    height: 70%;
   }
   .scrolling-section#report-scrolling-section, .scrolling-section#sound-scrolling-section {
     height: 79%;

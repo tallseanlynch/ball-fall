@@ -158,8 +158,8 @@
     }
   </style>
 
-  <!-- <script onLoad="scriptLoaded('initial.js')" type="text/javascript" src="js/initial.min.js"></script> -->
-  <script onLoad="scriptLoaded('initial.js')" type="text/javascript" src="js/initial.js"></script>
+  <script onLoad="scriptLoaded('initial.js')" type="text/javascript" src="js/initial.min.js"></script>
+  <!-- <script onLoad="scriptLoaded('initial.js')" type="text/javascript" src="js/initial.js"></script> -->
   <style>
     #loading-gradient-curtain {
       position: fixed;
@@ -336,6 +336,9 @@
       display: table-cell;
       vertical-align: middle;
       padding-left: 5%;
+    }
+    #instructions-list-main-menu .instructions-text {
+      font-size: 1.25rem;
     }
 
     @media only screen and (min-width: 1000px) {
@@ -648,9 +651,11 @@
       <h1 class="landing-title-text">BALLSINKI</h1>
     </header>
     <div id="landing-page" class="margin-bottom-2 hide">
-      <script>if (window.appConfig.env !== 'app') {
+      <script>
+        if (window.appConfig.env !== 'app') {
           document.querySelector('#landing-page').classList.remove('hide')
-        }</script>
+        }
+      </script>
       <div class="section-container play-now-container" onClick="landingPageToMainMenu()">
         <div class="new-zone-container">
           <div class="new-zone-title">VORTEX</div>
@@ -1092,9 +1097,10 @@
   <div id="high-scores-main-menu" class="menu-container hide">
     <div id="high-scores-main-menu-title" class="menu-title-text margin-bottom-2 font-e">HIGH SCORES</div>
     <div id="high-scores-zone-menu-main-menu" class="margin-bottom-1">
-      <button id="high-scores-main-menu-left-arrow" class="left-arrow"><</button>
-      <div id="high-scores-main-menu-current-zone" class="level-select-button font-d">Hidden Hollow</div>
-      <button id="high-scores-main-menu-right-arrow" class="right-arrow">></button>
+      <button id="high-scores-main-menu-left-arrow" class="left-arrow">
+        < </button>
+          <div id="high-scores-main-menu-current-zone" class="level-select-button font-d">Hidden Hollow</div>
+          <button id="high-scores-main-menu-right-arrow" class="right-arrow">></button>
     </div>
     <div id="high-scores-tab-menu-main-menu" class="margin-bottom-1">
       <button class="font-a tab-button" id="high-scores-device-tab-button-main-menu">DEVICE</button>
@@ -1194,7 +1200,7 @@
   </div>
   <div id="instructions" class="menu-container hide">
     <div id="credits-title" class="menu-title-text margin-bottom-2 font-e">INSTRUCTIONS</div>
-    <div id="instructions-list" class="scrolling-section margin-bottom-2">
+    <div id="instructions-list-main-menu" class="scrolling-section margin-bottom-2">
       <div class="table-display">
         <img class="landing-instructions-image" src="images/Gems@2x.png">
         <div class="instructions-text">Collect crystals to score as many points as possible!</div>
@@ -1328,8 +1334,8 @@
 <script onLoad="scriptLoaded('GLTFLoader.js')" type="text/javascript" src="js/GLTFLoader.min.js"></script>
 
 
-<script onLoad="scriptLoaded('main')" src="main.js" type="text/javascript"></script>
-<!-- <script onLoad="scriptLoaded('main')" src="main.min.js" type="text/javascript"></script> -->
+<!-- <script onLoad="scriptLoaded('main')" src="main.js" type="text/javascript"></script> -->
+<script onLoad="scriptLoaded('main')" src="main.min.js" type="text/javascript"></script>
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-PGJYVH2VWT"></script>

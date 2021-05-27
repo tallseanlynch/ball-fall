@@ -10487,7 +10487,6 @@
         }
       },
       handleHighScoreApiCall : async (options) => {
-        console.log(options)
         let callOptions = {}
         
         if (options && options.method != null) {
@@ -10519,7 +10518,6 @@
                 })
               })
             }
-            console.log(callOptions.body)
             callOptions.body = JSON.stringify(callOptions.body)
           }
         }
@@ -10530,8 +10528,6 @@
             .then(res=> res.json())
             .then(data => {
               jsonData = data
-              console.log(jsonData)
-              // now update leaderboard ui elements
               window.appConfig.gameModeFunctions.updatePostedHighscores(data)
               window.appConfig.gameModeFunctions.updateGlobalHighscores(data)
             })
@@ -10571,7 +10567,6 @@
           }
         })
         return oldScores
-        //window.appConfig.gameModeFunctions.handleHighScoreApiCall({method:'POST', oldScores: window.appConfig.gameModeFunctions.populateOldScores()})
       },
       updatePostedHighscores: (data) => {
         if (data !== undefined && data.writeResult !== undefined) {
@@ -10696,6 +10691,14 @@
         })
         localStorage.setItem('appConfig', JSON.stringify(window.appConfig.highscores))
 
+      },
+      updateLocalHighscoreObjectFormat: () => {
+        window.appConfig.stagesArray.forEach( stage => {
+          if (window.appConfig.highscores[stage] === undefined) {
+            window.appConfig.highscores[stage] = {highscores:[]}
+          }
+        })
+        localStorage.setItem('appConfig', JSON.stringify(window.appConfig.highscores))
       }
     }
     
@@ -10740,27 +10743,46 @@
     window.appConfig.highScoreConfig.inputNumbers.forEach(hsInput => {
       window.appConfig.selectors[`highScore${hsInput}InputClickDown`].addEventListener("click", () => {
         const letterIndex = window.appConfig.highScoreConfig.charactersList.indexOf(window.appConfig.highScoreConfig.currentName[hsInput-1])
-        let newIndex = letterIndex === 0 ? window.appConfig.highScoreConfig.charactersList.length -1 : letterIndex - 1
-        window.appConfig.highScoreConfig.currentName = window.appConfig.highScoreConfig.currentName.substring(0, hsInput-1) + window.appConfig.highScoreConfig.charactersList[newIndex] + window.appConfig.highScoreConfig.currentName.substring(hsInput-1 + 1);
-        window.appConfig.selectors[`highScore${hsInput}InputValue`].childNodes[0].data = window.appConfig.highScoreConfig.currentName[hsInput-1]
-        window.appConfig.selectors.highScoreSubmitButton.disabled = window.appConfig.highScoreConfig.badWords.includes(window.appConfig.highScoreConfig.currentName.toUpperCase())
-        //then display message to change
-      } )
-      window.appConfig.selectors[`highScore${hsInput}InputClickUp`].addEventListener("click", () => {
-        const letterIndex = window.appConfig.highScoreConfig.charactersList.indexOf(window.appConfig.highScoreConfig.currentName[hsInput-1])
         let newIndex = letterIndex === window.appConfig.highScoreConfig.charactersList.length -1 ? 0 : letterIndex + 1
         window.appConfig.highScoreConfig.currentName = window.appConfig.highScoreConfig.currentName.substring(0, hsInput-1) + window.appConfig.highScoreConfig.charactersList[newIndex] + window.appConfig.highScoreConfig.currentName.substring(hsInput-1 + 1);
         window.appConfig.selectors[`highScore${hsInput}InputValue`].childNodes[0].data = window.appConfig.highScoreConfig.currentName[hsInput-1]
-        window.appConfig.selectors.highScoreSubmitButton.disabled = window.appConfig.highScoreConfig.badWords.includes(window.appConfig.highScoreConfig.currentName.toUpperCase())
-        //then display message to change
+        if (window.appConfig.highScoreConfig.badWords.includes(window.appConfig.highScoreConfig.currentName.toUpperCase())) {
+          window.appConfig.selectors.highScoreSubmitButton.disabled = true
+          window.appConfig.selectors.highScoreSubmitButton.classList.add('gray')
+          window.appConfig.highScoreConfig.inputNumbers.forEach(hsInput => {
+            window.appConfig.selectors[`highScore${hsInput}InputValue`].classList.add('gray')
+          })
+        } else {
+          window.appConfig.selectors.highScoreSubmitButton.disabled = false
+          window.appConfig.selectors.highScoreSubmitButton.classList.remove('gray')
+          window.appConfig.highScoreConfig.inputNumbers.forEach(hsInput => {
+            window.appConfig.selectors[`highScore${hsInput}InputValue`].classList.remove('gray')
+          })
+        }
+      } )
+      window.appConfig.selectors[`highScore${hsInput}InputClickUp`].addEventListener("click", () => {
+        const letterIndex = window.appConfig.highScoreConfig.charactersList.indexOf(window.appConfig.highScoreConfig.currentName[hsInput-1])
+        let newIndex = letterIndex === 0 ? window.appConfig.highScoreConfig.charactersList.length -1 : letterIndex - 1
+        window.appConfig.highScoreConfig.currentName = window.appConfig.highScoreConfig.currentName.substring(0, hsInput-1) + window.appConfig.highScoreConfig.charactersList[newIndex] + window.appConfig.highScoreConfig.currentName.substring(hsInput-1 + 1);
+        window.appConfig.selectors[`highScore${hsInput}InputValue`].childNodes[0].data = window.appConfig.highScoreConfig.currentName[hsInput-1]
+        if (window.appConfig.highScoreConfig.badWords.includes(window.appConfig.highScoreConfig.currentName.toUpperCase())) {
+          window.appConfig.selectors.highScoreSubmitButton.disabled = true
+          window.appConfig.selectors.highScoreSubmitButton.classList.add('gray')
+          window.appConfig.highScoreConfig.inputNumbers.forEach(hsInput => {
+            window.appConfig.selectors[`highScore${hsInput}InputValue`].classList.add('gray')
+          })
+        } else {
+          window.appConfig.selectors.highScoreSubmitButton.disabled = false
+          window.appConfig.selectors.highScoreSubmitButton.classList.remove('gray')
+          window.appConfig.highScoreConfig.inputNumbers.forEach(hsInput => {
+            window.appConfig.selectors[`highScore${hsInput}InputValue`].classList.remove('gray')
+          })
+        }
       } )
     })
     window.appConfig.selectors.highScoreSubmitButton.addEventListener("click", () => {
-      console.log(window.appConfig.highscores[`STAGE${window.appConfig.highScoreConfig.newScoreZone}`])
       const scoreIndexToUpdate = window.appConfig.highscores[`STAGE${window.appConfig.highScoreConfig.newScoreZone}`].highscores.findIndex(obj => obj.date === window.appConfig.highScoreConfig.newScore.date)
-      console.log("nameToSubmit:",window.appConfig.highScoreConfig.currentName)
       window.appConfig.highscores[`STAGE${window.appConfig.highScoreConfig.newScoreZone}`].highscores[scoreIndexToUpdate].name = window.appConfig.highScoreConfig.currentName
-      console.log("scoreToUpdate: ", window.appConfig.highscores[`STAGE${window.appConfig.highScoreConfig.newScoreZone}`].highscores[scoreIndexToUpdate])
       localStorage.setItem('appConfig', JSON.stringify(window.appConfig.highscores))
       localStorage.setItem('hsName', window.appConfig.highScoreConfig.currentName)
       window.appConfig.gameModeFunctions.updateLegacyHighscoreNames(window.appConfig.highScoreConfig.currentName)
@@ -10802,6 +10824,7 @@
       window.appConfig.selectors.highScoresDeviceTabButtonMainMenu.classList.add('gray')
 
     })
+    window.appConfig.gameModeFunctions.updateLocalHighscoreObjectFormat()
     window.appConfig.gameModeFunctions.updateLocalHighscoreUI()
     window.appConfig.gameModeFunctions.updateLocalHighscoreUIMainMenu()
 
