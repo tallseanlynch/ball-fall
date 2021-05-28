@@ -657,7 +657,11 @@ td.high-score-sec {
 /* .scrolling-section#report-scrolling-section {
   overflow-y: hidden;
 } */
-
+#high-score-input-scrolling-section {
+  display: block;
+  position:relative;
+  overflow-y:scroll;
+}
 .high-score-table-container {
   height: 21vh;
   overflow-y:scroll;

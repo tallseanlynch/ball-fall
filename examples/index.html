@@ -493,10 +493,19 @@
       font-family: "Coves Light";
       font-size: 1.25rem;
     }
+    .new-zone1 {
+      font-family: "Coves Light";
+      font-size: 2.55rem;
+    }
 
     .new-zone-sub {
       font-family: "Coves Light";
       font-size: .75rem;
+      opacity: .9;
+    }
+    .new-zone-sub1 {
+      font-family: "Coves Light";
+      font-size: 1.25rem;
       opacity: .9;
     }
 
@@ -508,6 +517,23 @@
       margin-bottom: 15px;
       background-color: #fc03df;
       padding: 15px 0px;
+    }
+    .new-zone-feature {
+      font-family: "Aadhunik";
+      font-size: 1.25rem;
+      color: white;
+      opacity: .9;
+      margin-bottom: 15px;
+      background-color: #fc03df;
+      padding: 15px 0px;
+    }
+    
+    .new-zone-title1 {
+      font-family: "Aadhunik";
+      font-size: 2.5rem;
+      color: #fc03df;
+      opacity: .9;
+      background-color: white;
     }
 
     .new-zone-container {
@@ -535,7 +561,7 @@
         top: 15%;
       }
 
-      .new-zone-title {
+      .new-zone-title, .new-zone-title1, #new-zone-feature {
         font-size: 1rem;
       }
     }
@@ -596,7 +622,7 @@
   <div id="high-score-input-modal-curtain" class="hide modal-curtain">
     <div id="high-score-input-modal" class="menu-container">
       <div id="high-score-title" class="menu-title-text margin-bottom-2">NEW HIGH SCORE</div>
-      <div id="high-score-input-scrolling-section" class="scrolling-section">
+      <div id="high-score-input-scrolling-section" class="">
         <table id="high-scores-input-table" class="margin-bottom-3 table-margin-1">
           <tr id="high-score-input-1-row">
             <td id="high-score-input-click-up-1" class="font-b high-score-input-arrow">
@@ -658,12 +684,14 @@
       </script>
       <div class="section-container play-now-container" onClick="landingPageToMainMenu()">
         <div class="new-zone-container">
-          <div class="new-zone-title">VORTEX</div>
+          <div class="new-zone-feature">NEW FEATURE</div>
           <button id="start-button" class="play-now">PLAY NOW</button>
         </div>
         <div class="new-zone-feat-container">
-          <div class="new-zone-sub">FEATURING MUSIC BY</div>
-          <div class="new-zone">GEORGE FOLZ</div>
+          <!-- <div class="new-zone-title1">HIGHSCORES</div> -->
+          
+          <div class="new-zone-sub1">GLOBAL</div>
+          <div class="new-zone1">HIGHSCORES</div>
         </div>
       </div>
       <section class="copy-section learn-more">
