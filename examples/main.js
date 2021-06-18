@@ -288,6 +288,35 @@
           prize: "sounds/Sound FX/PRIZE_1.mp3",
           backgroundMusic: "sounds/VORTEX.mp3"
         }
+      },
+      STAGE8: {
+        name: "SWIRL",
+        number: 9,
+        backgroundColors: [
+          "#6dcff6",
+          "#00a651",
+          "#26797d",
+          "#000000"
+        ],
+        basicColors: [
+          new THREE.Color(0x662d91),
+          new THREE.Color(0x26797d)
+        ],
+        sounds: {
+          coins: coinProperties,
+          beams: [
+            "sounds/Sound FX/BALL FALL fx a1.mp3",
+            "sounds/Sound FX/BALL FALL fx a2.mp3",
+            "sounds/Sound FX/BALL FALL fx a3.mp3",
+            "sounds/Sound FX/BALL FALL fx a4.mp3",
+            "sounds/Sound FX/BALL FALL fx a5.mp3",
+            "sounds/Sound FX/BALL FALL fx a6.mp3",
+            "sounds/Sound FX/BALL FALL fx a7.mp3",
+            "sounds/Sound FX/BALL FALL fx a8.mp3"
+          ],
+          prize: "sounds/Sound FX/PRIZE_1.mp3",
+          backgroundMusic: "sounds/VORTEX.mp3"
+        }
       }
 
     }
@@ -7867,6 +7896,377 @@
 
             window.appConfig.stages.STAGE7.data.started = true
           }
+        },
+        STAGE8: {
+          data: {
+            started: false,
+            xAdj: -60,
+            vAdj: -70,
+            sAdj: 2,
+            startingPosition: window.appConfig.originVector,
+            sapphirePortalPosition: { x: 37.5/2.5, y: 125, z: -5 }
+          },
+          backgroundColors: stageProperties.STAGE8.backgroundColors,
+          basicColors: stageProperties.STAGE8.basicColors,
+          sounds: stageProperties.STAGE8.sounds,
+          name: stageProperties.STAGE8.name,
+          number: stageProperties.STAGE8.number,
+          defaultTransforms: [
+          ],
+          transforms: {
+          },
+          teardown: () => {
+            teardownStage('STAGE8')
+            window.appConfig.stages.STAGE8.data.started = false
+          },
+          initBackground: () => {
+            const createBackgroundAnimation = () => {
+              const bgGroup = new THREE.Group()
+              bgGroup.name = 'STAGE8BGGROUP'
+              const elementGeometry = new THREE.IcosahedronGeometry(1, 0)
+              const elementMaterials = [
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE8.backgroundColors[0], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE8.backgroundColors[1], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE8.backgroundColors[2], transparent: true, opacity: .25 }),
+                new THREE.MeshPhongMaterial({ color: stageProperties.STAGE8.backgroundColors[3], transparent: true, opacity: .25 }),
+              ]
+
+              const numberOfElements = 50
+              let elementI = 0
+              for (elementI; elementI < numberOfElements; elementI++) {
+                bgGroup.add(new THREE.Mesh(elementGeometry, elementMaterials[elementI % elementMaterials.length]))
+              }
+              scene.add(bgGroup)
+              bgGroup.position.set(0, 0, -10)
+              bgGroup.children.forEach(c => {
+                c.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -20 + Math.random() * -30)
+                const bgElementScale = 1 + Math.random() * 10
+                c.scale.set(bgElementScale, bgElementScale, bgElementScale)
+                c.rotation.z = (Math.random() * 2) * Math.PI
+              })
+              bgGroup.activeCallback = () => {
+                if (bgGroup) {
+                  bgGroup.children.forEach((c, ci) => {
+                    c.position.y += .005 * ci / 2
+                    c.rotation.y += .005
+                    if (c.position.y > 125) {
+                      c.position.y = -125
+                    }
+                  })
+                }
+              }
+              bgGroup.activeCallback()
+              window.appConfig.stages['STAGE8'].bgGroupActiveCallback = bgGroup.activeCallback
+            }
+
+            createBackgroundAnimation()
+          },
+          init: () => {
+              const endPointGeometry = new THREE.SphereGeometry(2, 8, 8)
+              const purpleMaterial = new THREE.MeshBasicMaterial({ color: 0x9932CC })
+              const loadJSONStage = (config) => {
+                const {filename, stageIndex} = config
+
+                const newPoints = window.appConfig[filename]
+                let principalsInc = 0
+                let beamsInc = 0
+                const principalTypes = ['gem-portal','emerald', 'diamond', 'ruby', 'sapphire-portal']
+                newPoints.forEach(np => {
+                  switch(np.type) {
+                    case "principal":
+                      if (principalsInc < 5) {
+                        let pType = principalTypes[principalsInc]
+                        switch (pType) {
+                          case 'emerald':
+                            window.appConfig.stages.components.createEmerald({ x: np.position.x, y: np.position.y, z: 0 })
+                            break;
+                          case 'diamond':
+                            window.appConfig.stages.components.createDiamond({ x: np.position.x, y: np.position.y, z: 0 })
+                            break;
+                          case 'ruby':
+                            window.appConfig.stages.components.createRuby({ x: np.position.x, y: np.position.y, z: 0 })
+                            break;
+                          case 'sapphire-portal':
+                            window.appConfig.stages[`STAGE${stageIndex}`].data.sapphirePortalPosition = { x: np.position.x, y: np.position.y, z: -5 }
+                            window.appConfig.timers.activeTimers.push(
+                              window.appConfig.timers.addPortalToStage({ x: np.position.x, y: np.position.y, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
+                                window.appConfig.stages.components.sapphirePortalConfig())
+                            )
+                            window.appConfig.stages.components.setUpPortalIndicators(()=> {
+                              let ellipseGeometry = new THREE.CircleGeometry(4.125, 5)
+                              ellipseGeometry.rotateZ((2 * Math.PI) / 20)
+                
+                              let i = 1;
+                              for (i; i < ellipseGeometry.vertices.length; i++) {
+                                window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
+                              }
+
+                            })
+                            break;
+                          case 'gem-portal':
+                            window.appConfig.timers.activeTimers.push(
+                              window.appConfig.timers.addPortalToStage({ x: np.position.x, y: np.position.y, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
+                                window.appConfig.stages.components.gemPortalConfig())
+                            )
+
+                            window.appConfig.stages.components.setUpPortalIndicators(() => {
+                              window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
+                              window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
+                              window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')                           
+                            })
+                            break;
+                        }
+                        principalsInc++
+                      }
+                      break;
+                    case "wall":
+                        const wall = createBeam({
+                          p: [np.position.x, np.position.y, np.position.z],
+                          r: [0, 0, np.rotation],
+                          s: (np.length *.1) - .42
+                        })
+                        wall.name = `STAGE${stageIndex}-beam${beamsInc}`
+                        scene.add(wall)
+                        beamsInc++
+                      break;
+                  }
+                })
+              
+
+                // if (request.status === 200) {
+                // }
+              }
+              loadJSONStage({filename:'generatedLevelDataStage8', stageIndex: 8 })
+
+
+            // const createStage7StaticCrystals = () => {
+            //   let dlx0 = 150
+            //   let dly0 = 35
+            //   let dlMax = 6
+            //   for(let dli = 0; dli < dlMax; dli++) {
+            //     createCrystalCircle('STAGE8', 1.5, { x: dlx0 - (dli * 25), y: dly0 + (dli * 25)}, dli % 2, 4)
+            //     createCrystalCircle('STAGE8', 2.25, { x: dlx0 - (dli * 25), y: dly0 + (dli * 25)}, (dli + 1) % 2, 6)  
+            //     createCrystalCircle('STAGE8', 2.75, { x: dlx0 - (dli * 25), y: dly0 + (dli * 25)}, (dli + 2) % 2, 12)  
+            //     createCrystalCircle('STAGE8', 1.5, { x: dlx0 - (dli * 25), y: (dly0 + (dli * 25)) * -1}, dli % 2, 4)
+            //     createCrystalCircle('STAGE8', 2.25, { x: dlx0 - (dli * 25), y: (dly0 + (dli * 25)) * -1}, (dli + 1) % 2, 6)  
+            //     createCrystalCircle('STAGE8', 2.75, { x: dlx0 - (dli * 25), y: (dly0 + (dli * 25)) * -1}, (dli + 2) % 2, 12)  
+  
+            //     createCrystalCircle('STAGE8', 1.5, { x: (dlx0 - (dli * 25)) * -1, y: dly0 + (dli * 25)}, dli % 2, 4)
+            //     createCrystalCircle('STAGE8', 2.25, { x: (dlx0 - (dli * 25)) * -1, y: dly0 + (dli * 25)}, (dli + 1) % 2, 6)  
+            //     createCrystalCircle('STAGE8', 2.75, { x: (dlx0 - (dli * 25)) * -1, y: dly0 + (dli * 25)}, (dli + 2) % 2, 12)  
+            //     createCrystalCircle('STAGE8', 1.5, { x: (dlx0 - (dli * 25)) * -1, y: (dly0 + (dli * 25)) * -1}, dli % 2, 4)
+            //     createCrystalCircle('STAGE8', 2.25, { x: (dlx0 - (dli * 25)) * -1, y: (dly0 + (dli * 25)) * -1}, (dli + 1) % 2, 6)  
+            //     createCrystalCircle('STAGE8', 2.75, { x: (dlx0 - (dli * 25)) * -1, y: (dly0 + (dli * 25)) * -1}, (dli + 2) % 2, 12)  
+            //   }  
+            // }
+            // createStage7StaticCrystals()
+            
+
+            // const createStage7Crystals = (xScale = 1, yScale = 1, xTranslate = 0, yTranslate = 0) => {
+
+            //   let clx0 = 10 * xScale + xTranslate
+            //   let cly0 = 10 * yScale + yTranslate
+            //   createCrystalCircle('STAGE8', 2, { x: clx0, y: cly0 }, 0, 4)
+            //   createCrystalCircle('STAGE8', 2.5, { x: clx0, y: cly0 }, 1, 8)
+            //   createCrystalCircle('STAGE8', 1.5, { x: clx0 * 3, y: cly0 }, 0, 4)
+            //   createCrystalCircle('STAGE8', 2.25, { x: clx0 * 3, y: cly0 }, 1, 8)
+            //   createCrystalCircle('STAGE8', 2, { x: clx0 * 5, y: cly0 }, 0, 4)
+            //   createCrystalCircle('STAGE8', 2.5, { x: clx0 * 5, y: cly0 }, 1, 8)
+            //   createCrystalCircle('STAGE8', 1.5, { x: clx0 * 6.25, y: cly0 * 2.25 }, 0, 4)
+            //   createCrystalCircle('STAGE8', 2.25, { x: clx0 * 6.25, y: cly0 * 2.25 }, 1, 8)
+
+            //   cly0 = cly0 * -1
+            //   createCrystalCircle('STAGE8', 2, { x: clx0, y: cly0 }, 0, 4)
+            //   createCrystalCircle('STAGE8', 2.5, { x: clx0, y: cly0 }, 1, 8)
+            //   createCrystalCircle('STAGE8', 1.5, { x: clx0 * 3, y: cly0 }, 0, 4)
+            //   createCrystalCircle('STAGE8', 2.25, { x: clx0 * 3, y: cly0 }, 1, 8)
+            //   createCrystalCircle('STAGE8', 2, { x: clx0 * 5, y: cly0 }, 0, 4)
+            //   createCrystalCircle('STAGE8', 2.5, { x: clx0 * 5, y: cly0 }, 1, 8)
+            //   createCrystalCircle('STAGE8', 1.5, { x: clx0 * 6.25, y: cly0 * 2.25 }, 0, 4)
+            //   createCrystalCircle('STAGE8', 2.25, { x: clx0 * 6.25, y: cly0 * 2.25 }, 1, 8)
+
+
+            //   let cx0 = 125 * xScale + xTranslate
+            //   let cx1 = 170 * xScale + xTranslate
+            //   createCrystalCircle('STAGE8', 2.5, { x: cx0, y: 0 }, 2, 4)
+            //   createCrystalCircle('STAGE8', 3, { x: cx0, y: 0 }, 0, 8)
+            //   createCrystalCircle('STAGE8', 3.5, { x: cx0, y: 0 }, 1, 8)
+            //   createCrystalCircle('STAGE8', 4, { x: cx0, y: 0 }, 2, 16)
+            //   createCrystalCircle('STAGE8', 4.5, { x: cx0, y: 0 }, 1, 16)
+
+            //   prize(7, 400, { x: cx0, y: 0, z: 0 })
+            //   prize(7, 400, { x: cx0, y: 0, z: 0 })
+
+            //   let cpx0 = 80 * xScale + xTranslate
+            //   let cpx1 = 10 * xScale + xTranslate
+            //   let cpy1 = 70 * yScale + xTranslate
+
+
+            //   prize(7, 400, { x: 0, y: 190, z: 0 })
+            //   prize(7, 400, { x: 0, y: -190, z: 0 })
+            //   prize(7, 400, { x: 197.5, y: 0, z: 0 })
+            //   prize(7, 400, { x: -197.5, y: 0, z: 0 })
+
+            //   prize(7, 400, { x: cpx0, y: 0, z: 0 })
+            //   prize(7, 400, { x: cpx0, y: 0, z: 0 })
+            //   prize(7, 400, { x: cpx1, y: cpy1, z: 0 })
+            //   prize(7, 400, { x: cpx1, y: -cpy1, z: 0 })
+
+            //   let cpx2 = 20 * xScale + xTranslate
+            //   let cpy2 = 105 * yScale + yTranslate
+
+            //   prize(7, 400, { x: cpx2, y: cpy2, z: 0 })
+            //   prize(7, 400, { x: cpx2, y: -cpy2, z: 0 })
+
+            //   let cpx3 = 137.5 * xScale + xTranslate
+            //   let cpy3 = 47.5 * yScale + yTranslate
+
+            //   prize(7, 400, { x: cpx3, y: cpy3, z: 0 })
+            //   prize(7, 400, { x: cpx3, y: -cpy3, z: 0 })
+
+            //   let cpx4 = (47.5 - 10) * xScale + xTranslate
+            //   let cpy4 = (137.5 + 10) * yScale + yTranslate
+
+            //   prize(7, 400, { x: cpx4, y: cpy4, z: 0 })
+            //   prize(7, 400, { x: cpx4, y: -cpy4, z: 0 })
+
+
+            //   createCrystalCircle('STAGE8', 2.5, { x: cx1, y: 0 }, 0, 4)
+            //   createCrystalCircle('STAGE8', 3, { x: cx1, y: 0 }, 1, 8)
+            //   createCrystalCircle('STAGE8', 3.5, { x: cx1, y: 0 }, 2, 8)
+            //   createCrystalCircle('STAGE8', 4, { x: cx1, y: 0 }, 1, 16)
+            //   createCrystalCircle('STAGE8', 4.5, { x: cx1, y: 0 }, 0, 16)
+  
+            //   let cx2 = 65 * xScale + xTranslate
+            //   let cy2 = 45 * yScale + yTranslate
+  
+            //   createCrystalCircle('STAGE8', 1.5, { x: cx2, y: cy2 }, 1, 2)
+            //   createCrystalCircle('STAGE8', 2.5, { x: cx2, y: cy2 }, 0, 8)
+            //   createCrystalCircle('STAGE8', 3, { x: cx2, y: cy2 }, 2, 8)
+  
+            //   createCrystalCircle('STAGE8', 1.5, { x: cx2, y: -cy2 }, 1, 2)
+            //   createCrystalCircle('STAGE8', 2.5, { x: cx2, y: -cy2 }, 0, 8)
+            //   createCrystalCircle('STAGE8', 3, { x: cx2, y: -cy2 }, 2, 8)
+  
+            //   let cx3 = 35 * xScale + xTranslate
+            //   let cy3 = 65 * yScale + yTranslate
+  
+            //   createCrystalCircle('STAGE8', 1.5, { x: cx3, y: cy3 }, 1, 2)
+            //   createCrystalCircle('STAGE8', 2.5, { x: cx3, y: cy3 }, 0, 8)
+            //   createCrystalCircle('STAGE8', 3, { x: cx3, y: cy3 }, 2, 8)
+            //   createCrystalCircle('STAGE8', 3.5, { x: cx3, y: cy3 }, 1, 16)
+            //   createCrystalCircle('STAGE8', 4, { x: cx3, y: cy3 }, 2, 8)
+  
+            //   createCrystalCircle('STAGE8', 1.5, { x: cx3, y: -cy3 }, 1, 2)
+            //   createCrystalCircle('STAGE8', 2.5, { x: cx3, y: -cy3 }, 0, 8)
+            //   createCrystalCircle('STAGE8', 3, { x: cx3, y: -cy3 }, 2, 8)
+            //   createCrystalCircle('STAGE8', 3.5, { x: cx3, y: -cy3 }, 1, 16)
+            //   createCrystalCircle('STAGE8', 4, { x: cx3, y: -cy3 }, 2, 8)
+  
+            //   let lx0 = 80 * xScale + xTranslate
+            //   let ly0 = 15 * yScale + yTranslate
+            //   let lx1 = 110 * xScale + xTranslate
+            //   let ly1 = 30 * yScale + yTranslate
+
+            //   createCrystalCircle('STAGE8', 1.5, { x: lx0, y: ly0 }, 1, 2)
+            //   createCrystalCircle('STAGE8', 2.5, { x: lx0, y: ly0 }, 0, 8)
+            //   createCrystalCircle('STAGE8', 3, { x: lx0, y: ly0 }, 0, 16)
+  
+            //   createCrystalCircle('STAGE8', 1.5, { x: lx0, y: -ly0 }, 1, 2)
+            //   createCrystalCircle('STAGE8', 2.5, { x: lx0, y: -ly0 }, 0, 8)
+            //   createCrystalCircle('STAGE8', 3, { x: lx0, y: -ly0 }, 0, 16)
+  
+            //   createCrystalCircle('STAGE8', 1.5, { x: lx1, y: ly1 }, 2, 2)
+            //   createCrystalCircle('STAGE8', 2.5, { x: lx1, y: ly1 }, 1, 8)
+            //   createCrystalCircle('STAGE8', 3, { x: lx1, y: ly1 }, 0, 16)
+  
+            //   createCrystalCircle('STAGE8', 1.5, { x: lx1, y: -ly1 }, 2, 2)
+            //   createCrystalCircle('STAGE8', 2.5, { x: lx1, y: -ly1 }, 1, 8)
+            //   createCrystalCircle('STAGE8', 3, { x: lx1, y: -ly1 }, 0, 16)
+
+            // }
+
+            // const createStage7Bumpers = (xScale = 1, yScale = 1, xTranslate = 0, yTranslate = 0) => {
+            //   let bx = 75 * xScale + xTranslate
+            //   let by = 75 * yScale + yTranslate
+
+            //   window.appConfig.stages.components.createBumper("STAGE8BUMPER0", 1, { x: bx, y: by, z: 0 }, 6)
+            //   window.appConfig.stages.components.createBumper("STAGE8BUMPER0", 1, { x: bx, y: -by, z: 0 }, 6)
+
+            //   let bx1 = 7.5 * xScale + xTranslate
+            //   let by1 = 85 * yScale + yTranslate
+
+            //   window.appConfig.stages.components.createBumper("STAGE8BUMPER0", 1, { x: bx1, y: -by1, z: 0 }, 6)
+            //   window.appConfig.stages.components.createBumper("STAGE8BUMPER0", 1, { x: bx1, y: by1, z: 0 }, 6)
+
+            //   window.appConfig.stages.components.createBumper("STAGE8BUMPER0", 1, { x: bx1, y: -by1 * 2.125, z: 0 }, 6)
+            //   window.appConfig.stages.components.createBumper("STAGE8BUMPER0", 1, { x: bx1, y: by1 * 2.125, z: 0 }, 6)
+
+            //   let bx2 = 85 * xScale + xTranslate
+            //   let by2 = 35 * yScale + yTranslate
+
+            //   window.appConfig.stages.components.createBumper("STAGE8BUMPER0", 1, { x: bx2, y: -by2, z: 0 }, 6)
+            //   window.appConfig.stages.components.createBumper("STAGE8BUMPER0", 1, { x: bx2, y: by2, z: 0 }, 6)
+            // }
+            // createStage7Bumpers()
+            // createStage7Bumpers(-1)
+
+            // createStage7Crystals()
+            // createStage7Crystals(-1)
+
+            // window.appConfig.stages.components.createRuby({ x: -170, y: -1, z: 0 })
+            // window.appConfig.stages.components.createEmerald({ x: 168.75, y: -1, z: 0 })
+            // window.appConfig.stages.components.createDiamond({ x: 0, y: -125, z: 0 })
+
+            // const createDiamondCrystals = () => {
+            //   let clx0 = 0
+            //   let cly0 = -124
+            //   // createCrystalCircle('STAGE8', 2, { x: clx0, y: cly0 }, 0, 4)
+            //   createCrystalCircle('STAGE8', 2.5, { x: clx0, y: cly0 }, 1, 8)
+            //   createCrystalCircle('STAGE8', 3, { x: clx0, y: cly0 }, 0, 8)
+            //   createCrystalCircle('STAGE8', 3.5, { x: clx0, y: cly0 }, 1, 16)
+            //   createCrystalCircle('STAGE8', 4, { x: clx0, y: cly0 }, 2, 16)
+            //   createCrystalCircle('STAGE8', 4.5, { x: clx0, y: cly0 }, 1, 24)
+
+            //   clx0 = 0
+            //   cly0 = 110
+            //   createCrystalCircle('STAGE8', 1, { x: clx0, y: cly0 }, 1, 4)
+            //   createCrystalCircle('STAGE8', 2, { x: clx0, y: cly0 }, 0, 8)
+            //   createCrystalCircle('STAGE8', 2.5, { x: clx0, y: cly0 }, 1, 8)
+            //   createCrystalCircle('STAGE8', 3, { x: clx0, y: cly0 }, 0, 8)
+
+            //   clx0 = 0
+            //   cly0 = 140
+            //   createCrystalCircle('STAGE8', 1, { x: clx0, y: cly0 }, 1, 4)
+            //   createCrystalCircle('STAGE8', 2, { x: clx0, y: cly0 }, 0, 8)
+            //   createCrystalCircle('STAGE8', 2.5, { x: clx0, y: cly0 }, 1, 8)
+            //   createCrystalCircle('STAGE8', 3, { x: clx0, y: cly0 }, 0, 8)
+
+            //   // createCrystalCircle('STAGE8', 3.5, { x: clx0, y: cly0 }, 1, 16)
+            //   // createCrystalCircle('STAGE8', 4, { x: clx0, y: cly0 }, 2, 16)
+            //   // createCrystalCircle('STAGE8', 4.5, { x: clx0, y: cly0 }, 1, 24)
+
+            // }
+            // createDiamondCrystals()
+
+
+            window.appConfig.stages.components.createSapphire({ x: -100, y: -100, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: -110, y: -100, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: -120, y: -100, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: -130, y: 100, z: 0 })
+            window.appConfig.stages.components.createSapphire({ x: -140, y: 100, z: 0 })
+
+            window.appConfig.stages.components.createBlueIsland()
+
+            // window.appConfig.stages.STAGE8.STAGE8MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE8MINORSTRUCTURE")
+            // window.appConfig.stages.STAGE8.STAGE8MINORSTRUCTUREA = scene.children.find((obj) => obj.name === "STAGE8MINORSTRUCTUREA")
+            // window.appConfig.stages.STAGE8.STAGE8MINORSTRUCTUREB = scene.children.find((obj) => obj.name === "STAGE8MINORSTRUCTUREB")
+            // window.appConfig.stages.STAGE8.STAGE8MINORSTRUCTUREC = scene.children.find((obj) => obj.name === "STAGE8MINORSTRUCTUREC")
+            // window.appConfig.stages.STAGE8.STAGE8MINORSTRUCTURED = scene.children.find((obj) => obj.name === "STAGE8MINORSTRUCTURED")
+            // window.appConfig.stages.STAGE8.STAGE8MINORSTRUCTUREE = scene.children.find((obj) => obj.name === "STAGE8MINORSTRUCTUREE")
+
+            window.appConfig.stages.STAGE8.data.started = true
+          }
         }
       }
 
@@ -10656,15 +11056,16 @@
       updateGlobalHighscoreUI: () => {
         const hsIndexes = [1,2,3,4,5,6,7,8,9,10]
         hsIndexes.forEach( hsI => {
-          const hs = window.appConfig.globalHighscores[window.appConfig.currentStageIndex].arr[hsI - 1]
-          if (hs !== undefined && hs.seconds > 0 && hs.score !== undefined) {
-            window.appConfig.selectors[`globalHighScore${hsI}Score`].innerHTML = hs.score.toLocaleString('en-US').replace(',', comma())
-            window.appConfig.selectors[`globalHighScore${hsI}Sec`].childNodes[0].data = hs.seconds + " sec"
-            window.appConfig.selectors[`globalHighScore${hsI}Row`].classList.remove("hide")
-            window.appConfig.selectors[`globalHighScore${hsI}Name`].childNodes[0].data = hs.name
-          } else {
-            window.appConfig.selectors[`globalHighScore${hsI}Row`].classList.add("hide")
-          }
+          if (window.appConfig.globalHighscores[window.appConfig.currentStageIndex] !== undefined) {
+            const hs = window.appConfig.globalHighscores[window.appConfig.currentStageIndex].arr[hsI - 1]
+            if (hs !== undefined && hs.seconds > 0 && hs.score !== undefined) {
+              window.appConfig.selectors[`globalHighScore${hsI}Score`].innerHTML = hs.score.toLocaleString('en-US').replace(',', comma())
+              window.appConfig.selectors[`globalHighScore${hsI}Sec`].childNodes[0].data = hs.seconds + " sec"
+              window.appConfig.selectors[`globalHighScore${hsI}Row`].classList.remove("hide")
+              window.appConfig.selectors[`globalHighScore${hsI}Name`].childNodes[0].data = hs.name
+            } else {
+              window.appConfig.selectors[`globalHighScore${hsI}Row`].classList.add("hide")
+            }}
         })
       },
       updateGlobalHighscoreUIMainMenu: () => {
