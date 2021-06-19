@@ -1098,7 +1098,25 @@
         window.appConfig.itemAmounts.crystalCircle++
       };
 
+      const crystalAngleTempVector = new THREE.Vector3()
+      const crystalAngleLine3 = new THREE.Line3()
+      const createCrystalAngle = (config) => {
+        const {v1, v2, size, name} = config
 
+        crystalAngleLine3.set(v1, v2)
+        let length = Math.floor(crystalAngleLine3.distance()/4)
+        const crystalAngle = new THREE.Group()
+        crystalAngle.debugTypeIndex = window.appConfig.itemAmounts.crystalLine
+        crystalAngle.debugType = 'CRYSTALANGLE'
+        crystalAngle.debugName = 'CRYSTALANGLE' + window.appConfig.itemAmounts.crystalLine
+        crystalAngle.name = name + '_' + crystalAngle.debugName
+        for (let i = 0; i <= length; i++) {
+          crystalAngleLine3.at((1-(i/length)), crystalAngleTempVector)
+          const newCrystal = crystal(size, { x: crystalAngleTempVector.x, y: crystalAngleTempVector.y, z: 0 })
+          crystalAngle.add(newCrystal);
+          scene.add(crystalAngle)
+        }
+      }
       const createCrystalLine = (
         name = 'NO_NAME',
         s,
@@ -7968,8 +7986,13 @@
                 const {filename, stageIndex} = config
 
                 const newPoints = window.appConfig[filename]
+                console.log(newPoints)
                 let principalsInc = 0
                 let beamsInc = 0
+                let prizesInc = 0
+                let bumpersInc = 0
+                let tempV1 = new THREE.Vector3()
+                let tempV2 = new THREE.Vector3()
                 const principalTypes = ['gem-portal','emerald', 'diamond', 'ruby', 'sapphire-portal']
                 newPoints.forEach(np => {
                   switch(np.type) {
@@ -8028,6 +8051,28 @@
                         wall.name = `STAGE${stageIndex}-beam${beamsInc}`
                         scene.add(wall)
                         beamsInc++
+                      break;
+                    case "prize":
+                      prize(stageIndex, prizesInc, { x: np.position.x, y: np.position.y, z: 0 })
+                      prizesInc++
+                      break;
+                    case "crystalSphere":
+                      let crystalSizeInc = 0
+                      let ringsNum = (np.radius -(np.radius % 4))/4
+                      for (let i = 1; i <= ringsNum; i++){
+                        createCrystalCircle(`STAGE${stageIndex}`, 1.35 + (i *.58), { x: np.position.x, y: np.position.y}, crystalSizeInc % 3, 8)
+                        crystalSizeInc++
+                      }
+                      break;
+                    case "bumper":
+                      console.log('bumper')
+                      window.appConfig.stages.components.createBumper(`STAGE${stageIndex}BUMPER${bumpersInc}`, 1, { x: np.position.x, y: np.position.y, z: 0 }, 6)
+                      bumpersInc++
+                      break;
+                    case "crystal-line":
+                      tempV1.set(np.v1.x,np.v1.y, 0 )
+                      tempV2.set(np.v2.x,np.v2.y, 0 )
+                      createCrystalAngle({name:`STAGE${stageIndex}`, v1: tempV1, v2: tempV2, size: 0});
                       break;
                   }
                 })

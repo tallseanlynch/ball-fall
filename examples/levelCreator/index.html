@@ -28,11 +28,14 @@
         <input type="file" id="file-selector">
         <!-- <button id="load-button" class="ui-button">Load</button> -->
         <button id="save-button" class="ui-button">Save</button>
+        <button id="select-button" class="ui-button">Select</button>
         <button id="generate-button" class="ui-button">Generate</button>
         <button id="teardown-button" class="ui-button">Teardown</button>
         <button id="center-button" class="ui-button">Center</button>
         <button id="line-button" class="ui-button">Line</button>
+        <button id="crystal-line-button" class="ui-button">Crystal Line</button>
         <button id="prize-button" class="ui-button">Prize</button>
+        <button id="bumper-button" class="ui-button">Bumper</button>
     </div>
     <div id="viewport"></div>
 </body>
@@ -100,9 +103,10 @@
     const midpointGeometry = new THREE.BoxGeometry(2, 2, 2)
     const endPointGeometry = new THREE.SphereGeometry(2, 8, 8)
     const prizeGeometry = new THREE.SphereGeometry(3, 8, 8)
-    const redMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 })
-    const purpleMaterial = new THREE.MeshBasicMaterial({ color: 0x9932CC })
-    const yellowMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+    const redMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true })
+    const purpleMaterial = new THREE.MeshBasicMaterial({ color: 0x9932CC, transparent: true })
+    const greenMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true })
+    const blueMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff, transparent: true })
     const lineMaterial = new THREE.LineBasicMaterial({
         color: 0x0000ff, transparent: true, opacity: .5
     });
@@ -144,43 +148,60 @@
 
         if (newPoints !== undefined) {
             console.log('newPoints:', newPoints)
+            let npTempVector = new THREE.Vector3()
+            let principalsInc = 0
+            let beamsInc = 0
+            let prizesInc = 0
+            let crystalSpheresInc = 0
+            let bumpersInc = 0
             newPoints.forEach((p, pIndex) => {
-                console.log(p.mesh.object.name)
                 switch (p.type) {
                     case 'principal':
 
                         const principal = new THREE.Mesh(principalSphereGeometry, redMaterial)
-                        principal.name = p.mesh.object.name
+                        principal.name = `principal-${principalsInc}`
                         scene.add(principal)
                         principals.push(principal)
                         points.push({ type: 'principal', mesh: principal, position: principal.position, radius: 20 })
 
                         principal.position.set(p.position.x, p.position.y, p.position.z)
+                        principalsInc++
                         break;
                     case 'crystalSphere':
 
                         const crystalSphereGeometry = new THREE.SphereGeometry(p.radius, 32, 32)
-                        const crystalSphere = new THREE.Mesh(crystalSphereGeometry, yellowMaterial)
-                        crystalSphere.name = p.mesh.object.name
+                        const crystalSphere = new THREE.Mesh(crystalSphereGeometry, greenMaterial)
+                        crystalSphere.name = `crystalSphere-${crystalSpheresInc}`
                         scene.add(crystalSphere)
                         crystalSphere.position.set(p.position.x, p.position.y, p.position.z)
                         points.push({ type: 'crystalSphere', mesh: crystalSphere, position: crystalSphere.position, radius: p.radius })
+                        crystalSpheresInc++
                         break;
                     case 'wall':
                         const boxGeometry = new THREE.BoxGeometry(p.length, 2, 3)
                         const wall = new THREE.Mesh(boxGeometry, purpleMaterial)
-                        wall.name = p.mesh.object.name
-                        wall.position.set(p.position.x, p.position.y, p.position.z)
+                        wall.name = `wall-${beamsInc}`
+                        wall.position.set(p.position.x, p.position.y, 0)
                         wall.rotation.z = p.rotation
                         scene.add(wall)
                         points.push({ type: 'wall', mesh: wall, position: wall.position, rotation: wall.rotation.z, length: p.length, v1: p.v1, v2: p.v2 })
+                        beamsInc++
                         break;
                     case 'prize':
                         const prize = new THREE.Mesh(prizeGeometry, purpleMaterial)
                         prize.position.set(p.position.x, p.position.y, p.position.z)
-                        prize.name = p.mesh.object.name
+                        prize.name = `prize-${prizesInc}`
                         scene.add(prize)
                         points.push({ type: 'prize', mesh: prize, position: prize.position, radius: 3 })
+                        prizesInc++
+                        break;
+                    case 'bumper':
+                        const bumper = new THREE.Mesh(prizeGeometry, blueMaterial)
+                        bumper.position.set(p.position.x, p.position.y, p.position.z)
+                        scene.add(bumper)
+                        bumper.name = `bumper-${bumpersInc}`
+                        points.push({ type: 'bumper', mesh: bumper, position: bumper.position, radius: 3 })
+                        bumpersInc++
                         break;
                     default:
                         break;
@@ -191,7 +212,7 @@
 
             })
         } else {
-            
+
             for (let i = 0; i < 5; i++) {
                 const principal = new THREE.Mesh(principalSphereGeometry, redMaterial)
                 principal.name = `principal-${i}`
@@ -210,7 +231,7 @@
                 //principals[i] is p1, principals[j] is p2
 
                 //make midpoints
-                const midpoint = new THREE.Mesh(midpointGeometry, yellowMaterial)
+                const midpoint = new THREE.Mesh(midpointGeometry, greenMaterial)
                 midpoint.position.set((principals[i].position.x + principals[j].position.x) / 2,
                     (principals[i].position.y + principals[j].position.y) / 2,
                     (principals[i].position.z + principals[j].position.z) / 2)
@@ -223,7 +244,6 @@
                 const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([principals[i].position, principals[j].position]), lineMaterial)
                 const line3 = new THREE.Line3(principals[i].position, principals[j].position)
                 line.name = `line-${i}-${j}`
-                // console.log(line3.distance())
                 points.push({ type: 'line', mesh: line, position: line.position })
 
                 scene.add(line)
@@ -256,7 +276,7 @@
                     let vector = midpoint.position.clone()
                     let radius = getRadiusThatFits(vector, 30)
                     const crystalSphereGeometry = new THREE.SphereGeometry(radius, 32, 32)
-                    const crystalSphere = new THREE.Mesh(crystalSphereGeometry, yellowMaterial)
+                    const crystalSphere = new THREE.Mesh(crystalSphereGeometry, greenMaterial)
                     crystalSphere.name = `crystal-sphere-${midpointIndex}`
                     scene.add(crystalSphere)
                     crystalSphere.position.set(midpoint.position.x, midpoint.position.y, midpoint.position.z)
@@ -294,7 +314,7 @@
 
 
     const createWall = (v1, v2) => {
-        const v1Sphere = new THREE.Mesh(endPointGeometry, yellowMaterial)
+        const v1Sphere = new THREE.Mesh(endPointGeometry, greenMaterial)
         v1Sphere.position.copy(v1)
         const v2Sphere = new THREE.Mesh(endPointGeometry, purpleMaterial)
         v2Sphere.position.copy(v2)
@@ -303,12 +323,8 @@
         let line3 = new THREE.Line3(v1, v2)
         let yDiff = v2.y - v1.y
         let xDiff = v2.x - v1.x
-        // let angle = Math.atan2(yDiff, xDiff) * 180 /Math.PI
         let angle = Math.atan2(yDiff, xDiff)
-        console.log('line3', line3)
-        console.log('angle', angle)
         let distance = line3.distance()
-        console.log('distance', distance)
         const boxGeometry = new THREE.BoxGeometry(distance, 2, 3)
         const wall = new THREE.Mesh(boxGeometry, purpleMaterial)
         wall.name = "wall"
@@ -318,6 +334,27 @@
         points.push({ type: 'wall', mesh: wall, position: wall.position, rotation: angle, length: distance, v1: v1, v2: v2 })
 
     }
+    const createCrystalWall = (v1, v2) => {
+        const v1Sphere = new THREE.Mesh(endPointGeometry, greenMaterial)
+        v1Sphere.position.copy(v1)
+        const v2Sphere = new THREE.Mesh(endPointGeometry, purpleMaterial)
+        v2Sphere.position.copy(v2)
+        scene.add(v1Sphere)
+        scene.add(v2Sphere)
+        let line3 = new THREE.Line3(v1, v2)
+        let yDiff = v2.y - v1.y
+        let xDiff = v2.x - v1.x
+        let angle = Math.atan2(yDiff, xDiff)
+        let distance = line3.distance()
+        const boxGeometry = new THREE.BoxGeometry(distance, 2, 3)
+        const wall = new THREE.Mesh(boxGeometry, greenMaterial)
+        wall.name = "crystal-line"
+        line3.getCenter(wall.position)
+        wall.rotation.z = angle
+        scene.add(wall)
+        points.push({ type: 'crystal-line', mesh: wall, position: wall.position, rotation: angle, length: distance, v1: v1, v2: v2 })
+
+    }
     const createPrize = (v) => {
         const prize = new THREE.Mesh(prizeGeometry, purpleMaterial)
         prize.position.copy(v)
@@ -325,10 +362,20 @@
         prize.name = "prize"
         points.push({ type: 'prize', mesh: prize, position: prize.position, radius: 3 })
     }
+    const createBumper = (v) => {
+        const bumper = new THREE.Mesh(prizeGeometry, blueMaterial)
+        bumper.position.copy(v)
+        scene.add(bumper)
+        bumper.name = "bumper"
+        points.push({ type: 'bumper', mesh: bumper, position: bumper.position, radius: 3 })
+    }
 
 
     const clickRaycaster = new THREE.Raycaster();
     const mouseClickCoords = new THREE.Vector2();
+    let lastSelectedMesh
+    let lastSelectedMaterial = new THREE.MeshBasicMaterial()
+    let lastSelectedCacheMaterial
     function onDocumentMouseDown(event) {
         // event.stopPropagation();
         mouseClickCoords.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
@@ -336,10 +383,7 @@
         clickRaycaster.setFromCamera(mouseClickCoords, camera);
         const intersects = clickRaycaster.intersectObjects(scene.children);
         const clickPlaneIntersect = intersects.find(int => int.object.name === "clickPlane")
-        console.log(intersects)
-        console.log(clickPlaneIntersect);
         if (clickPlaneIntersect !== undefined) {
-            console.log(toolSelected)
             switch (toolSelected) {
                 case "line-draw":
                     lineDrawPoints.push(new THREE.Vector3(clickPlaneIntersect.point.x, clickPlaneIntersect.point.y, clickPlaneIntersect.point.z))
@@ -347,24 +391,80 @@
                         createWall(lineDrawPoints[lineDrawPoints.length - 1], lineDrawPoints[lineDrawPoints.length - 2])
                     }
                     break;
+                case "crystal-line-draw":
+                    crystalLineDrawPoints.push(new THREE.Vector3(clickPlaneIntersect.point.x, clickPlaneIntersect.point.y, clickPlaneIntersect.point.z))
+                    if (crystalLineDrawPoints.length >= 2) {
+                        createCrystalWall(crystalLineDrawPoints[crystalLineDrawPoints.length - 1], crystalLineDrawPoints[crystalLineDrawPoints.length - 2])
+                    }
+                    break;
                 case 'prize-draw':
                     createPrize(clickPlaneIntersect.point)
+                    break;
+                case 'bumper-draw':
+                    createBumper(clickPlaneIntersect.point)
+                    break;
+                case 'select':
+                    if (lastSelectedMesh !== undefined) {
+                        lastSelectedMesh.material = lastSelectedCacheMaterial
+                    }
+                    let pointsIntersects = clickRaycaster.intersectObjects(points.map(point => point.mesh));
+
+                    pointsIntersects = pointsIntersects.filter(pi => pi.object.name.startsWith('midpoint') === false && pi.object.name.startsWith('line') === false)
+                    if (pointsIntersects.length > 0) {
+                        lastSelectedMesh = pointsIntersects[0].object
+                        lastSelectedCacheMaterial = lastSelectedMesh.material
+                        lastSelectedMaterial.copy(lastSelectedMesh.material)
+                        lastSelectedMaterial.opacity = .5
+                        lastSelectedMesh.material = lastSelectedMaterial
+                    }
                     break;
             }
         }
     }
+    document.addEventListener('keydown', e => {
+        e.preventDefault()
+        e.stopPropagation()
+        switch (toolSelected) {
+            case 'select':
+                console.log('mesh', lastSelectedMesh)
+                if (lastSelectedMesh !== undefined) {
 
+                    switch (e.keyCode) {
+                        case 37: //left
+                            lastSelectedMesh.position.x = lastSelectedMesh.position.x - 1
+                            break;
+                        case 39: //right
+                            lastSelectedMesh.position.x = lastSelectedMesh.position.x + 1
+                            break;
+                        case 38: //up
+                            lastSelectedMesh.position.y = lastSelectedMesh.position.y + 1
+                            break;
+                        case 40: //down
+                            lastSelectedMesh.position.y = lastSelectedMesh.position.y - 1
+                            break;
+                        case 46: //delete
+                            scene.remove(lastSelectedMesh)
+                        default:
+                            break;
+                    }
+                }
+
+                break;
+            default:
+                break;
+        }
+    })
 
 
     document.querySelector('#center-button').addEventListener('click', (e) => {
         e.stopPropagation()
         const centerVector = getCenterVector()
-        console.log(centerVector)
         points.forEach(point => {
             point.position.set(point.position.x - centerVector.x, point.position.y - centerVector.y, point.position.z - centerVector.z)
         })
     })
     let lineDrawPoints = []
+    let crystalLineDrawPoints = []
     let toolSelected = ''
     document.querySelector('#line-button').addEventListener('click', (e) => {
         e.stopPropagation()
@@ -380,12 +480,26 @@
             document.querySelector('#line-button').classList.remove('selected-ui')
         }
     })
+
+    document.querySelector('#crystal-line-button').addEventListener('click', (e) => {
+        e.stopPropagation()
+        if (toolSelected !== 'crystal-line-draw') {
+            toolSelected = 'crystal-line-draw'
+            crystalLineDrawPoints = []
+            document.querySelector('#crystal-line-button').classList.add('selected-ui')
+            Array.from(document.querySelector('.ui').children).forEach(child => {
+                child.id !== e.target.id && child.classList.remove('selected-ui')
+            })
+        } else if (toolSelected === 'crystal-line-draw') {
+            toolSelected = ''
+            document.querySelector('#crystal-line-button').classList.remove('selected-ui')
+        }
+    })
     document.querySelector('#prize-button').addEventListener('click', (e) => {
         e.stopPropagation()
         if (toolSelected !== 'prize-draw') {
             toolSelected = 'prize-draw'
             lineDrawPoints = []
-            console.dir(document.querySelector('.ui'))
             document.querySelector('#prize-button').classList.add('selected-ui')
             Array.from(document.querySelector('.ui').children).forEach(child => {
                 child.id !== e.target.id && child.classList.remove('selected-ui')
@@ -393,6 +507,33 @@
         } else if (toolSelected === 'prize-draw') {
             toolSelected = ''
             document.querySelector('#prize-button').classList.remove('selected-ui')
+        }
+    })
+    document.querySelector('#bumper-button').addEventListener('click', (e) => {
+        e.stopPropagation()
+        if (toolSelected !== 'bumper-draw') {
+            toolSelected = 'bumper-draw'
+            lineDrawPoints = []
+            document.querySelector('#bumper-button').classList.add('selected-ui')
+            Array.from(document.querySelector('.ui').children).forEach(child => {
+                child.id !== e.target.id && child.classList.remove('selected-ui')
+            })
+        } else if (toolSelected === 'bumper-draw') {
+            toolSelected = ''
+            document.querySelector('#bumper-button').classList.remove('selected-ui')
+        }
+    })
+    document.querySelector('#select-button').addEventListener('click', (e) => {
+        e.stopPropagation()
+        if (toolSelected !== 'select') {
+            toolSelected = 'select'
+            document.querySelector('#select-button').classList.add('selected-ui')
+            Array.from(document.querySelector('.ui').children).forEach(child => {
+                child.id !== e.target.id && child.classList.remove('selected-ui')
+            })
+        } else if (toolSelected === 'select') {
+            toolSelected = ''
+            document.querySelector('#select-button').classList.remove('selected-ui')
         }
     })
 
@@ -409,7 +550,12 @@
 
     document.querySelector('#save-button').addEventListener('click', (e) => {
         e.stopPropagation()
-        let fileContent = JSON.stringify(points);
+        let strippedPoints = [...points]
+        strippedPoints.forEach(point => {
+            delete point.mesh
+        })
+        strippedPoints = strippedPoints.filter(point => point.type !== 'midpoint' && point.type !== 'line')
+        let fileContent = JSON.stringify(strippedPoints);
         let bb = new Blob([fileContent], { type: 'text/json' });
         let a = document.createElement('a');
         a.download = 'levelCreator.json';
@@ -435,8 +581,6 @@
     }
 
     document.querySelector('body').addEventListener('click', (e) => {
-        console.log('clicked body')
-        console.log('e', e)
         onDocumentMouseDown(e)
     })
 
