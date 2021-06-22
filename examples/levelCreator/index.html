@@ -32,15 +32,18 @@
         <button id="generate-button" class="ui-button">Generate</button>
         <button id="teardown-button" class="ui-button">Teardown</button>
         <button id="center-button" class="ui-button">Center</button>
-        <button id="line-button" class="ui-button">Line</button>
-        <button id="crystal-line-button" class="ui-button">Crystal Line</button>
-        <button id="prize-button" class="ui-button">Prize</button>
-        <button id="bumper-button" class="ui-button">Bumper</button>
+        <button id="line-draw-button" class="ui-button">Line</button>
+        <button id="crystal-line-draw-button" class="ui-button">Crystal Line</button>
+        <button id="remote-door-draw-button" class="ui-button">Remote Door</button>
+        <button id="remote-switch-draw-button" class="ui-button">Remote Switch</button>
+        <button id="prize-draw-button" class="ui-button">Prize</button>
+        <button id="bumper-draw-button" class="ui-button">Bumper</button>
     </div>
     <div id="viewport"></div>
 </body>
 <script type="text/javascript" src="../js/three-121.min.js"></script>
 <script type="text/javascript" src="../js/THREEOrbitControls.js"></script>
+<script type="text/javascript" src="./uuidv4.js"></script>
 <script>
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -104,9 +107,15 @@
     const endPointGeometry = new THREE.SphereGeometry(2, 8, 8)
     const prizeGeometry = new THREE.SphereGeometry(3, 8, 8)
     const redMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true })
+    redMaterial.name = "redMaterial"
     const purpleMaterial = new THREE.MeshBasicMaterial({ color: 0x9932CC, transparent: true })
+    purpleMaterial.name = "purpleMaterial"
     const greenMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true })
+    greenMaterial.name = "greenMaterial"
     const blueMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff, transparent: true })
+    blueMaterial.name = "blueMaterial"
+    const orangeMaterial = new THREE.MeshBasicMaterial({ color: 0xffa500, transparent: true })
+    orangeMaterial.name = "orangeMaterial"
     const lineMaterial = new THREE.LineBasicMaterial({
         color: 0x0000ff, transparent: true, opacity: .5
     });
@@ -121,6 +130,15 @@
 
 
     let points = []
+
+    let principalsInc = 0
+    let beamsInc = 0
+    let prizesInc = 0
+    let crystalSpheresInc = 0
+    let bumpersInc = 0
+    let remoteDoorsInc = 0
+    let crystalLinesInc = 0
+    let remoteSwitchesInc = 0
     // make principals
     const positionPrincipal = (vector, index) => {
         const principals = points.filter(p => p.type === "principal")
@@ -148,65 +166,108 @@
 
         if (newPoints !== undefined) {
             console.log('newPoints:', newPoints)
-            let npTempVector = new THREE.Vector3()
-            let principalsInc = 0
-            let beamsInc = 0
-            let prizesInc = 0
-            let crystalSpheresInc = 0
-            let bumpersInc = 0
+            npTempVector = new THREE.Vector3()
+            principalsInc = 0
+            beamsInc = 0
+            prizesInc = 0
+            crystalSpheresInc = 0
+            crystalLinesInc = 0
+            remoteDoorsInc = 0
+            bumpersInc = 0
+            remoteSwitchesInc = 0
             newPoints.forEach((p, pIndex) => {
+                let newPointObj = {}
+                let mesh
+
+                if (p.uuid === undefined) {
+                    newPointObj.uuid = uuidv4()
+                } else {
+                    newPointObj.uuid = p.uuid
+                }
                 switch (p.type) {
                     case 'principal':
 
-                        const principal = new THREE.Mesh(principalSphereGeometry, redMaterial)
-                        principal.name = `principal-${principalsInc}`
-                        scene.add(principal)
-                        principals.push(principal)
-                        points.push({ type: 'principal', mesh: principal, position: principal.position, radius: 20 })
-
-                        principal.position.set(p.position.x, p.position.y, p.position.z)
+                        mesh = new THREE.Mesh(principalSphereGeometry, redMaterial)
+                        mesh.name = `principal-${principalsInc}`
+                        scene.add(mesh)
+                        principals.push(mesh)
+                        newPointObj = { ...newPointObj, type: 'principal', radius: 20 }
+                        mesh.position.set(p.position.x, p.position.y, p.position.z)
                         principalsInc++
                         break;
                     case 'crystalSphere':
 
                         const crystalSphereGeometry = new THREE.SphereGeometry(p.radius, 32, 32)
-                        const crystalSphere = new THREE.Mesh(crystalSphereGeometry, greenMaterial)
-                        crystalSphere.name = `crystalSphere-${crystalSpheresInc}`
-                        scene.add(crystalSphere)
-                        crystalSphere.position.set(p.position.x, p.position.y, p.position.z)
-                        points.push({ type: 'crystalSphere', mesh: crystalSphere, position: crystalSphere.position, radius: p.radius })
+                        mesh = new THREE.Mesh(crystalSphereGeometry, greenMaterial)
+                        mesh.name = `crystalSphere-${crystalSpheresInc}`
+                        scene.add(mesh)
+                        mesh.position.set(p.position.x, p.position.y, p.position.z)
+                        newPointObj = { ...newPointObj, type: 'crystalSphere', radius: p.radius }
                         crystalSpheresInc++
                         break;
                     case 'wall':
                         const boxGeometry = new THREE.BoxGeometry(p.length, 2, 3)
-                        const wall = new THREE.Mesh(boxGeometry, purpleMaterial)
-                        wall.name = `wall-${beamsInc}`
-                        wall.position.set(p.position.x, p.position.y, 0)
-                        wall.rotation.z = p.rotation
-                        scene.add(wall)
-                        points.push({ type: 'wall', mesh: wall, position: wall.position, rotation: wall.rotation.z, length: p.length, v1: p.v1, v2: p.v2 })
+                        mesh = new THREE.Mesh(boxGeometry, purpleMaterial)
+                        mesh.name = `wall-${beamsInc}`
+                        mesh.position.set(p.position.x, p.position.y, 0)
+                        mesh.rotation.z = p.rotation
+                        scene.add(mesh)
+                        newPointObj = { ...newPointObj, type: 'wall', rotation: mesh.rotation.z, length: p.length, v1: p.v1, v2: p.v2 }
                         beamsInc++
                         break;
+                    case 'crystal-line':
+                        const crystalBoxGeometry = new THREE.BoxGeometry(p.length, 2, 3)
+                        mesh = new THREE.Mesh(crystalBoxGeometry, greenMaterial)
+                        mesh.name = `wall-${crystalLinesInc}`
+                        mesh.position.set(p.position.x, p.position.y, 0)
+                        mesh.rotation.z = p.rotation
+                        scene.add(mesh)
+                        newPointObj = { ...newPointObj, type: 'crystal-line', rotation: mesh.rotation.z, length: p.length, v1: p.v1, v2: p.v2 }
+                        crystalLinesInc++
+                        break;
                     case 'prize':
-                        const prize = new THREE.Mesh(prizeGeometry, purpleMaterial)
-                        prize.position.set(p.position.x, p.position.y, p.position.z)
-                        prize.name = `prize-${prizesInc}`
-                        scene.add(prize)
-                        points.push({ type: 'prize', mesh: prize, position: prize.position, radius: 3 })
+                        mesh = new THREE.Mesh(prizeGeometry, purpleMaterial)
+                        mesh.position.set(p.position.x, p.position.y, p.position.z)
+                        mesh.name = `prize-${prizesInc}`
+                        scene.add(mesh)
+                        newPointObj = { ...newPointObj, type: 'prize', radius: 3 }
                         prizesInc++
                         break;
                     case 'bumper':
-                        const bumper = new THREE.Mesh(prizeGeometry, blueMaterial)
-                        bumper.position.set(p.position.x, p.position.y, p.position.z)
-                        scene.add(bumper)
-                        bumper.name = `bumper-${bumpersInc}`
-                        points.push({ type: 'bumper', mesh: bumper, position: bumper.position, radius: 3 })
+                        mesh = new THREE.Mesh(prizeGeometry, blueMaterial)
+                        mesh.position.set(p.position.x, p.position.y, p.position.z)
+                        scene.add(mesh)
+                        mesh.name = `bumper-${bumpersInc}`
+                        newPointObj = { ...newPointObj, type: 'bumper', radius: 3 }
                         bumpersInc++
+                        break;
+                    case 'remote-door':
+                        mesh = new THREE.Mesh(remoteDoorGeometry, blueMaterial)
+                        mesh.position.set(p.position.x, p.position.y, p.position.z)
+                        mesh.rotation.z = p.rotation
+                        scene.add(mesh)
+                        mesh.name = `remote-door-${remoteDoorsInc}`
+                        newPointObj = { ...newPointObj, type: 'remote-door', radius: p.radius, rotation: p.rotation, wall: p.wall }
+                        remoteDoorsInc++
+                        break;
+                    case 'remote-switch':
+                        mesh = new THREE.Mesh(prizeGeometry, orangeMaterial)
+                        mesh.position.set(p.position.x, p.position.y, p.position.z)
+                        scene.add(mesh)
+                        mesh.name = `remote-switch-${remoteSwitchesInc}`
+                        newPointObj = { ...newPointObj, type: 'remote-switch', radius: p.radius, remoteDoor: p.remoteDoor }
+                        remoteSwitchesInc++
                         break;
                     default:
                         break;
                 }
+                if (mesh !== undefined) {
+                    newPointObj = { ...newPointObj, mesh: mesh, position: mesh.position }
+                    points.push(newPointObj)
+                } else {
 
+                    console.log('couldnt handle', p)
+                }
 
 
 
@@ -215,11 +276,11 @@
 
             for (let i = 0; i < 5; i++) {
                 const principal = new THREE.Mesh(principalSphereGeometry, redMaterial)
-                principal.name = `principal-${i}`
+                principal.name = `principal-${principalsInc}`
                 scene.add(principal)
                 principals.push(principal)
                 points.push({ type: 'principal', mesh: principal, position: principal.position, radius: 20 })
-
+                principalsInc++
                 positionPrincipal(principal.position, i)
             }
 
@@ -277,10 +338,11 @@
                     let radius = getRadiusThatFits(vector, 30)
                     const crystalSphereGeometry = new THREE.SphereGeometry(radius, 32, 32)
                     const crystalSphere = new THREE.Mesh(crystalSphereGeometry, greenMaterial)
-                    crystalSphere.name = `crystal-sphere-${midpointIndex}`
+                    crystalSphere.name = `crystal-sphere-${crystalSpheresInc}`
                     scene.add(crystalSphere)
                     crystalSphere.position.set(midpoint.position.x, midpoint.position.y, midpoint.position.z)
-                    points.push({ type: 'crystalSphere', mesh: crystalSphere, position: crystalSphere.position, radius: radius })
+                    points.push({ type: 'crystalSphere', mesh: crystalSphere, position: crystalSphere.position, radius: radius, uuid: uuidv4() })
+                    crystalSpheresInc++
                 }
             })
     }
@@ -327,12 +389,12 @@
         let distance = line3.distance()
         const boxGeometry = new THREE.BoxGeometry(distance, 2, 3)
         const wall = new THREE.Mesh(boxGeometry, purpleMaterial)
-        wall.name = "wall"
+        wall.name = `wall-${beamsInc}`
         line3.getCenter(wall.position)
         wall.rotation.z = angle
         scene.add(wall)
-        points.push({ type: 'wall', mesh: wall, position: wall.position, rotation: angle, length: distance, v1: v1, v2: v2 })
-
+        points.push({ type: 'wall', mesh: wall, position: wall.position, rotation: angle, length: distance, v1: v1, v2: v2, uuid: uuidv4() })
+        beamsInc++
     }
     const createCrystalWall = (v1, v2) => {
         const v1Sphere = new THREE.Mesh(endPointGeometry, greenMaterial)
@@ -348,34 +410,72 @@
         let distance = line3.distance()
         const boxGeometry = new THREE.BoxGeometry(distance, 2, 3)
         const wall = new THREE.Mesh(boxGeometry, greenMaterial)
-        wall.name = "crystal-line"
+        wall.name = `crystal-line-${crystalLinesInc}`
         line3.getCenter(wall.position)
         wall.rotation.z = angle
         scene.add(wall)
-        points.push({ type: 'crystal-line', mesh: wall, position: wall.position, rotation: angle, length: distance, v1: v1, v2: v2 })
-
+        points.push({ type: 'crystal-line', mesh: wall, position: wall.position, rotation: angle, length: distance, v1: v1, v2: v2, uuid: uuidv4() })
+        crystalLinesInc++
     }
     const createPrize = (v) => {
         const prize = new THREE.Mesh(prizeGeometry, purpleMaterial)
         prize.position.copy(v)
         scene.add(prize)
-        prize.name = "prize"
-        points.push({ type: 'prize', mesh: prize, position: prize.position, radius: 3 })
+        prize.name = `prize-${prizesInc}`
+        points.push({ type: 'prize', mesh: prize, position: prize.position, radius: 3, uuid: uuidv4() })
+        prizesInc++
     }
     const createBumper = (v) => {
         const bumper = new THREE.Mesh(prizeGeometry, blueMaterial)
         bumper.position.copy(v)
         scene.add(bumper)
-        bumper.name = "bumper"
-        points.push({ type: 'bumper', mesh: bumper, position: bumper.position, radius: 3 })
+        bumper.name = `bumper-${bumpersInc}`
+        points.push({ type: 'bumper', mesh: bumper, position: bumper.position, radius: 3, uuid: uuidv4() })
+        bumpersInc++
+    }
+    const remoteDoorGeometry = new THREE.BoxGeometry(20, 3, 3)
+    const createRemoteDoor = (v) => {
+        const door = new THREE.Mesh(remoteDoorGeometry, blueMaterial)
+        door.position.copy(v)
+        scene.add(door)
+        door.name = `remove-door${remoteDoorsInc}`
+        door.rotation.z = remoteDoorAngle
+        points.push({ type: 'remote-door', rotation: remoteDoorAngle, mesh: door, position: door.position, radius: 3, wall: remoteDoorPointUuid, uuid: uuidv4() })
+        lastSelectedRemoteDoorPoint = points[points.length - 1]
+        remoteDoorsInc++
+    }
+
+    let lastSelectedRemoteDoorPoint = undefined
+    const createRemoteSwitch = (v) => {
+        if (lastSelectedRemoteDoorPoint !== undefined) {
+            const remoteSwitch = new THREE.Mesh(prizeGeometry, orangeMaterial)
+            remoteSwitch.position.copy(v)
+            scene.add(remoteSwitch)
+            remoteSwitch.name = `remote-switch-${remoteSwitchesInc}`
+            points.push({ type: 'remote-switch', mesh: remoteSwitch, position: remoteSwitch.position, radius: 3, remoteDoor: lastSelectedRemoteDoorPoint.uuid, uuid: uuidv4() })
+            remoteSwitchesInc++
+        }
     }
 
 
     const clickRaycaster = new THREE.Raycaster();
     const mouseClickCoords = new THREE.Vector2();
-    let lastSelectedMesh
-    let lastSelectedMaterial = new THREE.MeshBasicMaterial()
-    let lastSelectedCacheMaterial
+    const moveRaycaster = new THREE.Raycaster();
+    const mouseMoveCoords = new THREE.Vector2();
+    let hoverMeshes = []
+    // let lsObj = {
+    //     mesh: undefined,
+    //     cacheMaterial:undefined,
+    // }
+    let lastSelected = []
+    for (let i = 0; i < 100; i++) {
+        // lastSelected.push(lsObj)
+        lastSelected[i] = {}
+        lastSelected[i].mesh = undefined
+        lastSelected[i].material = new THREE.MeshBasicMaterial()
+        lastSelected[i].cacheMaterial = undefined
+    }
+
     function onDocumentMouseDown(event) {
         // event.stopPropagation();
         mouseClickCoords.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
@@ -403,50 +503,120 @@
                 case 'bumper-draw':
                     createBumper(clickPlaneIntersect.point)
                     break;
+                case 'remote-door-draw':
+                    createRemoteDoor(hoverMeshes[0].position)
+                    break;
+                case 'remote-switch-draw':
+                    createRemoteSwitch(hoverMeshes[0].position)
+                    break;
                 case 'select':
-                    if (lastSelectedMesh !== undefined) {
-                        lastSelectedMesh.material = lastSelectedCacheMaterial
-                    }
-                    let pointsIntersects = clickRaycaster.intersectObjects(points.map(point => point.mesh));
-
+                    let pointsIntersects = clickRaycaster.intersectObjects(points.filter(point => point.mesh !== undefined).map(point => point.mesh));
                     pointsIntersects = pointsIntersects.filter(pi => pi.object.name.startsWith('midpoint') === false && pi.object.name.startsWith('line') === false)
+
                     if (pointsIntersects.length > 0) {
-                        lastSelectedMesh = pointsIntersects[0].object
-                        lastSelectedCacheMaterial = lastSelectedMesh.material
-                        lastSelectedMaterial.copy(lastSelectedMesh.material)
-                        lastSelectedMaterial.opacity = .5
-                        lastSelectedMesh.material = lastSelectedMaterial
+                        let lastSelectedPoint = points.find(p => p.mesh.uuid === pointsIntersects[0].object.uuid)
+                        console.log(lastSelectedPoint)
+
+                        switch (lastSelectedPoint.type) {
+                            case 'remote-door':
+                                lastSelectedRemoteDoorPoint = lastSelectedPoint
+                                break;
+                            default:
+                                break;
+                        }
+                        console.log('shiftKey', event.shiftKey)
+                        let sIndex = 0
+                        if (event.shiftKey === true) {
+                            sIndex = lastSelected.findIndex(ls => ls.mesh === undefined)
+                        } else {
+                            if (lastSelected[sIndex].mesh !== undefined) {
+                                lastSelected[sIndex].mesh.material = lastSelected[sIndex].cacheMaterial
+                            }
+                        }
+                        console.log('sIndex', sIndex)
+                        lastSelected[sIndex].mesh = pointsIntersects[0].object
+                        lastSelected[sIndex].cacheMaterial = lastSelected[sIndex].mesh.material
+                        lastSelected[sIndex].material.copy(lastSelected[sIndex].mesh.material)
+                        lastSelected[sIndex].material.opacity = .5
+                        lastSelected[sIndex].mesh.material = lastSelected[sIndex].material
+                        if (event.shiftKey === false) {
+                            console.log('UNSELECT AFTER', sIndex)
+                            let until = lastSelected.findIndex(ls => {
+                                // console.log(ls)
+                                // debugger
+                                return ls.mesh === undefined
+                            })
+                            console.log('until', until)
+                            // debugger
+                            for (let i = sIndex + 1; i < until; i++) {
+                                console.log('unselecting mesh', i)
+                                lastSelected[i].mesh.material = lastSelected[i].cacheMaterial
+                                lastSelected[i].mesh = undefined
+                            }
+                        }
+                    } else {
+                        console.log('UNSELECT ALL')
+                        let until = lastSelected.findIndex(ls => ls.mesh === undefined)
+                        console.log('until', until)
+                        for (let i = 0; i < until; i++) {
+                            lastSelected[i].mesh.material = lastSelected[i].cacheMaterial
+                            lastSelected[i].mesh = undefined
+                        }
                     }
+
                     break;
             }
         }
     }
     document.addEventListener('keydown', e => {
-        e.preventDefault()
-        e.stopPropagation()
         switch (toolSelected) {
             case 'select':
-                console.log('mesh', lastSelectedMesh)
-                if (lastSelectedMesh !== undefined) {
-
-                    switch (e.keyCode) {
-                        case 37: //left
-                            lastSelectedMesh.position.x = lastSelectedMesh.position.x - 1
-                            break;
-                        case 39: //right
-                            lastSelectedMesh.position.x = lastSelectedMesh.position.x + 1
-                            break;
-                        case 38: //up
-                            lastSelectedMesh.position.y = lastSelectedMesh.position.y + 1
-                            break;
-                        case 40: //down
-                            lastSelectedMesh.position.y = lastSelectedMesh.position.y - 1
-                            break;
-                        case 46: //delete
-                            scene.remove(lastSelectedMesh)
-                        default:
-                            break;
-                    }
+                // console.log('lastSelected', lastSelected)
+                let i = 0
+                switch (e.keyCode) {
+                    case 37: //left
+                        e.preventDefault()
+                        e.stopPropagation()
+                        while (lastSelected[i].mesh !== undefined) {
+                            lastSelected[i].mesh.position.x = lastSelected[i].mesh.position.x - 1
+                            i++
+                        }
+                        break;
+                    case 39: //right
+                        e.preventDefault()
+                        e.stopPropagation()
+                        while (lastSelected[i].mesh !== undefined) {
+                            lastSelected[i].mesh.position.x = lastSelected[i].mesh.position.x + 1
+                            i++
+                        }
+                        break;
+                    case 38: //up
+                        e.preventDefault()
+                        e.stopPropagation()
+                        while (lastSelected[i].mesh !== undefined) {
+                            lastSelected[i].mesh.position.y = lastSelected[i].mesh.position.y + 1
+                            i++
+                        }
+                        break;
+                    case 40: //down
+                        e.preventDefault()
+                        e.stopPropagation()
+                        while (lastSelected[i].mesh !== undefined) {
+                            lastSelected[i].mesh.position.y = lastSelected[i].mesh.position.y - 1
+                            i++
+                        }
+                        break;
+                    case 46: //delete
+                        e.preventDefault()
+                        e.stopPropagation()
+                        while (lastSelected[i].mesh !== undefined) {
+                            scene.remove(lastSelected[i].mesh)
+                            points.splice(points.findIndex(p => p.mesh.uuid === lastSelected[i].mesh.uuid), 1)
+                            i++
+                        }
+                        break;
+                    default:
+                        break;
                 }
 
                 break;
@@ -456,6 +626,178 @@
     })
 
 
+    let lineDrawPoints = []
+    let crystalLineDrawPoints = []
+    let toolSelected = ''
+
+    const drawTools = [
+        {
+            name: 'line-draw',
+            clickFunction: () => {
+                lineDrawPoints = []
+            },
+            hoverMeshFunction: () => {
+                if (hoverMeshes[0] === undefined) {
+                    hoverMeshes.push(new THREE.Mesh(endPointGeometry, greenMaterial.clone()))
+                    hoverMeshes[0].material.opacity = .5
+                    scene.add(hoverMeshes[0])
+                } else {
+                    hoverMeshes[0].geometry = endPointGeometry
+                    hoverMeshes[0].material.copy(greenMaterial)
+                    hoverMeshes[0].material.opacity = .5
+                    hoverMeshes[0].visible = true
+                }
+                if (hoverMeshes[1] === undefined) {
+                    hoverMeshes.push(new THREE.Mesh(new THREE.BoxGeometry(1, 2, 3), purpleMaterial.clone()))
+                    hoverMeshes[1].material.opacity = .5
+                    scene.add(hoverMeshes[1])
+                } else {
+                    hoverMeshes[1].geometry = new THREE.BoxGeometry(1, 2, 3)
+                    hoverMeshes[1].material.copy(purpleMaterial)
+                    hoverMeshes[1].material.opacity = .5
+                    hoverMeshes[1].visible = false
+                }
+            }
+        },
+        {
+            name: 'crystal-line-draw',
+            clickFunction: () => {
+                crystalLineDrawPoints = []
+            },
+            hoverMeshFunction: () => {
+                if (hoverMeshes[0] === undefined) {
+                    hoverMeshes.push(new THREE.Mesh(endPointGeometry, greenMaterial.clone()))
+                    hoverMeshes[0].material.opacity = .5
+                    scene.add(hoverMeshes[0])
+                } else {
+                    hoverMeshes[0].geometry = endPointGeometry
+                    hoverMeshes[0].material.copy(greenMaterial)
+                    hoverMeshes[0].material.opacity = .5
+                    hoverMeshes[0].visible = true
+                }
+                if (hoverMeshes[1] === undefined) {
+                    hoverMeshes.push(new THREE.Mesh(new THREE.BoxGeometry(1, 2, 3), greenMaterial.clone()))
+                    hoverMeshes[1].material.opacity = .5
+                    scene.add(hoverMeshes[1])
+                } else {
+                    hoverMeshes[1].geometry = new THREE.BoxGeometry(1, 2, 3)
+                    hoverMeshes[1].material.copy(greenMaterial)
+                    hoverMeshes[1].material.opacity = .5
+                    hoverMeshes[1].visible = false
+                }
+            }
+        },
+        {
+            name: 'prize-draw',
+            clickFunction: () => {
+            },
+            hoverMeshFunction: () => {
+                if (hoverMeshes[0] === undefined) {
+                    hoverMeshes.push(new THREE.Mesh(prizeGeometry, purpleMaterial.clone()))
+                    hoverMeshes[0].material.opacity = .5
+                    scene.add(hoverMeshes[0])
+                } else {
+                    hoverMeshes[0].geometry = prizeGeometry
+                    hoverMeshes[0].material.copy(purpleMaterial)
+                    hoverMeshes[0].material.opacity = .5
+                    hoverMeshes[0].visible = true
+                }
+
+            }
+        },
+        {
+            name: 'bumper-draw',
+            clickFunction: () => {
+            },
+            hoverMeshFunction: () => {
+                if (hoverMeshes[0] === undefined) {
+                    hoverMeshes.push(new THREE.Mesh(prizeGeometry, blueMaterial.clone()))
+                    hoverMeshes[0].material.opacity = .5
+                    scene.add(hoverMeshes[0])
+                } else {
+                    hoverMeshes[0].geometry = prizeGeometry
+                    hoverMeshes[0].material.copy(blueMaterial)
+                    hoverMeshes[0].material.opacity = .5
+                    hoverMeshes[0].visible = true
+                }
+            }
+        },
+        {
+            name: 'remote-door-draw',
+            clickFunction: () => {
+            },
+            hoverMeshFunction: () => {
+                if (hoverMeshes[0] === undefined) {
+                    hoverMeshes.push(new THREE.Mesh(remoteDoorGeometry, blueMaterial.clone()))
+                    hoverMeshes[0].material.opacity = .5
+                    scene.add(hoverMeshes[0])
+                } else {
+                    hoverMeshes[0].geometry = remoteDoorGeometry
+                    hoverMeshes[0].material.copy(blueMaterial)
+                    hoverMeshes[0].material.opacity = .5
+                    hoverMeshes[0].visible = true
+                }
+            }
+        }, ,
+        {
+            name: 'remote-switch-draw',
+            clickFunction: () => {
+            },
+            hoverMeshFunction: () => {
+                if (hoverMeshes[0] === undefined) {
+                    hoverMeshes.push(new THREE.Mesh(prizeGeometry, orangeMaterial.clone()))
+                    hoverMeshes[0].material.opacity = .5
+                    scene.add(hoverMeshes[0])
+                } else {
+                    hoverMeshes[0].geometry = prizeGeometry
+                    hoverMeshes[0].material.copy(orangeMaterial)
+                    hoverMeshes[0].material.opacity = .5
+                    hoverMeshes[0].visible = true
+                }
+            }
+        },
+        {
+            name: 'select',
+            clickFunction: () => {
+            },
+            hoverMeshFunction: () => {
+
+                if (hoverMeshes[0] !== undefined) {
+                    hoverMeshes[0].visible = false
+                }
+                if (hoverMeshes[1] !== undefined) {
+                    hoverMeshes[1].visible = false
+                }
+            }
+        }
+    ]
+    const registerDrawTool = (config) => {
+        const { name, clickFunction, hoverMeshFunction } = config
+        document.querySelector(`#${name}-button`).addEventListener('click', (e) => {
+            e.stopPropagation()
+            if (toolSelected !== name) {
+                toolSelected = name
+                document.querySelector(`#${name}-button`).classList.add('selected-ui')
+                Array.from(document.querySelector('.ui').children).forEach(child => {
+                    child.id !== e.target.id && child.classList.remove('selected-ui')
+                })
+                lineDrawPoints = []
+                crystalLineDrawPoints = []
+                clickFunction()
+                hoverMeshFunction()
+            } else if (toolSelected === name) {
+                toolSelected = ''
+                hoverMeshes.forEach(mesh => {
+                    mesh.visible = false
+                })
+                document.querySelector(`#${name}-button`).classList.remove('selected-ui')
+            }
+        })
+    }
+    drawTools.forEach(tool => {
+        registerDrawTool(tool)
+    })
+
     document.querySelector('#center-button').addEventListener('click', (e) => {
         e.stopPropagation()
         const centerVector = getCenterVector()
@@ -463,80 +805,6 @@
             point.position.set(point.position.x - centerVector.x, point.position.y - centerVector.y, point.position.z - centerVector.z)
         })
     })
-    let lineDrawPoints = []
-    let crystalLineDrawPoints = []
-    let toolSelected = ''
-    document.querySelector('#line-button').addEventListener('click', (e) => {
-        e.stopPropagation()
-        if (toolSelected !== 'line-draw') {
-            toolSelected = 'line-draw'
-            lineDrawPoints = []
-            document.querySelector('#line-button').classList.add('selected-ui')
-            Array.from(document.querySelector('.ui').children).forEach(child => {
-                child.id !== e.target.id && child.classList.remove('selected-ui')
-            })
-        } else if (toolSelected === 'line-draw') {
-            toolSelected = ''
-            document.querySelector('#line-button').classList.remove('selected-ui')
-        }
-    })
-
-    document.querySelector('#crystal-line-button').addEventListener('click', (e) => {
-        e.stopPropagation()
-        if (toolSelected !== 'crystal-line-draw') {
-            toolSelected = 'crystal-line-draw'
-            crystalLineDrawPoints = []
-            document.querySelector('#crystal-line-button').classList.add('selected-ui')
-            Array.from(document.querySelector('.ui').children).forEach(child => {
-                child.id !== e.target.id && child.classList.remove('selected-ui')
-            })
-        } else if (toolSelected === 'crystal-line-draw') {
-            toolSelected = ''
-            document.querySelector('#crystal-line-button').classList.remove('selected-ui')
-        }
-    })
-    document.querySelector('#prize-button').addEventListener('click', (e) => {
-        e.stopPropagation()
-        if (toolSelected !== 'prize-draw') {
-            toolSelected = 'prize-draw'
-            lineDrawPoints = []
-            document.querySelector('#prize-button').classList.add('selected-ui')
-            Array.from(document.querySelector('.ui').children).forEach(child => {
-                child.id !== e.target.id && child.classList.remove('selected-ui')
-            })
-        } else if (toolSelected === 'prize-draw') {
-            toolSelected = ''
-            document.querySelector('#prize-button').classList.remove('selected-ui')
-        }
-    })
-    document.querySelector('#bumper-button').addEventListener('click', (e) => {
-        e.stopPropagation()
-        if (toolSelected !== 'bumper-draw') {
-            toolSelected = 'bumper-draw'
-            lineDrawPoints = []
-            document.querySelector('#bumper-button').classList.add('selected-ui')
-            Array.from(document.querySelector('.ui').children).forEach(child => {
-                child.id !== e.target.id && child.classList.remove('selected-ui')
-            })
-        } else if (toolSelected === 'bumper-draw') {
-            toolSelected = ''
-            document.querySelector('#bumper-button').classList.remove('selected-ui')
-        }
-    })
-    document.querySelector('#select-button').addEventListener('click', (e) => {
-        e.stopPropagation()
-        if (toolSelected !== 'select') {
-            toolSelected = 'select'
-            document.querySelector('#select-button').classList.add('selected-ui')
-            Array.from(document.querySelector('.ui').children).forEach(child => {
-                child.id !== e.target.id && child.classList.remove('selected-ui')
-            })
-        } else if (toolSelected === 'select') {
-            toolSelected = ''
-            document.querySelector('#select-button').classList.remove('selected-ui')
-        }
-    })
-
     document.querySelector('#generate-button').addEventListener('click', (e) => {
         e.stopPropagation()
         generatePrincipals()
@@ -582,6 +850,84 @@
 
     document.querySelector('body').addEventListener('click', (e) => {
         onDocumentMouseDown(e)
+    })
+
+
+    let mousemoveLine30 = new THREE.Line3()
+    let mousemoveLine31 = new THREE.Line3()
+    let mousemoveVector = new THREE.Vector3()
+    let mousemoveClosestVector = new THREE.Vector3()
+    let remoteDoorPointUuid = ''
+    let remoteDoorAngle = 0
+    document.querySelector('body').addEventListener('mousemove', (e) => {
+        e.stopPropagation();
+        mouseMoveCoords.x = (e.clientX / renderer.domElement.clientWidth) * 2 - 1;
+        mouseMoveCoords.y = - (e.clientY / renderer.domElement.clientHeight) * 2 + 1;
+        moveRaycaster.setFromCamera(mouseMoveCoords, camera);
+        const intersects = moveRaycaster.intersectObjects(scene.children);
+        const clickPlaneIntersect = intersects.find(int => int.object.name === "clickPlane")
+        if (hoverMeshes[0] !== undefined && clickPlaneIntersect !== undefined) {
+            hoverMeshes[0].position.set(clickPlaneIntersect.point.x, clickPlaneIntersect.point.y, clickPlaneIntersect.point.z)
+            switch (toolSelected) {
+                case 'remote-door-draw':
+                    const walls = points.filter(point => point.type === 'wall')
+                    let closestDistance = 3000
+                    let currentDistance = 3000
+                    walls.forEach(wall => {
+                        mousemoveLine30.set(wall.v1, wall.v2)
+                        mousemoveLine30.closestPointToPoint(clickPlaneIntersect.point, true, mousemoveVector)
+                        mousemoveLine31.set(clickPlaneIntersect.point, mousemoveVector)
+                        currentDistance = mousemoveLine31.distance()
+                        if (currentDistance < closestDistance) {
+                            closestDistance = currentDistance
+                            mousemoveClosestVector.copy(mousemoveVector)
+                            // debugger
+                            remoteDoorPointUuid = wall.uuid
+                            remoteDoorAngle = Math.atan2(wall.v2.y - wall.v1.y, wall.v2.x - wall.v1.x)
+                        }
+                    })
+                    hoverMeshes[0].rotation.z = remoteDoorAngle
+                    hoverMeshes[0].position.copy(mousemoveClosestVector)
+                    // debugger
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (hoverMeshes[1] !== undefined) {
+            switch (toolSelected) {
+                case 'line-draw':
+                    if (lineDrawPoints.length >= 1) {
+
+                        let v1 = lineDrawPoints[lineDrawPoints.length - 1]
+                        let v2 = clickPlaneIntersect.point
+                        mousemoveLine31.set(v1, v2)
+                        let angle = Math.atan2(v2.y - v1.y, v2.x - v1.x)
+                        let distance = mousemoveLine31.distance()
+                        hoverMeshes[1].scale.set(distance, 1, 1)
+                        mousemoveLine31.getCenter(hoverMeshes[1].position)
+                        hoverMeshes[1].rotation.z = angle
+                        hoverMeshes[1].visible = true
+                    }
+                    break;
+                case 'crystal-line-draw':
+                    if (crystalLineDrawPoints.length >= 1) {
+
+                        let v1 = crystalLineDrawPoints[crystalLineDrawPoints.length - 1]
+                        let v2 = clickPlaneIntersect.point
+                        mousemoveLine31.set(v1, v2)
+                        let angle = Math.atan2(v2.y - v1.y, v2.x - v1.x)
+                        let distance = mousemoveLine31.distance()
+                        hoverMeshes[1].scale.set(distance, 1, 1)
+                        mousemoveLine31.getCenter(hoverMeshes[1].position)
+                        hoverMeshes[1].rotation.z = angle
+                        hoverMeshes[1].visible = true
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     })
 
     render = function () {

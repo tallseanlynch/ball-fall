@@ -2618,12 +2618,6 @@
             const switchBeamAdj = config.switchBeamAdj ? config.switchBeamAdj : 0
             const rotateGroup = new THREE.Group()
 
-            const beamOne = createBeam({
-              p: [0 + config.p.x, 0 + config.p.y, 0 + config.p.z],
-              r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
-              s: (config.s * 2.5) * .1 + performanceAdj + switchBeamAdj
-            })
-
             const normalSwitchBeamConfig = {
               switchIndicators: 3,
               color: window.appConfig.stages[window.appConfig.currentStage].backgroundColors[3]
@@ -2636,23 +2630,54 @@
                 receiver: { name: config.receiver.name }
               }
             }
+            let switchBeamP 
+            let switchBeamRotation
+            switch (config.dir) {
+              case 'x':
+                switchBeamP = [(config.s * 3.3) + config.p.x, 0 + config.p.y, 0 + config.p.z]
+                switchBeamRotation = 0
+                break;
+              case 'y':
+                switchBeamP = [0 + config.p.x, (config.s * 3.3) + config.p.y, 0 + config.p.z]
+                switchBeamRotation = 0.5 * Math.PI
+                break;
+              case 'single':
+                switchBeamP = [0 + config.p.x, 0 + config.p.y, 0 + config.p.z]
+                switchBeamRotation = config.rotation
+                break;
+              default:
+                break;
+            }
 
             const switchBeamTwo = createBeam({
-              p: config.dir === 'x' ? [(config.s * 3.3) + config.p.x, 0 + config.p.y, 0 + config.p.z] : [0 + config.p.x, (config.s * 3.3) + config.p.y, 0 + config.p.z],
-              r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
+              p: switchBeamP,
+              r: [0, 0, switchBeamRotation],
               s: (config.s * 2.5) * .1 + performanceAdj + switchBeamAdj,
               switchBeam: config.receiver ? remoteSwitchBeamConfig() : normalSwitchBeamConfig
             })
-
-            const beamThree = createBeam({
-              p: config.dir === 'x' ? [(config.s * 6.6) + config.p.x, 0 + config.p.y, 0 + config.p.z] : [0 + config.p.x, (config.s * 6.6) + config.p.y, 0 + config.p.z],
-              r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
-              s: (config.s * 2.5) * .1 + performanceAdj + switchBeamAdj
-            })
-
-            scene.add(beamOne)
             scene.add(switchBeamTwo)
-            scene.add(beamThree)
+            // if (config.rotation !== undefined) {
+            //   console.log('angle', config.rotation)
+            //   switchBeamTwo.rotation.z = config.rotation
+            // }
+
+            if (config.single === undefined || config.single === false ) {
+              const beamOne = createBeam({
+                p: [0 + config.p.x, 0 + config.p.y, 0 + config.p.z],
+                r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
+                s: (config.s * 2.5) * .1 + performanceAdj + switchBeamAdj
+              })
+              scene.add(beamOne)
+
+              const beamThree = createBeam({
+                p: config.dir === 'x' ? [(config.s * 6.6) + config.p.x, 0 + config.p.y, 0 + config.p.z] : [0 + config.p.x, (config.s * 6.6) + config.p.y, 0 + config.p.z],
+                r: [0, 0, config.dir === 'x' ? 0 : .5 * Math.PI],
+                s: (config.s * 2.5) * .1 + performanceAdj + switchBeamAdj
+              })
+              scene.add(beamThree)
+  
+
+            }
           },
           createRemoteSwitch: (config = {
             transmitter: {
@@ -7980,7 +8005,7 @@
             createBackgroundAnimation()
           },
           init: () => {
-              const endPointGeometry = new THREE.SphereGeometry(2, 8, 8)
+              const endPointGeometry = new THREE.SphereGeometry(1.5, 8, 8)
               const purpleMaterial = new THREE.MeshBasicMaterial({ color: 0x9932CC })
               const loadJSONStage = (config) => {
                 const {filename, stageIndex} = config
@@ -7991,8 +8016,14 @@
                 let beamsInc = 0
                 let prizesInc = 0
                 let bumpersInc = 0
+                let remoteReceiversInc = 0
+                let remoteTransmittersInc = 0
                 let tempV1 = new THREE.Vector3()
                 let tempV2 = new THREE.Vector3()
+                let tempWallV1 = new THREE.Vector3()
+                let tempWallV2 = new THREE.Vector3()
+                let tempLine30 = new THREE.Line3()
+                let tempLine31 = new THREE.Line3()
                 const principalTypes = ['gem-portal','emerald', 'diamond', 'ruby', 'sapphire-portal']
                 newPoints.forEach(np => {
                   switch(np.type) {
@@ -8043,14 +8074,62 @@
                       }
                       break;
                     case "wall":
+                      tempWallV1.copy(np.v1)
+                      tempLine31.set(np.v1, np.v2)
+                      let remoteReceiversToCreate = newPoints.filter(p => p.wall === np.uuid)
+
+                      const makeWallSection = () => {
+                        
+                      }
+                      remoteReceiversToCreate.forEach(rr => {
+                        
+                        let remoteTransmittersToCreate = newPoints.filter(p => p.remoteDoor === rr.uuid)
+                        remoteTransmittersToCreate.forEach(rt => {
+                          window.appConfig.stages.components.createRemoteSwitch({
+                            transmitter: {
+                              p: { x: rt.position.x, y: rt.position.y, z: 0 }
+                            },
+                            receiver: {
+                              p: { x: rr.position.x, y: rr.position.y, z: 0 },
+                              name: `STAGE${stageIndex}RECEIVER_${remoteReceiversInc}`
+                            }
+                          })
+                          remoteTransmittersInc++
+                        })
+                        // console.log('rr', rr)
+                        // debugger
+                        tempV2.set(rr.radius * Math.cos(np.rotation) + rr.position.x,(rr.radius* 2) * Math.sin(np.rotation) + rr.position.y, 0)
+                        tempV1.set(rr.radius * Math.cos(np.rotation + Math.PI) + rr.position.x, (rr.radius*2) * Math.sin(np.rotation + Math.PI) + rr.position.y,0)
+                        tempWallV2.copy(tempV1)
+                        tempLine31.closestPointToPoint(tempWallV1, true, tempWallV1)
+                        tempLine31.closestPointToPoint(tempWallV2, true, tempWallV2)
+                        tempLine30.set(tempWallV1, tempWallV2)
+                        tempLine30.getCenter(tempV1)
                         const wall = createBeam({
-                          p: [np.position.x, np.position.y, np.position.z],
+                          p: [tempV1.x, tempV1.y,tempV1.z],
                           r: [0, 0, np.rotation],
-                          s: (np.length *.1) - .42
+                          s: (tempLine30.distance() *.1) - .42
                         })
                         wall.name = `STAGE${stageIndex}-beam${beamsInc}`
                         scene.add(wall)
                         beamsInc++
+                        tempWallV1.copy(tempV2)
+                        window.appConfig.stages.components.createSwitchBeamWall({single:true, rotation: np.rotation, s:rr.radius, dir: 'single', p:{x:rr.position.x, y:rr.position.y, z:rr.position.z }, receiver: {name: `STAGE${stageIndex}RECEIVER_${remoteReceiversInc}` } })
+                        remoteReceiversInc++
+                      })
+                      tempWallV2.copy(np.v2)
+                      tempLine31.closestPointToPoint(tempWallV1, true, tempWallV1)
+                      tempLine31.closestPointToPoint(tempWallV2, true, tempWallV2)
+                      tempLine30.set(tempWallV1, tempWallV2)
+                      tempLine30.getCenter(tempV1)
+                      const wall = createBeam({
+                        p: [tempV1.x, tempV1.y,tempV1.z],
+                        r: [0, 0, np.rotation],
+                        s: (tempLine30.distance() *.1) - .42
+                      })
+                      wall.name = `STAGE${stageIndex}-beam${beamsInc}`
+                      scene.add(wall)
+                      beamsInc++
                       break;
                     case "prize":
                       prize(stageIndex, prizesInc, { x: np.position.x, y: np.position.y, z: 0 })
