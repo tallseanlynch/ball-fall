@@ -8007,6 +8007,9 @@
           init: () => {
               const endPointGeometry = new THREE.SphereGeometry(1.5, 8, 8)
               const purpleMaterial = new THREE.MeshBasicMaterial({ color: 0x9932CC })
+              const redMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 })
+              const greenMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+              const blueMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff })
               const loadJSONStage = (config) => {
                 const {filename, stageIndex} = config
 
@@ -8018,12 +8021,18 @@
                 let bumpersInc = 0
                 let remoteReceiversInc = 0
                 let remoteTransmittersInc = 0
+                let crystalSpheresInc = 0
+                let crystalLinesInc = 0
+                let blackholesInc = 0
+                let superballsInc = 0
                 let tempV1 = new THREE.Vector3()
                 let tempV2 = new THREE.Vector3()
+                let tempV3 = new THREE.Vector3()
                 let tempWallV1 = new THREE.Vector3()
                 let tempWallV2 = new THREE.Vector3()
                 let tempLine30 = new THREE.Line3()
                 let tempLine31 = new THREE.Line3()
+                let tempLine32 = new THREE.Line3()
                 const principalTypes = ['gem-portal','emerald', 'diamond', 'ruby', 'sapphire-portal']
                 newPoints.forEach(np => {
                   switch(np.type) {
@@ -8073,14 +8082,22 @@
                         principalsInc++
                       }
                       break;
-                    case "wall":
+                    case "wall": // also handles point cases "remote-door" and "remote-switch"
                       tempWallV1.copy(np.v1)
                       tempLine31.set(np.v1, np.v2)
                       let remoteReceiversToCreate = newPoints.filter(p => p.wall === np.uuid)
-
-                      const makeWallSection = () => {
+                      remoteReceiversToCreate.sort((a,b)=> {
                         
-                      }
+                        tempV1.set(a.position.x, a.position.y, a.position.z)
+                        tempLine30.set(np.v1, tempV1)
+                        let distanceA = tempLine30.distance()
+                        
+                        tempV1.set(b.position.x, b.position.y, b.position.z)
+                        tempLine30.set(np.v1, tempV1)
+                        let distanceB = tempLine30.distance()
+                        let result = distanceA - distanceB
+                        return result
+                      })
                       remoteReceiversToCreate.forEach(rr => {
                         
                         let remoteTransmittersToCreate = newPoints.filter(p => p.remoteDoor === rr.uuid)
@@ -8096,39 +8113,111 @@
                           })
                           remoteTransmittersInc++
                         })
-                        // console.log('rr', rr)
+                        console.log('radius', rr.radius)
                         // debugger
-                        tempV2.set(rr.radius * Math.cos(np.rotation) + rr.position.x,(rr.radius* 2) * Math.sin(np.rotation) + rr.position.y, 0)
+
                         tempV1.set(rr.radius * Math.cos(np.rotation + Math.PI) + rr.position.x, (rr.radius*2) * Math.sin(np.rotation + Math.PI) + rr.position.y,0)
-                        tempWallV2.copy(tempV1)
+                        tempV2.set(rr.radius * Math.cos(np.rotation) + rr.position.x,(rr.radius* 2) * Math.sin(np.rotation) + rr.position.y, 0)
+                        const tempDistanceLine3 = new THREE.Line3(tempV1, tempV2)
+                        const tempDistance = tempDistanceLine3.distance()
+                        console.log('tempDistance',tempDistance)
+                        tempLine30.set(tempWallV1, tempV1)
+                        let tempV1distance = tempLine30.distance()
+                        tempLine30.set(tempWallV1, tempV2)
+                        let tempV2distance = tempLine30.distance()
+                        let firstPoint, secondPoint
+                        if (tempV1distance < tempV2distance){
+                          firstPoint = tempV1
+                          secondPoint = tempV2
+                        } else {
+                          firstPoint = tempV2
+                          secondPoint = tempV1
+                        }
+
+                        tempWallV2.copy(firstPoint)
                         tempLine31.closestPointToPoint(tempWallV1, true, tempWallV1)
                         tempLine31.closestPointToPoint(tempWallV2, true, tempWallV2)
+
                         tempLine30.set(tempWallV1, tempWallV2)
-                        tempLine30.getCenter(tempV1)
+                        // const v1Mesh = new THREE.Mesh(endPointGeometry, purpleMaterial)
+                        // v1Mesh.position.copy(tempWallV1)
+                        // scene.add(v1Mesh)
+                        // const v2Mesh = new THREE.Mesh(endPointGeometry, greenMaterial)
+                        // v2Mesh.position.copy(tempWallV2)
+                        // scene.add(v2Mesh)
+                        
+                        tempLine30.getCenter(tempV3)
                         const wall = createBeam({
-                          p: [tempV1.x, tempV1.y,tempV1.z],
+                          p: [tempV3.x, tempV3.y,tempV3.z],
                           r: [0, 0, np.rotation],
-                          s: (tempLine30.distance() *.1) - .42
+                          s: (tempLine30.distance() *.1) - .45
                         })
                         wall.name = `STAGE${stageIndex}-beam${beamsInc}`
                         scene.add(wall)
+                        
+                        const v3Mesh = new THREE.Mesh(endPointGeometry, redMaterial)
+                        v3Mesh.position.copy(tempLine30.start)
+                        scene.add(v3Mesh)
+                        const v4Mesh = new THREE.Mesh(endPointGeometry, blueMaterial)
+                        v4Mesh.position.copy(tempLine30.end)
+                        scene.add(v4Mesh)
+                        
+                        tempLine31.closestPointToPoint(firstPoint, true, firstPoint)
+                        tempLine31.closestPointToPoint(secondPoint, true, secondPoint)
+                        tempLine32.set(firstPoint, secondPoint)
+                        tempLine32.getCenter(tempV3)
+                        
+                        const v1Mesh = new THREE.Mesh(endPointGeometry, purpleMaterial)
+                        v1Mesh.position.copy(firstPoint)
+                        scene.add(v1Mesh)
+                        const v2Mesh = new THREE.Mesh(endPointGeometry, greenMaterial)
+                        v2Mesh.position.copy(secondPoint)
+                        scene.add(v2Mesh)
+                        // v1Mesh.visible = false
+                        // v2Mesh.visible = false
+                        // v3Mesh.visible = false
+                        // v4Mesh.visible = false
                         beamsInc++
-                        tempWallV1.copy(tempV2)
-                        window.appConfig.stages.components.createSwitchBeamWall({single:true, rotation: np.rotation, s:rr.radius, dir: 'single', p:{x:rr.position.x, y:rr.position.y, z:rr.position.z }, receiver: {name: `STAGE${stageIndex}RECEIVER_${remoteReceiversInc}` } })
+                        tempWallV1.copy(secondPoint)
+                        console.log('distance', tempLine32.distance())
+                        window.appConfig.stages.components.createSwitchBeamWall({
+                          single:true, 
+                          rotation: np.rotation, 
+                          s: (rr.radius * .02), 
+                          switchBeamAdj: (tempLine32.distance() * .1) * -.9, 
+                          dir: 'single', 
+                          p:{x:tempV3.x, y:tempV3.y, z:tempV3.z }, 
+                          receiver: {name: `STAGE${stageIndex}RECEIVER_${remoteReceiversInc}` } 
+                        })
                         remoteReceiversInc++
                       })
                       tempWallV2.copy(np.v2)
                       tempLine31.closestPointToPoint(tempWallV1, true, tempWallV1)
                       tempLine31.closestPointToPoint(tempWallV2, true, tempWallV2)
                       tempLine30.set(tempWallV1, tempWallV2)
+                      // const v1Mesh = new THREE.Mesh(endPointGeometry, purpleMaterial)
+                      // v1Mesh.position.copy(tempWallV1)
+                      // scene.add(v1Mesh)
+                      // const v2Mesh = new THREE.Mesh(endPointGeometry, greenMaterial)
+                      // v2Mesh.position.copy(tempWallV2)
+                      // scene.add(v2Mesh)
+
                       tempLine30.getCenter(tempV1)
                       const wall = createBeam({
                         p: [tempV1.x, tempV1.y,tempV1.z],
                         r: [0, 0, np.rotation],
-                        s: (tempLine30.distance() *.1) - .42
+                        s: (tempLine30.distance() *.1) - .45
                       })
                       wall.name = `STAGE${stageIndex}-beam${beamsInc}`
                       scene.add(wall)
+                      const v3Mesh = new THREE.Mesh(endPointGeometry, redMaterial)
+                        v3Mesh.position.copy(tempLine30.start)
+                        scene.add(v3Mesh)
+                        const v4Mesh = new THREE.Mesh(endPointGeometry, blueMaterial)
+                        v4Mesh.position.copy(tempLine30.end)
+                        scene.add(v4Mesh)
+                        v3Mesh.visible = false
+                        v4Mesh.visible = false
                       beamsInc++
                       break;
                     case "prize":
@@ -8142,9 +8231,9 @@
                         createCrystalCircle(`STAGE${stageIndex}`, 1.35 + (i *.58), { x: np.position.x, y: np.position.y}, crystalSizeInc % 3, 8)
                         crystalSizeInc++
                       }
+                      crystalSpheresInc++
                       break;
                     case "bumper":
-                      console.log('bumper')
                       window.appConfig.stages.components.createBumper(`STAGE${stageIndex}BUMPER${bumpersInc}`, 1, { x: np.position.x, y: np.position.y, z: 0 }, 6)
                       bumpersInc++
                       break;
@@ -8152,6 +8241,28 @@
                       tempV1.set(np.v1.x,np.v1.y, 0 )
                       tempV2.set(np.v2.x,np.v2.y, 0 )
                       createCrystalAngle({name:`STAGE${stageIndex}`, v1: tempV1, v2: tempV2, size: 0});
+                      crystalLinesInc++
+                      break;
+                    case "blackhole":
+                      window.appConfig.stages.components.createBlackHole({ position: { x: np.position.x, y: np.position.y, z: 0 }, scale: { x: 2, y: 2, z: 2 } })
+                      blackholesInc++
+                      break;
+                    case "superball":
+                      if (superballsInc === 0) {
+                        let theName = `${window.appConfig.currentStage}_SPHERECOIN${superballsInc}`
+                        window.appConfig.createSphere({
+                          bounce: 1,
+                          name: theName,
+                          position: {
+                            x: np.position.x,
+                            y: np.position.y,
+                            z: 0
+                          },
+                          handleCollision: (c) => window.appConfig.superBallHandleCollision(c, theName)
+                        })
+
+                      }
+                      superballsInc++
                       break;
                   }
                 })
@@ -8601,6 +8712,7 @@
           if (window.appConfig.stages[window.appConfig.currentStage].data.gemSuperBalls < 8) {
             window.appConfig.stages[window.appConfig.currentStage].data.gemSuperBalls++
           }
+          
           window.appConfig.timers.activeTimers.push(window.appConfig.timers.superBallTeleport(the_object))
           window.appConfig.stages.components.dematerializeMesh({ dMesh: other_object, scaleAdj: 5, spriteTypes: ['fiveStar'] })
           for (let superSounds = 0; superSounds < 20; superSounds++) {
@@ -8908,7 +9020,7 @@
         let distMod = .1
         if (typeof theSphere.position.x === "number") {
           bh.position.lerp(theSphere.position, .001 * Math.random() * 2)
-          bh.position.lerp(anchors[bhIndex], .00075)
+          bh.position.lerp(anchors[bhIndex % (anchors.length -1)], .00075)
           bh.scale.x += .001
           bh.scale.y += .001
           bh.scale.z += .001
@@ -8929,7 +9041,7 @@
           bh.material.opacity = .98 + (lfo(500) * .2)
         }
       } catch (err) {
-        console.log('BLACK HOLE ERROR')
+        console.log('BLACK HOLE ERROR', err)
       }
     }
 

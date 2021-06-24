@@ -32,12 +32,15 @@
         <button id="generate-button" class="ui-button">Generate</button>
         <button id="teardown-button" class="ui-button">Teardown</button>
         <button id="center-button" class="ui-button">Center</button>
-        <button id="line-draw-button" class="ui-button">Line</button>
+        <button id="line-draw-button" class="ui-button">Wall</button>
         <button id="crystal-line-draw-button" class="ui-button">Crystal Line</button>
+        <button id="crystal-circle-draw-button" class="ui-button">Crystal Circle</button>
         <button id="remote-door-draw-button" class="ui-button">Remote Door</button>
         <button id="remote-switch-draw-button" class="ui-button">Remote Switch</button>
         <button id="prize-draw-button" class="ui-button">Prize</button>
         <button id="bumper-draw-button" class="ui-button">Bumper</button>
+        <button id="superball-draw-button" class="ui-button">Superball</button>
+        <button id="blackhole-draw-button" class="ui-button">Blackhole</button>
     </div>
     <div id="viewport"></div>
 </body>
@@ -116,6 +119,8 @@
     blueMaterial.name = "blueMaterial"
     const orangeMaterial = new THREE.MeshBasicMaterial({ color: 0xffa500, transparent: true })
     orangeMaterial.name = "orangeMaterial"
+    const blackMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true })
+    blackMaterial.name = "blackMaterial"
     const lineMaterial = new THREE.LineBasicMaterial({
         color: 0x0000ff, transparent: true, opacity: .5
     });
@@ -139,6 +144,8 @@
     let remoteDoorsInc = 0
     let crystalLinesInc = 0
     let remoteSwitchesInc = 0
+    let superballsInc = 0
+    let blackholesInc = 0
     // make principals
     const positionPrincipal = (vector, index) => {
         const principals = points.filter(p => p.type === "principal")
@@ -175,6 +182,8 @@
             remoteDoorsInc = 0
             bumpersInc = 0
             remoteSwitchesInc = 0
+            superballsInc = 0
+            blackholesInc = 0
             newPoints.forEach((p, pIndex) => {
                 let newPointObj = {}
                 let mesh
@@ -257,6 +266,21 @@
                         mesh.name = `remote-switch-${remoteSwitchesInc}`
                         newPointObj = { ...newPointObj, type: 'remote-switch', radius: p.radius, remoteDoor: p.remoteDoor }
                         remoteSwitchesInc++
+                    case 'superball':
+                        mesh = new THREE.Mesh(endPointGeometry, redMaterial)
+                        mesh.position.set(p.position.x, p.position.y, p.position.z)
+                        scene.add(mesh)
+                        mesh.name = `superball-${superballsInc}`
+                        newPointObj = { ...newPointObj, type: 'superball', mesh: mesh, position: mesh.position}
+                        superballsInc++
+                        break;
+                    case 'blackhole':
+                        mesh = new THREE.Mesh(endPointGeometry, blackMaterial)
+                        mesh.position.set(p.position.x, p.position.y, p.position.z)
+                        scene.add(mesh)
+                        mesh.name = `blackhole-${blackholesInc}`
+                        newPointObj = { ...newPointObj, type: 'blackhole', mesh: mesh, position: mesh.position}
+                        blackholesInc++
                         break;
                     default:
                         break;
@@ -336,8 +360,7 @@
                     // make coins
                     let vector = midpoint.position.clone()
                     let radius = getRadiusThatFits(vector, 30)
-                    const crystalSphereGeometry = new THREE.SphereGeometry(radius, 32, 32)
-                    const crystalSphere = new THREE.Mesh(crystalSphereGeometry, greenMaterial)
+                    const crystalSphere = new THREE.Mesh(new THREE.SphereGeometry(radius, 32, 32), greenMaterial)
                     crystalSphere.name = `crystal-sphere-${crystalSpheresInc}`
                     scene.add(crystalSphere)
                     crystalSphere.position.set(midpoint.position.x, midpoint.position.y, midpoint.position.z)
@@ -417,6 +440,16 @@
         points.push({ type: 'crystal-line', mesh: wall, position: wall.position, rotation: angle, length: distance, v1: v1, v2: v2, uuid: uuidv4() })
         crystalLinesInc++
     }
+    let currentSphereRadius = 1
+    const createCrystalCircle = (v1) => {
+        const crystalSphere = new THREE.Mesh(crystalCircleGeometry, greenMaterial)
+        crystalSphere.name = `crystal-sphere-${crystalSpheresInc}`
+        crystalSphere.scale.set(currentSphereRadius, currentSphereRadius, currentSphereRadius)
+        scene.add(crystalSphere)
+        crystalSphere.position.set(v1.x, v1.y, v1.z)
+        points.push({ type: 'crystalSphere', mesh: crystalSphere, position: crystalSphere.position, radius: currentSphereRadius, uuid: uuidv4() })
+        crystalSpheresInc++
+    }
     const createPrize = (v) => {
         const prize = new THREE.Mesh(prizeGeometry, purpleMaterial)
         prize.position.copy(v)
@@ -433,7 +466,7 @@
         points.push({ type: 'bumper', mesh: bumper, position: bumper.position, radius: 3, uuid: uuidv4() })
         bumpersInc++
     }
-    const remoteDoorGeometry = new THREE.BoxGeometry(20, 3, 3)
+    const remoteDoorGeometry = new THREE.BoxGeometry(10, 3, 3)
     const createRemoteDoor = (v) => {
         const door = new THREE.Mesh(remoteDoorGeometry, blueMaterial)
         door.position.copy(v)
@@ -455,6 +488,22 @@
             points.push({ type: 'remote-switch', mesh: remoteSwitch, position: remoteSwitch.position, radius: 3, remoteDoor: lastSelectedRemoteDoorPoint.uuid, uuid: uuidv4() })
             remoteSwitchesInc++
         }
+    }
+    const createSuperball = (v) => {
+        const superball = new THREE.Mesh(endPointGeometry, redMaterial)
+        superball.position.copy(v)
+        scene.add(superball)
+        superball.name = `superball-${superballsInc}`
+        points.push({ type: 'superball', mesh: superball, position: superball.position, uuid: uuidv4() })
+        superballsInc++
+    }
+    const createBlackhole = (v) => {
+        const blackhole = new THREE.Mesh(endPointGeometry, blackMaterial)
+        blackhole.position.copy(v)
+        scene.add(blackhole)
+        blackhole.name = `blackhole-${blackholesInc}`
+        points.push({ type: 'blackhole', mesh: blackhole, position: blackhole.position, uuid: uuidv4() })
+        blackholesInc++
     }
 
 
@@ -497,6 +546,9 @@
                         createCrystalWall(crystalLineDrawPoints[crystalLineDrawPoints.length - 1], crystalLineDrawPoints[crystalLineDrawPoints.length - 2])
                     }
                     break;
+                case "crystal-circle-draw":
+                    createCrystalCircle(clickPlaneIntersect.point)
+                    break;
                 case 'prize-draw':
                     createPrize(clickPlaneIntersect.point)
                     break;
@@ -509,49 +561,64 @@
                 case 'remote-switch-draw':
                     createRemoteSwitch(hoverMeshes[0].position)
                     break;
+                case 'superball-draw':
+                    createSuperball(hoverMeshes[0].position)
+                    break;
+                case 'blackhole-draw':
+                    createBlackhole(hoverMeshes[0].position)
+                    break;
                 case 'select':
                     let pointsIntersects = clickRaycaster.intersectObjects(points.filter(point => point.mesh !== undefined).map(point => point.mesh));
                     pointsIntersects = pointsIntersects.filter(pi => pi.object.name.startsWith('midpoint') === false && pi.object.name.startsWith('line') === false)
 
                     if (pointsIntersects.length > 0) {
-                        let lastSelectedPoint = points.find(p => p.mesh.uuid === pointsIntersects[0].object.uuid)
-                        console.log(lastSelectedPoint)
-
-                        switch (lastSelectedPoint.type) {
-                            case 'remote-door':
-                                lastSelectedRemoteDoorPoint = lastSelectedPoint
-                                break;
-                            default:
-                                break;
-                        }
-                        console.log('shiftKey', event.shiftKey)
-                        let sIndex = 0
-                        if (event.shiftKey === true) {
-                            sIndex = lastSelected.findIndex(ls => ls.mesh === undefined)
-                        } else {
-                            if (lastSelected[sIndex].mesh !== undefined) {
-                                lastSelected[sIndex].mesh.material = lastSelected[sIndex].cacheMaterial
+                        let alreadySelectedIndex = lastSelected.findIndex(ls => {
+                            if (ls.mesh !== undefined && ls.mesh.uuid === pointsIntersects[0].object.uuid) {
+                                return true
+                            } else {
+                                return false
                             }
-                        }
-                        console.log('sIndex', sIndex)
-                        lastSelected[sIndex].mesh = pointsIntersects[0].object
-                        lastSelected[sIndex].cacheMaterial = lastSelected[sIndex].mesh.material
-                        lastSelected[sIndex].material.copy(lastSelected[sIndex].mesh.material)
-                        lastSelected[sIndex].material.opacity = .5
-                        lastSelected[sIndex].mesh.material = lastSelected[sIndex].material
-                        if (event.shiftKey === false) {
-                            console.log('UNSELECT AFTER', sIndex)
-                            let until = lastSelected.findIndex(ls => {
-                                // console.log(ls)
+                        })
+                        console.log(alreadySelectedIndex)
+                        if (alreadySelectedIndex === -1) {
+                            let lastSelectedPoint = points.find(p => p.mesh.uuid === pointsIntersects[0].object.uuid)
+                            console.log(lastSelectedPoint)
+                            switch (lastSelectedPoint.type) {
+                                case 'remote-door':
+                                    lastSelectedRemoteDoorPoint = lastSelectedPoint
+                                    break;
+                                default:
+                                    break;
+                            }
+                            console.log('shiftKey', event.shiftKey)
+                            let sIndex = 0
+                            if (event.shiftKey === true) {
+                                sIndex = lastSelected.findIndex(ls => ls.mesh === undefined)
+                            } else {
+                                if (lastSelected[sIndex].mesh !== undefined) {
+                                    lastSelected[sIndex].mesh.material = lastSelected[sIndex].cacheMaterial
+                                }
+                            }
+                            console.log('sIndex', sIndex)
+                            lastSelected[sIndex].mesh = pointsIntersects[0].object
+                            lastSelected[sIndex].cacheMaterial = lastSelected[sIndex].mesh.material
+                            lastSelected[sIndex].material.copy(lastSelected[sIndex].mesh.material)
+                            lastSelected[sIndex].material.opacity = .5
+                            lastSelected[sIndex].mesh.material = lastSelected[sIndex].material
+                            if (event.shiftKey === false) {
+                                console.log('UNSELECT AFTER', sIndex)
+                                let until = lastSelected.findIndex(ls => {
+                                    // console.log(ls)
+                                    // debugger
+                                    return ls.mesh === undefined
+                                })
+                                console.log('until', until)
                                 // debugger
-                                return ls.mesh === undefined
-                            })
-                            console.log('until', until)
-                            // debugger
-                            for (let i = sIndex + 1; i < until; i++) {
-                                console.log('unselecting mesh', i)
-                                lastSelected[i].mesh.material = lastSelected[i].cacheMaterial
-                                lastSelected[i].mesh = undefined
+                                for (let i = sIndex + 1; i < until; i++) {
+                                    console.log('unselecting mesh', i)
+                                    lastSelected[i].mesh.material = lastSelected[i].cacheMaterial
+                                    lastSelected[i].mesh = undefined
+                                }
                             }
                         }
                     } else {
@@ -620,6 +687,33 @@
                 }
 
                 break;
+            case 'crystal-circle-draw':
+                switch (e.keyCode) {
+                    case 81: //q
+                        console.log('q')
+                        e.preventDefault()
+                        e.stopPropagation()
+                        if (currentSphereRadius > 0 && toolSelected === 'crystal-circle-draw') {
+                            currentSphereRadius--
+                            console.log('currentSphereRadius', currentSphereRadius)
+                            hoverMeshes[0].scale.set(currentSphereRadius, currentSphereRadius, currentSphereRadius)
+                        }
+                        break;
+                    case 87: //w
+                        console.log('w')
+                        e.preventDefault()
+                        e.stopPropagation()
+                        if (toolSelected === 'crystal-circle-draw') {
+                            currentSphereRadius++
+                            console.log('currentSphereRadius', currentSphereRadius)
+                            hoverMeshes[0].scale.set(currentSphereRadius, currentSphereRadius, currentSphereRadius)
+                        }
+                        break;
+                    default:
+                        break;
+
+                }
+                break;
             default:
                 break;
         }
@@ -629,7 +723,7 @@
     let lineDrawPoints = []
     let crystalLineDrawPoints = []
     let toolSelected = ''
-
+    const crystalCircleGeometry = new THREE.SphereGeometry(1, 8, 8)
     const drawTools = [
         {
             name: 'line-draw',
@@ -738,7 +832,7 @@
                     hoverMeshes[0].visible = true
                 }
             }
-        }, ,
+        },
         {
             name: 'remote-switch-draw',
             clickFunction: () => {
@@ -751,6 +845,57 @@
                 } else {
                     hoverMeshes[0].geometry = prizeGeometry
                     hoverMeshes[0].material.copy(orangeMaterial)
+                    hoverMeshes[0].material.opacity = .5
+                    hoverMeshes[0].visible = true
+                }
+            }
+        },
+        {
+            name: 'crystal-circle-draw',
+            clickFunction: () => {
+            },
+            hoverMeshFunction: () => {
+                if (hoverMeshes[0] === undefined) {
+                    hoverMeshes.push(new THREE.Mesh(crystalCircleGeometry, greenMaterial.clone()))
+                    hoverMeshes[0].material.opacity = .5
+                    scene.add(hoverMeshes[0])
+                } else {
+                    hoverMeshes[0].geometry = crystalCircleGeometry
+                    hoverMeshes[0].material.copy(greenMaterial)
+                    hoverMeshes[0].material.opacity = .5
+                    hoverMeshes[0].visible = true
+                }
+            }
+        },
+        {
+            name: 'superball-draw',
+            clickFunction: () => {
+            },
+            hoverMeshFunction: () => {
+                if (hoverMeshes[0] === undefined) {
+                    hoverMeshes.push(new THREE.Mesh(endPointGeometry, redMaterial.clone()))
+                    hoverMeshes[0].material.opacity = .5
+                    scene.add(hoverMeshes[0])
+                } else {
+                    hoverMeshes[0].geometry = endPointGeometry
+                    hoverMeshes[0].material.copy(redMaterial)
+                    hoverMeshes[0].material.opacity = .5
+                    hoverMeshes[0].visible = true
+                }
+            }
+        },
+        {
+            name: 'blackhole-draw',
+            clickFunction: () => {
+            },
+            hoverMeshFunction: () => {
+                if (hoverMeshes[0] === undefined) {
+                    hoverMeshes.push(new THREE.Mesh(endPointGeometry, blackMaterial.clone()))
+                    hoverMeshes[0].material.opacity = .5
+                    scene.add(hoverMeshes[0])
+                } else {
+                    hoverMeshes[0].geometry = endPointGeometry
+                    hoverMeshes[0].material.copy(blackMaterial)
                     hoverMeshes[0].material.opacity = .5
                     hoverMeshes[0].visible = true
                 }
@@ -929,6 +1074,12 @@
             }
         }
     })
+    // document.querySelector('canvas').addEventListener('wheel', (e) => {
+    //     e.stopPropagation();
+    //     e.preventDefault();
+
+    //     console.log(e.deltaY)
+    // })
 
     render = function () {
         requestAnimationFrame(render);
