@@ -1,14 +1,22 @@
 <html>
 
 <head>
+
+    <link rel="shortcut icon" type="image/png" href="level-creator-144.png">
     <style>
         body {
             margin: 0;
         }
 
-        .ui {
+        .ui-top {
             position: absolute;
             top: 10px;
+            left: 10px;
+        }
+
+        .ui-bottom {
+            position: absolute;
+            bottom: 10px;
             left: 10px;
         }
 
@@ -24,7 +32,7 @@
 </head>
 
 <body>
-    <div class="ui">
+    <div class="ui-top">
         <input type="file" id="file-selector">
         <!-- <button id="load-button" class="ui-button">Load</button> -->
         <button id="save-button" class="ui-button">Save</button>
@@ -41,6 +49,16 @@
         <button id="bumper-draw-button" class="ui-button">Bumper</button>
         <button id="superball-draw-button" class="ui-button">Superball</button>
         <button id="blackhole-draw-button" class="ui-button">Blackhole</button>
+        <button id="guidepoint-draw-button" class="ui-button">Guidepoint</button>
+    </div>
+    <div class="ui-bottom">
+        <div id="snaps-container">
+            <span>Snaps:</span>
+            <input type="checkbox" id="guidepoints-checkbox" name="guidepoint">
+            <label for="guidepoints-checkbox">Guidepoints</label>
+            <input type="checkbox" id="wall-endpoints-checkbox" name="wall-endpoint">
+            <label for="wall-endpoints-checkbox">Wall Endpoints</label>
+        </div>
     </div>
     <div id="viewport"></div>
 </body>
@@ -109,6 +127,9 @@
     const midpointGeometry = new THREE.BoxGeometry(2, 2, 2)
     const endPointGeometry = new THREE.SphereGeometry(2, 8, 8)
     const prizeGeometry = new THREE.SphereGeometry(3, 8, 8)
+    const guidepointGeometry = new THREE.BoxGeometry(2, 2, 2)
+    const hotPurpleMaterial = new THREE.MeshBasicMaterial({ color: 0xeb34d8, transparent: true })
+    hotPurpleMaterial.name = "hotPurpleMaterial"
     const redMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true })
     redMaterial.name = "redMaterial"
     const purpleMaterial = new THREE.MeshBasicMaterial({ color: 0x9932CC, transparent: true })
@@ -146,6 +167,7 @@
     let remoteSwitchesInc = 0
     let superballsInc = 0
     let blackholesInc = 0
+    let guidepointsInc = 0
     // make principals
     const positionPrincipal = (vector, index) => {
         const principals = points.filter(p => p.type === "principal")
@@ -184,6 +206,7 @@
             remoteSwitchesInc = 0
             superballsInc = 0
             blackholesInc = 0
+            guidepointsInc = 0
             newPoints.forEach((p, pIndex) => {
                 let newPointObj = {}
                 let mesh
@@ -271,7 +294,7 @@
                         mesh.position.set(p.position.x, p.position.y, p.position.z)
                         scene.add(mesh)
                         mesh.name = `superball-${superballsInc}`
-                        newPointObj = { ...newPointObj, type: 'superball', mesh: mesh, position: mesh.position}
+                        newPointObj = { ...newPointObj, type: 'superball', mesh: mesh, position: mesh.position }
                         superballsInc++
                         break;
                     case 'blackhole':
@@ -279,8 +302,16 @@
                         mesh.position.set(p.position.x, p.position.y, p.position.z)
                         scene.add(mesh)
                         mesh.name = `blackhole-${blackholesInc}`
-                        newPointObj = { ...newPointObj, type: 'blackhole', mesh: mesh, position: mesh.position}
+                        newPointObj = { ...newPointObj, type: 'blackhole', mesh: mesh, position: mesh.position }
                         blackholesInc++
+                        break;
+                    case 'guidepoint':
+                        mesh = new THREE.Mesh(guidepointGeometry, hotPurpleMaterial)
+                        mesh.position.set(p.position.x, p.position.y, p.position.z)
+                        scene.add(mesh)
+                        mesh.name = `guidepoint-${guidepointsInc}`
+                        newPointObj = { ...newPointObj, type: 'guidepoint', mesh: mesh, position: mesh.position, uuid: uuidv4() }
+                        guidepointsInc++
                         break;
                     default:
                         break;
@@ -505,6 +536,14 @@
         points.push({ type: 'blackhole', mesh: blackhole, position: blackhole.position, uuid: uuidv4() })
         blackholesInc++
     }
+    const createGuidepoint = (v) => {
+        const guidepoint = new THREE.Mesh(guidepointGeometry, hotPurpleMaterial)
+        guidepoint.position.copy(v)
+        scene.add(guidepoint)
+        guidepoint.name = `guidepoint-${guidepointsInc}`
+        points.push({ type: 'guidepoint', mesh: guidepoint, position: guidepoint.position, uuid: uuidv4() })
+        guidepointsInc++
+    }
 
 
     const clickRaycaster = new THREE.Raycaster();
@@ -535,25 +574,30 @@
         if (clickPlaneIntersect !== undefined) {
             switch (toolSelected) {
                 case "line-draw":
-                    lineDrawPoints.push(new THREE.Vector3(clickPlaneIntersect.point.x, clickPlaneIntersect.point.y, clickPlaneIntersect.point.z))
+                    if (hoverMeshes[0] !== undefined && hoverMeshes[0].visible === true) {
+                        // debugger
+                        lineDrawPoints.push(hoverMeshes[0].position.clone())
+                    }
                     if (lineDrawPoints.length >= 2) {
                         createWall(lineDrawPoints[lineDrawPoints.length - 1], lineDrawPoints[lineDrawPoints.length - 2])
                     }
                     break;
                 case "crystal-line-draw":
-                    crystalLineDrawPoints.push(new THREE.Vector3(clickPlaneIntersect.point.x, clickPlaneIntersect.point.y, clickPlaneIntersect.point.z))
+                    if (hoverMeshes[0] !== undefined && hoverMeshes[0].visible === true) {
+                        crystalLineDrawPoints.push(hoverMeshes[0].position.clone())
+                    }
                     if (crystalLineDrawPoints.length >= 2) {
                         createCrystalWall(crystalLineDrawPoints[crystalLineDrawPoints.length - 1], crystalLineDrawPoints[crystalLineDrawPoints.length - 2])
                     }
                     break;
                 case "crystal-circle-draw":
-                    createCrystalCircle(clickPlaneIntersect.point)
+                    createCrystalCircle(hoverMeshes[0].position)
                     break;
                 case 'prize-draw':
-                    createPrize(clickPlaneIntersect.point)
+                    createPrize(hoverMeshes[0].position)
                     break;
                 case 'bumper-draw':
-                    createBumper(clickPlaneIntersect.point)
+                    createBumper(hoverMeshes[0].position)
                     break;
                 case 'remote-door-draw':
                     createRemoteDoor(hoverMeshes[0].position)
@@ -566,6 +610,9 @@
                     break;
                 case 'blackhole-draw':
                     createBlackhole(hoverMeshes[0].position)
+                    break;
+                case 'guidepoint-draw':
+                    createGuidepoint(hoverMeshes[0].position)
                     break;
                 case 'select':
                     let pointsIntersects = clickRaycaster.intersectObjects(points.filter(point => point.mesh !== undefined).map(point => point.mesh));
@@ -582,7 +629,7 @@
                         console.log(alreadySelectedIndex)
                         if (alreadySelectedIndex === -1) {
                             let lastSelectedPoint = points.find(p => p.mesh.uuid === pointsIntersects[0].object.uuid)
-                            console.log('LSP',lastSelectedPoint)
+                            console.log('LSP', lastSelectedPoint)
                             switch (lastSelectedPoint.type) {
                                 case 'remote-door':
                                     lastSelectedRemoteDoorPoint = lastSelectedPoint
@@ -902,6 +949,23 @@
             }
         },
         {
+            name: 'guidepoint-draw',
+            clickFunction: () => {
+            },
+            hoverMeshFunction: () => {
+                if (hoverMeshes[0] === undefined) {
+                    hoverMeshes.push(new THREE.Mesh(guidepointGeometry, hotPurpleMaterial.clone()))
+                    hoverMeshes[0].material.opacity = .5
+                    scene.add(hoverMeshes[0])
+                } else {
+                    hoverMeshes[0].geometry = guidepointGeometry
+                    hoverMeshes[0].material.copy(hotPurpleMaterial)
+                    hoverMeshes[0].material.opacity = .5
+                    hoverMeshes[0].visible = true
+                }
+            }
+        },
+        {
             name: 'select',
             clickFunction: () => {
             },
@@ -923,7 +987,7 @@
             if (toolSelected !== name) {
                 toolSelected = name
                 document.querySelector(`#${name}-button`).classList.add('selected-ui')
-                Array.from(document.querySelector('.ui').children).forEach(child => {
+                Array.from(document.querySelector('.ui-top').children).forEach(child => {
                     child.id !== e.target.id && child.classList.remove('selected-ui')
                 })
                 lineDrawPoints = []
@@ -942,6 +1006,13 @@
     drawTools.forEach(tool => {
         registerDrawTool(tool)
     })
+    
+    Array.from(document.querySelectorAll('#snaps-container input[type="checkbox"]'))
+        .forEach(checkbox => {
+            checkbox.addEventListener('click', e => {
+                e.stopPropagation()
+            })
+        })
 
     document.querySelector('#center-button').addEventListener('click', (e) => {
         e.stopPropagation()
@@ -993,6 +1064,7 @@
         console.warn('file loading unsupported')
     }
 
+
     document.querySelector('body').addEventListener('click', (e) => {
         onDocumentMouseDown(e)
     })
@@ -1004,6 +1076,38 @@
     let mousemoveClosestVector = new THREE.Vector3()
     let remoteDoorPointUuid = ''
     let remoteDoorAngle = 0
+
+    const snapTo = (config) => {
+        const { point, snaps, radius } = config
+        // console.log(snaps)
+        snapPointUuid = ''
+        const snapPoints = points.filter(p => snaps.indexOf(p.type) > -1)
+        if (snaps.includes('wall-endpoint')) {
+            points.forEach(p => {
+                if (p.type === 'wall') {
+                    snapPoints.push({ position: { x: p.v1.x, y: p.v1.y, z: p.v1.z } })
+                    snapPoints.push({ position: { x: p.v2.x, y: p.v2.y, z: p.v2.z } })
+                }
+            })
+        }
+        let closestDistance = 3000
+        let currentDistance = 3000
+        // console.log(snapPoints)
+        snapPoints.forEach(sp => {
+            mousemoveVector.set(sp.position.x, sp.position.y, sp.position.z)
+            mousemoveLine30.set(point, mousemoveVector)
+            currentDistance = mousemoveLine30.distance()
+            if (currentDistance <= radius && currentDistance < closestDistance) {
+                closestDistance = currentDistance
+                mousemoveClosestVector.copy(mousemoveVector)
+            }
+        })
+        if (closestDistance !== 3000) {
+            hoverMeshes[0].position.copy(mousemoveClosestVector)
+        }
+    }
+
+
     document.querySelector('body').addEventListener('mousemove', (e) => {
         e.stopPropagation();
         mouseMoveCoords.x = (e.clientX / renderer.domElement.clientWidth) * 2 - 1;
@@ -1036,6 +1140,18 @@
                     // debugger
                     break;
                 default:
+                    let tempSnaps = []
+                    Array.from(document.querySelectorAll('#snaps-container input[type="checkbox"]'))
+                        .forEach(checkbox => {
+                            if (checkbox.checked === true){
+                                tempSnaps.push(checkbox.name)
+                            }
+                        })
+                    snapTo({
+                        point: clickPlaneIntersect.point,
+                        snaps: tempSnaps,
+                        radius: 6
+                    })
                     break;
             }
         }
@@ -1045,7 +1161,7 @@
                     if (lineDrawPoints.length >= 1) {
 
                         let v1 = lineDrawPoints[lineDrawPoints.length - 1]
-                        let v2 = clickPlaneIntersect.point
+                        let v2 = hoverMeshes[0].position
                         mousemoveLine31.set(v1, v2)
                         let angle = Math.atan2(v2.y - v1.y, v2.x - v1.x)
                         let distance = mousemoveLine31.distance()
@@ -1059,7 +1175,7 @@
                     if (crystalLineDrawPoints.length >= 1) {
 
                         let v1 = crystalLineDrawPoints[crystalLineDrawPoints.length - 1]
-                        let v2 = clickPlaneIntersect.point
+                        let v2 = hoverMeshes[0].position
                         mousemoveLine31.set(v1, v2)
                         let angle = Math.atan2(v2.y - v1.y, v2.x - v1.x)
                         let distance = mousemoveLine31.distance()
