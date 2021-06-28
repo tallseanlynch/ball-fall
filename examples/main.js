@@ -8113,14 +8113,11 @@
                           })
                           remoteTransmittersInc++
                         })
-                        console.log('radius', rr.radius)
-                        // debugger
-
-                        tempV1.set(rr.radius * Math.cos(np.rotation + Math.PI) + rr.position.x, (rr.radius*2) * Math.sin(np.rotation + Math.PI) + rr.position.y,0)
-                        tempV2.set(rr.radius * Math.cos(np.rotation) + rr.position.x,(rr.radius* 2) * Math.sin(np.rotation) + rr.position.y, 0)
-                        const tempDistanceLine3 = new THREE.Line3(tempV1, tempV2)
-                        const tempDistance = tempDistanceLine3.distance()
-                        console.log('tempDistance',tempDistance)
+                        tempV3.set(rr.position.x, rr.position.y, rr.position.z)
+                        tempLine30.set(np.v1, tempV3)
+                        tempLine31.at((tempLine30.distance()/tempLine31.distance()-(rr.radius/tempLine31.distance())), tempV1)
+                        tempLine31.at((tempLine30.distance()/tempLine31.distance()+(rr.radius/tempLine31.distance())), tempV2)
+                        tempLine30.set(tempV1, tempV2)
                         tempLine30.set(tempWallV1, tempV1)
                         let tempV1distance = tempLine30.distance()
                         tempLine30.set(tempWallV1, tempV2)
@@ -8135,16 +8132,7 @@
                         }
 
                         tempWallV2.copy(firstPoint)
-                        tempLine31.closestPointToPoint(tempWallV1, true, tempWallV1)
-                        tempLine31.closestPointToPoint(tempWallV2, true, tempWallV2)
-
                         tempLine30.set(tempWallV1, tempWallV2)
-                        // const v1Mesh = new THREE.Mesh(endPointGeometry, purpleMaterial)
-                        // v1Mesh.position.copy(tempWallV1)
-                        // scene.add(v1Mesh)
-                        // const v2Mesh = new THREE.Mesh(endPointGeometry, greenMaterial)
-                        // v2Mesh.position.copy(tempWallV2)
-                        // scene.add(v2Mesh)
                         
                         tempLine30.getCenter(tempV3)
                         const wall = createBeam({
@@ -8155,52 +8143,24 @@
                         wall.name = `STAGE${stageIndex}-beam${beamsInc}`
                         scene.add(wall)
                         
-                        const v3Mesh = new THREE.Mesh(endPointGeometry, redMaterial)
-                        v3Mesh.position.copy(tempLine30.start)
-                        scene.add(v3Mesh)
-                        const v4Mesh = new THREE.Mesh(endPointGeometry, blueMaterial)
-                        v4Mesh.position.copy(tempLine30.end)
-                        scene.add(v4Mesh)
-                        
-                        tempLine31.closestPointToPoint(firstPoint, true, firstPoint)
-                        tempLine31.closestPointToPoint(secondPoint, true, secondPoint)
                         tempLine32.set(firstPoint, secondPoint)
                         tempLine32.getCenter(tempV3)
                         
-                        const v1Mesh = new THREE.Mesh(endPointGeometry, purpleMaterial)
-                        v1Mesh.position.copy(firstPoint)
-                        scene.add(v1Mesh)
-                        const v2Mesh = new THREE.Mesh(endPointGeometry, greenMaterial)
-                        v2Mesh.position.copy(secondPoint)
-                        scene.add(v2Mesh)
-                        // v1Mesh.visible = false
-                        // v2Mesh.visible = false
-                        // v3Mesh.visible = false
-                        // v4Mesh.visible = false
                         beamsInc++
                         tempWallV1.copy(secondPoint)
-                        console.log('distance', tempLine32.distance())
                         window.appConfig.stages.components.createSwitchBeamWall({
                           single:true, 
                           rotation: np.rotation, 
-                          s: (rr.radius * .02), 
-                          switchBeamAdj: (tempLine32.distance() * .1) * -.9, 
+                          s: (tempLine32.distance() * .1), 
+                          switchBeamAdj: .2, 
                           dir: 'single', 
                           p:{x:tempV3.x, y:tempV3.y, z:tempV3.z }, 
-                          receiver: {name: `STAGE${stageIndex}RECEIVER_${remoteReceiversInc}` } 
+                          receiver: remoteTransmittersToCreate.length > 0 ? {name: `STAGE${stageIndex}RECEIVER_${remoteReceiversInc}` } : undefined
                         })
                         remoteReceiversInc++
                       })
                       tempWallV2.copy(np.v2)
-                      tempLine31.closestPointToPoint(tempWallV1, true, tempWallV1)
-                      tempLine31.closestPointToPoint(tempWallV2, true, tempWallV2)
                       tempLine30.set(tempWallV1, tempWallV2)
-                      // const v1Mesh = new THREE.Mesh(endPointGeometry, purpleMaterial)
-                      // v1Mesh.position.copy(tempWallV1)
-                      // scene.add(v1Mesh)
-                      // const v2Mesh = new THREE.Mesh(endPointGeometry, greenMaterial)
-                      // v2Mesh.position.copy(tempWallV2)
-                      // scene.add(v2Mesh)
 
                       tempLine30.getCenter(tempV1)
                       const wall = createBeam({
@@ -8210,14 +8170,6 @@
                       })
                       wall.name = `STAGE${stageIndex}-beam${beamsInc}`
                       scene.add(wall)
-                      const v3Mesh = new THREE.Mesh(endPointGeometry, redMaterial)
-                        v3Mesh.position.copy(tempLine30.start)
-                        scene.add(v3Mesh)
-                        const v4Mesh = new THREE.Mesh(endPointGeometry, blueMaterial)
-                        v4Mesh.position.copy(tempLine30.end)
-                        scene.add(v4Mesh)
-                        v3Mesh.visible = false
-                        v4Mesh.visible = false
                       beamsInc++
                       break;
                     case "prize":

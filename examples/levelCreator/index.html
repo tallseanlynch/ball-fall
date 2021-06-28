@@ -582,7 +582,7 @@
                         console.log(alreadySelectedIndex)
                         if (alreadySelectedIndex === -1) {
                             let lastSelectedPoint = points.find(p => p.mesh.uuid === pointsIntersects[0].object.uuid)
-                            console.log(lastSelectedPoint)
+                            console.log('LSP',lastSelectedPoint)
                             switch (lastSelectedPoint.type) {
                                 case 'remote-door':
                                     lastSelectedRemoteDoorPoint = lastSelectedPoint
@@ -590,7 +590,7 @@
                                 default:
                                     break;
                             }
-                            console.log('shiftKey', event.shiftKey)
+                            // console.log('shiftKey', event.shiftKey)
                             let sIndex = 0
                             if (event.shiftKey === true) {
                                 sIndex = lastSelected.findIndex(ls => ls.mesh === undefined)
@@ -599,23 +599,23 @@
                                     lastSelected[sIndex].mesh.material = lastSelected[sIndex].cacheMaterial
                                 }
                             }
-                            console.log('sIndex', sIndex)
+                            // console.log('sIndex', sIndex)
                             lastSelected[sIndex].mesh = pointsIntersects[0].object
                             lastSelected[sIndex].cacheMaterial = lastSelected[sIndex].mesh.material
                             lastSelected[sIndex].material.copy(lastSelected[sIndex].mesh.material)
                             lastSelected[sIndex].material.opacity = .5
                             lastSelected[sIndex].mesh.material = lastSelected[sIndex].material
                             if (event.shiftKey === false) {
-                                console.log('UNSELECT AFTER', sIndex)
+                                // console.log('UNSELECT AFTER', sIndex)
                                 let until = lastSelected.findIndex(ls => {
                                     // console.log(ls)
                                     // debugger
                                     return ls.mesh === undefined
                                 })
-                                console.log('until', until)
+                                // console.log('until', until)
                                 // debugger
                                 for (let i = sIndex + 1; i < until; i++) {
-                                    console.log('unselecting mesh', i)
+                                    // console.log('unselecting mesh', i)
                                     lastSelected[i].mesh.material = lastSelected[i].cacheMaterial
                                     lastSelected[i].mesh = undefined
                                 }
