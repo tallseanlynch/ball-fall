@@ -58,6 +58,10 @@
             <label for="guidepoints-checkbox">Guidepoints</label>
             <input type="checkbox" id="wall-endpoints-checkbox" name="wall-endpoint">
             <label for="wall-endpoints-checkbox">Wall Endpoints</label>
+            <input type="checkbox" id="wall-midpoints-checkbox" name="wall-midpoint">
+            <label for="wall-midpoints-checkbox">Wall Midpoints</label>
+            <input type="checkbox" id="principals-checkbox" name="principal">
+            <label for="principals-checkbox">Principals</label>
         </div>
     </div>
     <div id="viewport"></div>
@@ -1008,11 +1012,11 @@
     })
     
     Array.from(document.querySelectorAll('#snaps-container input[type="checkbox"]'))
-        .forEach(checkbox => {
-            checkbox.addEventListener('click', e => {
-                e.stopPropagation()
-            })
+    .forEach(checkbox => {
+        checkbox.addEventListener('click', e => {
+            e.stopPropagation()
         })
+    })
 
     document.querySelector('#center-button').addEventListener('click', (e) => {
         e.stopPropagation()
@@ -1087,6 +1091,15 @@
                 if (p.type === 'wall') {
                     snapPoints.push({ position: { x: p.v1.x, y: p.v1.y, z: p.v1.z } })
                     snapPoints.push({ position: { x: p.v2.x, y: p.v2.y, z: p.v2.z } })
+                }
+            })
+        }
+        if (snaps.includes('wall-midpoint')) {
+            points.forEach(p => {
+                if (p.type === 'wall') {
+                    mousemoveLine30.set(p.v1,p.v2)
+                    mousemoveLine30.getCenter(mousemoveVector)
+                    snapPoints.push({ position: { x: mousemoveVector.x, y: mousemoveVector.y, z: mousemoveVector.z } })
                 }
             })
         }
