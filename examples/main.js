@@ -8041,13 +8041,13 @@
                         let pType = principalTypes[principalsInc]
                         switch (pType) {
                           case 'emerald':
-                            window.appConfig.stages.components.createEmerald({ x: np.position.x, y: np.position.y, z: 0 })
+                            window.appConfig.stages.components.createEmerald({ x: np.position.x -.575, y: np.position.y -1.5, z: 0 })
                             break;
                           case 'diamond':
-                            window.appConfig.stages.components.createDiamond({ x: np.position.x, y: np.position.y, z: 0 })
+                            window.appConfig.stages.components.createDiamond({ x: np.position.x, y: np.position.y -.75, z: 0 })
                             break;
                           case 'ruby':
-                            window.appConfig.stages.components.createRuby({ x: np.position.x, y: np.position.y, z: 0 })
+                            window.appConfig.stages.components.createRuby({ x: np.position.x -.375, y: np.position.y -1.5, z: 0 })
                             break;
                           case 'sapphire-portal':
                             window.appConfig.stages[`STAGE${stageIndex}`].data.sapphirePortalPosition = { x: np.position.x, y: np.position.y, z: -5 }
@@ -8178,9 +8178,10 @@
                       break;
                     case "crystalSphere":
                       let crystalSizeInc = 0
-                      let ringsNum = (np.radius -(np.radius % 4))/4
+                      let innerRadius = 2
+                      let ringsNum = (np.radius -(np.radius % 4))/4 - 1
                       for (let i = 1; i <= ringsNum; i++){
-                        createCrystalCircle(`STAGE${stageIndex}`, 1.35 + (i *.58), { x: np.position.x, y: np.position.y}, crystalSizeInc % 3, 8)
+                        createCrystalCircle(`STAGE${stageIndex}`, 1.35 + ((i + 1) *.58), { x: np.position.x, y: np.position.y}, crystalSizeInc % 3, 8)
                         crystalSizeInc++
                       }
                       crystalSpheresInc++
