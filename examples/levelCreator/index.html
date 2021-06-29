@@ -50,6 +50,7 @@
         <button id="superball-draw-button" class="ui-button">Superball</button>
         <button id="blackhole-draw-button" class="ui-button">Blackhole</button>
         <button id="guidepoint-draw-button" class="ui-button">Guidepoint</button>
+        <button id="n-guidepoint-draw-button" class="ui-button">N-Guidepoint</button>
     </div>
     <div class="ui-bottom">
         <div id="snaps-container">
@@ -62,6 +63,14 @@
             <label for="wall-midpoints-checkbox">Wall Midpoints</label>
             <input type="checkbox" id="principals-checkbox" name="principal">
             <label for="principals-checkbox">Principals</label>
+        </div>
+        <div id="inputs-n-guidepoints-container">
+            <label for="input-n">N:</label>
+            <input type="text" id="input-n" name="input-n">
+            <label for="input-radius">Radius:</label>
+            <input type="text" id="input-radius" name="input-radius">
+            <label for="input-rotation">Rotation:</label>
+            <input type="text" id="input-rotation" name="input-rotation">
         </div>
     </div>
     <div id="viewport"></div>
@@ -127,7 +136,7 @@
     orbitControls.update()
     const principalGeometry = new THREE.BoxGeometry(2, 2, 2)
 
-    const principalSphereGeometry = new THREE.SphereGeometry(20, 32, 32)
+    const principalSphereGeometry = new THREE.SphereGeometry(2, 32, 32)
     const midpointGeometry = new THREE.BoxGeometry(2, 2, 2)
     const endPointGeometry = new THREE.SphereGeometry(2, 8, 8)
     const prizeGeometry = new THREE.SphereGeometry(3, 8, 8)
@@ -149,6 +158,13 @@
     const lineMaterial = new THREE.LineBasicMaterial({
         color: 0x0000ff, transparent: true, opacity: .5
     });
+    const nGuidepointGeometry = [
+
+    ]
+    for (let i = 0; i < 14; i++) {
+        nGuidepointGeometry.push(new THREE.CircleGeometry(10, i+3))
+    }
+    console.log(nGuidepointGeometry)
     const gridHelper = new THREE.GridHelper(200, 20);
     gridHelper.rotation.x = Math.PI / 2
     scene.add(gridHelper);
@@ -157,7 +173,13 @@
     clickPlane.visible = false
     clickPlane.name = 'clickPlane'
     scene.add(clickPlane);
-
+    const menuInputs = {
+        'n-guidepoint-draw': {
+            'n': 3,
+            'radius': 1,
+            'rotation': 0
+        }
+    }
 
     let points = []
 
@@ -554,6 +576,7 @@
     const mouseClickCoords = new THREE.Vector2();
     const moveRaycaster = new THREE.Raycaster();
     const mouseMoveCoords = new THREE.Vector2();
+    const nGuidepointTempVector = new THREE.Vector3()
     let hoverMeshes = []
     // let lsObj = {
     //     mesh: undefined,
@@ -617,6 +640,15 @@
                     break;
                 case 'guidepoint-draw':
                     createGuidepoint(hoverMeshes[0].position)
+                    break;
+                case 'n-guidepoint-draw':
+                    console.log('n-guidepoint-draw')
+                    console.log(hoverMeshes[0])
+                    for(let i =1; i < hoverMeshes[0].geometry.vertices.length; i++){
+                        console.log('creating guidepoint')
+                        nGuidepointTempVector.copy(hoverMeshes[0].geometry.vertices[i])
+                        createGuidepoint(hoverMeshes[0].localToWorld(nGuidepointTempVector))
+                    }
                     break;
                 case 'select':
                     let pointsIntersects = clickRaycaster.intersectObjects(points.filter(point => point.mesh !== undefined).map(point => point.mesh));
@@ -970,6 +1002,23 @@
             }
         },
         {
+            name: 'n-guidepoint-draw',
+            clickFunction: () => {
+            },
+            hoverMeshFunction: () => {
+                if (hoverMeshes[0] === undefined) {
+                    hoverMeshes.push(new THREE.Mesh(nGuidepointGeometry[menuInputs['n-guidepoint-draw']['n']-3], hotPurpleMaterial.clone()))
+                    hoverMeshes[0].material.opacity = .5
+                    scene.add(hoverMeshes[0])
+                } else {
+                    hoverMeshes[0].geometry = nGuidepointGeometry[menuInputs['n-guidepoint-draw']['n']-3]
+                    hoverMeshes[0].material.copy(hotPurpleMaterial)
+                    hoverMeshes[0].material.opacity = .5
+                    hoverMeshes[0].visible = true
+                }
+            }
+        },
+        {
             name: 'select',
             clickFunction: () => {
             },
@@ -1150,6 +1199,11 @@
                     })
                     hoverMeshes[0].rotation.z = remoteDoorAngle
                     hoverMeshes[0].position.copy(mousemoveClosestVector)
+                    snapTo({
+                        point: clickPlaneIntersect.point,
+                        snaps: 'wall-midpoint',
+                        radius: 3
+                    })
                     // debugger
                     break;
                 default:
@@ -1203,12 +1257,52 @@
             }
         }
     })
-    // document.querySelector('canvas').addEventListener('wheel', (e) => {
-    //     e.stopPropagation();
-    //     e.preventDefault();
+    document.querySelector('#inputs-n-guidepoints-container #input-n').addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault()
+    
+    })
 
-    //     console.log(e.deltaY)
-    // })
+    document.querySelector('#inputs-n-guidepoints-container #input-n').addEventListener('input', (e) => {
+        e.stopPropagation();
+        e.preventDefault()
+        const pInt = parseInt(e.target.value)
+        if (pInt >= 3 && pInt <=12 && toolSelected === 'n-guidepoint-draw') {
+            menuInputs['n-guidepoint-draw']['n'] =pInt
+            hoverMeshes[0].geometry = nGuidepointGeometry[menuInputs['n-guidepoint-draw']['n']-3]
+        }
+    })
+    document.querySelector('#inputs-n-guidepoints-container #input-radius').addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault()
+    
+    })
+
+    document.querySelector('#inputs-n-guidepoints-container #input-radius').addEventListener('input', (e) => {
+        e.stopPropagation();
+        e.preventDefault()
+        const pInt = parseInt(e.target.value)
+        if (pInt >= 1 && pInt <=200 && toolSelected === 'n-guidepoint-draw') {
+            menuInputs['n-guidepoint-draw']['radius'] =pInt
+            hoverMeshes[0].scale.set(pInt, pInt, pInt)
+        }
+    })
+    document.querySelector('#inputs-n-guidepoints-container #input-rotation').addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault()
+    
+    })
+
+    document.querySelector('#inputs-n-guidepoints-container #input-rotation').addEventListener('input', (e) => {
+        e.stopPropagation();
+        e.preventDefault()
+        const pInt = parseInt(e.target.value)
+        console.log('pInt', pInt)
+        if (pInt >= -1000 && pInt <=1000 && toolSelected === 'n-guidepoint-draw') {
+            menuInputs['n-guidepoint-draw']['rotation'] =pInt
+            hoverMeshes[0].rotation.z = (Math.PI * 2) * ((pInt % 360)/ 360)
+        }
+    })
 
     render = function () {
         requestAnimationFrame(render);
