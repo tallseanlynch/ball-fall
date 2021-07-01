@@ -290,17 +290,18 @@
         }
       },
       STAGE8: {
-        name: "SWIRL",
+        name: "SUMMER SLICE",
         number: 9,
         backgroundColors: [
-          "#6dcff6",
-          "#00a651",
-          "#26797d",
-          "#000000"
+          "#75b9be",
+          "#434371",
+          "#f9b5ac",
+          "#ee7674",
+          "#b5f44a"
         ],
         basicColors: [
-          new THREE.Color(0x662d91),
-          new THREE.Color(0x26797d)
+          new THREE.Color(0xDAFAA3),
+          new THREE.Color(0xffffff)
         ],
         sounds: {
           coins: coinProperties,
@@ -315,7 +316,7 @@
             "sounds/Sound FX/BALL FALL fx a8.mp3"
           ],
           prize: "sounds/Sound FX/PRIZE_1.mp3",
-          backgroundMusic: "sounds/VORTEX.mp3"
+          backgroundMusic: "sounds/MANTISHEAD.mp3"
         }
       }
 
@@ -8010,6 +8011,9 @@
               const redMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 })
               const greenMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
               const blueMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff })
+              const stageFetch = async () => {
+                const response = await fetch(url, '/levelCreator/')
+              }
               const loadJSONStage = (config) => {
                 const {filename, stageIndex} = config
 
@@ -8115,8 +8119,8 @@
                         })
                         tempV3.set(rr.position.x, rr.position.y, rr.position.z)
                         tempLine30.set(np.v1, tempV3)
-                        tempLine31.at((tempLine30.distance()/tempLine31.distance()-(rr.radius/tempLine31.distance())), tempV1)
-                        tempLine31.at((tempLine30.distance()/tempLine31.distance()+(rr.radius/tempLine31.distance())), tempV2)
+                        tempLine31.at((tempLine30.distance()/tempLine31.distance()-((rr.radius)/tempLine31.distance())), tempV1)
+                        tempLine31.at((tempLine30.distance()/tempLine31.distance()+((rr.radius)/tempLine31.distance())), tempV2)
                         tempLine30.set(tempV1, tempV2)
                         tempLine30.set(tempWallV1, tempV1)
                         let tempV1distance = tempLine30.distance()
@@ -8152,7 +8156,8 @@
                           single:true, 
                           rotation: np.rotation, 
                           s: (tempLine32.distance() * .1), 
-                          switchBeamAdj: .2, 
+                          switchBeamAdj: (rr.radius * .1), 
+                          // switchBeamAdj: 0, 
                           dir: 'single', 
                           p:{x:tempV3.x, y:tempV3.y, z:tempV3.z }, 
                           receiver: remoteTransmittersToCreate.length > 0 ? {name: `STAGE${stageIndex}RECEIVER_${remoteReceiversInc}` } : undefined
@@ -8220,223 +8225,8 @@
                   }
                 })
               
-
-                // if (request.status === 200) {
-                // }
               }
               loadJSONStage({filename:'generatedLevelDataStage8', stageIndex: 8 })
-
-
-            // const createStage7StaticCrystals = () => {
-            //   let dlx0 = 150
-            //   let dly0 = 35
-            //   let dlMax = 6
-            //   for(let dli = 0; dli < dlMax; dli++) {
-            //     createCrystalCircle('STAGE8', 1.5, { x: dlx0 - (dli * 25), y: dly0 + (dli * 25)}, dli % 2, 4)
-            //     createCrystalCircle('STAGE8', 2.25, { x: dlx0 - (dli * 25), y: dly0 + (dli * 25)}, (dli + 1) % 2, 6)  
-            //     createCrystalCircle('STAGE8', 2.75, { x: dlx0 - (dli * 25), y: dly0 + (dli * 25)}, (dli + 2) % 2, 12)  
-            //     createCrystalCircle('STAGE8', 1.5, { x: dlx0 - (dli * 25), y: (dly0 + (dli * 25)) * -1}, dli % 2, 4)
-            //     createCrystalCircle('STAGE8', 2.25, { x: dlx0 - (dli * 25), y: (dly0 + (dli * 25)) * -1}, (dli + 1) % 2, 6)  
-            //     createCrystalCircle('STAGE8', 2.75, { x: dlx0 - (dli * 25), y: (dly0 + (dli * 25)) * -1}, (dli + 2) % 2, 12)  
-  
-            //     createCrystalCircle('STAGE8', 1.5, { x: (dlx0 - (dli * 25)) * -1, y: dly0 + (dli * 25)}, dli % 2, 4)
-            //     createCrystalCircle('STAGE8', 2.25, { x: (dlx0 - (dli * 25)) * -1, y: dly0 + (dli * 25)}, (dli + 1) % 2, 6)  
-            //     createCrystalCircle('STAGE8', 2.75, { x: (dlx0 - (dli * 25)) * -1, y: dly0 + (dli * 25)}, (dli + 2) % 2, 12)  
-            //     createCrystalCircle('STAGE8', 1.5, { x: (dlx0 - (dli * 25)) * -1, y: (dly0 + (dli * 25)) * -1}, dli % 2, 4)
-            //     createCrystalCircle('STAGE8', 2.25, { x: (dlx0 - (dli * 25)) * -1, y: (dly0 + (dli * 25)) * -1}, (dli + 1) % 2, 6)  
-            //     createCrystalCircle('STAGE8', 2.75, { x: (dlx0 - (dli * 25)) * -1, y: (dly0 + (dli * 25)) * -1}, (dli + 2) % 2, 12)  
-            //   }  
-            // }
-            // createStage7StaticCrystals()
-            
-
-            // const createStage7Crystals = (xScale = 1, yScale = 1, xTranslate = 0, yTranslate = 0) => {
-
-            //   let clx0 = 10 * xScale + xTranslate
-            //   let cly0 = 10 * yScale + yTranslate
-            //   createCrystalCircle('STAGE8', 2, { x: clx0, y: cly0 }, 0, 4)
-            //   createCrystalCircle('STAGE8', 2.5, { x: clx0, y: cly0 }, 1, 8)
-            //   createCrystalCircle('STAGE8', 1.5, { x: clx0 * 3, y: cly0 }, 0, 4)
-            //   createCrystalCircle('STAGE8', 2.25, { x: clx0 * 3, y: cly0 }, 1, 8)
-            //   createCrystalCircle('STAGE8', 2, { x: clx0 * 5, y: cly0 }, 0, 4)
-            //   createCrystalCircle('STAGE8', 2.5, { x: clx0 * 5, y: cly0 }, 1, 8)
-            //   createCrystalCircle('STAGE8', 1.5, { x: clx0 * 6.25, y: cly0 * 2.25 }, 0, 4)
-            //   createCrystalCircle('STAGE8', 2.25, { x: clx0 * 6.25, y: cly0 * 2.25 }, 1, 8)
-
-            //   cly0 = cly0 * -1
-            //   createCrystalCircle('STAGE8', 2, { x: clx0, y: cly0 }, 0, 4)
-            //   createCrystalCircle('STAGE8', 2.5, { x: clx0, y: cly0 }, 1, 8)
-            //   createCrystalCircle('STAGE8', 1.5, { x: clx0 * 3, y: cly0 }, 0, 4)
-            //   createCrystalCircle('STAGE8', 2.25, { x: clx0 * 3, y: cly0 }, 1, 8)
-            //   createCrystalCircle('STAGE8', 2, { x: clx0 * 5, y: cly0 }, 0, 4)
-            //   createCrystalCircle('STAGE8', 2.5, { x: clx0 * 5, y: cly0 }, 1, 8)
-            //   createCrystalCircle('STAGE8', 1.5, { x: clx0 * 6.25, y: cly0 * 2.25 }, 0, 4)
-            //   createCrystalCircle('STAGE8', 2.25, { x: clx0 * 6.25, y: cly0 * 2.25 }, 1, 8)
-
-
-            //   let cx0 = 125 * xScale + xTranslate
-            //   let cx1 = 170 * xScale + xTranslate
-            //   createCrystalCircle('STAGE8', 2.5, { x: cx0, y: 0 }, 2, 4)
-            //   createCrystalCircle('STAGE8', 3, { x: cx0, y: 0 }, 0, 8)
-            //   createCrystalCircle('STAGE8', 3.5, { x: cx0, y: 0 }, 1, 8)
-            //   createCrystalCircle('STAGE8', 4, { x: cx0, y: 0 }, 2, 16)
-            //   createCrystalCircle('STAGE8', 4.5, { x: cx0, y: 0 }, 1, 16)
-
-            //   prize(7, 400, { x: cx0, y: 0, z: 0 })
-            //   prize(7, 400, { x: cx0, y: 0, z: 0 })
-
-            //   let cpx0 = 80 * xScale + xTranslate
-            //   let cpx1 = 10 * xScale + xTranslate
-            //   let cpy1 = 70 * yScale + xTranslate
-
-
-            //   prize(7, 400, { x: 0, y: 190, z: 0 })
-            //   prize(7, 400, { x: 0, y: -190, z: 0 })
-            //   prize(7, 400, { x: 197.5, y: 0, z: 0 })
-            //   prize(7, 400, { x: -197.5, y: 0, z: 0 })
-
-            //   prize(7, 400, { x: cpx0, y: 0, z: 0 })
-            //   prize(7, 400, { x: cpx0, y: 0, z: 0 })
-            //   prize(7, 400, { x: cpx1, y: cpy1, z: 0 })
-            //   prize(7, 400, { x: cpx1, y: -cpy1, z: 0 })
-
-            //   let cpx2 = 20 * xScale + xTranslate
-            //   let cpy2 = 105 * yScale + yTranslate
-
-            //   prize(7, 400, { x: cpx2, y: cpy2, z: 0 })
-            //   prize(7, 400, { x: cpx2, y: -cpy2, z: 0 })
-
-            //   let cpx3 = 137.5 * xScale + xTranslate
-            //   let cpy3 = 47.5 * yScale + yTranslate
-
-            //   prize(7, 400, { x: cpx3, y: cpy3, z: 0 })
-            //   prize(7, 400, { x: cpx3, y: -cpy3, z: 0 })
-
-            //   let cpx4 = (47.5 - 10) * xScale + xTranslate
-            //   let cpy4 = (137.5 + 10) * yScale + yTranslate
-
-            //   prize(7, 400, { x: cpx4, y: cpy4, z: 0 })
-            //   prize(7, 400, { x: cpx4, y: -cpy4, z: 0 })
-
-
-            //   createCrystalCircle('STAGE8', 2.5, { x: cx1, y: 0 }, 0, 4)
-            //   createCrystalCircle('STAGE8', 3, { x: cx1, y: 0 }, 1, 8)
-            //   createCrystalCircle('STAGE8', 3.5, { x: cx1, y: 0 }, 2, 8)
-            //   createCrystalCircle('STAGE8', 4, { x: cx1, y: 0 }, 1, 16)
-            //   createCrystalCircle('STAGE8', 4.5, { x: cx1, y: 0 }, 0, 16)
-  
-            //   let cx2 = 65 * xScale + xTranslate
-            //   let cy2 = 45 * yScale + yTranslate
-  
-            //   createCrystalCircle('STAGE8', 1.5, { x: cx2, y: cy2 }, 1, 2)
-            //   createCrystalCircle('STAGE8', 2.5, { x: cx2, y: cy2 }, 0, 8)
-            //   createCrystalCircle('STAGE8', 3, { x: cx2, y: cy2 }, 2, 8)
-  
-            //   createCrystalCircle('STAGE8', 1.5, { x: cx2, y: -cy2 }, 1, 2)
-            //   createCrystalCircle('STAGE8', 2.5, { x: cx2, y: -cy2 }, 0, 8)
-            //   createCrystalCircle('STAGE8', 3, { x: cx2, y: -cy2 }, 2, 8)
-  
-            //   let cx3 = 35 * xScale + xTranslate
-            //   let cy3 = 65 * yScale + yTranslate
-  
-            //   createCrystalCircle('STAGE8', 1.5, { x: cx3, y: cy3 }, 1, 2)
-            //   createCrystalCircle('STAGE8', 2.5, { x: cx3, y: cy3 }, 0, 8)
-            //   createCrystalCircle('STAGE8', 3, { x: cx3, y: cy3 }, 2, 8)
-            //   createCrystalCircle('STAGE8', 3.5, { x: cx3, y: cy3 }, 1, 16)
-            //   createCrystalCircle('STAGE8', 4, { x: cx3, y: cy3 }, 2, 8)
-  
-            //   createCrystalCircle('STAGE8', 1.5, { x: cx3, y: -cy3 }, 1, 2)
-            //   createCrystalCircle('STAGE8', 2.5, { x: cx3, y: -cy3 }, 0, 8)
-            //   createCrystalCircle('STAGE8', 3, { x: cx3, y: -cy3 }, 2, 8)
-            //   createCrystalCircle('STAGE8', 3.5, { x: cx3, y: -cy3 }, 1, 16)
-            //   createCrystalCircle('STAGE8', 4, { x: cx3, y: -cy3 }, 2, 8)
-  
-            //   let lx0 = 80 * xScale + xTranslate
-            //   let ly0 = 15 * yScale + yTranslate
-            //   let lx1 = 110 * xScale + xTranslate
-            //   let ly1 = 30 * yScale + yTranslate
-
-            //   createCrystalCircle('STAGE8', 1.5, { x: lx0, y: ly0 }, 1, 2)
-            //   createCrystalCircle('STAGE8', 2.5, { x: lx0, y: ly0 }, 0, 8)
-            //   createCrystalCircle('STAGE8', 3, { x: lx0, y: ly0 }, 0, 16)
-  
-            //   createCrystalCircle('STAGE8', 1.5, { x: lx0, y: -ly0 }, 1, 2)
-            //   createCrystalCircle('STAGE8', 2.5, { x: lx0, y: -ly0 }, 0, 8)
-            //   createCrystalCircle('STAGE8', 3, { x: lx0, y: -ly0 }, 0, 16)
-  
-            //   createCrystalCircle('STAGE8', 1.5, { x: lx1, y: ly1 }, 2, 2)
-            //   createCrystalCircle('STAGE8', 2.5, { x: lx1, y: ly1 }, 1, 8)
-            //   createCrystalCircle('STAGE8', 3, { x: lx1, y: ly1 }, 0, 16)
-  
-            //   createCrystalCircle('STAGE8', 1.5, { x: lx1, y: -ly1 }, 2, 2)
-            //   createCrystalCircle('STAGE8', 2.5, { x: lx1, y: -ly1 }, 1, 8)
-            //   createCrystalCircle('STAGE8', 3, { x: lx1, y: -ly1 }, 0, 16)
-
-            // }
-
-            // const createStage7Bumpers = (xScale = 1, yScale = 1, xTranslate = 0, yTranslate = 0) => {
-            //   let bx = 75 * xScale + xTranslate
-            //   let by = 75 * yScale + yTranslate
-
-            //   window.appConfig.stages.components.createBumper("STAGE8BUMPER0", 1, { x: bx, y: by, z: 0 }, 6)
-            //   window.appConfig.stages.components.createBumper("STAGE8BUMPER0", 1, { x: bx, y: -by, z: 0 }, 6)
-
-            //   let bx1 = 7.5 * xScale + xTranslate
-            //   let by1 = 85 * yScale + yTranslate
-
-            //   window.appConfig.stages.components.createBumper("STAGE8BUMPER0", 1, { x: bx1, y: -by1, z: 0 }, 6)
-            //   window.appConfig.stages.components.createBumper("STAGE8BUMPER0", 1, { x: bx1, y: by1, z: 0 }, 6)
-
-            //   window.appConfig.stages.components.createBumper("STAGE8BUMPER0", 1, { x: bx1, y: -by1 * 2.125, z: 0 }, 6)
-            //   window.appConfig.stages.components.createBumper("STAGE8BUMPER0", 1, { x: bx1, y: by1 * 2.125, z: 0 }, 6)
-
-            //   let bx2 = 85 * xScale + xTranslate
-            //   let by2 = 35 * yScale + yTranslate
-
-            //   window.appConfig.stages.components.createBumper("STAGE8BUMPER0", 1, { x: bx2, y: -by2, z: 0 }, 6)
-            //   window.appConfig.stages.components.createBumper("STAGE8BUMPER0", 1, { x: bx2, y: by2, z: 0 }, 6)
-            // }
-            // createStage7Bumpers()
-            // createStage7Bumpers(-1)
-
-            // createStage7Crystals()
-            // createStage7Crystals(-1)
-
-            // window.appConfig.stages.components.createRuby({ x: -170, y: -1, z: 0 })
-            // window.appConfig.stages.components.createEmerald({ x: 168.75, y: -1, z: 0 })
-            // window.appConfig.stages.components.createDiamond({ x: 0, y: -125, z: 0 })
-
-            // const createDiamondCrystals = () => {
-            //   let clx0 = 0
-            //   let cly0 = -124
-            //   // createCrystalCircle('STAGE8', 2, { x: clx0, y: cly0 }, 0, 4)
-            //   createCrystalCircle('STAGE8', 2.5, { x: clx0, y: cly0 }, 1, 8)
-            //   createCrystalCircle('STAGE8', 3, { x: clx0, y: cly0 }, 0, 8)
-            //   createCrystalCircle('STAGE8', 3.5, { x: clx0, y: cly0 }, 1, 16)
-            //   createCrystalCircle('STAGE8', 4, { x: clx0, y: cly0 }, 2, 16)
-            //   createCrystalCircle('STAGE8', 4.5, { x: clx0, y: cly0 }, 1, 24)
-
-            //   clx0 = 0
-            //   cly0 = 110
-            //   createCrystalCircle('STAGE8', 1, { x: clx0, y: cly0 }, 1, 4)
-            //   createCrystalCircle('STAGE8', 2, { x: clx0, y: cly0 }, 0, 8)
-            //   createCrystalCircle('STAGE8', 2.5, { x: clx0, y: cly0 }, 1, 8)
-            //   createCrystalCircle('STAGE8', 3, { x: clx0, y: cly0 }, 0, 8)
-
-            //   clx0 = 0
-            //   cly0 = 140
-            //   createCrystalCircle('STAGE8', 1, { x: clx0, y: cly0 }, 1, 4)
-            //   createCrystalCircle('STAGE8', 2, { x: clx0, y: cly0 }, 0, 8)
-            //   createCrystalCircle('STAGE8', 2.5, { x: clx0, y: cly0 }, 1, 8)
-            //   createCrystalCircle('STAGE8', 3, { x: clx0, y: cly0 }, 0, 8)
-
-            //   // createCrystalCircle('STAGE8', 3.5, { x: clx0, y: cly0 }, 1, 16)
-            //   // createCrystalCircle('STAGE8', 4, { x: clx0, y: cly0 }, 2, 16)
-            //   // createCrystalCircle('STAGE8', 4.5, { x: clx0, y: cly0 }, 1, 24)
-
-            // }
-            // createDiamondCrystals()
-
 
             window.appConfig.stages.components.createSapphire({ x: -100, y: -100, z: 0 })
             window.appConfig.stages.components.createSapphire({ x: -110, y: -100, z: 0 })
@@ -8445,14 +8235,6 @@
             window.appConfig.stages.components.createSapphire({ x: -140, y: 100, z: 0 })
 
             window.appConfig.stages.components.createBlueIsland()
-
-            // window.appConfig.stages.STAGE8.STAGE8MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE8MINORSTRUCTURE")
-            // window.appConfig.stages.STAGE8.STAGE8MINORSTRUCTUREA = scene.children.find((obj) => obj.name === "STAGE8MINORSTRUCTUREA")
-            // window.appConfig.stages.STAGE8.STAGE8MINORSTRUCTUREB = scene.children.find((obj) => obj.name === "STAGE8MINORSTRUCTUREB")
-            // window.appConfig.stages.STAGE8.STAGE8MINORSTRUCTUREC = scene.children.find((obj) => obj.name === "STAGE8MINORSTRUCTUREC")
-            // window.appConfig.stages.STAGE8.STAGE8MINORSTRUCTURED = scene.children.find((obj) => obj.name === "STAGE8MINORSTRUCTURED")
-            // window.appConfig.stages.STAGE8.STAGE8MINORSTRUCTUREE = scene.children.find((obj) => obj.name === "STAGE8MINORSTRUCTUREE")
-
             window.appConfig.stages.STAGE8.data.started = true
           }
         }

@@ -68,17 +68,17 @@
         </div>
         <div id="inputs-n-guidepoints-container">
             <label for="input-n">N:</label>
-            <input type="text" id="input-n" name="input-n">
+            <input type="text" id="input-n" name="input-n" value="3">
             <label for="input-radius">Radius:</label>
-            <input type="text" id="input-radius" name="input-radius">
+            <input type="text" id="input-radius" name="input-radius" value="1">
             <label for="input-rotation">Rotation:</label>
-            <input type="text" id="input-rotation" name="input-rotation">
+            <input type="text" id="input-rotation" name="input-rotation" value="0">
         </div>
     </div>
     <div id="viewport"></div>
 </body>
-<script type="text/javascript" src="../js/three-121.min.js"></script>
-<script type="text/javascript" src="../js/THREEOrbitControls.js"></script>
+<script type="text/javascript" src="./three-121.min.js"></script>
+<script type="text/javascript" src="./THREEOrbitControls.js"></script>
 <script type="text/javascript" src="./uuidv4.js"></script>
 <script>
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -317,6 +317,7 @@
                         mesh.name = `remote-switch-${remoteSwitchesInc}`
                         newPointObj = { ...newPointObj, type: 'remote-switch', radius: p.radius, remoteDoor: p.remoteDoor }
                         remoteSwitchesInc++
+                        break;
                     case 'superball':
                         mesh = new THREE.Mesh(endPointGeometry, redMaterial)
                         mesh.position.set(p.position.x, p.position.y, p.position.z)
@@ -525,14 +526,14 @@
         points.push({ type: 'bumper', mesh: bumper, position: bumper.position, radius: 3, uuid: uuidv4() })
         bumpersInc++
     }
-    const remoteDoorGeometry = new THREE.BoxGeometry(10, 3, 3)
+    const remoteDoorGeometry = new THREE.BoxGeometry(16, 3, 3)
     const createRemoteDoor = (v) => {
         const door = new THREE.Mesh(remoteDoorGeometry, blueMaterial)
         door.position.copy(v)
         scene.add(door)
         door.name = `remove-door${remoteDoorsInc}`
         door.rotation.z = remoteDoorAngle
-        points.push({ type: 'remote-door', rotation: remoteDoorAngle, mesh: door, position: door.position, radius: 3, wall: remoteDoorPointUuid, uuid: uuidv4() })
+        points.push({ type: 'remote-door', rotation: remoteDoorAngle, mesh: door, position: door.position, radius: 8, wall: remoteDoorPointUuid, uuid: uuidv4() })
         lastSelectedRemoteDoorPoint = points[points.length - 1]
         remoteDoorsInc++
     }
@@ -646,8 +647,17 @@
                 case 'n-guidepoint-draw':
                     console.log('n-guidepoint-draw')
                     console.log(hoverMeshes[0])
+                    if (points.find(p => {
+                        return (
+                            p.type === 'guidepoint' &&
+                            p.position.x === hoverMeshes[0].position.x &&
+                            p.position.y === hoverMeshes[0].position.y &&
+                            p.position.z === hoverMeshes[0].position.z
+                        )
+                    }) === undefined) {
+                        createGuidepoint(hoverMeshes[0].position)
+                    }
                     for (let i = 1; i < hoverMeshes[0].geometry.vertices.length; i++) {
-                        console.log('creating guidepoint')
                         nGuidepointTempVector.copy(hoverMeshes[0].geometry.vertices[i])
                         createGuidepoint(hoverMeshes[0].localToWorld(nGuidepointTempVector))
                     }
@@ -706,7 +716,8 @@
                                 }
                             }
                         }
-                    } else {
+                    } else if (event.shiftKey === false) {
+
                         console.log('UNSELECT ALL')
                         let until = lastSelected.findIndex(ls => ls.mesh === undefined)
                         console.log('until', until)
@@ -792,6 +803,105 @@
                             currentSphereRadius++
                             console.log('currentSphereRadius', currentSphereRadius)
                             hoverMeshes[0].scale.set(currentSphereRadius, currentSphereRadius, currentSphereRadius)
+                        }
+                        break;
+                    default:
+                        break;
+
+                }
+                break;
+            case 'n-guidepoint-draw':
+                switch (e.keyCode) {
+                    case 81: //q
+                        console.log('q')
+                        e.preventDefault()
+                        e.stopPropagation()
+                        {
+                            const theInput = document.querySelector('#inputs-n-guidepoints-container #input-n')
+                            const pInt = parseInt(theInput.value) - 1
+
+                            if (pInt >= 3 && pInt <= 12) {
+                                menuInputs['n-guidepoint-draw']['n'] = pInt
+                                theInput.value = pInt
+                                hoverMeshes[0].geometry = nGuidepointGeometry[menuInputs['n-guidepoint-draw']['n'] - 3]
+                            }
+                        }
+                        break;
+                    case 87: //w
+                        console.log('w')
+                        e.preventDefault()
+                        e.stopPropagation()
+                        {
+                            const theInput = document.querySelector('#inputs-n-guidepoints-container #input-n')
+                            const pInt = parseInt(theInput.value) + 1
+
+                            if (pInt >= 3 && pInt <= 12) {
+                                menuInputs['n-guidepoint-draw']['n'] = pInt
+                                theInput.value = pInt
+                                hoverMeshes[0].geometry = nGuidepointGeometry[menuInputs['n-guidepoint-draw']['n'] - 3]
+                            }
+                        }
+                        break;
+
+                    case 69: //e
+                        console.log('e')
+                        e.preventDefault()
+                        e.stopPropagation()
+                        {
+                            const theInput = document.querySelector('#inputs-n-guidepoints-container #input-radius')
+                            let pInt = parseFloat(theInput.value) - .1
+                            pInt = pInt.toFixed(2)
+
+                            if (pInt >= 1 && pInt <= 1200) {
+                                menuInputs['n-guidepoint-draw']['radius'] = pInt
+                                theInput.value = pInt
+                                hoverMeshes[0].scale.set(pInt, pInt, pInt)
+                            }
+                        }
+                        break;
+                    case 82: //r
+                        console.log('r')
+                        e.preventDefault()
+                        e.stopPropagation()
+                        {
+                            const theInput = document.querySelector('#inputs-n-guidepoints-container #input-radius')
+                            let pInt = parseFloat(theInput.value) + .1
+                            pInt = pInt.toFixed(2)
+
+                            if (pInt >= 1 && pInt <= 1200) {
+                                menuInputs['n-guidepoint-draw']['radius'] = pInt
+                                theInput.value = pInt
+                                hoverMeshes[0].scale.set(pInt, pInt, pInt)
+                            }
+                        }
+                        break;
+                    case 84: //t
+                        console.log('t')
+                        e.preventDefault()
+                        e.stopPropagation()
+                        {
+                            const theInput = document.querySelector('#inputs-n-guidepoints-container #input-rotation')
+                            const pInt = parseFloat(theInput.value) + 1
+                            if (pInt >= -1000 && pInt <= 1000) {
+                                menuInputs['n-guidepoint-draw']['rotation'] = pInt
+                                theInput.value = pInt
+                                hoverMeshes[0].rotation.z = (Math.PI * 2) * ((pInt % 360) / 360)
+                            }
+                        }
+                        break;
+                    case 89: //y
+                        console.log('y')
+                        e.preventDefault()
+                        e.stopPropagation()
+                        {
+                            const theInput = document.querySelector('#inputs-n-guidepoints-container #input-rotation')
+                            const pInt = parseFloat(theInput.value) - 1
+
+                            if (pInt >= -1000 && pInt <= 1000) {
+                                menuInputs['n-guidepoint-draw']['rotation'] = pInt
+                                theInput.value = pInt
+                                hoverMeshes[0].rotation.z = (Math.PI * 2) * ((pInt % 360) / 360)
+                            }
                         }
                         break;
                     default:
