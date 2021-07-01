@@ -2138,6 +2138,223 @@
             })
             return newPhysiObj
           },
+          loadJSONStage: (config) => {
+            const {stageIndex, data} = config
+            const endPointGeometry = new THREE.SphereGeometry(1.5, 8, 8)
+            const purpleMaterial = new THREE.MeshBasicMaterial({ color: 0x9932CC })
+            const redMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 })
+            const greenMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+            const blueMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff })
+            // const newPoints = window.appConfig.generatedLevelDataStage8
+            const newPoints = data
+            console.log(newPoints)
+            let principalsInc = 0
+            let beamsInc = 0
+            let prizesInc = 0
+            let bumpersInc = 0
+            let remoteReceiversInc = 0
+            let remoteTransmittersInc = 0
+            let crystalSpheresInc = 0
+            let crystalLinesInc = 0
+            let blackholesInc = 0
+            let superballsInc = 0
+            let tempV1 = new THREE.Vector3()
+            let tempV2 = new THREE.Vector3()
+            let tempV3 = new THREE.Vector3()
+            let tempWallV1 = new THREE.Vector3()
+            let tempWallV2 = new THREE.Vector3()
+            let tempLine30 = new THREE.Line3()
+            let tempLine31 = new THREE.Line3()
+            let tempLine32 = new THREE.Line3()
+            const principalTypes = ['gem-portal','emerald', 'diamond', 'ruby', 'sapphire-portal']
+            newPoints.forEach(np => {
+              switch(np.type) {
+                case "principal":
+                  if (principalsInc < 5) {
+                    let pType = principalTypes[principalsInc]
+                    switch (pType) {
+                      case 'emerald':
+                        window.appConfig.stages.components.createEmerald({ x: np.position.x -.575, y: np.position.y -1.5, z: 0 })
+                        break;
+                      case 'diamond':
+                        window.appConfig.stages.components.createDiamond({ x: np.position.x, y: np.position.y -.75, z: 0 })
+                        break;
+                      case 'ruby':
+                        window.appConfig.stages.components.createRuby({ x: np.position.x -.375, y: np.position.y -1.5, z: 0 })
+                        break;
+                      case 'sapphire-portal':
+                        window.appConfig.stages[`STAGE${stageIndex}`].data.sapphirePortalPosition = { x: np.position.x, y: np.position.y, z: -5 }
+                        window.appConfig.timers.activeTimers.push(
+                          window.appConfig.timers.addPortalToStage({ x: np.position.x, y: np.position.y, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
+                            window.appConfig.stages.components.sapphirePortalConfig())
+                        )
+                        window.appConfig.stages.components.setUpPortalIndicators(()=> {
+                          let ellipseGeometry = new THREE.CircleGeometry(4.125, 5)
+                          ellipseGeometry.rotateZ((2 * Math.PI) / 20)
+            
+                          let i = 1;
+                          for (i; i < ellipseGeometry.vertices.length; i++) {
+                            window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
+                          }
+          
+                        })
+                        break;
+                      case 'gem-portal':
+                        window.appConfig.timers.activeTimers.push(
+                          window.appConfig.timers.addPortalToStage({ x: np.position.x, y: np.position.y, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
+                            window.appConfig.stages.components.gemPortalConfig())
+                        )
+          
+                        window.appConfig.stages.components.setUpPortalIndicators(() => {
+                          window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
+                          window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
+                          window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')                           
+                        })
+                        break;
+                    }
+                    principalsInc++
+                  }
+                  break;
+                case "wall": // also handles point cases "remote-door" and "remote-switch"
+                  tempWallV1.copy(np.v1)
+                  tempLine31.set(np.v1, np.v2)
+                  let remoteReceiversToCreate = newPoints.filter(p => p.wall === np.uuid)
+                  remoteReceiversToCreate.sort((a,b)=> {
+                    
+                    tempV1.set(a.position.x, a.position.y, a.position.z)
+                    tempLine30.set(np.v1, tempV1)
+                    let distanceA = tempLine30.distance()
+                    
+                    tempV1.set(b.position.x, b.position.y, b.position.z)
+                    tempLine30.set(np.v1, tempV1)
+                    let distanceB = tempLine30.distance()
+                    let result = distanceA - distanceB
+                    return result
+                  })
+                  remoteReceiversToCreate.forEach(rr => {
+                    
+                    let remoteTransmittersToCreate = newPoints.filter(p => p.remoteDoor === rr.uuid)
+                    remoteTransmittersToCreate.forEach(rt => {
+                      window.appConfig.stages.components.createRemoteSwitch({
+                        transmitter: {
+                          p: { x: rt.position.x, y: rt.position.y, z: 0 }
+                        },
+                        receiver: {
+                          p: { x: rr.position.x, y: rr.position.y, z: 0 },
+                          name: `STAGE${stageIndex}RECEIVER_${remoteReceiversInc}`
+                        }
+                      })
+                      remoteTransmittersInc++
+                    })
+                    tempV3.set(rr.position.x, rr.position.y, rr.position.z)
+                    tempLine30.set(np.v1, tempV3)
+                    tempLine31.at((tempLine30.distance()/tempLine31.distance()-((rr.radius)/tempLine31.distance())), tempV1)
+                    tempLine31.at((tempLine30.distance()/tempLine31.distance()+((rr.radius)/tempLine31.distance())), tempV2)
+                    tempLine30.set(tempV1, tempV2)
+                    tempLine30.set(tempWallV1, tempV1)
+                    let tempV1distance = tempLine30.distance()
+                    tempLine30.set(tempWallV1, tempV2)
+                    let tempV2distance = tempLine30.distance()
+                    let firstPoint, secondPoint
+                    if (tempV1distance < tempV2distance){
+                      firstPoint = tempV1
+                      secondPoint = tempV2
+                    } else {
+                      firstPoint = tempV2
+                      secondPoint = tempV1
+                    }
+          
+                    tempWallV2.copy(firstPoint)
+                    tempLine30.set(tempWallV1, tempWallV2)
+                    
+                    tempLine30.getCenter(tempV3)
+                    const wall = createBeam({
+                      p: [tempV3.x, tempV3.y,tempV3.z],
+                      r: [0, 0, np.rotation],
+                      s: (tempLine30.distance() *.1) - .45
+                    })
+                    wall.name = `STAGE${stageIndex}-beam${beamsInc}`
+                    scene.add(wall)
+                    
+                    tempLine32.set(firstPoint, secondPoint)
+                    tempLine32.getCenter(tempV3)
+                    
+                    beamsInc++
+                    tempWallV1.copy(secondPoint)
+                    window.appConfig.stages.components.createSwitchBeamWall({
+                      single:true, 
+                      rotation: np.rotation, 
+                      s: (tempLine32.distance() * .1), 
+                      switchBeamAdj: (rr.radius * .1), 
+                      // switchBeamAdj: 0, 
+                      dir: 'single', 
+                      p:{x:tempV3.x, y:tempV3.y, z:tempV3.z }, 
+                      receiver: remoteTransmittersToCreate.length > 0 ? {name: `STAGE${stageIndex}RECEIVER_${remoteReceiversInc}` } : undefined
+                    })
+                    remoteReceiversInc++
+                  })
+                  tempWallV2.copy(np.v2)
+                  tempLine30.set(tempWallV1, tempWallV2)
+          
+                  tempLine30.getCenter(tempV1)
+                  const wall = createBeam({
+                    p: [tempV1.x, tempV1.y,tempV1.z],
+                    r: [0, 0, np.rotation],
+                    s: (tempLine30.distance() *.1) - .45
+                  })
+                  wall.name = `STAGE${stageIndex}-beam${beamsInc}`
+                  scene.add(wall)
+                  beamsInc++
+                  break;
+                case "prize":
+                  prize(stageIndex, prizesInc, { x: np.position.x, y: np.position.y, z: 0 })
+                  prizesInc++
+                  break;
+                case "crystalSphere":
+                  let crystalSizeInc = 0
+                  let innerRadius = 2
+                  let ringsNum = (np.radius -(np.radius % 4))/4 - 1
+                  for (let i = 1; i <= ringsNum; i++){
+                    createCrystalCircle(`STAGE${stageIndex}`, 1.35 + ((i + 1) *.58), { x: np.position.x, y: np.position.y}, crystalSizeInc % 3, 8)
+                    crystalSizeInc++
+                  }
+                  crystalSpheresInc++
+                  break;
+                case "bumper":
+                  window.appConfig.stages.components.createBumper(`STAGE${stageIndex}BUMPER${bumpersInc}`, 1, { x: np.position.x, y: np.position.y, z: 0 }, 6)
+                  bumpersInc++
+                  break;
+                case "crystal-line":
+                  tempV1.set(np.v1.x,np.v1.y, 0 )
+                  tempV2.set(np.v2.x,np.v2.y, 0 )
+                  createCrystalAngle({name:`STAGE${stageIndex}`, v1: tempV1, v2: tempV2, size: 0});
+                  crystalLinesInc++
+                  break;
+                case "blackhole":
+                  window.appConfig.stages.components.createBlackHole({ position: { x: np.position.x, y: np.position.y, z: 0 }, scale: { x: 2, y: 2, z: 2 } })
+                  blackholesInc++
+                  break;
+                case "superball":
+                  if (superballsInc === 0) {
+                    let theName = `${window.appConfig.currentStage}_SPHERECOIN${superballsInc}`
+                    window.appConfig.createSphere({
+                      bounce: 1,
+                      name: theName,
+                      position: {
+                        x: np.position.x,
+                        y: np.position.y,
+                        z: 0
+                      },
+                      handleCollision: (c) => window.appConfig.superBallHandleCollision(c, theName)
+                    })
+          
+                  }
+                  superballsInc++
+                  break;
+              }
+            })
+          
+          },
           handleCoinRemoval: (coinsToRemove, all = false) => {
             coinsToRemove.reverse()
             if (coinsToRemove.length > 0) {
@@ -2327,6 +2544,46 @@
             if (window.appConfig.performanceLevel > 0) {
               window.appConfig.stages[window.appConfig.currentStage].initBackground()
             }
+
+            window.appConfig.stages[window.appConfig.currentStage].data.started = true
+            // debugger
+              const stageFetch = async () => {
+                let response
+                if (window.appConfig.stages[window.appConfig.currentStage].pointsJSON !== undefined) {
+                  response = await fetch(window.appConfig.stages[window.appConfig.currentStage].pointsJSON)
+                  return response.json()
+                } else {
+                  return undefined 
+                }
+                
+              }
+
+              stageFetch().then(data => {
+                // console.log(data)
+                if (data !== undefined ) {
+                  window.appConfig.stages.components.loadJSONStage({data:data, stageIndex: window.appConfig.currentStageIndex })
+                }
+                if (window.appConfig.stages[window.appConfig.currentStage].init !== undefined) {
+                  window.appConfig.stages[window.appConfig.currentStage].init()
+                }
+                window.appConfig.stages.components.createSapphire({ x: -100, y: -100, z: 0 })
+                window.appConfig.stages.components.createSapphire({ x: -110, y: -100, z: 0 })
+                window.appConfig.stages.components.createSapphire({ x: -120, y: -100, z: 0 })
+                window.appConfig.stages.components.createSapphire({ x: -130, y: 100, z: 0 })
+                window.appConfig.stages.components.createSapphire({ x: -140, y: 100, z: 0 })    
+                window.appConfig.stages.components.createBlueIsland()
+              }).then(() => {
+                console.log('starting')
+                // debugger
+                if (window.appConfig.autoStartStage === true) {
+                  console.log('pushing countdown name timer')
+                  window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName())
+    
+                  console.log('lift curtain')
+                  window.appConfig.selectors.curtain.classList.add("opacity-0");
+
+                }
+              })
           },
           crystal: crystal,
           blueCrystal: blueCrystal,
@@ -3431,18 +3688,9 @@
             window.appConfig.stages.components.createBumper("STAGE0BUMPER18", 1, { x: 97.5, y: 60, z: 0 }, 3, 1)
             window.appConfig.stages.components.createBumper("STAGE0BUMPER19", 1, { x: 87.5, y: 70, z: 0 }, 3, 1)
 
-            window.appConfig.stages.components.createSapphire({ x: -100, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -110, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -120, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -130, y: 100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -140, y: 100, z: 0 })
-
-
             window.appConfig.stages.components.createRuby({ x: 87, y: -1.25, z: 0 })
             window.appConfig.stages.components.createEmerald({ x: -97.5, y: -1.25, z: 0 })
             window.appConfig.stages.components.createDiamond({ x: -57, y: -1.25, z: 0 })
-
-            window.appConfig.stages.components.createBlueIsland()
 
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createSwitchBeamWall = window.appConfig.stages.components.createSwitchBeamWall
@@ -3676,7 +3924,6 @@
             window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE1 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE1")
             window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE2 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE2")
             window.appConfig.stages.STAGE0.STAGE0MINORSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE0MINORSTRUCTURE3")
-            window.appConfig.stages.STAGE0.data.started = true
           }
         },
         STAGE1: {
@@ -3792,14 +4039,6 @@
             window.appConfig.stages.components.createBumper("STAGE1BUMPER11", 1, { x: -75, y: 0, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE1BUMPER12", 1, { x: -100, y: 0, z: 0 }, 6)
 
-
-            window.appConfig.stages.components.createSapphire({ x: -100, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -110, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -120, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -130, y: 100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -140, y: 100, z: 0 })
-
-
             // portal
             window.appConfig.timers.activeTimers.push(
               window.appConfig.timers.addPortalToStage({ x: -50, y: -50, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
@@ -3825,8 +4064,6 @@
             }
 
             window.appConfig.stages.components.setUpPortalIndicators(createStage1Portals)
-
-            window.appConfig.stages.components.createBlueIsland()
 
 
             window.appConfig.createSphere({
@@ -4122,7 +4359,6 @@
             window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE3 = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE3")
             window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE3A = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE3A")
             window.appConfig.stages.STAGE1.STAGE1MINORSTRUCTURE3B = scene.children.find((obj) => obj.name === "STAGE1MINORSTRUCTURE3B")
-            window.appConfig.stages.STAGE1.data.started = true
           }
         },
         STAGE2: {
@@ -4223,12 +4459,6 @@
             const createStage0MainBeamStructure = window.appConfig.stages.components.createStage0MainBeamStructure
             const createStage1MinorBeamStructure = window.appConfig.stages.components.createStage1MinorBeamStructure
 
-            window.appConfig.stages.components.createSapphire({ x: -100, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -110, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -120, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -130, y: 100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -140, y: 100, z: 0 })
-
             window.appConfig.stages.components.createBumper("STAGE2BUMPER4", 1, { x: 30, y: -65, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE2BUMPER4", 1, { x: -30, y: -65, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE2BUMPER4", 1, { x: 30, y: -115, z: 0 }, 6)
@@ -4262,8 +4492,6 @@
             }
 
             window.appConfig.stages.components.setUpPortalIndicators(createStage2Portals)
-
-            window.appConfig.stages.components.createBlueIsland()
 
             window.appConfig.createSphere({
               bounce: 1,
@@ -4577,7 +4805,6 @@
             window.appConfig.stages.STAGE2.STAGE2MINORSTRUCTUREROTATIONB = scene.children.find((obj) => obj.name === "STAGE2MINORSTRUCTUREROTATIONB")
             window.appConfig.stages.STAGE2.STAGE2MINORSTRUCTUREROTATIONC = scene.children.find((obj) => obj.name === "STAGE2MINORSTRUCTUREROTATIONC")
 
-            window.appConfig.stages.STAGE2.data.started = true
           }
         },
         STAGE3: {
@@ -4943,14 +5170,8 @@
             scene.add(stage3SwitchBeam3)
 
 
-            window.appConfig.stages.components.createSapphire({ x: 0, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: 0, y: 100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -100, y: 0, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: 100, y: 0, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: 100, y: 100, z: 0 })
             window.appConfig.stages.components.createRuby({ x: -110, y: 23.75, z: 0 })
             window.appConfig.stages.components.createEmerald({ x: 109.5, y: 23.75, z: 0 })
-            window.appConfig.stages.components.createBlueIsland()
 
             createCrystalCircle('STAGE3', 2.75, { x: 0, y: 140 }, 0, 8)
             createCrystalCircle('STAGE3', 3.125, { x: 0, y: 140 }, 1, 8)
@@ -5285,7 +5506,6 @@
             window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTURE3B = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTURE3B")
             window.appConfig.stages.STAGE3.STAGE3CROSSBEAMSTRUCTURE3C = scene.children.find((obj) => obj.name === "STAGE3CROSSBEAMSTRUCTURE3C")
 
-            window.appConfig.stages.STAGE3.data.started = true
           }
         },
         STAGE4: {
@@ -5831,13 +6051,6 @@
             createCrystalCircle('STAGE4', 3.25, { x: 87.5, y: -87.5 }, 1, 16)
             createCrystalCircle('STAGE4', 3.75, { x: 87.5, y: -87.5 }, 2, 16)
 
-            window.appConfig.stages.components.createSapphire({ x: 0, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: 0, y: 100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -100, y: 0, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: 100, y: 0, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: 100, y: 100, z: 0 })
-            window.appConfig.stages.components.createBlueIsland()
-
             prize(4, 0, { x: 75, y: 45, z: 0 })
             prize(4, 1, { x: 75, y: -45, z: 0 })
 
@@ -6168,7 +6381,6 @@
             window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE3C = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE3C")
             window.appConfig.stages.STAGE4.STAGE4CROSSBEAMSTRUCTURE3D = scene.children.find((obj) => obj.name === "STAGE4CROSSBEAMSTRUCTURE3D")
 
-            window.appConfig.stages.STAGE4.data.started = true
           }
         },
         STAGE5: {
@@ -6908,14 +7120,6 @@
               handleCollision: (c) => window.appConfig.superBallHandleCollision(c, window.appConfig.currentStage + '_SPHERECOINP')
             })
 
-
-            window.appConfig.stages.components.createSapphire({ x: -100, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -110, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -120, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -130, y: 100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -140, y: 100, z: 0 })
-            window.appConfig.stages.components.createBlueIsland()
-
             window.appConfig.stages.STAGE5.STAGE5PRIZE0 = scene.children.find((obj) => obj.name === "STAGE5PRIZE0")
             window.appConfig.stages.STAGE5.STAGE5PRIZE1 = scene.children.find((obj) => obj.name === "STAGE5PRIZE1")
             window.appConfig.stages.STAGE5.STAGE5PRIZE2 = scene.children.find((obj) => obj.name === "STAGE5PRIZE2")
@@ -6933,7 +7137,6 @@
             window.appConfig.stages.STAGE5.STAGE5MINORSTRUCTUREB = scene.children.find((obj) => obj.name === "STAGE5MINORSTRUCTUREB")
             window.appConfig.stages.STAGE5.STAGE5MINORSTRUCTUREC = scene.children.find((obj) => obj.name === "STAGE5MINORSTRUCTUREC")
 
-            window.appConfig.stages.STAGE5.data.started = true
           }
         },
         STAGE6: {
@@ -7412,14 +7615,6 @@
 
             window.appConfig.stages.components.createDiamond({ x: 92.5, y: -94.5, z: 0 })
 
-            window.appConfig.stages.components.createSapphire({ x: -100, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -110, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -120, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -130, y: 100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -140, y: 100, z: 0 })
-
-            window.appConfig.stages.components.createBlueIsland()
-
             window.appConfig.stages.components.createBumper("STAGE6BUMPER0", 1, { x: -60, y: -100, z: 0 }, 6)
             window.appConfig.stages.components.createBumper("STAGE6BUMPER0", 1, { x: -100, y: -60, z: 0 }, 6)
 
@@ -7438,7 +7633,6 @@
             window.appConfig.stages.STAGE6.STAGE6MINORSTRUCTURED = scene.children.find((obj) => obj.name === "STAGE6MINORSTRUCTURED")
             window.appConfig.stages.STAGE6.STAGE6MINORSTRUCTUREE = scene.children.find((obj) => obj.name === "STAGE6MINORSTRUCTUREE")
 
-            window.appConfig.stages.STAGE6.data.started = true
           }
         },
         STAGE7: {
@@ -7922,15 +8116,6 @@
             }
             createDiamondCrystals()
 
-
-            window.appConfig.stages.components.createSapphire({ x: -100, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -110, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -120, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -130, y: 100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -140, y: 100, z: 0 })
-
-            window.appConfig.stages.components.createBlueIsland()
-
             // window.appConfig.stages.STAGE7.STAGE7MINORSTRUCTURE = scene.children.find((obj) => obj.name === "STAGE7MINORSTRUCTURE")
             // window.appConfig.stages.STAGE7.STAGE7MINORSTRUCTUREA = scene.children.find((obj) => obj.name === "STAGE7MINORSTRUCTUREA")
             // window.appConfig.stages.STAGE7.STAGE7MINORSTRUCTUREB = scene.children.find((obj) => obj.name === "STAGE7MINORSTRUCTUREB")
@@ -7938,7 +8123,6 @@
             // window.appConfig.stages.STAGE7.STAGE7MINORSTRUCTURED = scene.children.find((obj) => obj.name === "STAGE7MINORSTRUCTURED")
             // window.appConfig.stages.STAGE7.STAGE7MINORSTRUCTUREE = scene.children.find((obj) => obj.name === "STAGE7MINORSTRUCTUREE")
 
-            window.appConfig.stages.STAGE7.data.started = true
           }
         },
         STAGE8: {
@@ -7950,6 +8134,7 @@
             startingPosition: window.appConfig.originVector,
             sapphirePortalPosition: { x: 37.5/2.5, y: 125, z: -5 }
           },
+          pointsJSON: 'levelJSON/levelCreator (72).json',
           backgroundColors: stageProperties.STAGE8.backgroundColors,
           basicColors: stageProperties.STAGE8.basicColors,
           sounds: stageProperties.STAGE8.sounds,
@@ -8006,242 +8191,11 @@
             createBackgroundAnimation()
           },
           init: () => {
-              const endPointGeometry = new THREE.SphereGeometry(1.5, 8, 8)
-              const purpleMaterial = new THREE.MeshBasicMaterial({ color: 0x9932CC })
-              const redMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 })
-              const greenMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
-              const blueMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff })
-              const stageFetch = async () => {
-                const response = await fetch(url, '/levelCreator/')
-              }
-              const loadJSONStage = (config) => {
-                const {filename, stageIndex} = config
-
-                const newPoints = window.appConfig[filename]
-                console.log(newPoints)
-                let principalsInc = 0
-                let beamsInc = 0
-                let prizesInc = 0
-                let bumpersInc = 0
-                let remoteReceiversInc = 0
-                let remoteTransmittersInc = 0
-                let crystalSpheresInc = 0
-                let crystalLinesInc = 0
-                let blackholesInc = 0
-                let superballsInc = 0
-                let tempV1 = new THREE.Vector3()
-                let tempV2 = new THREE.Vector3()
-                let tempV3 = new THREE.Vector3()
-                let tempWallV1 = new THREE.Vector3()
-                let tempWallV2 = new THREE.Vector3()
-                let tempLine30 = new THREE.Line3()
-                let tempLine31 = new THREE.Line3()
-                let tempLine32 = new THREE.Line3()
-                const principalTypes = ['gem-portal','emerald', 'diamond', 'ruby', 'sapphire-portal']
-                newPoints.forEach(np => {
-                  switch(np.type) {
-                    case "principal":
-                      if (principalsInc < 5) {
-                        let pType = principalTypes[principalsInc]
-                        switch (pType) {
-                          case 'emerald':
-                            window.appConfig.stages.components.createEmerald({ x: np.position.x -.575, y: np.position.y -1.5, z: 0 })
-                            break;
-                          case 'diamond':
-                            window.appConfig.stages.components.createDiamond({ x: np.position.x, y: np.position.y -.75, z: 0 })
-                            break;
-                          case 'ruby':
-                            window.appConfig.stages.components.createRuby({ x: np.position.x -.375, y: np.position.y -1.5, z: 0 })
-                            break;
-                          case 'sapphire-portal':
-                            window.appConfig.stages[`STAGE${stageIndex}`].data.sapphirePortalPosition = { x: np.position.x, y: np.position.y, z: -5 }
-                            window.appConfig.timers.activeTimers.push(
-                              window.appConfig.timers.addPortalToStage({ x: np.position.x, y: np.position.y, z: -5 }, window.appConfig.currentStage + '_SAPPHIRE_00', { x: 0, y: 300, z: 0 },
-                                window.appConfig.stages.components.sapphirePortalConfig())
-                            )
-                            window.appConfig.stages.components.setUpPortalIndicators(()=> {
-                              let ellipseGeometry = new THREE.CircleGeometry(4.125, 5)
-                              ellipseGeometry.rotateZ((2 * Math.PI) / 20)
-                
-                              let i = 1;
-                              for (i; i < ellipseGeometry.vertices.length; i++) {
-                                window.appConfig.stages.components.createSapphire({ x: ellipseGeometry.vertices[i].x, y: ellipseGeometry.vertices[i].y, z: 0 }, false, false, '_SAPPHIRE_00')
-                              }
-
-                            })
-                            break;
-                          case 'gem-portal':
-                            window.appConfig.timers.activeTimers.push(
-                              window.appConfig.timers.addPortalToStage({ x: np.position.x, y: np.position.y, z: -5 }, 'GEM_STAGE_END_00', { x: 0, y: 0, z: 0 },
-                                window.appConfig.stages.components.gemPortalConfig())
-                            )
-
-                            window.appConfig.stages.components.setUpPortalIndicators(() => {
-                              window.appConfig.stages.components.createDiamond({ x: 10, y: -17.5, z: -2.5 }, false, 'GEM_STAGE_END_00')
-                              window.appConfig.stages.components.createEmerald({ x: 6.5, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')
-                              window.appConfig.stages.components.createRuby({ x: 13, y: -24, z: -2.5 }, false, 'GEM_STAGE_END_00')                           
-                            })
-                            break;
-                        }
-                        principalsInc++
-                      }
-                      break;
-                    case "wall": // also handles point cases "remote-door" and "remote-switch"
-                      tempWallV1.copy(np.v1)
-                      tempLine31.set(np.v1, np.v2)
-                      let remoteReceiversToCreate = newPoints.filter(p => p.wall === np.uuid)
-                      remoteReceiversToCreate.sort((a,b)=> {
-                        
-                        tempV1.set(a.position.x, a.position.y, a.position.z)
-                        tempLine30.set(np.v1, tempV1)
-                        let distanceA = tempLine30.distance()
-                        
-                        tempV1.set(b.position.x, b.position.y, b.position.z)
-                        tempLine30.set(np.v1, tempV1)
-                        let distanceB = tempLine30.distance()
-                        let result = distanceA - distanceB
-                        return result
-                      })
-                      remoteReceiversToCreate.forEach(rr => {
-                        
-                        let remoteTransmittersToCreate = newPoints.filter(p => p.remoteDoor === rr.uuid)
-                        remoteTransmittersToCreate.forEach(rt => {
-                          window.appConfig.stages.components.createRemoteSwitch({
-                            transmitter: {
-                              p: { x: rt.position.x, y: rt.position.y, z: 0 }
-                            },
-                            receiver: {
-                              p: { x: rr.position.x, y: rr.position.y, z: 0 },
-                              name: `STAGE${stageIndex}RECEIVER_${remoteReceiversInc}`
-                            }
-                          })
-                          remoteTransmittersInc++
-                        })
-                        tempV3.set(rr.position.x, rr.position.y, rr.position.z)
-                        tempLine30.set(np.v1, tempV3)
-                        tempLine31.at((tempLine30.distance()/tempLine31.distance()-((rr.radius)/tempLine31.distance())), tempV1)
-                        tempLine31.at((tempLine30.distance()/tempLine31.distance()+((rr.radius)/tempLine31.distance())), tempV2)
-                        tempLine30.set(tempV1, tempV2)
-                        tempLine30.set(tempWallV1, tempV1)
-                        let tempV1distance = tempLine30.distance()
-                        tempLine30.set(tempWallV1, tempV2)
-                        let tempV2distance = tempLine30.distance()
-                        let firstPoint, secondPoint
-                        if (tempV1distance < tempV2distance){
-                          firstPoint = tempV1
-                          secondPoint = tempV2
-                        } else {
-                          firstPoint = tempV2
-                          secondPoint = tempV1
-                        }
-
-                        tempWallV2.copy(firstPoint)
-                        tempLine30.set(tempWallV1, tempWallV2)
-                        
-                        tempLine30.getCenter(tempV3)
-                        const wall = createBeam({
-                          p: [tempV3.x, tempV3.y,tempV3.z],
-                          r: [0, 0, np.rotation],
-                          s: (tempLine30.distance() *.1) - .45
-                        })
-                        wall.name = `STAGE${stageIndex}-beam${beamsInc}`
-                        scene.add(wall)
-                        
-                        tempLine32.set(firstPoint, secondPoint)
-                        tempLine32.getCenter(tempV3)
-                        
-                        beamsInc++
-                        tempWallV1.copy(secondPoint)
-                        window.appConfig.stages.components.createSwitchBeamWall({
-                          single:true, 
-                          rotation: np.rotation, 
-                          s: (tempLine32.distance() * .1), 
-                          switchBeamAdj: (rr.radius * .1), 
-                          // switchBeamAdj: 0, 
-                          dir: 'single', 
-                          p:{x:tempV3.x, y:tempV3.y, z:tempV3.z }, 
-                          receiver: remoteTransmittersToCreate.length > 0 ? {name: `STAGE${stageIndex}RECEIVER_${remoteReceiversInc}` } : undefined
-                        })
-                        remoteReceiversInc++
-                      })
-                      tempWallV2.copy(np.v2)
-                      tempLine30.set(tempWallV1, tempWallV2)
-
-                      tempLine30.getCenter(tempV1)
-                      const wall = createBeam({
-                        p: [tempV1.x, tempV1.y,tempV1.z],
-                        r: [0, 0, np.rotation],
-                        s: (tempLine30.distance() *.1) - .45
-                      })
-                      wall.name = `STAGE${stageIndex}-beam${beamsInc}`
-                      scene.add(wall)
-                      beamsInc++
-                      break;
-                    case "prize":
-                      prize(stageIndex, prizesInc, { x: np.position.x, y: np.position.y, z: 0 })
-                      prizesInc++
-                      break;
-                    case "crystalSphere":
-                      let crystalSizeInc = 0
-                      let innerRadius = 2
-                      let ringsNum = (np.radius -(np.radius % 4))/4 - 1
-                      for (let i = 1; i <= ringsNum; i++){
-                        createCrystalCircle(`STAGE${stageIndex}`, 1.35 + ((i + 1) *.58), { x: np.position.x, y: np.position.y}, crystalSizeInc % 3, 8)
-                        crystalSizeInc++
-                      }
-                      crystalSpheresInc++
-                      break;
-                    case "bumper":
-                      window.appConfig.stages.components.createBumper(`STAGE${stageIndex}BUMPER${bumpersInc}`, 1, { x: np.position.x, y: np.position.y, z: 0 }, 6)
-                      bumpersInc++
-                      break;
-                    case "crystal-line":
-                      tempV1.set(np.v1.x,np.v1.y, 0 )
-                      tempV2.set(np.v2.x,np.v2.y, 0 )
-                      createCrystalAngle({name:`STAGE${stageIndex}`, v1: tempV1, v2: tempV2, size: 0});
-                      crystalLinesInc++
-                      break;
-                    case "blackhole":
-                      window.appConfig.stages.components.createBlackHole({ position: { x: np.position.x, y: np.position.y, z: 0 }, scale: { x: 2, y: 2, z: 2 } })
-                      blackholesInc++
-                      break;
-                    case "superball":
-                      if (superballsInc === 0) {
-                        let theName = `${window.appConfig.currentStage}_SPHERECOIN${superballsInc}`
-                        window.appConfig.createSphere({
-                          bounce: 1,
-                          name: theName,
-                          position: {
-                            x: np.position.x,
-                            y: np.position.y,
-                            z: 0
-                          },
-                          handleCollision: (c) => window.appConfig.superBallHandleCollision(c, theName)
-                        })
-
-                      }
-                      superballsInc++
-                      break;
-                  }
-                })
-              
-              }
-              loadJSONStage({filename:'generatedLevelDataStage8', stageIndex: 8 })
-
-            window.appConfig.stages.components.createSapphire({ x: -100, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -110, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -120, y: -100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -130, y: 100, z: 0 })
-            window.appConfig.stages.components.createSapphire({ x: -140, y: 100, z: 0 })
-
-            window.appConfig.stages.components.createBlueIsland()
-            window.appConfig.stages.STAGE8.data.started = true
           }
         }
       }
 
       window.appConfig.stages.components.stageInit()
-      window.appConfig.stages[window.appConfig.currentStage].init()
 
       initGame();
 
@@ -8263,13 +8217,13 @@
       timer.addEventListener("targetAchieved", function (e) {
         startStageEnd()
       })
+      console.log('lift curtain')
       window.appConfig.selectors.curtain.classList.add("opacity-0");
 
       if(window.appConfig.env === 'app') {
         landingPageToMainMenu()
       }
     };
-
     initGame = (function () {
       var sphere_geometry = new THREE.SphereGeometry(1, 32, 32),
         collisionInc = 0,
@@ -9777,8 +9731,9 @@
               }
               window.appConfig.currentStage = window.appConfig.stagesArray[window.appConfig.currentStageIndex]
             }
+            window.appConfig.autoStartStage = false
             if (action && action.autoStart === true) {
-              window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName())
+              window.appConfig.autoStartStage = true
             }
             if (action && action.autoStart === false) {
               showStart()
@@ -9801,7 +9756,6 @@
             } else {
               window.appConfig.selectors.stageNameTitle1.classList.add("hide")
             }
-            window.appConfig.selectors.curtain.classList.add("opacity-0");
             const restartBallPosition = window.appConfig.stages[window.appConfig.currentStage].data.startingPosition
             window.appConfig.positionBall(restartBallPosition)
             window.appConfig.timers.data.initialBallZoom.percentComplete = 0
@@ -10095,7 +10049,6 @@
 
       if (!window.appConfig.stages[window.appConfig.currentStage].data.started) {
         window.appConfig.stages.components.stageInit()
-        window.appConfig.stages[window.appConfig.currentStage].init()
       } else {
         if (window.appConfig.landingPage === true || (!window.appConfig.pause && !window.appConfig.userHasEnded)) {
           window.appConfig.activeTransforms.length > 0 && window.appConfig.activeTransforms.forEach(t => {

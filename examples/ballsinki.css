@@ -457,7 +457,7 @@ td.high-score-sec {
   transition: all 2000ms;
   pointer-events: none;
   background-color: white;
-  z-index: 1;
+  z-index: 1000000000;
   position: absolute;
   left: 0;
   top: 0;
