@@ -2578,11 +2578,9 @@
                 if (window.appConfig.autoStartStage === true) {
                   console.log('pushing countdown name timer')
                   window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName())
-    
-                  console.log('lift curtain')
-                  window.appConfig.selectors.curtain.classList.add("opacity-0");
-
-                }
+                    }
+                    console.log('lift curtain')
+                    window.appConfig.selectors.curtain.classList.add("opacity-0");
               })
           },
           crystal: crystal,
@@ -8217,8 +8215,8 @@
       timer.addEventListener("targetAchieved", function (e) {
         startStageEnd()
       })
-      console.log('lift curtain')
-      window.appConfig.selectors.curtain.classList.add("opacity-0");
+      // console.log('lift curtain')
+      // window.appConfig.selectors.curtain.classList.add("opacity-0");
 
       if(window.appConfig.env === 'app') {
         landingPageToMainMenu()
