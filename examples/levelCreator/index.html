@@ -36,6 +36,7 @@
         <input type="file" id="file-selector">
         <!-- <button id="load-button" class="ui-button">Load</button> -->
         <button id="save-button" class="ui-button">Save</button>
+        <button id="save-prod-button" class="ui-button">Save Prod</button>
         <button id="select-button" class="ui-button">Select</button>
         <button id="generate-button" class="ui-button">Generate</button>
         <button id="teardown-button" class="ui-button">Teardown</button>
@@ -1215,6 +1216,20 @@
         let bb = new Blob([fileContent], { type: 'text/json' });
         let a = document.createElement('a');
         a.download = 'levelCreator.json';
+        a.href = window.URL.createObjectURL(bb);
+        a.click();
+    })
+    document.querySelector('#save-prod-button').addEventListener('click', (e) => {
+        e.stopPropagation()
+        let strippedPoints = [...points]
+        strippedPoints.forEach(point => {
+            delete point.mesh
+        })
+        strippedPoints = strippedPoints.filter(point => point.type !== 'midpoint' && point.type !== 'line' && point.type !== 'guidepoint')
+        let fileContent = JSON.stringify(strippedPoints);
+        let bb = new Blob([fileContent], { type: 'text/json' });
+        let a = document.createElement('a');
+        a.download = 'prodLevelCreator.json';
         a.href = window.URL.createObjectURL(bb);
         a.click();
     })

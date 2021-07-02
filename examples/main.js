@@ -2147,7 +2147,7 @@
             const blueMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff })
             // const newPoints = window.appConfig.generatedLevelDataStage8
             const newPoints = data
-            console.log(newPoints)
+            // console.log(newPoints)
             let principalsInc = 0
             let beamsInc = 0
             let prizesInc = 0
@@ -2312,10 +2312,15 @@
                   break;
                 case "crystalSphere":
                   let crystalSizeInc = 0
-                  let innerRadius = 2
-                  let ringsNum = (np.radius -(np.radius % 4))/4 - 1
-                  for (let i = 1; i <= ringsNum; i++){
-                    createCrystalCircle(`STAGE${stageIndex}`, 1.35 + ((i + 1) *.58), { x: np.position.x, y: np.position.y}, crystalSizeInc % 3, 8)
+                  
+                  let innerRadius = 0
+                  if (np.innerRadius !== undefined) {
+                    innerRadius = np.innerRadius
+                  }
+                  let ringsNum = (np.radius -(np.radius % 6))/6 - (innerRadius)
+                  let ringsNum1 = (np.radius -(np.radius % 4))/4 - (innerRadius)
+                  for (let i = 0; i <= ringsNum; i++){
+                    createCrystalCircle(`STAGE${stageIndex}`, 1.25 + .45 +((i+ innerRadius)  *.65), { x: np.position.x, y: np.position.y}, crystalSizeInc % 3, 4 + (i*2 ))
                     crystalSizeInc++
                   }
                   crystalSpheresInc++
@@ -2335,21 +2340,18 @@
                   blackholesInc++
                   break;
                 case "superball":
-                  if (superballsInc === 0) {
-                    let theName = `${window.appConfig.currentStage}_SPHERECOIN${superballsInc}`
-                    window.appConfig.createSphere({
-                      bounce: 1,
-                      name: theName,
-                      position: {
-                        x: np.position.x,
-                        y: np.position.y,
-                        z: 0
-                      },
-                      handleCollision: (c) => window.appConfig.superBallHandleCollision(c, theName)
-                    })
-          
-                  }
-                  superballsInc++
+                  // let theName = `${window.appConfig.currentStage}_SPHERECOIN${superballsInc}`
+                  // window.appConfig.createSphere({
+                  //   bounce: 1,
+                  //   name: theName,
+                  //   position: {
+                  //     x: np.position.x,
+                  //     y: np.position.y,
+                  //     z: 0
+                  //   },
+                  //   handleCollision: (c) => window.appConfig.superBallHandleCollision(c, theName)
+                  // })          
+                  // superballsInc++
                   break;
               }
             })
@@ -2559,7 +2561,6 @@
               }
 
               stageFetch().then(data => {
-                // console.log(data)
                 if (data !== undefined ) {
                   window.appConfig.stages.components.loadJSONStage({data:data, stageIndex: window.appConfig.currentStageIndex })
                 }
@@ -2573,13 +2574,10 @@
                 window.appConfig.stages.components.createSapphire({ x: -140, y: 100, z: 0 })    
                 window.appConfig.stages.components.createBlueIsland()
               }).then(() => {
-                console.log('starting')
                 // debugger
                 if (window.appConfig.autoStartStage === true) {
-                  console.log('pushing countdown name timer')
                   window.appConfig.timers.activeTimers.push(window.appConfig.timers.countdownName())
                     }
-                    console.log('lift curtain')
                     window.appConfig.selectors.curtain.classList.add("opacity-0");
               })
           },
@@ -8132,7 +8130,7 @@
             startingPosition: window.appConfig.originVector,
             sapphirePortalPosition: { x: 37.5/2.5, y: 125, z: -5 }
           },
-          pointsJSON: 'levelJSON/levelCreator (72).json',
+          pointsJSON: 'levelJSON/prodLevelCreator (3).json',
           backgroundColors: stageProperties.STAGE8.backgroundColors,
           basicColors: stageProperties.STAGE8.basicColors,
           sounds: stageProperties.STAGE8.sounds,
@@ -8215,9 +8213,7 @@
       timer.addEventListener("targetAchieved", function (e) {
         startStageEnd()
       })
-      // console.log('lift curtain')
-      // window.appConfig.selectors.curtain.classList.add("opacity-0");
-
+      
       if(window.appConfig.env === 'app') {
         landingPageToMainMenu()
       }
