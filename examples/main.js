@@ -2340,18 +2340,18 @@
                   blackholesInc++
                   break;
                 case "superball":
-                  // let theName = `${window.appConfig.currentStage}_SPHERECOIN${superballsInc}`
-                  // window.appConfig.createSphere({
-                  //   bounce: 1,
-                  //   name: theName,
-                  //   position: {
-                  //     x: np.position.x,
-                  //     y: np.position.y,
-                  //     z: 0
-                  //   },
-                  //   handleCollision: (c) => window.appConfig.superBallHandleCollision(c, theName)
-                  // })          
-                  // superballsInc++
+                  let theName = `${window.appConfig.currentStage}_SPHERECOIN${superballsInc}`
+                  window.appConfig.createSphere({
+                    bounce: 1,
+                    name: theName,
+                    position: {
+                      x: np.position.x,
+                      y: np.position.y,
+                      z: 0
+                    },
+                    handleCollision: (c) => window.appConfig.superBallHandleCollision(c, theName)
+                  })          
+                  superballsInc++
                   break;
               }
             })
@@ -8130,7 +8130,7 @@
             startingPosition: window.appConfig.originVector,
             sapphirePortalPosition: { x: 37.5/2.5, y: 125, z: -5 }
           },
-          pointsJSON: 'levelJSON/prodLevelCreator (3).json',
+          pointsJSON: 'levelJSON/prodLevelCreator (1).json',
           backgroundColors: stageProperties.STAGE8.backgroundColors,
           basicColors: stageProperties.STAGE8.basicColors,
           sounds: stageProperties.STAGE8.sounds,
@@ -10854,7 +10854,7 @@
           console.log(err)
         }
       },
-      populateOldScores: (zones = [0,1,2,3,4,5,6,7]) => {
+      populateOldScores: (zones = [8]) => {
         const makeName = () => {
           let name = ''
           for (let i = 0; i < 3; i++) {
@@ -10974,16 +10974,21 @@
       updateGlobalHighscoreUI: () => {
         const hsIndexes = [1,2,3,4,5,6,7,8,9,10]
         hsIndexes.forEach( hsI => {
-          if (window.appConfig.globalHighscores[window.appConfig.currentStageIndex] !== undefined) {
-            const hs = window.appConfig.globalHighscores[window.appConfig.currentStageIndex].arr[hsI - 1]
-            if (hs !== undefined && hs.seconds > 0 && hs.score !== undefined) {
-              window.appConfig.selectors[`globalHighScore${hsI}Score`].innerHTML = hs.score.toLocaleString('en-US').replace(',', comma())
-              window.appConfig.selectors[`globalHighScore${hsI}Sec`].childNodes[0].data = hs.seconds + " sec"
-              window.appConfig.selectors[`globalHighScore${hsI}Row`].classList.remove("hide")
-              window.appConfig.selectors[`globalHighScore${hsI}Name`].childNodes[0].data = hs.name
-            } else {
-              window.appConfig.selectors[`globalHighScore${hsI}Row`].classList.add("hide")
-            }}
+          if (window.appConfig.globalHighscores[window.appConfig.currentStageIndex] === undefined) {
+            window.appConfig.globalHighscores[window.appConfig.currentStageIndex] = {
+              zone: window.appConfig.currentStageIndex,
+              arr: []
+            }
+          }
+          const hs = window.appConfig.globalHighscores[window.appConfig.currentStageIndex].arr[hsI - 1]
+          if (hs !== undefined && hs.seconds > 0 && hs.score !== undefined) {
+            window.appConfig.selectors[`globalHighScore${hsI}Score`].innerHTML = hs.score.toLocaleString('en-US').replace(',', comma())
+            window.appConfig.selectors[`globalHighScore${hsI}Sec`].childNodes[0].data = hs.seconds + " sec"
+            window.appConfig.selectors[`globalHighScore${hsI}Row`].classList.remove("hide")
+            window.appConfig.selectors[`globalHighScore${hsI}Name`].childNodes[0].data = hs.name
+          } else {
+            window.appConfig.selectors[`globalHighScore${hsI}Row`].classList.add("hide")
+          }
         })
       },
       updateGlobalHighscoreUIMainMenu: () => {
