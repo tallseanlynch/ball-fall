@@ -8191,7 +8191,7 @@
         }
       }
 
-      window.appConfig.stages.components.stageInit()
+      // window.appConfig.stages.components.stageInit()
 
       initGame();
 

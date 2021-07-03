@@ -1,9 +1,9 @@
 const { exec } = require("child_process");
 
 const libs = [
-    'main',
+    'main'
     // 'js/ammo'
-    'js/initial'
+    // 'js/initial'
     // 'js/three-121',
     // 'js/stats',
     // 'js/physi',
