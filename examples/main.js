@@ -8130,7 +8130,11 @@
             startingPosition: window.appConfig.originVector,
             sapphirePortalPosition: { x: 37.5/2.5, y: 125, z: -5 }
           },
-          pointsJSON: 'levelJSON/prodLevelCreator (1).json',
+          pointsJSON: 'levelJSON/levelCreator (48).json', // sean 4th level Pinecone
+          // pointsJSON: 'levelJSON/levelCreator (49).json', // sean 3rd level Complex
+          // pointsJSON: 'levelJSON/levelCreator (27).json', // haley 1st level
+          // pointsJSON: 'levelJSON/levelCreator (15).json', // sean 2nd level Penguin Biology
+          // pointsJSON: 'levelJSON/levelCreator (23).json', // sean 1st level Hexagon
           backgroundColors: stageProperties.STAGE8.backgroundColors,
           basicColors: stageProperties.STAGE8.basicColors,
           sounds: stageProperties.STAGE8.sounds,
